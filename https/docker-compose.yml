@@ -1,0 +1,47 @@
+db:
+  image: postgres
+
+uwsgi:
+  restart: always
+  image: vanessa/sregistry
+  volumes:
+    - .:/code
+    - ./static:/var/www/static
+  links:
+    - redis
+    - db
+
+nginx:
+  restart: always
+  image: nginx
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
+    - /etc/ssl/certs:/etc/ssl/certs:ro
+    - /etc/ssl/private:/etc/ssl/private:ro
+  volumes_from:
+    - uwsgi
+  links:
+    - uwsgi
+    - db
+
+redis:
+  restart: always
+  image: redis:latest
+  ports:
+    - "6379:6379"
+
+
+worker:
+  image: vanessa/sregistry
+  command: celery worker -A shub.celery -Q default -n default@%h -B
+  volumes:
+    - .:/code
+  volumes_from:
+    - uwsgi
+  links:
+    - redis
+    - db
