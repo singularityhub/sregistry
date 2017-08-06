@@ -10,6 +10,7 @@ Updated docs on how to install Docker or docker-compose are provided for [instal
 ## Settings
 See that folder called [settings](../shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a [settings/secrets.py](../shub/settings/secrets.py) for application secrets, and [settings/config.py](../shub/settings/config.py) to configure your database and registry information.
 
+
 ### Secrets
 There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials. First, create this file
 
@@ -22,6 +23,68 @@ and inside you want to add a `SECRET_KEY`. You can use the [secret key generator
 ```      
 SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 ```
+
+### Authentication Secrets
+One thing I (@vsoch) can't do for you in advance is produce application keys and secrets to give your Registry for each social provider that you want to allow users (and yourself) to login with. We are going to use a framework called [python social auth](https://python-social-auth-docs.readthedocs.io/en/latest/configuration/django.html) to achieve this, and in fact you can add a [number of providers](http://python-social-auth-docs.readthedocs.io/en/latest/backends/index.html) (I have set up a lot of them, including SAML, so please <a href="https://www.github.com/singularityhub/sregistry/isses" target="_blank">submit an issue</a> if you want one added to the base proper.). Singularity Registry uses OAuth2 with a token--> refresh flow because it gives the user power to revoke permission at any point, and is a more modern strategy than storing a database of usernames and passwords. You can enable or disable as many of these that you want, and this is done in the [settings/config.py](../shub/settings/config.py):
+
+```
+# Which social auths do you want to use?
+ENABLE_GOOGLE_AUTH=False
+ENABLE_TWITTER_AUTH=True
+ENABLE_GITHUB_AUTH=False
+
+```
+
+and you will need at least one to log in. I've found that Twitter works the fastest and easiest, and then Github and Google. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
+
+ - [Github Developers](https://github.com/settings/developers)
+
+We will walk through the setup of each in detail. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Twitter was the only one that worked reliably without an actual domain for me.
+
+
+#### Google OAuth2
+You first need to [follow the instructions](https://developers.google.com/identity/protocols/OpenIDConnect) and setup an OAuth2 API credential. The redirect URL should be every variation of having http/https, and www. and not. (Eg, change around http-->https and with and without www.) of `https://www.sregistry.org/complete/google-oauth2/`. Google has good enough debugging that if you get this wrong, it will give you an error message with what is going wrong. You should store the credential in `secrets.py`, along with the complete path to the file for your application:
+
+
+      GOOGLE_CLIENT_FILE='/code/.grilledcheese.json'
+
+      # http://psa.matiasaguirre.net/docs/backends/google.html?highlight=google
+      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'xxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com'
+      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'xxxxxxxxxxxxxxxxx'
+      # The scope is not needed, unless you want to develop something new.
+      #SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/drive']
+      SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+          'access_type': 'offline',
+          'approval_prompt': 'auto'
+      }
+
+
+Google is great in letting you specify multiple acceptable callback urls, so you should set every version of `http://127.0.0.1/complete/google-oauth2` (I did with and without http/https, along with the ending and without the ending slash, just in case). Note that `1.` extra arguments have been added to ensure that users can refresh tokens, and `2.` in testing I was using `http` and not `https`, and I eventually added `https` (and so the url was adjusted accordingly). Next, we need to follow instructions for [web applications](https://developers.google.com/identity/protocols/OAuth2WebServer). 
+
+#### Setting up Github OAuth
+For users to connect to Github, you need to [register a new application](https://github.com/settings/applications/new), and add the key and secret to your `secrets.py` file like this: 
+
+
+      http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
+      SOCIAL_AUTH_GITHUB_KEY = ''
+      SOCIAL_AUTH_GITHUB_SECRET = ''
+
+      # You shouldn't actually need this if we aren't using repos
+      # SOCIAL_AUTH_GITHUB_SCOPE = ["repo","user"]
+
+
+The callback url should be in the format `http://127.0.0.1/complete/github`, and replace the localhost address with your domain. 
+
+
+#### Setting up Twitter OAuth2
+Twitter is the easiest of the three to setup, you can go to the [Twitter Apps](https://apps.twitter.com/) dashboard, register an app, and add secrets, etc. to your `secrets.py`:
+
+      SOCIAL_AUTH_TWITTER_KEY = ''
+      SOCIAL_AUTH_TWITTER_SECRET = ''
+
+
+The callback url here should be `http://127.0.0.1/complete/twitter`.
+
 
 ### Config
 In the [config.py](../shub/settings/config.py) you need to define the following:
