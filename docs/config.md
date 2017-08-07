@@ -38,16 +38,20 @@ Of course anyone that shells into your Docker image could just explode everythin
 
 ```bash
 # Inside the image, here is how you would do it
-$ python manage.py create_superuser --username vsoch
-
+$ python manage.py add_superuser --username vsoch
 DEBUG Username: vsoch
 DEBUG vsoch can now manage and build.
+
 ```
 # And from outside the Docker image
 
 NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
-docker exec $NAME python /code/manage.py create_superuser --username vsoch
+docker exec $NAME python /code/manage.py add_superuser --username vsoch
 ```
+
+You can also choose to remove a superuser at any time. This means he or she will no longer be able to build and access the token and secret to do so.
+
+
 
 
 ## Adding users to a registry
