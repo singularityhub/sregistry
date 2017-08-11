@@ -225,7 +225,7 @@ docker-compose stop
 When you do `docker-compose up -d` the application should be available at `http://127.0.0.1/`, and if you've configured https, `https://127.0.0.1/`. If you need to shell into the application, for example to debug with `python manage.py shell` you can get the container id with `docker ps` and then do:
 
 ```
-NAME=$(docker ps -aqf "name=singularityregistry_uwsgi_1")
+NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 

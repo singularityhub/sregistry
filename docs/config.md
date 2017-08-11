@@ -52,6 +52,13 @@ docker exec $NAME python /code/manage.py add_superuser --username vsoch
 You can also choose to remove a superuser at any time. This means he or she will no longer be able to build and access the token and secret to do so.
 
 
+```
+# Inside the image
+$ python manage.py remove_superuser --username vsoch
+# Outside
+NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
+docker exec $NAME python /code/manage.py remove_superuser --username vsoch
+```
 
 
 ## Adding users to a registry
