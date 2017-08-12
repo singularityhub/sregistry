@@ -1,0 +1,27 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Beep Boop, Error!</title>
+    <style>
+    #robot {
+        position: absolute;
+        top:25%;
+        left:25%;
+        text-align: left;
+        font-family: Roboto, sans-serif;
+    }
+    </style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <div id="robot">
+        <h1 style="color:#999">Beep Boop, Error!</h1>
+        <img width="300px" src="{% static "img/robot_package.png"%}">
+        <small style="color:#999;">Don't worry, our team has been notified! <a href="https://www.github.com/singularityhub/singularityhub.github.io/issues" target="_blank">Get in touch</a> if needed.</small>
+   </div>
+  </head>
+  <body>
+  </body>
+</html>

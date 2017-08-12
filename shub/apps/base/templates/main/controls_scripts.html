@@ -1,0 +1,116 @@
+{% load static from staticfiles %}
+<script>
+
+// Enable tooltips
+$('[data-toggle="tooltip"]').tooltip()
+
+// Allow the user to reset tags
+$("#reset_container_box").click(function(){
+    localStorage.removeItem('containers');
+    console.log("Container box emptied.");
+    $("#containers").empty();
+    update_box();
+})
+
+
+// Function to populate box with containers from local storage
+function populate_box(div,contents){
+    var contents = JSON.parse(contents);
+    $(div).empty();
+    $.each(contents,function(container_id,container){      
+        var new_box = '<div class="input-group container-box"><span class="input-group-addon"><input class="container-input" type="checkbox" aria-label="' + container_id +'"></span><div class="container-button">'+ container +'</div></div>'
+        $(div).append(new_box);
+    })
+}
+
+// If we have containers saved in local storage
+function update_box() {
+    var tags = localStorage.getItem('containers')
+    
+    if (tags != null) {
+        populate_box("#containers",tags);
+    }
+
+    // If tags are empty, hide box
+    if (tags == null) {
+        $("#container-operations").addClass('hidden');
+        $("#full_message").addClass('hidden');
+        $("#empty_message").removeClass('hidden');
+        console.log("No saved containers in box.");
+    } else {
+        $("#full_message").removeClass('hidden');
+        $("#empty_message").addClass('hidden');
+        $("#container-operations").removeClass('hidden');
+        console.log("You have saved containers in your box!");
+    }
+
+   // Make sure no more than two checkboxes are selected
+    $('.container-input').on('change', function(evt) {
+    var total = $(".container-input:checked").length;
+    if(total > 2) {
+       // Tell the user
+       $("#message_box").text("You can only have a maximum of two images for any comparison.");
+       $("#message_box").removeClass("hidden");
+       this.checked = false;
+   }
+});
+
+}
+
+// Toggle box function controls changing icon, showing and hiding box
+function toggle_box(){
+
+    if ($("#controls").hasClass('hidden')){
+        $("#controls").removeClass('hidden');
+        $("#show_container_set_icon").removeClass('fa-plus-square');
+        $("#show_container_set_icon").addClass('fa-minus-square');
+    } else {
+        $("#controls").addClass('hidden');
+        $("#show_container_set_icon").removeClass('fa-minus-square');
+        $("#show_container_set_icon").addClass('fa-plus-square');
+    }
+}
+
+
+// Save container when the user clicks save
+$(".save_container").click(function(){
+   var container_set = localStorage.getItem('containers');
+   var container_id = $(this).attr("data-id").replace('container_','');
+   var container_name = $(this).attr("data-name");
+   if (container_set != null){
+       container_set = JSON.parse(container_set);
+   } else {
+       container_set = {};
+   }
+   container_set[container_id] = container_name;
+   localStorage.setItem('containers', JSON.stringify(container_set));
+   console.log("Container saved to box.")
+   update_box();
+   $("#controls").removeClass("hidden");
+})
+
+// General function to compare containers
+function compare_containers(comparison_operation){
+    var total = $(".container-input:checked").length;
+    if (total < 2) {
+       $("#message_box").text("You must select two containers for comparison");
+       $("#message_box").removeClass("hidden");
+    } else {
+       var container_ids = $(".container-input:checked").map(function(){return $(this).attr("aria-label");}).get();
+       var url = "{{ domain }}/tools/compare/" + container_ids[0] + "/" + comparison_operation + "/" + container_ids[1];
+       document.location = url;
+    }
+}
+
+// Compare containers
+$("#compare_containers").click(function(){
+    compare_containers('intersect');
+})
+
+// Subtract containers
+// Compare containers
+$("#subtract_containers").click(function(){
+    compare_containers('subtract');
+})
+
+</script>

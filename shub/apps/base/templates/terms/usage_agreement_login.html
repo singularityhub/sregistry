@@ -1,0 +1,83 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                </a><h2 class="title">Terms of Service</h2></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <iframe frameBorder="0" width="100%" height="900px" src="https://docs.google.com/document/d/1np84Pd36nPWQGnrN2ZsH7mID__fyeBllSMjQ5vc9Z3s/pub?embedded=true"></iframe>
+        <p class="well">Version 1.0 Updated 8/05/2017</p>
+
+    </div>
+    <div class="col-md-4">
+                <p id="message" 
+                   class="alert alert-info"><strong>You must agree to the terms of service to continue.</strong> 
+                   <br><br>These terms basically say that Singularity Registry softawre is provided as a service to you, and that you are responsible for what you put in your institution's containers. By way of publicly sharing container content via a Singularity Registry, you are making the content of the containers accessible worldwide to anyone that uses the Singularity client. The developers of Singularity Registry trust that you will not act maliciously, dishonestly, or destructively.</p>
+        <button class="btn btn-info" 
+                id="agree_button">I Agree</button>
+
+        <button class="btn btn-info" 
+                style="display:none"
+                id="continue_button"
+                disabled>Continue</button>
+
+
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/cookie-token.js' %}"></script>
+<script>
+
+$(document).ready(function(){
+
+    $("#agree_button").click(function(){
+        agreeTerms();
+    })
+    $("#continue_button").click(function(){
+        document.location = "/"
+    })
+    $("#containerbox").hide();
+
+})
+
+function agreeTerms() {
+
+    $.ajax({
+        url : "{% url 'agree_terms' %}",
+        type : "POST",
+
+        success : function(json) {
+            if (json['status'] == true){
+                $("#agree_button").hide();
+                $("#continue_button").attr("disabled",false)
+                $("#continue_button").show();
+                $("#message").text("Hooray! Welcome to the Singularity Registry Community! The robots are glad to have you.")
+
+            } else {
+               $("#message").text("There was a problem with your agreement. Please post an issue to get help.")
+            }
+        },
+
+        error : function(xhr,errmsg,err) {
+            $('#message').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+     });
+}
+</script>
+{% endblock %}

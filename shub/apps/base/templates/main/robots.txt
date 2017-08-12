@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+
+User-agent: Googlebot
+Sitemap: /sitemap.xml
+Disallow: /*delete$

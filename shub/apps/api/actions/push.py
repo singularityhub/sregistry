@@ -40,8 +40,8 @@ class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ImageFile
-        read_only_fields = ('created', 'datafile','collection','tag','name')
-        fields = ('created', 'datafile','collection','tag','name')
+        read_only_fields = ('created', 'datafile','collection','tag','name', 'metadata',)
+        fields = ('created', 'datafile','collection','tag','name', 'metadata')
 
 
 class ContainerPushViewSet(ModelViewSet):
@@ -76,4 +76,5 @@ class ContainerPushViewSet(ModelViewSet):
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
                             tag=self.request.data.get('tag','latest'),
-                            name=self.request.data.get('name'))
+                            name=self.request.data.get('name'),
+                            metadata=self.request.data.get('metadata'))

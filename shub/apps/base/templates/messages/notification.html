@@ -1,0 +1,30 @@
+<script>
+function toast_message(message) {
+
+    toastr.options = {
+          "closeButton": true,
+          "debug": false,
+          "newestOnTop": true,
+          "progressBar": true,
+          "positionClass": "toast-bottom-right",
+          "preventDuplicates": true,
+          "showDuration": "300",
+          "hideDuration": "1000",
+          {% if toast_url %}
+          "onclick": function(){ document.location = "{{ toast_url }}" }
+          {% endif %}
+          "timeOut": "4000",
+          "extendedTimeOut": "1000",
+          "showEasing": "swing",
+          "hideEasing": "linear",
+          "showMethod": "fadeIn",
+          "hideMethod": "fadeOut"
+       }
+
+       {% if toast_type %}
+       toastr["{{ toast_type }}"](message)
+       {% else %}
+       toastr["success"](message)
+       {% endif %}   
+}
+</script>

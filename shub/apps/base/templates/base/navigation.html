@@ -1,0 +1,64 @@
+{% load staticfiles %}
+{% load gravatar %}
+
+        <nav class="navbar navbar-default" role="navigation">
+        <a class="navbar-brand" href="{% url 'index' %}"><span style="color:#e32929">S</span>Registry</a>
+        
+          <ul class="nav navbar-nav">
+
+            <!-- Containers -->
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Containers
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'collections' %}">Containers</a></li>
+                <li><a href="{% url 'all_tags' %}">Tags</a></li>
+              </ul>
+            </li>
+
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="https://singularityhub.github.io/sregistry" target="_blank">User Guide</a></li>
+
+            <!-- Tools Dropdown -->
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Tools
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'compare_all' %}">Container Similarity Tree</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="https://github.com/singularityhub/singularityhub.github.io/issues/new" target="_blank">Get Help</a></li>
+              </ul>
+            </li>
+
+            <li><a href="{% url 'search' %}"><i class="fa fa-search"></i></a></li>
+          </ul>
+
+          <!-- User Options -->
+          <ul class="nav navbar-nav navbar-right" style="margin-right:20px">
+            {% if request.user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ request.user.username }}
+ <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'my_collections' %}">Containers</a></li>
+                <li role="separator" class="divider"></li>
+                <!--<li class="dropdown-header">Settings</li>-->
+                <li><a href="/api">API</a></li>
+                {% if request.user.admin %}
+                <li><a href="{% url 'token' %}">Token</a></li>
+                {% endif %}
+                <li><a href="{% url 'logout' %}">Log Out</a></li>
+              </ul>
+            </li>
+            <li>{% gravatar user.email 30 %}</li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+
+            <!-- Search Icon -->
+            <!--<li><a href=""><i class="fa fa-search"></i></a></li>-->
+          </ul>
+
+    </nav>

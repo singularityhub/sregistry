@@ -76,12 +76,14 @@ class ImageFile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)
     tag = models.CharField(max_length=200, null=False)
+    metadata = models.TextField(default='') # will be converted to json
     name = models.CharField(max_length=200, null=False)
     datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
 
                    # ImageFile (instance)
 def create_container(sender, instance, **kwargs):
     from shub.apps.main.models import Container, Collection
+    from shub.apps.main.views import update_container_labels
     collection = Collection.objects.get(name=instance.collection)
    
     # Get a container, if it exists, we've already written file here
@@ -93,6 +95,30 @@ def create_container(sender, instance, **kwargs):
                                              tag=instance.tag,
                                              name=instance.name,
                                              image=instance)
+        
+    def add_metadata(container,metadata,field):
+        if field in metadata:
+            if field not in ['',None]:
+                container.metadata[field] = metadata.field
+                container.save()
+
+    # Load container metadata
+    try:
+        metadata = json.loads(metadata)['data']['attributes']
+        add_metadata(container,metadata,'deffile')
+        add_metadata(container,metadata,'runscript')
+        add_metadata(container,metadata,'test')
+        add_metadata(container,metadata,'environment')
+
+    except:
+        bot.error("Error parsing metadata for %s/%s" %(collection.name,
+                                                       instance.name))
+        pass
+
+    # Add labels
+    if metadata['labels'] not in [None,'']:
+        container = update_container_labels(container,metadata['labels'])
+
     container.save()
 
 post_save.connect(create_container, sender=ImageFile)

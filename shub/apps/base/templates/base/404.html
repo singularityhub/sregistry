@@ -1,0 +1,26 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Beep Boop, Not Found!</title>
+    <style>
+    #robot {
+        position: absolute;
+        top:25%;
+        left:25%;
+        text-align: center;
+        font-family: Roboto, sans-serif;
+    }
+    </style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div id="robot">
+        <h1 style="color:#999">Beep Boop, Not Found!</h1>
+        <img width="300px" src="{% static "img/robot_vision.png"%}">
+    </div>
+  </body>
+</html>
