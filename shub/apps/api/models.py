@@ -37,7 +37,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
 import os
-
+import json
 
 class OverwriteStorage(FileSystemStorage):
 
@@ -85,6 +85,7 @@ def create_container(sender, instance, **kwargs):
     from shub.apps.main.models import Container, Collection
     from shub.apps.main.views import update_container_labels
     collection = Collection.objects.get(name=instance.collection)
+    metadata = instance.metadata
    
     # Get a container, if it exists, we've already written file here
     containers = collection.containers.filter(tag=instance.tag)
@@ -99,21 +100,21 @@ def create_container(sender, instance, **kwargs):
     def add_metadata(container,metadata,field):
         if field in metadata:
             if field not in ['',None]:
-                container.metadata[field] = metadata.field
+                container.metadata[field] = metadata[field]
                 container.save()
 
     # Load container metadata
-    try:
-        metadata = json.loads(metadata)['data']['attributes']
-        add_metadata(container,metadata,'deffile')
-        add_metadata(container,metadata,'runscript')
-        add_metadata(container,metadata,'test')
-        add_metadata(container,metadata,'environment')
+    #try:
+    metadata = json.loads(metadata)['data']['attributes']
+    add_metadata(container,metadata,'deffile')
+    add_metadata(container,metadata,'runscript')
+    add_metadata(container,metadata,'test')
+    add_metadata(container,metadata,'environment')
 
-    except:
-        bot.error("Error parsing metadata for %s/%s" %(collection.name,
-                                                       instance.name))
-        pass
+    #except:
+    #    bot.error("Error parsing metadata for %s/%s" %(collection.name,
+    #                                                   instance.name))
+    #    pass
 
     # Add labels
     if metadata['labels'] not in [None,'']:
