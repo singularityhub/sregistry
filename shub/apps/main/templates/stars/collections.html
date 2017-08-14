@@ -1,0 +1,113 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+{% endblock %}
+
+{% block content %}
+
+{% include 'messages/message.html' %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card" style="padding:20px">
+            <div class="header" style="padding-bottom:10px">
+                   <h3 class="title">
+                   <img src="{% static 'img/robot1.png' %}" width="80px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
+                   {{ page_title }}</h3>
+            </div>
+        </div>    
+    </div>
+</div>
+
+<!-- Containers! -->
+<div class="row">
+    <div class="col-md-12">
+
+            <p> The robots have some favorites. These container collections are ranked based on the number of stars.</p>
+    </div>
+</div>
+
+{% if collections %}
+<div class="row" style="padding-top:50px;">
+    <div class="col-md-12">
+        <span style='float:right'><a href="{% url 'search' %}"><i class="fa fa-search"></i></a></span>
+    </div>
+
+    {% if collections %}
+    <!-- Navigation to different groups of collections -->
+    <div class="col-md-12">
+        <div class="content"  style="padding-bottom:20px">
+                <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default">All Collections</button></a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-md-12" class="table card material-table mdl-data-table--selectable">
+        <table id="datatable" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Builds</th>
+                <th>Description</th>
+                <th>Last Modified</th>
+                <th><i class="fa fa-2x fa-star" 
+                       style="color:gold"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for collection in collections %}
+            <tr>
+               <td><a href="{% url 'collection_details' collection.id %}">{{ collection.repo.full_name }}</a></td>
+               <td>{{ collection.star__count }}</td>
+               <td>{{ collection.containers.count }}</td>
+               <td>{% if collection.repo.url %}<a style="margin-right:20px;float:right" href="https://www.github.com/{{ collection.repo.full_name }}" target="_blank">
+                     <i class="fa fa-github"></i></a>{% endif %}
+                   {% if collection.repo.description %}{{ collection.repo.description }}{% endif %}</td>
+               <td>{{ collection.modify_date|date:"Y-m-d"}}</td>
+             </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script>
+$(document).ready(function(){
+
+    // Hack until figure out why pagination ugly
+    $('.material-pagination').hide();
+
+    $('#collection_table').DataTable( {
+       pageLength: 100, 
+       columnDefs: [
+            {
+                targets: [ 0, 1, 2 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            },
+          ],
+       columns: [
+            { "width": "40%" },
+            { "width": "10%" },
+               null,
+            ]
+    } );
+
+
+    $(".browser-default").change(function(){
+        $('.material-pagination').hide();
+    })
+
+})
+</script>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+
+.metric {
+  margin-bottom:2px;
+}
+
+#id_spec { 
+     position: absolute;
+     height:800px;
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% include "messages/message.html" %}
+
+<div id="fh5co-portfolio">
+
+<!-- Meta data about container-->
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">{{ container.name }}</a>:{{ container.tag }}</h2>
+                <p>Version {{ container.version }}</p>
+                <h3>
+                     <span class="icon-controls" style="position:relative;top:-70px">
+                     </span>
+                </h3>
+            </div>
+            <div class="content"  style="padding-bottom:20px">
+
+                {% if user.is_authenticated %}
+                    {% if edit_permission %}
+                         {% if container.frozen %}
+                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Unfreeze</button></a>
+                         {% else %}
+                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Freeze</button></a>
+                         {% endif %}
+                    {% else %}
+                         {% if container.frozen %}
+                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="#"><button class="btn btn-sm btn-default" disabled>Unfreeze</button></a>
+                         {% else %}
+                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="#"><button class="btn btn-sm btn-default" disabled>Freeze</button></a>
+                         {% endif %}
+                    {% endif %}
+                {% endif %}             
+
+                {% if container.tags.all %}
+                <a href="{% url 'container_tags' container.id %}"><button class="btn btn-sm btn-default">Tags</button></a>
+                {% endif %} 
+
+                {% if container.image %}
+                <a href="{% url 'download_container' container.id %}" target="_blank"><button class="btn btn-sm btn-default">Download</button></a>
+                <a class="save_container" data-id="container_{{ container.id }}" data-name="{{ container.collection.repo.owner.login }}/{{ container.collection.repo.name }}:{{ container.branch}}" class="btn btn-default btn-sm save_container" >
+                 <button data-toggle="tooltip" data-placement="right" title="add container to your snackbox for visualizations and comparisons!" class="btn btn-sm btn-default"><i data-id="container_{{ container.id }}" data-name="{{ container.collection.repo.owner.login }}/{{ container.collection.repo.name }}:{{ container.branch}}" class="fa fa-plus"></i></button></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <ul class="nav nav-pills" style="padding-left:25px">
+        {% if container.metadata.deffile %}
+        <li class="active"><a data-toggle="pill" href="#recipe">Singularity Recipe</a></li>
+        {% endif %}
+        {% if container.metadata.runscript %}
+        <li><a data-toggle="pill" href="#runscript">Runscript</a></li>
+        {% endif %}
+        {% if container.metadata.test %}
+        <li><a data-toggle="pill" href="#test">Tests</a></li>
+        {% endif %}
+        {% if container.metadata.environment %}
+        <li><a data-toggle="pill" href="#environment">Environment</a></li>
+        {% endif %}
+        {% if labels %}
+        <li><a data-toggle="pill" href="#labels">Labels</a></li>
+        {% endif %}
+    </ul>
+
+    <div class="tab-content" style="padding-top:50px">
+
+        <!-- Singularity Recipe -->
+        {% if container.metadata.deffile %}
+        <div id="recipe" class="tab-pane fade in active">
+
+            {% if container.metrics %}
+            <div class="col-md-6 card">
+            {% else %}
+            <div class="col-md-12 card">
+            {% endif %}
+                <div id="recipetext">{{ container.metadata.deffile }}</div>
+            </div>
+            {% if container.metrics  %}
+
+            <div class="col-md-6 card" style="padding:10px;background-color:white;border-radius:5px">
+                <h4>Build Metrics</h4>
+                {% for key, value in container.metrics.items %} 
+
+                    {% if key == "build_time" %}
+                    <p class="metric">Build Time: {{ value }} seconds</p>
+                    {% endif %}
+
+                    {% if key == "estimated_os" %}
+                    <p class="metric">Estimated OS: {{ value }}<a href="https://github.com/singularityware/singularity-python/blob/master/examples/classify_image/estimate_os.py" target="_blank"><i style="cursor:pointer;margin-left:10px" class="fa fa-question-circle"></i></a></p>
+                    {% endif %}
+
+                    {% if key == "size" %}
+                    <p class="metric">Padded Size: {{ value }} MB</p>
+                    {% endif %}
+
+                    {% if key == "singularity_version" %}
+                    <p class="metric">Singularity Version {{ value }}</p>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+
+        <!-- Singularity Runscript -->
+        {% if container.metadata.runscript %}
+        <div id="runscript" class="tab-pane fade">
+            <div class="col-md-12 card">
+                <div id="runscripttext">{{ container.metadata.runscript }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Singularity Test -->
+        {% if container.metadata.test %}
+        <div id="runscript" class="tab-pane fade in active">
+            <div class="col-md-12 card">
+                <div id="testtext">{{ container.metadata.test }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Singularity Environment -->
+        {% if container.metadata.environment %}
+        <div id="plots" class="tab-pane fade">
+            <div class="col-md-12 card">
+                <div id="environmenttext">{{ container.metadata.environment }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Labels -->
+        {% if labels %}
+        <div id="labels" class="tab-pane fade">
+            <div class="col-md-12 card">
+
+                {% for label in labels %} 
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4><a href="{% url 'view_label' label.id %}">{{ label.key }}</a></h4>
+                        </div>
+                        <div class="col-md-6" style='margin-top:20px'> 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="well">{{ label.value }}</p>
+                        </div>
+                        <div class="col-md-6" style='margin-top:20px'> 
+                            <h3>n={{ label.containers.count }}</h3>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+
+    </div>
+</div>
+{% include "social/share_links.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script src="{% static "js/ace.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/clipboard.min.js"%}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script>
+
+function make_editor(divname) {
+    var editor = ace.edit(divname + "text");
+    editor.setOption("maxLines", 1000)
+}
+
+$(document).ready(function(){
+
+    var cb = new Clipboard('.copyme');
+
+    cb.on('success',function(e){
+       e.clearSelection();
+       var message = "#" + $(e.trigger).attr("id") + "-alert";
+       $(message).text("Copied");
+       setTimeout(function(){
+          $(message).addClass('hidden');
+       }, 2000);
+       $(message).removeClass('hidden');
+    });
+    
+    cb.on('error',function(e){
+       var message = "#" + $(e.trigger).attr("id") + "-alert";
+       $(message).text("Error!");
+       setTimeout(function(){
+          $(message).addClass('hidden');
+       }, 2000);
+       $(message).removeClass('hidden');
+    });
+
+    {% if container.metadata.deffile %}    
+    make_editor("recipe")
+    {% endif %}
+    {% if container.metadata.runscript %}    
+    make_editor("runscript")
+    {% endif %}
+    {% if container.metadata.test %}
+    make_editor("test")
+    {% endif %}
+    {% if container.metadata.environment %}    
+    make_editor("environment")
+    {% endif %}    
+
+    // Load highlighter for highlight js (log)
+    hljs.initHighlightingOnLoad();
+
+})
+
+// Add the iframe after page loads
+window.onload = function() {
+  var iframe = document.createElement('iframe');
+  iframe.src = "#";
+  iframe.width = "100%";
+  iframe.height = "800px";
+  iframe.frameBorder = "0";
+  $(iframe).appendTo('#osembed'); 
+}
+
+</script>
+{% endblock %}

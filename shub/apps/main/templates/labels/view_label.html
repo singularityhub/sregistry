@@ -1,0 +1,40 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% block head %}
+{% include "style/search.html" %}
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>{{ label.key }}: <a href="#">{{ label.value }}</a> <span class="small">label</span></h2>
+
+        {% if label.containers.all|length > 0 %}
+            <table>
+                 {% for container in label.containers.all %}
+                 <tr class="{% cycle 'odd' 'even' %}">
+                     <td><strong>{{ forloop.counter }}.</strong></td>
+                     <td><a href="{{ container.get_absolute_url }}">{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}</a><br/>
+                     </td>
+                     <td>
+                         <a href="{% url 'container_details' container.id %}">
+                         {% if container.collection.tags.count > 0 %}
+                             {% for tag in container.collection.tags.all %}
+                             <a href="{% url 'view_tag' tag.id %}">
+                                 <button style="margin-top:15px" class="btn btn-default btn-xs">
+                                 {{ tag.name }}</button></a>
+                              {% endfor %}
+                         {% endif %}
+                     </td>
+                     <td class="right">
+                         <span class="hint">
+                         Modified Date {{ container.collection.modify_date }} <br/>
+                         </span>
+                     </td>
+                  </tr>
+                  {% endfor %}
+            </table>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}

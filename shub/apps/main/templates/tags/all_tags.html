@@ -1,0 +1,112 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<style>
+.list {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+}
+
+.item {
+  -webkit-flex: 1 auto;
+  flex: 1 auto;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.item a {
+  display: block;
+  background-color: #e32929;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
+  color: #fff;
+}
+
+.item a:hover, a:focus {
+  color: yellow !important;
+  text-decoration:none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% include 'messages/message.html' %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card" style="padding:20px">
+            <div class="header" style="padding-bottom:10px">
+                   <h3 class="title">
+                   <img src="{% static 'img/robot_vision.png' %}" 
+                        width="160px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
+                   Tags!</h3>
+            </div>
+        </div>    
+    </div>
+</div>
+
+<!-- Containers! -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="mdl-tooltip">
+            Tags are derived automatically from Github topics, and collection owners can adjust as needed.
+            <span style='float:right'><a href="{% url 'search' %}"><i class="fa fa-search"></i></a></span>
+        </div>
+    </div>
+</div>
+
+{% if tags %}
+<div class="row" style="padding-top:20px;">
+    <div class="col-md-12">
+
+    <div class="list">
+        {% for tag in tags %}
+        <div class="item"><a href="{% url 'view_tag' tag.id %}">{{ tag.name }}</a></div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script>
+$(document).ready(function(){
+    // Hack until figure out why pagination ugly
+    $('.material-pagination').hide();
+
+    $('#collection_table').DataTable( {
+       pageLength: 100, 
+       columnDefs: [
+            {
+                targets: [ 0, 1, 2 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            },
+          ],
+       columns: [
+            { "width": "40%" },
+            { "width": "10%" },
+               null,
+            ]
+    } );
+
+
+    $(".browser-default").change(function(){
+        $('.material-pagination').hide();
+    })
+
+})
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% block head %}
+{% include "style/search.html" %}
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>tag: <a href="#">{{ tag.name }}</a></h2>
+
+        {% if collections %}
+            <table>
+                 {% for collection in collections %}
+                 <tr class="{% cycle 'odd' 'even' %}">
+                     <td><strong>{{ forloop.counter }}.</strong></td>
+                     <td><a href="{{ collection.get_absolute_url }}">{{ collection.repo.full_name }}</a><br/>
+                         <span class="hint">Containers: <a href="{{ collection.get_absolute_url }}">
+                                        {{ collection.containers.count }}</a></span>
+                     </td>
+                     <td>
+                         <a href="{% url 'collection_details' collection.id %}">
+                         {% if collection.tags.count > 0 %}
+                             {% for tag in collection.tags.all %}
+                             <a href="{% url 'view_tag' tag.id %}">
+                                 <button style="margin-top:15px" class="btn btn-default btn-xs">
+                                 {{ tag.name }}</button></a>
+                              {% endfor %}
+                              {% endif %}
+                     </td>
+                     <td class="right">
+                         <span class="hint">
+                         Modified Date {{ collection.modify_date }} <br/>
+                         </span>
+                         <a target="_blank" 
+                            href="http://www.github.com/{{ collection.repo.full_name }}">
+                            <i class="fa fa-2x fa-github"></i>
+                         </a>
+                     </td>
+                  </tr>
+                  {% endfor %}
+            </table>
+            {% else %}
+            <p class="alert alert-info">Beep Boop! That tag is only defined for private collections.</p>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}

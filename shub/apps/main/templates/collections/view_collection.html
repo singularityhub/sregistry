@@ -1,0 +1,374 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<meta http-equiv="refresh" content="30000">
+<style>
+.btn-control {
+  margin-top:20px !important;
+  padding-right:5px !important;
+  padding-bottom:5px !important;
+  padding-left: 7px !important;
+  min-width:20px !important;
+}
+#collection_tags {
+    float:right;
+    background:white; 
+    border-radius:10px;
+    border:none;
+    margin-bottom:50px
+}
+#star {
+    padding-left:25px; 
+    float:right; 
+    color:gold; 
+    font-size:30px;
+    cursor:pointer;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="{% static "css/tagit.theme.css" %}">
+<link href="{% static "css/jquery.tagit.css"%}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<!-- Error messages for builds will be added here-->
+{% include 'messages/message.html' %}
+
+<div class="row" style="margin-top:30px">
+
+    <!-- Container collection meta -->
+    <div class="col-md-4">
+        <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
+    </div>
+    <div class="col-md-6">
+
+        <div class="card">
+            <div class="header">
+
+           {% if collection.tags.count > 0 %}
+           <ul id="collection_tags">
+           {% for tag in collection.tags.all %}
+               <li name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</li>
+           {% endfor %}
+           </ul>
+           {% endif %}
+            </div>
+       </div>   
+    </div>
+    <div class="col-md-2">
+
+                   {% if collection.private %}
+                       {% if collection.owner == request.user %}
+                           <a href="https://www.github.com/{{ collection.repo.full_name }}" 
+                              target="_blank">
+                              <i style="padding-left:25px; margin-right:50px; float:right; font-size:30px" class="fa fa-github"></i></a>       
+                       {% endif %}
+                   {% else %}
+                       <a href="https://www.github.com/{{ collection.repo.full_name }}" 
+                          target="_blank"><i style="padding-left:25px; margin-right:50px; float:right; font-size:30px" class="fa fa-github"></i></a>       
+                   {% endif %}
+
+                   <!--Star Rating-->
+                   {% if request.user.is_authenticated %}
+                       {% if star %}
+                       <i id="star" class="fa fa-star"></i>
+                       {% else %}
+                       <i id="star" class="fa fa-star-o"></i>
+                       {% endif %}
+                   {% endif %}
+
+    </div>
+</div>
+
+<div class="row" style="margin-top:40px">
+
+    <!-- Container collection meta -->
+    <div class="col-md-12">
+        <div class="card">
+                 
+             <!-- Supplementary -->
+             <button class="btn btn-sm btn-default dropdown">
+                <a href="#" class="dropdown-toggle" 
+                            data-toggle="dropdown" 
+                            role="button" 
+                            aria-haspopup="true" 
+                            aria-expanded="false">
+                Supplementary
+                <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    {% if collection.demo_set.count > 0 %}
+                    <li><a  style="text-transform:none"
+                            href="{% url 'collection_demos' collection.id %}">Demos and Tutorials</a></li>
+                    {% endif %}
+                    <li><a style="text-transform:none"
+                           href="{% url 'new_demo' collection.id %}">Add Demo or Tutorial</a></li>
+                 </ul>
+             </button>
+
+
+             <!-- Settings -->
+             <button class="btn btn-sm btn-default dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Settings
+                    <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'edit_collection' collection.id %}"
+                               style="text-transform:none"
+                               title="Add more metadata about your collection.">Edit</a></li>
+                  </ul>
+              </button>
+
+                {% if collection.containers.count > 0 %}
+                <a href="{% url 'collection_commands' collection.id %}"><button class="btn btn-sm btn-default">Usage</button></a>
+                {% endif %}
+
+                <!--{% if collection.active %}
+                <a data-toggle="tooltip" data-placement="right" title="the builder will build the most recent Singularity file in the base of master branch" href="#"><button class="btn btn-sm btn-default">Trigger Build</button></a>
+                {% else %}
+                <a data-toggle="tooltip" data-placement="right" title="the builder will build the most recent Singularity file in the base of master branch" href="#"><button class="btn btn-sm btn-default" disabled>Trigger Build</button></a>
+                {% endif %}-->
+            </div>
+    </div>
+ </div>
+
+<!-- Containers! -->
+<div class="row">
+        {% if containers %}
+            <div class="col-md-12">
+                <div class="card material-table mdl-data-table--selectable">
+                   <div class="table-header">
+                       <span class="table-title">Builds</span>
+                   </div>
+                   <table id="datatable">
+                       <thead>
+                           <tr>
+                               <th></th>
+                               <th>uri</th>
+                               <th>Recipe <i class="fa fa-cloud-download" style="margin-left:5px"></i></th>
+                               <th>Status</th>
+                               <th>Tag</th>
+                               <th>Build Date</th>
+                               <!--<th></th>-->
+                               <th></th>
+                           </tr>
+                       </thead>
+
+                       <form method="POST" action="#" id="container-table">
+                           {% csrf_token %}
+                           <tbody>
+                           {% for container in containers %}
+                           <tr>
+                               <td style="width:80px">
+
+                               {% if edit_permission %}
+                                   {% if container.frozen %}
+
+                                   {% else %}
+                                   <a title="delete container build" 
+                                           class="delete_container btn-sm btn btn-control btn-secondary" 
+                                           id="delete{{ container.id }}">
+                                           <i class="fa fa-trash"></i></a>
+                                           <a id="confirm_delete{{ container.id }}" 
+                                              href="{% url 'delete_container' container.id %}"></a>
+
+                                   {% endif %}
+
+                                   {% if container.status == "FINISHED" %}
+                                   <a title="freezing a build means that pushing the same tag and branch will not overwrite." 
+                                           class="freeze_container btn-xs btn btn-control btn-secondary" 
+                                           id="freeze{{ container.id }}">
+                                           {% if container.frozen %}<i class="fa fa-lock"></i>{% else %}<i class="fa fa-unlock"></i>{% endif %}</a>
+                                           <a href="{% url 'change_freeze_status' container.id %}"></a>
+                                   {% endif %}
+                               {% endif %}
+
+                               </td>
+
+                               <td><a href="{% url 'container_details' container.id %}">
+                                   {{ collection.name }}/{{ container.name }}:{{ container.tag }}
+                                   </a>
+                               </td>
+                                
+                               <td><a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a></td>
+                               <td>{% if container.frozen %}
+                                   <a href="#">
+                                   <button style="width:115px" 
+                                           class="btn btn-info btn-sm"
+                                           disabled>FROZEN</button></a>
+                                   {% else %}
+                                   <a href="#">
+                                   <button style="width:115px" 
+                                           class="btn btn-success btn-sm"
+                                           disabled>OPEN</button></a>
+                                   {% endif %}</td>
+                               <td>{{ container.tag }}</td>
+                               <td>{{ container.created }}</td>
+                               <td>
+
+                               {% if container.image %}
+                               <a href="{% url 'view_container' container.id %}"
+                                  data-toggle="tooltip" 
+                                  data-placement="right" 
+                                  title="look inside at the guts of your container">
+                                  <i class="fa fa-eye"></i>
+                               </a>   
+ 
+                               <a data-toggle="tooltip" 
+                                  data-placement="right" 
+                                  title="add a container to your box for visualization and comparison to other containers." 
+                                  data-id="container_{{ container.id }}" 
+                                  data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
+                                  class="save_container" 
+                                  style="margin:15px">
+                                  <i data-id="container_{{ container.id }}" 
+                                     data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}"  
+                                             class="fa fa-plus"></i>
+                                </a>
+                               {% endif %}
+                           </td>                                
+
+                           </tr>
+                           {% endfor %}
+                       </tbody>
+                       </form>    
+
+                    </table>
+                </div>
+            </div>
+            {% include "collections/collection_admin.html" %}
+            {% else %}
+            
+            <!-- No containers! Tell the user to add one -->
+            <div class="col-lg-8 col-sm-6">
+                <p style="padding-top:20px;padding-bottom:20px">This page will refresh automatically with new pushes.</p>
+            </div>
+
+            {% include "collections/collection_admin.html" %}
+            {% endif %}
+            {% include "social/share_links.html" %} 
+
+        </div>
+{% endblock %}
+
+{% block scripts %}
+{% if edit_permission %}
+<script src="{% static "js/cookie-token.js" %}"></script>
+{% endif %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script src="{% static "js/jquery-ui.min.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/tag-it.min.js"%}" type="text/javascript" charset="utf-8"></script>
+
+<script>
+$(document).ready(function(){
+
+    // Tweaks to fix table style
+    $('.table-header').css('width',$("table").css('width'))
+    $('.paginate_button').remove()
+
+    {% if collection.tags.count > 0 %}
+    $("#collection_tags").tagit({
+        removeConfirmation:true,
+        {% if edit_permission %}
+        afterTagRemoved: function(event, ui) {
+            removeTag(ui.tagLabel);
+        },
+        afterTagAdded: function(event, ui) {
+            addTag(ui.tagLabel);
+        }
+        {% else %}
+        readOnly:true
+        {% endif %}
+    });
+
+        {% if request.user.is_authenticated %}
+        $("#star").click(function(){
+            do_star();
+        })
+
+        function do_star() {
+
+            $.ajax({
+                url : "{% url 'favorite' collection.id %}",
+                type : "POST",
+
+                success : function(json) {
+                    if (json['status'] == "added"){
+                        $("#star").removeClass('fa-star-o');
+                        $("#star").addClass('fa-star');
+                        console.log("<3 <3 <3");
+                    } else {
+                        $("#star").removeClass('fa-star');
+                        $("#star").addClass('fa-star-o');
+                        console.log("Nope, don't like this one anymore!")
+                    }
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+             });
+        }
+        {% endif %}
+
+
+        {% if edit_permission %}
+        function addTag(tag) {
+
+            $.ajax({
+                url : "{% url 'add_tag' collection.id %}",
+                type : "POST",
+                data: { tag : tag },
+
+                success : function(json) {
+                    console.log("Woohoo, tagalicious!");
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+             });
+        }
+
+        function removeTag(tag) {
+
+            $.ajax({
+                url : "{% url 'remove_tag' collection.id %}",
+                type : "POST",
+                data: { tag : tag },
+
+                success : function(json) {
+                    console.log(json);
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+             });
+        }
+        {% endif %}
+    {% endif %}
+
+    // Check with the user before deleting a container
+    $(".delete_container").click(function(){
+        var response = confirm("Are you sure you want to delete this container?");
+        if (response == true) {
+           var container_id = $(this).attr('id')
+           var url = $("#confirm_" + container_id).attr('href');
+           document.location = url;
+        }
+    })
+
+    // Or the entire collection
+    $("#delete_collection").click(function(){
+        var response = confirm("Are you sure you want to delete this collection of builds?");
+        if (response == true) {
+           document.location = "{% url 'delete_collection' collection.id %}";
+        }
+    })
+
+});
+
+</script>
+{% endblock %}

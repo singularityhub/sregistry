@@ -37,6 +37,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
 import os
+import uuid
 import json
 
 class OverwriteStorage(FileSystemStorage):
@@ -88,7 +89,8 @@ def create_container(sender, instance, **kwargs):
     metadata = instance.metadata
    
     # Get a container, if it exists, we've already written file here
-    containers = collection.containers.filter(tag=instance.tag)
+    containers = collection.containers.filter(tag=instance.tag,
+                                              name=instance.name)
     if len(containers) > 0:
         container = containers[0]
     else:
@@ -120,6 +122,7 @@ def create_container(sender, instance, **kwargs):
     if metadata['labels'] not in [None,'']:
         container = update_container_labels(container,metadata['labels'])
 
+    container.version = uuid.uuid4().__str__()
     container.save()
 
 post_save.connect(create_container, sender=ImageFile)

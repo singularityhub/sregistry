@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+
+#id_spec { 
+     position: absolute;
+     height:800px;
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+<!-- Error messages for builds will be added here-->
+{% include 'messages/message.html' %}
+
+<!-- Meta data about container-->
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                <a href="{% url 'collection_details' collection.id %}"><h2 class="title">{{ collection.repo.full_name }}</h2></a>
+                <h3>
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    {% if demos %}
+    <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="pill" href="#videos">AsciiCast</a></li>
+    </ul>
+
+    <div style="padding-left:30px" id="videos" class="tab-pane fade in active">
+
+         {% for demo in demos %}
+            <div class="row">
+                <p><button class="hide-button btn-sm btn-default btn" id="asciicast-{{ demo.id }}">Toggle</button>
+                   <a href="{% url 'container_demo' demo.id %}"><button class="hide-button btn-sm btn-default btn"><i class="fa fa-link"></i></button>  {{ demo.description }}</p></a>
+                <div class="col-md-12 card" id="asciicast-{{ demo.id }}-viewer">
+
+                {% if demo.kind == "ASCIINEMA" %}
+                    <script type="text/javascript" src="https://asciinema.org/a/{{ demo.url }}.js" id="asciicast-{{ demo.url }}" async></script>
+                {% endif %}
+
+                </div>
+             </div>
+             {% endfor %}
+
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% include "social/share_links.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+
+    
+    // Show/Hide the asciicast
+    $(".hide-button").click(function(){
+        var ascii_id = "#" + $(this).attr("id") + "-viewer"
+        $(ascii_id).toggle()
+    })
+
+})
+</script>
+{% endblock %}

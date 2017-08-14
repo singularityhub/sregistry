@@ -1,0 +1,45 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+<!-- Error messages for builds will be added here-->
+{% include 'messages/message.html' %}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header" style="padding-bottom:10px">
+                <h2 class="title">Upload Supplementary</h2>
+                <p>Collection: <a href="{% url 'collection_details' collection.id %}"> {{ collection.repo.full_name }}</a></p>
+                <h3>
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+            <div class="col-md-12 card">
+
+            <form action="{% url 'new_demo' collection.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% crispy form %}
+            </form>
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script>
+$(document).ready(function(){
+  $("#submit-id-submit").css("margin-top","20px")
+
+})
+</script>
+{% endblock %}

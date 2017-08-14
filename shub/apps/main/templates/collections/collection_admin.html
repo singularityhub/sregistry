@@ -1,0 +1,23 @@
+<!-- Danger Zone -->
+<div class="row" style="padding-left:25px">
+<div class="col-md-12">
+{% if edit_permission %}
+<button class="btn btn-sm btn-danger dropdown">
+    <a href="#" style="color:white" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+    Administration
+    <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+        {% if collection.private %}
+        <li><a href="{% url 'make_collection_public' collection.id %}"
+               style="text-transform:none"
+               title="each user is allowed unlimited public collections.">Make Public</a></li>
+        {% else %}
+        <li><a href="{% url 'make_collection_public' collection.id %}"
+               style="text-transform:none"
+              title="each user is allowed one private collections.">Make Private</a></li>
+        {% endif %}
+    </ul>
+</button>
+{% endif %}
+</div>
+</div>

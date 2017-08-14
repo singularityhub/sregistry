@@ -1,0 +1,118 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+<!-- Error messages for builds will be added here-->
+{% include 'messages/message.html' %}
+
+<div class="row">
+
+    <!-- Container collection meta -->
+    <div class="col-md-12">
+        <div class="card" style="padding-top:20px">
+            <div class="header">
+                <h2 class="title" style="margin-bottom:0px"><a href="{% url 'collection_details' collection.id %}">
+                      {{ collection.repo.owner.login }}/{{ collection.repo.name }}</a>
+                    <a href="https://www.github.com/{{ collection.repo.owner.login }}/{{ collection.repo.name }}" 
+                       target="_blank">
+                    <i style="padding-left:25px; float:right; font-size:30px" 
+                       class="fa fa-github"></i></a>
+                </h2>
+                <small>Usage</small>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <!-- Pull Example-->
+        <div class="row">
+            <div class="col-md-10">
+                <p><strong>Pull</strong> the container to your machine (and optionally name custom, or by hash/commit:</p>
+                <p class="well" id="pull_well">
+                     singularity pull shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
+                     singularity pull --name customname.img shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
+                     singularity pull --commit shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
+                     singularity pull --hash shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
+                </p>
+            </div>
+            <div class="col-md-2">
+                <button style="margin-top:55px" id="pull" class="btn copyme" data-clipboard-target="#pull"><i class="fa fa-copy"></i></button>
+		<div style="width:58px" class="alert alert-info hidden" id="pullb-alert" role="alert">
+		</div>
+            </div>
+        </div>
+
+        <!-- Shell Example-->
+        <div class="row">
+            <div class="col-md-10"> 
+                <p><strong>Shell</strong> into the container:</p>
+                <p class="well" id="shell_well">
+                    singularity shell shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}
+                </p>
+            </div>
+            <div class="col-md-2">
+                <button style="margin-top:55px" id="shell" class="btn copyme" data-clipboard-target="#shell"><i class="fa fa-copy"></i></button>
+                <div style="width:58px" class="alert alert-info hidden" id="shellb-alert" role="alert">
+                </div>
+            </div>
+        </div>
+
+        <!-- Run Example-->
+        <div class="row">
+            <div class="col-md-10">
+                <p><strong>Run</strong> the container:</p>
+                <p id="run_well" class="well"><br>
+                    singularity run shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}</p>
+            </div>
+            <div class="col-md-2">
+                <button style="margin-top:55px" id="run" class="btn copyme" data-clipboard-target="#run"><i class="fa fa-copy"></i></button>
+                <div style="width:58px" class="alert alert-info hidden" id="runb-alert" role="alert">
+		</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "messages/notification.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script>
+$('.copyme').click(function(){
+    var copy_id = $(this).attr('id')
+    var content = $("#" + copy_id + "_well")
+    var range = document.createRange();  
+    range.selectNode(content[0])  
+    window.getSelection().addRange(range)
+
+  try {  
+        // Now that we've selected the anchor text, execute the copy command  
+        var successful = document.execCommand('copy');  
+        var msg = successful ? 'successful' : 'unsuccessful';  
+        toast_message('Copy ' + msg)
+      }  catch(err) {  
+        toast_message('Oops, unable to copy');  
+      }  
+
+    // removeRange(range) when it is supported  
+    window.getSelection().removeAllRanges();  
+
+});
+</script>
+{% endblock %}
