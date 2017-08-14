@@ -23,7 +23,7 @@
 #star {
     padding-left:25px; 
     float:right; 
-    color:gold; 
+    color:#e32929; 
     font-size:30px;
     cursor:pointer;
 }
@@ -59,25 +59,14 @@
     </div>
     <div class="col-md-2">
 
-                   {% if collection.private %}
-                       {% if collection.owner == request.user %}
-                           <a href="https://www.github.com/{{ collection.repo.full_name }}" 
-                              target="_blank">
-                              <i style="padding-left:25px; margin-right:50px; float:right; font-size:30px" class="fa fa-github"></i></a>       
-                       {% endif %}
+               <!--Star Rating-->
+               {% if request.user.is_authenticated %}
+                   {% if star %}
+                   <i id="star" class="fa fa-star"></i>
                    {% else %}
-                       <a href="https://www.github.com/{{ collection.repo.full_name }}" 
-                          target="_blank"><i style="padding-left:25px; margin-right:50px; float:right; font-size:30px" class="fa fa-github"></i></a>       
+                   <i id="star" class="fa fa-star-o"></i>
                    {% endif %}
-
-                   <!--Star Rating-->
-                   {% if request.user.is_authenticated %}
-                       {% if star %}
-                       <i id="star" class="fa fa-star"></i>
-                       {% else %}
-                       <i id="star" class="fa fa-star-o"></i>
-                       {% endif %}
-                   {% endif %}
+               {% endif %}
 
     </div>
 </div>
@@ -163,27 +152,14 @@
                                <td style="width:80px">
 
                                {% if edit_permission %}
-                                   {% if container.frozen %}
-
-                                   {% else %}
-                                   <a title="delete container build" 
-                                           class="delete_container btn-sm btn btn-control btn-secondary" 
-                                           id="delete{{ container.id }}">
-                                           <i class="fa fa-trash"></i></a>
-                                           <a id="confirm_delete{{ container.id }}" 
-                                              href="{% url 'delete_container' container.id %}"></a>
-
-                                   {% endif %}
-
-                                   {% if container.status == "FINISHED" %}
-                                   <a title="freezing a build means that pushing the same tag and branch will not overwrite." 
-                                           class="freeze_container btn-xs btn btn-control btn-secondary" 
-                                           id="freeze{{ container.id }}">
-                                           {% if container.frozen %}<i class="fa fa-lock"></i>{% else %}<i class="fa fa-unlock"></i>{% endif %}</a>
-                                           <a href="{% url 'change_freeze_status' container.id %}"></a>
-                                   {% endif %}
+                               <a title="delete container build" 
+                                  class="delete_container btn-sm btn btn-control btn-secondary" 
+                                  id="delete{{ container.id }}">
+                                   <i class="fa fa-trash"></i></a>
+                                   <a id="confirm_delete{{ container.id }}" 
+                                      href="{% url 'delete_container' container.id %}"></a>
                                {% endif %}
-
+                               
                                </td>
 
                                <td><a href="{% url 'container_details' container.id %}">
@@ -192,32 +168,31 @@
                                </td>
                                 
                                <td><a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a></td>
-                               <td>{% if container.frozen %}
-                                   <a href="#">
-                                   <button style="width:115px" 
+                               <td>
+                                   {% if edit_permission %}
+                                   <a href="{% url 'change_freeze_status' container.id %}">
+                                   {% endif %}
+                                   
+                                   {% if container.frozen %}
+                                   <button title="a frozen tag is locked from being overwritten with a push."
+                                           style="width:115px" 
                                            class="btn btn-info btn-sm"
-                                           disabled>FROZEN</button></a>
+                                           {% if edit_permission %}{% else %}disabled{% endif %}>FROZEN <i style='color:white' class="fa fa-lock"></i></button>
                                    {% else %}
-                                   <a href="#">
-                                   <button style="width:115px" 
+                                   <button title="freezing a container prevents pushing for the specified tag."
+                                           style="width:115px" 
                                            class="btn btn-success btn-sm"
-                                           disabled>OPEN</button></a>
+                                           {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
                                    {% endif %}</td>
+                                   {% if edit_permission %}</a>{% endif %}
                                <td>{{ container.tag }}</td>
-                               <td>{{ container.created }}</td>
+                               <td>{{ container.add_date }}</td>
                                <td>
 
-                               {% if container.image %}
-                               <a href="{% url 'view_container' container.id %}"
-                                  data-toggle="tooltip" 
-                                  data-placement="right" 
-                                  title="look inside at the guts of your container">
-                                  <i class="fa fa-eye"></i>
-                               </a>   
- 
+                               {% if container.image %} 
                                <a data-toggle="tooltip" 
                                   data-placement="right" 
-                                  title="add a container to your box for visualization and comparison to other containers." 
+                                  title="add a container to your cart." 
                                   data-id="container_{{ container.id }}" 
                                   data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
                                   class="save_container" 

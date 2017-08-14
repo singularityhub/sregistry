@@ -46,11 +46,10 @@
             </div>
             <div class="content"  style="padding-bottom:20px">
 
-                {% if user.is_authenticated %}
-                    {% if edit_permission %}
-                         {% if container.frozen %}
-                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Unfreeze</button></a>
-                         {% else %}
+                {% if edit_permission %}
+                     {% if container.frozen %}
+                     <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Unfreeze</button></a>
+                     {% else %}
                          <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Freeze</button></a>
                          {% endif %}
                     {% else %}
@@ -58,9 +57,8 @@
                          <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="#"><button class="btn btn-sm btn-default" disabled>Unfreeze</button></a>
                          {% else %}
                          <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="#"><button class="btn btn-sm btn-default" disabled>Freeze</button></a>
-                         {% endif %}
-                    {% endif %}
-                {% endif %}             
+                     {% endif %}
+                {% endif %}
 
                 {% if container.tags.all %}
                 <a href="{% url 'container_tags' container.id %}"><button class="btn btn-sm btn-default">Tags</button></a>

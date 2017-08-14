@@ -113,9 +113,11 @@ def container_details(request,cid):
         messages.info(request,"This container is private.")
         return redirect('collections')
 
+    edit_permission = container.has_edit_permission(request)
     labels = Label.objects.filter(containers=container)
     context = { "container":container,
-                "labels":labels}
+                "labels":labels,
+                "edit_permission": edit_permission }
     return render(request, 'containers/container_details.html', context)
 
 

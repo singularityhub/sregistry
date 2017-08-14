@@ -4,7 +4,7 @@
                         {% if results|length %}
                         <table>
                             <tr class="even">
-                                <td colspan="4" class="right">
+                                <td colspan="5" class="right">
                                     <strong>Found {{ results|length }} collections</strong>
                                 </td>
                             </tr>
@@ -12,7 +12,7 @@
                             {% for collection in results %}
                             <tr class="{% cycle 'odd' 'even' %}">
                                 <td><strong>{{ forloop.counter }}.</strong></td>
-                                <td><a href="{{ collection.get_absolute_url }}">{{ collection.repo.full_name }}</a><br/>
+                                <td><a href="{{ collection.get_absolute_url }}">{{ collection.name }}</a><br/>
                                     <span class="hint">Containers: <a href="{{ collection.get_absolute_url }}">
                                         {{ collection.containers.count }}</a></span>
                                 </td>
@@ -26,14 +26,19 @@
                                           {% endfor %}
                                       {% endif %}
                                 </td>
+                                <td>
+                                    {% for container in collection.containers.all %}
+                                        {% for label in container.labels %}
+                                        <a href="{% url 'view_label' label.id %}">
+                                              <button class="btn btn-default btn-xs">
+                                                            {{ label.key }}</button></a>
+                                         {% endfor %}
+                                    {% endfor %}
+                                </td>
                                 <td class="right">
                                     <span class="hint">
                                     Modified Date {{ collection.modify_date }} <br/>
                                     </span>
-                                    <a target="_blank" 
-                                       href="http://www.github.com/{{ collection.repo.full_name }}">
-                                       <i class="fa fa-2x fa-github"></i>
-                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}

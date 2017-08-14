@@ -51,11 +51,12 @@ def container_search(request):
     ''' 
     if request.is_ajax():
         q = request.GET.get('q')
-        if q is not None:            
+        if q is not None:    
             results = Collection.objects.filter(
-                Q(repo__full_name__contains=q) |
+                Q(name__contains=q) |
                 Q(containers__name__contains=q) |
-                Q(tags__name__contains=q)).exclude(private=True).order_by('modify_date').distinct()
+                Q(tags__name__contains=q) |
+                Q(containers__tag__contains=q)).exclude(private=True).order_by('modify_date').distinct()
  
             context = {"results":results,
                        "submit_result": "anything"}
