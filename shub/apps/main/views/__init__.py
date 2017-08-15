@@ -50,7 +50,6 @@ from .collections import (
     make_collection_private,
     make_collection_public,
     my_collections,
-    save_collection,        
     user_collections,
     view_collection
 )
@@ -80,6 +79,7 @@ from .labels import (
 )
 
 from .stars import (
+    star_collection,
     starred_collections
 )
 
@@ -87,6 +87,5 @@ from .tags import (
     remove_tag,
     add_tag,
     all_tags,
-    view_tag,
-    star_collection
+    view_tag
 )

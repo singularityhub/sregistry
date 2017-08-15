@@ -111,12 +111,6 @@ class Collection(models.Model):
     modify_date = models.DateTimeField('date modified', auto_now=True)
     secret = models.CharField(max_length=200, null=False, verbose_name="Collection secret for webhook")
     metadata = JSONField(default={}) # open field for metadata about a collection
-
-    # Build specs
-    build_padding = models.PositiveIntegerField(null=False,
-                                                blank=False,
-                                                default=200, verbose_name="padding to add to build image.")
-    build_size = models.PositiveIntegerField(null=True, blank=True)
     tags = TaggableManager()
 
     # Users
@@ -152,6 +146,19 @@ class Collection(models.Model):
     def get_label(self):
         return "collection"
 
+
+    def labels(self):
+        labels = dict()
+        for container in self.containers.all():
+            for label in container.labels():
+                if label.key not in labels:
+                    labels[label.key] = {}
+                if label.value not in labels[label.key]:
+                    labels[label.key][label.value] = 1
+                else:
+                    labels[label.key][label.value] += 1 
+        return labels
+ 
   
     # Permissions
 
@@ -165,12 +172,11 @@ class Collection(models.Model):
     def has_collection_star(self,request):
         '''returns true or false to indicate
         if a user has starred a collection'''
-
         has_star = False
         if request.user.is_authenticated():
             try:
                 star = Star.objects.get(user=request.user,
-                                        collection=collection)
+                                        collection=self)
                 has_star = True 
             except:
                 pass

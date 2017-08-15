@@ -35,29 +35,6 @@ from shub.apps.main.models import (
     Star
 )
 
-from shub.apps.main.utils import (
-    get_collection_users,
-    get_nightly_comparisons,
-    get_container_log,
-    write_tmpfile
-)
-
-from singularity.analysis.classify import estimate_os
-from singularity.analysis.compare import (
-    calculate_similarity,
-    compare_containers
-)
-
-from singularity.utils import read_file
-from singularity.views.trees import (
-    container_tree,
-    container_similarity,
-    container_difference
-)
-
-from shub.apps.users.views import validate_credentials
-from taggit.models import Tag
-
 from django.shortcuts import (
     get_object_or_404, 
     render_to_response, 
@@ -66,7 +43,10 @@ from django.shortcuts import (
 )
 
 from django.db.models.aggregates import Count
-from django.http import JsonResponse
+from django.http import (
+    JsonResponse, 
+    HttpResponseRedirect
+)
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -87,3 +67,31 @@ def starred_collections(request):
     collections = [x for x in collections if x.star__count>0]
     context = {"collections": collections }
     return render(request, 'stars/collections.html', context)
+
+
+#######################################################################################
+# COLLECTION STARS
+#######################################################################################
+
+@login_required
+def star_collection(request,cid):
+    '''change favorite status of collection. If it's favorited, unfavorite by deleting
+    the star. If not, then create it.
+    '''
+    collection = get_collection(cid)
+    try:
+        star = Star.objects.get(user=request.user,
+                                collection=collection)
+    except:
+        star = None
+
+    if star is None:
+        star = Star.objects.create(user=request.user,
+                                   collection=collection)
+        star.save()
+        status = {'status':'added'}
+    else:
+        star.delete()
+        status = {'status':'removed'}
+
+    return JsonResponse(status)

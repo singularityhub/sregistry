@@ -34,7 +34,10 @@ from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
-
+from shub.apps.api.utils import (
+    JsonResponseMessage,
+    validate_request
+)
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -54,6 +57,13 @@ class ContainerPushViewSet(ModelViewSet):
  
         tag=self.request.data.get('tag','latest')                                   
         name=self.request.data.get('name')
+        signature=self.requests.POST.get('HTTP_SREGISTRY_EVENT', None)
+        if signature is None:
+            return JsonResponseMessage(status=403, message="Authentication Required")
+
+
+        if not signature_valid():
+
         create_new=False
 
         try:

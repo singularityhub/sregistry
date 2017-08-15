@@ -251,10 +251,7 @@ def edit_collection(request,cid):
             current_selection = new_builder
 
     context = {'collection':collection,
-               'current_selection':current_selection,
-               'default_builder':GOOGLE_CLOUD_BUILDER_IMAGE,
-               'edit_permission':edit_permission,
-               'builders':BUILDER_OPTIONS }
+               'edit_permission':edit_permission }
 
     return render(request, 'collections/edit_collection.html', context)
 
@@ -292,71 +289,6 @@ def delete_collection(request,cid):
     return redirect('collections')
 
 
-
-# New container collection
-@login_required
-def save_collection(request):
-    '''new_container_collection will display the (unconnected) repos for the user to connect to
-    '''
-
-    if request.method == "POST":
-
-        #TODO: how to create a new collection? just push?
-        # The checked repos are sent in format REPO_{{ repo.owner.login }}/{{ repo.name }}
-        repos = [x.replace('REPO_','') for x in request.POST.keys() if re.search("^REPO_",x)] 
-        secret = uuid.uuid4().__str__()
-
-        if len(repos) > 0:
-
-            # Always just take the first one
-            username,reponame = repos[0].split('/')
-
-            # Retrieve the repo fully
-            repo = get_repo(request.user,
-                            reponame=reponame,
-                            username=username)
-
-            webhook = create_webhook(user=request.user,
-                                     repo=repo,
-                                     secret=secret)
-
-            if "errors" in webhook:
-                # If there is an error, we should tell user about it
-                message = ','.join([x['message'] for x in webhook['errors']])
-                messages.info(request,"Errors: %s" %message)
-
-            # If the webhook was successful, it will have a ping_url
-            elif "ping_url" in webhook:                
-                collection = Collection.objects.create(secret=secret,
-                                                       webhook=webhook,
-                                                       active=True,
-                                                       repo=repo,
-                                                       repo_id=repo['id'],
-                                                       owner=request.user)
-                        
-                collection.save() # probably not necessary
-
-                # Add tags
-                if "topics" in webhook:
-                    if len(webhook['topics']) > 0:
-                        for topic in topics:
-                            collection.tags.add(topic)
-                        collection.save()
-
-                branches = get_collection_branches(collection) # update branches
-
-                # We also need to create a builder
-                builder = Builder.objects.create(collection=collection)
-                builder.save()
-                builder.specs = {'bucket_name': GOOGLE_CLOUD_BUCKET,
-                                 'environment': 'gce',
-                                 'builder_name': GOOGLE_CLOUD_BUILDER_IMAGE}
-                builder.save()
-
-                return redirect(collection.get_absolute_url())
-
-
-    return redirect('collections')
 
 
 

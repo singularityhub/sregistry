@@ -49,7 +49,7 @@ from django.shortcuts import (
 )
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from datetime import datetime
 
@@ -190,7 +190,18 @@ def change_freeze_status(request,cid):
 
         container.frozen = not container.frozen
         container.save()
-        messages.info(request,"Container frozen set to %s." %(container.frozen))
+        message = "Container %s:%s be overwritten by new pushes." %(container.name,
+                                                                                        container.tag)
+        if container.frozen: 
+            message = "%s:%s is frozen, and will not be overwritten by push." %(container.name,
+                                                                                container.tag)
+
+        messages.info(request, message)
     else:
         messages.info(request,"You do not have permissions to perform this operation.")
+
+    previous_page = request.META.get('HTTP_REFERER', None)
+    if previous_page is not None:
+        return HttpResponseRedirect(previous_page)
+
     return redirect('container_details', cid=container.id)

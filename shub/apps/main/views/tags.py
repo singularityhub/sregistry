@@ -145,32 +145,3 @@ def remove_tag(request,cid):
     else:
         message = "You do not have permissions to perform this operation."
     return JsonResponse({"message":message})
-
-
-#######################################################################################
-# COLLECTION STARS
-#######################################################################################
-
-@login_required
-def star_collection(request,cid):
-    '''change favorite status of collection. If it's favorited, unfavorite by deleting
-    the star. If not, then create it.
-    '''
-    collection = get_collection(cid)
-    try:
-        star = Star.objects.get(user=request.user,
-                                collection=collection)
-    except:
-        star = None
-
-    if star is None:
-        star = Star.objects.create(user=request.user,
-                                   collection=collection)
-        star.save()
-        status = {'status':'added'}
-    else:
-        star.delete()
-        status = {'status':'removed'}
-
-    return JsonResponse(status)
-

@@ -31,22 +31,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 from django.core.files.storage import FileSystemStorage
-from django.contrib.postgres.fields import JSONField
-from shub.settings import MEDIA_ROOT
+from shub.apps.api.actions import create_container
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
-import os
 import uuid
-import json
+import os
 
-class OverwriteStorage(FileSystemStorage):
 
-    def get_available_name(self, name, max_length=None):
-        # If the filename already exists, remove it as if it was a true file system
-        if self.exists(name):
-            os.remove(os.path.join(settings.MEDIA_ROOT, name))
-        return name
+#####################################################################################
+# HELPERS
+#####################################################################################
 
 
 def get_upload_folder(instance,filename):
@@ -62,15 +57,31 @@ def get_upload_folder(instance,filename):
         collection = Collection.objects.get(name=collection_name)
     except Collection.DoesNotExist:
         collection = Collection.objects.create(name=collection_name)
+        collection.secret = str(uuid.uuid4())
         collection.save()
 
     # Create collection root, if it doesn't exist
-    image_home = "%s/%s" %(MEDIA_ROOT,collection_name)
+    image_home = "%s/%s" %(settings.MEDIA_ROOT,collection_name)
     if not os.path.exists(image_home):
         os.mkdir(image_home)
     
     # Create a container, or get it, if doesn't exist
     return os.path.join(image_home, filename)
+
+
+
+#####################################################################################
+# MODELS & STORAGE
+#####################################################################################
+
+
+class OverwriteStorage(FileSystemStorage):
+
+    def get_available_name(self, name, max_length=None):
+        # If the filename already exists, remove it as if it was a true file system
+        if self.exists(name):
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
+        return name
 
 
 class ImageFile(models.Model):
@@ -81,48 +92,5 @@ class ImageFile(models.Model):
     name = models.CharField(max_length=200, null=False)
     datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
 
-                   # ImageFile (instance)
-def create_container(sender, instance, **kwargs):
-    from shub.apps.main.models import Container, Collection
-    from shub.apps.main.views import update_container_labels
-    collection = Collection.objects.get(name=instance.collection)
-    metadata = instance.metadata
-   
-    # Get a container, if it exists, we've already written file here
-    containers = collection.containers.filter(tag=instance.tag,
-                                              name=instance.name)
-    if len(containers) > 0:
-        container = containers[0]
-    else:
-        container = Container.objects.create(collection=collection,
-                                             tag=instance.tag,
-                                             name=instance.name,
-                                             image=instance)
-        
-    def add_metadata(container,metadata,field):
-        if field in metadata:
-            if field not in ['',None]:
-                container.metadata[field] = metadata[field]
-                container.save()
-
-    # Load container metadata
-    #try:
-    metadata = json.loads(metadata)['data']['attributes']
-    add_metadata(container,metadata,'deffile')
-    add_metadata(container,metadata,'runscript')
-    add_metadata(container,metadata,'test')
-    add_metadata(container,metadata,'environment')
-
-    #except:
-    #    bot.error("Error parsing metadata for %s/%s" %(collection.name,
-    #                                                   instance.name))
-    #    pass
-
-    # Add labels
-    if metadata['labels'] not in [None,'']:
-        container = update_container_labels(container,metadata['labels'])
-
-    container.version = uuid.uuid4().__str__()
-    container.save()
 
 post_save.connect(create_container, sender=ImageFile)

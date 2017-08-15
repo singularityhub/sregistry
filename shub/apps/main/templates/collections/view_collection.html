@@ -60,7 +60,7 @@
     <div class="col-md-2">
 
                <!--Star Rating-->
-               {% if request.user.is_authenticated %}
+               {% if user.is_authenticated %}
                    {% if star %}
                    <i id="star" class="fa fa-star"></i>
                    {% else %}
@@ -259,8 +259,10 @@ $(document).ready(function(){
         readOnly:true
         {% endif %}
     });
+    {% endif %}
 
-        {% if request.user.is_authenticated %}
+        {% if user.is_authenticated %}
+        console.log('Hello {{ user.username }}!')
         $("#star").click(function(){
             do_star();
         })
@@ -322,8 +324,7 @@ $(document).ready(function(){
                 }
              });
         }
-        {% endif %}
-    {% endif %}
+     {% endif %}
 
     // Check with the user before deleting a container
     $(".delete_container").click(function(){
