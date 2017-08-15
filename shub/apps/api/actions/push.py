@@ -36,7 +36,8 @@ from shub.apps.api.models import ImageFile
 from rest_framework import serializers
 from shub.apps.api.utils import (
     JsonResponseMessage,
-    validate_request
+    validate_request,
+    generate_timestamp
 )
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
@@ -57,17 +58,25 @@ class ContainerPushViewSet(ModelViewSet):
  
         tag=self.request.data.get('tag','latest')                                   
         name=self.request.data.get('name')
-        signature=self.requests.POST.get('HTTP_SREGISTRY_EVENT', None)
-        if signature is None:
+        auth=self.request.META.get('HTTP_AUTHORIZATION', None)
+        collection_name=self.request.data.get('collection')
+
+        if auth is None:
             return JsonResponseMessage(status=403, message="Authentication Required")
 
+        timestamp = generate_timestmap()
+        payload = "push|%s|%s|%s|%s|%s" %(collection_name,
+                                          timestamp,
+                                          name,
+                                          tag)
 
-        if not signature_valid():
+        if not validate_request(auth,payload,"push",timestamp):
+            return JsonResponseMessage(status=401, message="Unauthorized")
 
         create_new=False
 
         try:
-            collection = Collection.objects.get(name=self.request.data.get('collection')) 
+            collection = Collection.objects.get(name=collection_name) 
         except Collection.DoesNotExist:
             collection = None
             create_new=True
