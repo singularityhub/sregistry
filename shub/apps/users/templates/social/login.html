@@ -1,0 +1,46 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/social-auth.css"%}">
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+
+    {% include 'messages/message.html' %}
+    {% if user and not user.is_anonymous %}
+    <h3>Hello, {{ user.get_full_name }}!</h3>
+    <br>
+    <div>
+
+       <!-- If all credentials provided, give user full access -->
+       <a href="{% url 'my_collections' %}"><button class="btn btn-default">My Container Collections</button></a>
+       <a href="{% url 'logout' %}"><button class="btn btn-default">Logout</button></a>
+
+    {% else %}
+
+    <!-- User isn't logged in yet! -->
+    <div class="login-box">
+
+        {% if ENABLE_TWITTER_AUTH %}
+        <a class="social-button" id="twitter-connect" href="{% url 'social:begin' 'twitter' %}?next={{ domain }}{{ request.path }}">Login with Twitter</a>
+        {% endif %}
+        <!--<a class="social-button" id="box-connect" href="{% url 'social:begin' 'box' %}?next={{ request.path }}">Login with Box</a>-->
+
+        {% if ENABLE_GITHUB_AUTH %}
+        <a class="social-button" id="github-connect" href="{% url 'social:begin' 'github' %}?next={{ domain }}{{ request.path }}">Login with Github</a>
+        {% endif %}
+
+        {% if ENABLE_GOOGLE_AUTH %}
+        <a class="social-button" id="google-connect" href="{% url 'social:begin' 'google-oauth2' %}?next={{ domain }}{{ request.path }}">Login with Google</a>
+        {% endif %}
+    {% endif %}
+    </div>
+
+
+</div>
+{% endblock %}
+{% block footer %}
+{% include 'main/footer.html' %}
+{% endblock %}

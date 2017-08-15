@@ -29,13 +29,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
+from shub.logger import bot
+from django.core.exceptions import PermissionDenied
 from rest_framework.parsers import FormParser, MultiPartParser
 from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
 from shub.apps.api.utils import (
-    JsonResponseMessage,
     validate_request,
     generate_timestamp
 )
@@ -62,16 +63,17 @@ class ContainerPushViewSet(ModelViewSet):
         collection_name=self.request.data.get('collection')
 
         if auth is None:
-            return JsonResponseMessage(status=403, message="Authentication Required")
+            raise PermissionDenied("Authentication Required")
 
-        timestamp = generate_timestmap()
-        payload = "push|%s|%s|%s|%s|%s" %(collection_name,
-                                          timestamp,
-                                          name,
-                                          tag)
+        timestamp = generate_timestamp()
+        payload = "push|%s|%s|%s|%s|" %(collection_name,
+                                        timestamp,
+                                        name,
+                                        tag)
 
+        bot.debug("Request payload %s" %payload)
         if not validate_request(auth,payload,"push",timestamp):
-            return JsonResponseMessage(status=401, message="Unauthorized")
+            raise PermissionDenied("Unauthorized")
 
         create_new=False
 

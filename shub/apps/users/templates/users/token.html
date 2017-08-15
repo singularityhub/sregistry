@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/social-auth.css"%}">
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+
+    {% if request.user.admin and not request.user.is_anonymous %}
+    <div class="row" style='padding-bottom:30px'>
+        <h2>API Token</h2>
+        <small>push to the Registry</small>
+    </div>
+
+    <div class="row">
+
+    <div style="padding-top:20px" class="alert alert-info" role="alert">Store this at <strong>$HOME</strong>/.sregistry, keep private, and do not include in github repos.</div>
+
+
+       <div class="col-md-1" style='padding-top:10px'>
+           <button id="token" 
+                   class="btn copyme" 
+                   data-clipboard-target="#token">
+                   <i class="fa fa-copy"></i></button>
+       </div>
+       <div style="padding-top:20px; overflow:scroll;" class="well col-md-11" id="token_well" role="alert">
+            {  "token": 
+                     "{{ request.user.token }}",
+                "username": "{{ request.user.username }}"{% if domain %},{% endif %} 
+                {% if domain %}
+                "base": "{{ domain }}"
+                {% endif %}
+            }
+       </div>
+    </div>
+    {% else %}
+    <div style="padding-top:20px" class="alert alert-info" role="alert">You aren't authorized to see this. Sneaky!</div>
+
+    {% endif %}
+</div>
+
+</div>
+{% include "messages/notification.html" %}
+{% endblock %}
+
+{% block footer %}
+{% include 'main/footer.html' %}
+{% endblock %}
+{% block scripts %}
+<script>
+$('.copyme').click(function(){
+    var copy_id = $(this).attr('id')
+    var content = $("#" + copy_id + "_well")
+    var range = document.createRange();  
+    range.selectNode(content[0])  
+    window.getSelection().addRange(range)
+
+   try {  
+        // Now that we've selected the anchor text, execute the copy command  
+        var successful = document.execCommand('copy');  
+        var msg = successful ? 'successful' : 'unsuccessful';  
+        toast_message('Copy ' + msg)
+      }  catch(err) {  
+        toast_message('Oops, unable to copy');  
+      }  
+
+    // removeRange(range) when it is supported  
+    window.getSelection().removeAllRanges();  
+
+});
+</script>
+{% endblock %}
