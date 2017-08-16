@@ -65,7 +65,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ('name','add_date','modify_date','secret',
+        fields = ('name','add_date','modify_date',
                   'metadata', 'containers')
 
 
@@ -86,7 +86,7 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ('id','name','add_date','modify_date','secret',
+        fields = ('id','name','add_date','modify_date',
                   'metadata', 'containers')
 
 

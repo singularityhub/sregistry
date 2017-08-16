@@ -44,6 +44,12 @@ def search_view(request):
     context = {'active':'share'}
     return render(request, 'search/search.html', context)
 
+def container_query(q):
+    return Collection.objects.filter(
+                Q(name__contains=q) |
+                Q(containers__name__contains=q) |
+                Q(tags__name__contains=q) |
+                Q(containers__tag__contains=q)).exclude(private=True).order_by('modify_date').distinct()
 
 def container_search(request):
     '''container_search is the ajax driver to show results for a container search.
@@ -52,12 +58,7 @@ def container_search(request):
     if request.is_ajax():
         q = request.GET.get('q')
         if q is not None:    
-            results = Collection.objects.filter(
-                Q(name__contains=q) |
-                Q(containers__name__contains=q) |
-                Q(tags__name__contains=q) |
-                Q(containers__tag__contains=q)).exclude(private=True).order_by('modify_date').distinct()
- 
+            results = container_query(q)
             context = {"results":results,
                        "submit_result": "anything"}
 

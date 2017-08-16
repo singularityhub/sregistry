@@ -39,7 +39,10 @@ from shub.apps.main.models import Container, Collection
 
 from rest_framework import generics
 from shub.apps.logs.mixins import LoggingMixin
-from shub.apps.main.query import container_lookup
+from shub.apps.main.query import (
+    container_lookup,
+    container_query
+)
 
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -149,6 +152,19 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         return Response(400)
 
 
+class ContainerSearch(APIView):
+    """search for a list of containers depending on a query
+    """
+    def get_object(self, query):
+        from shub.apps.main.views.containers import get_container
+        return container_query(query.lower())
+        
+    def get(self, request, query):
+        containers = self.get_object(query)
+        serializer = ContainerSerializer(containers)
+        return Response(serializer.data)
+    
+
 #########################################################################
 # urlpatterns
 #########################################################################
@@ -157,6 +173,7 @@ urlpatterns = [
 
     url(r'^container/(?P<collection_name>.+?)/(?P<container_name>.+?):(?P<container_tag>.+?)$', ContainerDetailByName.as_view()),
     url(r'^container/(?P<collection_name>.+?)/(?P<container_name>.+?)$', ContainerDetailByName.as_view()),
+    url(r'^container/search/(?P<query>.+?)$', ContainerSearch.as_view()),
     url(r'^containers/(?P<cid>.+?)$', ContainerDetailById.as_view())
 
 ]
