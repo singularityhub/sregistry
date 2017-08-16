@@ -37,7 +37,7 @@
     <div class="col-md-12">
         <div class="card" style="padding:20px">
             <div class="header">
-                <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">{{ container.name }}</a>:{{ container.tag }}</h2>
+                <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">{{ container.collection.name }}</a>/{{ container.name }}:{{ container.tag }}</h2>
                 <p>Version {{ container.version }}</p>
                 <h3>
                      <span class="icon-controls" style="position:relative;top:-70px">
@@ -65,7 +65,7 @@
                 {% endif %} 
 
                 {% if container.image %}
-                <a href="{% url 'download_container' container.id %}" target="_blank"><button class="btn btn-sm btn-default">Download</button></a>
+                <a href="{% url 'download_container' container.id container.secret %}" target="_blank"><button class="btn btn-sm btn-default">Download</button></a>
                 <a class="save_container" data-id="container_{{ container.id }}" data-name="{{ container.collection.repo.owner.login }}/{{ container.collection.repo.name }}:{{ container.branch}}" class="btn btn-default btn-sm save_container" >
                  <button data-toggle="tooltip" data-placement="right" title="add container to your snackbox for visualizations and comparisons!" class="btn btn-sm btn-default"><i data-id="container_{{ container.id }}" data-name="{{ container.collection.repo.owner.login }}/{{ container.collection.repo.name }}:{{ container.branch}}" class="fa fa-plus"></i></button></a>
                 {% endif %}

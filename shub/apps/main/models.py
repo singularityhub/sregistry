@@ -45,6 +45,7 @@ from taggit.managers import TaggableManager
 
 import collections
 import operator
+import uuid
 import os
 import re
 from urllib import parse
@@ -219,14 +220,14 @@ class Star(models.Model):
 class Container(models.Model):
     '''A container is a base (singularity) container, stored as a file (image) with a unique id and name
     '''
-    name = models.CharField(max_length=250, null=False, blank=False)
     add_date = models.DateTimeField('date container added', auto_now=True)
     collection = models.ForeignKey('main.Collection',null=False,blank=False, related_name="containers")
-    tag = models.CharField(max_length=250,null=False,blank=False,default="latest")
+    image = models.ForeignKey(ImageFile, null=True, blank=False) # an image upload, or maybe change it?
     metadata = JSONField(default={},blank=True)
     metrics = JSONField(default={},blank=True)
-    image = models.ForeignKey(ImageFile, null=True, blank=False) # an image upload, or maybe change it?
-    description = models.CharField(max_length=250,null=True,blank=True)
+    name = models.CharField(max_length=250, null=False, blank=False)
+    tag = models.CharField(max_length=250,null=False,blank=False,default="latest")
+    secret = models.CharField(max_length=250,null=True,blank=True)
     version = models.CharField(max_length=250,null=True,blank=True)
     frozen = models.BooleanField(choices=FROZEN_CHOICES,
                                  default=False,
@@ -240,10 +241,26 @@ class Container(models.Model):
         return "%s/%s:%s" %(self.collection.name,
                             self.name,version)
 
+    def update_secret(self):
+        '''secret exists to make brute force download not possible'''
+        self.secret = str(uuid.uuid4())
+        self.save()
+
+    def save(self, *args, **kwargs):
+        '''update secret on each save'''
+        self.update_secret()
+        super(Container, self).save(*args, **kwargs)
+
     def get_image_path(self):
         if self.image not in [None,""]:
             return self.image.datafile.path
         return None
+
+    def get_download_url(self):
+        if self.image not in [None,""]:
+            return self.image.datafile.file
+        return None
+
 
     def get_label(self):
         return "container"

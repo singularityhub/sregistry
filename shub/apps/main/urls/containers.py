@@ -46,7 +46,7 @@ urlpatterns = [
 
     # Download
     url(r'^containers/(?P<cid>\d+)/download/recipe$', views.download_recipe,name='download_recipe'),
-    url(r'^containers/(?P<cid>\d+)/download/container$', views.download_container,name='download_container'),
+    url(r'^containers/(?P<cid>\d+)/download/(?P<secret>.+?)$', views.download_container,name='download_container'),
 
 ]
 

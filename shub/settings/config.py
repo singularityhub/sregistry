@@ -39,7 +39,7 @@ ENABLE_GITHUB_AUTH=False
 # see https://singularityhub.github.io/sregistry/config.html
 
 
-DOMAIN_NAME = "https://127.0.0.1"
+DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
 
 ADMINS = (('vsochat', 'vsochat@gmail.com'),)

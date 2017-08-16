@@ -78,10 +78,15 @@ def download_recipe(request,cid):
         return response
 
 
-def download_container(request,cid):
+def download_container(request,cid,secret):
     '''manually add a tag to the collection
     '''
     container = get_container(cid)
+
+    # The secret must be up to date
+    if container.secret != secret:
+        return Http404
+
     filename = "%s.img" %container.get_uri().replace('/','-')
     response = HttpResponse(container.image.datafile.file,
                             content_type='application/img')
