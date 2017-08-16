@@ -62,8 +62,6 @@ RUN pip install django-user-agents
 RUN pip install django-guardian
 RUN pip install pytz
 RUN pip install python3-saml
-RUN pip install djangorestframework-jwt
-
 
 # Install Singularity
 RUN git clone https://www.github.com/singularityware/singularity.git
@@ -71,6 +69,8 @@ WORKDIR singularity
 RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 
 RUN mkdir /code
+RUN mkir -p /var/www/images
+
 WORKDIR /code
 RUN /usr/bin/yes | pip uninstall cython
 RUN apt-get remove -y gfortran

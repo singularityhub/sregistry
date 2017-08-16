@@ -241,14 +241,15 @@ class Container(models.Model):
         return "%s/%s:%s" %(self.collection.name,
                             self.name,version)
 
-    def update_secret(self):
+    def update_secret(self,save=True):
         '''secret exists to make brute force download not possible'''
         self.secret = str(uuid.uuid4())
-        self.save()
+        if save is True:
+            self.save()
 
     def save(self, *args, **kwargs):
         '''update secret on each save'''
-        self.update_secret()
+        self.update_secret(save=False)
         super(Container, self).save(*args, **kwargs)
 
     def get_image_path(self):
@@ -260,7 +261,6 @@ class Container(models.Model):
         if self.image not in [None,""]:
             return self.image.datafile.file
         return None
-
 
     def get_label(self):
         return "container"

@@ -39,9 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_user_agents',
-    'shub.apps.base',
-    'shub.apps.main',
     'shub.apps.api',
+    'shub.apps.base',
+    'shub.apps.logs',
+    'shub.apps.main',
     'shub.apps.users',
     'shub.apps.singularity'
 ]

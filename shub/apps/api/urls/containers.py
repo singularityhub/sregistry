@@ -37,6 +37,8 @@ import os
 from shub.apps.api.utils import ObjectOnlyPermissions
 from shub.apps.main.models import Container, Collection
 
+from rest_framework import generics
+from shub.apps.logs.mixins import LoggingMixin
 from shub.apps.main.query import container_lookup
 
 from rest_framework import serializers
@@ -105,7 +107,7 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
 #########################################################################
 
 
-class ContainerDetailByName(APIView):
+class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
     """Retrieve a container instance based on it's name
     """
     def get_object(self, collection_name, container_name, container_tag):
@@ -127,7 +129,7 @@ class ContainerDetailByName(APIView):
 
 
 
-class ContainerDetailById(APIView):
+class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
     """Retrieve a container instance based on it's id
     """
     def get_object(self, cid):
