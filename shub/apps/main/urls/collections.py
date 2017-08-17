@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from django.conf.urls import url
 import shub.apps.main.views as views
+from shub.apps.main.query import collection_query
 
 urlpatterns = [
 

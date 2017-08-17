@@ -31,9 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 from django.shortcuts import render
-
-from shub.apps.main.models import Collection, Container
- 
 from django.template.context import RequestContext
 from django.db.models import Q
 
@@ -44,21 +41,16 @@ def search_view(request):
     context = {'active':'share'}
     return render(request, 'search/search.html', context)
 
-def container_query(q):
-    return Collection.objects.filter(
-                Q(name__contains=q) |
-                Q(containers__name__contains=q) |
-                Q(tags__name__contains=q) |
-                Q(containers__tag__contains=q)).exclude(private=True).order_by('modify_date').distinct()
 
 def container_search(request):
     '''container_search is the ajax driver to show results for a container search.
     by default we search container collection name.
     ''' 
+    from shub.apps.main.query import collection_query
     if request.is_ajax():
         q = request.GET.get('q')
         if q is not None:    
-            results = container_query(q)
+            results = collection_query(q)
             context = {"results":results,
                        "submit_result": "anything"}
 

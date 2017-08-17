@@ -39,10 +39,7 @@ from shub.apps.main.models import Container, Collection
 
 from rest_framework import generics
 from shub.apps.logs.mixins import LoggingMixin
-from shub.apps.main.query import (
-    container_lookup,
-    container_query
-)
+from shub.apps.main.query import container_lookup
 
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -152,17 +149,39 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         return Response(400)
 
 
+#########################################################################
+# Search
+#########################################################################
+
+
 class ContainerSearch(APIView):
     """search for a list of containers depending on a query
     """
-    def get_object(self, query):
-        from shub.apps.main.views.containers import get_container
-        return container_query(query.lower())
+    def get_object(self, query, across_collections):
+        from shub.apps.main.query import container_query
+        return container_query(query.lower(), across_collections)
         
-    def get(self, request, query):
-        containers = self.get_object(query)
+    def get(self, request, query, across_collections=1):
+        containers = self.get_object(query, across_collections)
         serializer = ContainerSerializer(containers)
         return Response(serializer.data)
+
+
+class SpecificContainerSearch(APIView):
+    """search for a list of containers depending on a query
+    """
+    def get_object(self, name, collection, tag):
+        from shub.apps.main.query import specific_container_query
+        return specific_container_query(collection=collection,
+                                        name=name,
+                                        tag=tag)
+        
+    def get(self, request, name, collection=None, tag=None):
+        containers = self.get_object(collection=collection,
+                                     name=name, tag=tag)
+        print(containers)
+        data = [ContainerSerializer(c).data for c in containers]
+        return Response(data)
     
 
 #########################################################################
@@ -171,9 +190,18 @@ class ContainerSearch(APIView):
 
 urlpatterns = [
 
+    # General container search
+    #url(r'^container/search/(?P<query>.+?)/(?P<across_collections>[0-1])$', ContainerSearch.as_view()),
+    #url(r'^container/search/(?P<query>.+?)$', ContainerSearch.as_view()),
+
+    # Specific Container Search
+    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/tag/(?P<tag>.+?)$', SpecificContainerSearch.as_view()),
+    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)$', SpecificContainerSearch.as_view()),
+    url(r'^container/search/name/(?P<name>.+?)/tag/(?P<tag>.+?)$', SpecificContainerSearch.as_view()),
+    url(r'^container/search/name/(?P<name>.+?)$', SpecificContainerSearch.as_view()),
+
     url(r'^container/(?P<collection_name>.+?)/(?P<container_name>.+?):(?P<container_tag>.+?)$', ContainerDetailByName.as_view()),
     url(r'^container/(?P<collection_name>.+?)/(?P<container_name>.+?)$', ContainerDetailByName.as_view()),
-    url(r'^container/search/(?P<query>.+?)$', ContainerSearch.as_view()),
     url(r'^containers/(?P<cid>.+?)$', ContainerDetailById.as_view())
 
 ]

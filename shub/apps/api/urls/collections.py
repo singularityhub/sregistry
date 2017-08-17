@@ -37,7 +37,12 @@ from shub.apps.api.urls.containers import ContainerSerializer
 from shub.apps.api.utils import ObjectOnlyPermissions
 from shub.apps.main.models import Container, Collection
 
-from shub.apps.main.query import container_lookup
+from shub.apps.main.query import (
+    container_lookup,
+    collection_query,
+    container_query
+)
+
 from shub.settings import DOMAIN_NAME
 
 from rest_framework import serializers
@@ -81,7 +86,11 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
     def list_containers(self, collection):
         container_list = []
         for c in collection.containers.all():
-            container_list.append("%s/containers/%s" %(DOMAIN_NAME, c.id))
+            entry = {"name": c.name,
+                     "tag": c.tag,
+                     "uri": c.get_uri(),
+                     "detail": "%s/containers/%s" %(DOMAIN_NAME, c.id)}
+            container_list.append(entry)
         return container_list
 
     class Meta:
@@ -134,12 +143,35 @@ class CollectionDetailByName(APIView):
 
 
 #########################################################################
+# Search
+#########################################################################
+
+
+class CollectionSearch(APIView):
+    """search for a list of collections depending on a query. This is
+    a general search to look across all fields for one term
+    """
+    def get_object(self, query):
+        from shub.apps.main.query import collection_query
+        return collection_query(query.lower())
+        
+    def get(self, request, query):
+        collections = self.get_object(query)
+        serializer = CollectionSerializer(collections)
+        return Response(serializer.data)
+    
+
+    
+
+
+#########################################################################
 # urlpatterns
 #########################################################################
 
 
 urlpatterns = [
 
-    url(r'^collection/(?P<collection_name>.+?)$', CollectionDetailByName.as_view())
+    url(r'^collection/(?P<collection_name>.+?)$', CollectionDetailByName.as_view()),
+    url(r'collection/search/(?P<query>.+?)$', CollectionSearch.as_view()),
 
 ]
