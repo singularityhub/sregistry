@@ -72,11 +72,14 @@ ACTIVE_CHOICES = ((True, 'Active'),
 def has_edit_permission(instance,request):
     '''can the user of the request edit the collection or container?
     '''
-    if request.user.is_authenticated() == False:
+    if request.user.is_authenticated() is False:
         return False
 
     # Global Admins
     if request.user.admin is True:
+        return True
+
+    if request.user.is_superuser is True:
         return True
 
     # Collection Contributors

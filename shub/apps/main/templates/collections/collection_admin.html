@@ -12,7 +12,7 @@
                style="text-transform:none"
                title="each user is allowed unlimited public collections.">Make Public</a></li>
         {% else %}
-        <li><a href="{% url 'make_collection_public' collection.id %}"
+        <li><a href="{% url 'make_collection_private' collection.id %}"
                style="text-transform:none"
               title="each user is allowed one private collections.">Make Private</a></li>
         {% endif %}
