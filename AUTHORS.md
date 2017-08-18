@@ -2,9 +2,6 @@
 
     - Vanessa Sochat <vsochat@stanford.edu>
 
-#Developers:
-
-    - Gregory M. Kurtzer <gmkurtzer@gmail.com>
 
 #Contributors:
 
