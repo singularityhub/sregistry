@@ -118,7 +118,7 @@ def view_collection(request,cid):
     collection = get_collection(cid)
 
     # If private, and not the owner, no go.
-    if collection.private == True and request.user != collection.owner:
+    if collection.private == True and collection.has_edit_permission(request) == False:
         messages.info(request,"This collection is private.")
         return redirect('collections')
 
