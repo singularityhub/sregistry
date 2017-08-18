@@ -1,9 +1,6 @@
 cython
-numpy
-scikit-learn
 pandas
 h5py
-matplotlib
 uwsgi
 Django==1.11.2
 social-auth-app-django

@@ -10,6 +10,8 @@ The Singularity Registry Client is provided by [Singularity Python](https://gith
 
 
 ## Install
+
+### Local Installation
 To install, you can do the following:
 
 ```
@@ -21,6 +23,18 @@ python setup.py install
 To check your install, run this command to make sure the `sregistry` client is found.
 
 which sregistry
+
+
+### Container Install
+We have provided a Singularity build definition for you, for which you can use to build a container that serves as the sregistry client (and this will likely be provided on Singularity Hub so you don't even need to do that.) To build, do the following:
+
+```
+cd sregistry/
+singularity create --size 2000 sregistry
+sudo singularity bootstrap sregistry Singularity
+```
+
+If you install via this option, you will want to make sure the container itself is somewhere on your path, with appropriate permissions for who you want to be able to use it.
 
 
 ## Commands

@@ -23,7 +23,6 @@ RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
-
 RUN mkdir /code
 RUN mkdir -p /var/www/images
 
