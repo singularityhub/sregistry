@@ -47,9 +47,11 @@ from django.http import (
     JsonResponse, 
     HttpResponseRedirect
 )
+from .collections import get_collection
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
 
 import os
 import re
