@@ -69,7 +69,7 @@ WORKDIR singularity
 RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 
 RUN mkdir /code
-RUN mkir -p /var/www/images
+RUN mkdir -p /var/www/images
 
 WORKDIR /code
 RUN /usr/bin/yes | pip uninstall cython
