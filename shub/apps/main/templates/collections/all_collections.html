@@ -70,7 +70,8 @@ span.even { background: rgba(91, 192, 222, 0.32); }
                 <th>Name</th>
                 <th>Builds</th>
                 <th>Labels</th>
-                <th>Last Modified</th>
+                <th>Private</th>
+                <th>Modified</th>
             </tr>
         </thead>
         <tbody>
@@ -83,7 +84,8 @@ span.even { background: rgba(91, 192, 222, 0.32); }
                       {% if forloop.last %}{% else %},{% endif %}
                       {% endfor %}
                    {% endfor %}</td>
-               <td>{{ collection.modify_date|date:"Y-m-d"}}</td>
+               <td style="width:15px">{% if collection.private %}Yes{% else %}No{% endif %}</td>
+               <td style="width:100px">{{ collection.modify_date|date:"Y-m-d"}}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -108,14 +110,16 @@ $(document).ready(function(){
        pageLength: 100, 
        columnDefs: [
             {
-                targets: [ 0, 1, 2 ],
+                targets: [ 1, 2, 3, 4, 5 ],
                 className: 'mdl-data-table__cell--non-numeric'
             },
           ],
        columns: [
-            { "width": "40%" },
-            { "width": "10%" },
-               null,
+            { "width": "20%" },
+            { "width": "30%" },
+            { "width": "15%" },
+            { "width": "15%" },
+            { "width": "20%" },
             ]
     } );
 

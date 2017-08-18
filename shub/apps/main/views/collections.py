@@ -44,6 +44,7 @@ from django.shortcuts import (
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from itertools import chain
 
 import os
 import re
@@ -70,7 +71,15 @@ def get_collection(cid):
 
 # All container collections
 def all_collections(request):
+
+    # public collections
     collections = Collection.objects.filter(private=False)
+
+    # private that the user can see
+    private_collections = [x for x in Collection.objects.filter(private=True)
+                           if x.has_edit_permission(request)]
+
+    collections = list(chain(collections,private_collections))
 
     # Get information about if they have storage, and repo access
     context = validate_credentials(user=request.user)
