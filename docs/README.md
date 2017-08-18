@@ -1,6 +1,12 @@
 # Singularity Registry Documentation
 
-Hello there! It's so great that you want to set up a Singularity Registry. Let's get started. 
+Hello there! It's so great that you want to use Singularity Registry. Let's get started. 
+
+## Use a Registry
+
+ - [sregistry Client](client.md): A client provided by Singularity Python to push, pull, list, and delete.
+
+## Deploy a Registry
 
  - [introduction](introduction.md): Coverts some background and basic information.
  - [deployment](deployment.md): will cover installing dependencies, configuring the web server, setting up variables and paths to the file system, and starting the application.
