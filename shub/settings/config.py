@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=True
 ENABLE_GITHUB_AUTH=False
-ENABLE_GITLAB_AUTH=True
+ENABLE_GITLAB_AUTH=False
 
 # NOTE you will need to set them up.
 # see https://singularityhub.github.io/sregistry/config.html
