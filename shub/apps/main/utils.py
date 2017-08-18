@@ -76,65 +76,6 @@ def write_tmpfile(memory_file):
     return file_name
 
 
-def prettify_log(content):
-    '''prettify log is a helper function for get_container_log - given that
-    the user wants to prettify the output, the color lookup is a list of 
-    regular expressions to match lines with colors
-    '''
-
-    # Regular expression, inside of replacement, color for it
-    lookup = ({'re':'(INFO:(?P<info>.+)\n)',
-               'sub':'INFO:\g<info>',
-               'color':'#470888',
-               'tag':'code-info'},
-              
-              {'re':'(ERROR:(?P<error>.+)\n)',
-               'sub':'ERROR:\g<error>',
-               'color':'#e32929',
-               'tag':'code-error'},
-
-              {'re':'(WARNING:(?P<warning>.+)\n)',
-               'sub':'WARNING:\g<warning>',
-               'color':'#e37129',
-               'tag':'code-warning'},
-
-              {'re':'(DEBUG:(?P<debug>.+)\n)',
-               'sub':'DEBUG:\g<debug>',
-               'color':'#31708f',
-               'tag':'code-debug'},
-
-              {'re':'((?P<one>(Extracting|Downloading))(?P<two>.+)\n)',
-               'sub':'\g<one>\g<two>',
-               'color':'#d94fa0',
-               'tag':'code-download'})
-
-    for item in lookup:
-        content = re.sub(item['re'],
-        '''<span class='%s' style="color:%s">%s
-           </span>'''              %(item['tag'],
-                                     item['color'],
-                                     item['sub']),content)
-    content = content.replace('\n','<br>').replace('<br><br>','<br>')
-    return content        
-
-
-def get_container_log(container,log_basename=None,prettify=True):
-    '''get_container_log will return the (string) log for the container.
-    :param container: the container object
-    :param log_basename: the basename of the log file in storage. Default is LOG
-    '''
-    if log_basename == None:
-        log_basename = "LOG"
-    content = None
-    if container.build_log == 'True':
-        for filey in container.files:
-            if os.path.basename(filey['name']) == log_basename:
-                content = requests.get(filey['mediaLink']).text
-    if prettify == True:
-        content = prettify_log(content)
-    return content
-
-
 def format_container_name(name,special_characters=None):
     '''format_container_name will take a name supplied by the user,
     remove all special characters (except for those defined by "special-characters"

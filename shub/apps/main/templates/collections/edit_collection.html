@@ -1,0 +1,52 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+
+{% include 'messages/message.html' %}
+
+<div class="row">
+    <!-- Container collection meta -->
+    <div class="col-md-12">
+        <div class="card" style="padding-top:20px">
+            <div class="header" style="padding-bottom:10px">
+                   <h3 class="title"><span class="small"> collection</span> <a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a>
+                   </h3>
+            </div>
+        </div>    
+    </div>
+</div>
+
+<!-- Edit Build Options -->
+<div class="row">
+    <div class="col-md-12">
+
+         <form action="{% url 'edit_collection' collection.id %}" method="POST">
+
+            {% csrf_token %}
+
+            <label for="private" style="padding-top:20px">Private</label>
+            <select id="private" 
+                    name="private" 
+                    class="form-control">
+
+                {% if collection.private %}
+                 <option value="True">True</option>
+                 <option value="False">False</option>
+                {% else %}
+                 <option value="False">False</option>
+                 <option value="True">True</option>
+                {% endif %}
+            </select>
+            <small>A private collection requires authentication for use, and is not revealed for public sharing.</small><br>
+            <input class="btn btn-primary" type="submit" value="Save" style="margin-top:20px">
+
+        </form>
+
+    </div>
+</div>
+
+</div>
+{% endblock %}

@@ -22,14 +22,10 @@
     <div class="col-md-12">
         <div class="card" style="padding-top:20px">
             <div class="header">
-                <h2 class="title" style="margin-bottom:0px"><a href="{% url 'collection_details' collection.id %}">
-                      {{ collection.repo.owner.login }}/{{ collection.repo.name }}</a>
-                    <a href="https://www.github.com/{{ collection.repo.owner.login }}/{{ collection.repo.name }}" 
-                       target="_blank">
-                    <i style="padding-left:25px; float:right; font-size:30px" 
-                       class="fa fa-github"></i></a>
+                <h2 class="title" style="margin-bottom:0px">Usage: <a href="{% url 'collection_details' collection.id %}">
+                      {{ collection.name }}</a>
                 </h2>
-                <small>Usage</small>
+                <p> The following shows example usage for the container {{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}
                 <hr>
             </div>
         </div>
@@ -38,16 +34,17 @@
 
 <div class="row">
     <div class="col-md-12">
+        <p class="alert alert-info">Note to testers - registry accession has not yet been added to the Singularity software proper. You can use the sregistry client to test</p>
 
         <!-- Pull Example-->
         <div class="row">
             <div class="col-md-10">
                 <p><strong>Pull</strong> the container to your machine (and optionally name custom, or by hash/commit:</p>
                 <p class="well" id="pull_well">
-                     singularity pull shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
-                     singularity pull --name customname.img shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
-                     singularity pull --commit shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
-                     singularity pull --hash shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}<br>
+                     sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}<br>
+                     sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }} --name customname.img<br>
+                     singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}<br>
+                     singularity pull --name customname.img shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}<br>
                 </p>
             </div>
             <div class="col-md-2">
@@ -62,7 +59,7 @@
             <div class="col-md-10"> 
                 <p><strong>Shell</strong> into the container:</p>
                 <p class="well" id="shell_well">
-                    singularity shell shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}
+                    singularity shell shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}
                 </p>
             </div>
             <div class="col-md-2">
@@ -77,7 +74,7 @@
             <div class="col-md-10">
                 <p><strong>Run</strong> the container:</p>
                 <p id="run_well" class="well"><br>
-                    singularity run shub://{{ collection.repo.owner.login }}/{{ collection.repo.name }}</p>
+                    singularity run shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}</p>
             </div>
             <div class="col-md-2">
                 <button style="margin-top:55px" id="run" class="btn copyme" data-clipboard-target="#run"><i class="fa fa-copy"></i></button>

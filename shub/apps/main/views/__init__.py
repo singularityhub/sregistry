@@ -60,7 +60,6 @@ from .containers import (
     get_container,
     change_freeze_status,
     container_details,
-    container_log,
     container_tags,
     delete_container
 )

@@ -39,7 +39,6 @@ urlpatterns = [
     url(r'^tags/(?P<tid>.+?)/view$', views.view_tag,name='view_tag'),
     url(r'^containers/(?P<cid>\d+)/view$', views.view_container,name='view_container'),
     url(r'^containers/(?P<cid>\d+)/$', views.container_details,name='container_details'),
-    url(r'^containers/(?P<cid>\d+)/log$', views.container_log,name='container_log'),
     url(r'^containers/(?P<cid>\d+)/tags$', views.container_tags,name='container_tags'),
     url(r'^containers/(?P<cid>\d+)/delete$', views.delete_container,name='delete_container'),
     url(r'^containers/(?P<cid>\d+)/freeze$', views.change_freeze_status,name='change_freeze_status'),

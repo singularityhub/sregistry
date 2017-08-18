@@ -29,8 +29,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-#from django.conf.urls import url, include
-from .create import create_container
-from .delete import delete_container
+from django.conf.urls import (
+    url, 
+    include
+)
 
+from rest_framework import routers
 
+from shub.apps.api.urls.containers import ContainerViewSet
+from shub.apps.api.urls.collections import CollectionViewSet
+from shub.apps.api.actions.push import ContainerPushViewSet
+
+router = routers.DefaultRouter()
+router.register(r'^containers', ContainerViewSet, base_name="container")
+router.register(r'^collections', CollectionViewSet, base_name="collection")
+router.register(r'^push', ContainerPushViewSet, base_name="push")  # push
+
+urlpatterns = [
+
+    url(r'^', include(router.urls))
+
+]

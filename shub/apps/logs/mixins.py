@@ -41,6 +41,11 @@ class BaseLoggingMixin(object):
         else:
             view_method = method.lower()
 
+        try:
+            params = _clean_data(request.query_params.dict())
+        except:
+            params = {}
+
         # create log
         self.request.log = APIRequestLog(
             requested_at=now(),
@@ -50,7 +55,7 @@ class BaseLoggingMixin(object):
             remote_addr=ipaddr,
             host=request.get_host(),
             method=request.method,
-            query_params=_clean_data(request.query_params.dict()),
+            query_params=params,
         )
 
         # regular initial, including auth check
@@ -136,6 +141,9 @@ def _clean_data(data):
     Function based on the "_clean_credentials" function of django
     (django/django/contrib/auth/__init__.py)
     """
+    if data is None:
+        return ''
+
     SENSITIVE_DATA = re.compile('api|token|key|secret|password|signature', re.I)
     CLEANSED_SUBSTITUTE = '********************'
     for key in data:

@@ -30,14 +30,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from shub.settings import MEDIA_ROOT
-from shub.apps.main.storage import RegistryStorage
 
 from shub.apps.api.models import ImageFile
 from shub.apps.users.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, DO_NOTHING
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_delete
 
 from django.contrib.postgres.fields import JSONField
 from polymorphic.models import PolymorphicModel
@@ -340,4 +339,4 @@ class Label(models.Model):
         app_label = 'main'
         unique_together =  (("key","value"),)
 
-pre_delete.connect(delete_imagefile, sender=Container)
+#post_delete.connect(delete_imagefile, sender=Container)

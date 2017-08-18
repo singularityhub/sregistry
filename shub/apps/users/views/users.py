@@ -29,8 +29,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-#from django.conf.urls import url, include
-from .create import create_container
-from .delete import delete_container
+from shub.apps.users.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
 
 
+@login_required
+def view_token(request):
+    if request.user.is_superuser or request.user.admin is True:
+        return render(request, 'users/token.html')
+    else:
+        messages.info(request,"You are not allowed to perform this action.")
+        return redirect('collections')

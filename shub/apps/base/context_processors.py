@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from shub.settings import ( 
     DOMAIN_NAME,
+    DOMAIN_NAKED,
     ENABLE_GOOGLE_AUTH,
     ENABLE_TWITTER_AUTH,
     ENABLE_GITHUB_AUTH,
@@ -43,6 +44,7 @@ from shub.settings import (
 
 def domain_processor(request):
     return {'domain': DOMAIN_NAME,
+            'DOMAIN_NAKED':DOMAIN_NAKED,
             'REGISTRY_URI': REGISTRY_URI,
             'REGISTRY_NAME':REGISTRY_NAME }
 

@@ -9,6 +9,7 @@ __pycache__
 #########
 migrations/
 make_video.sh
+celerybeat-schedule.db
 *.mp4
 OLD
 secrets.py

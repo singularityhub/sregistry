@@ -33,15 +33,6 @@ from shub.apps.main.models import (
     Container,
     Label
 )
-from shub.apps.main.utils import (
-    get_collection_users,
-    get_container_log
-)
-
-from singularity.analysis.classify import estimate_os
-from singularity.views.trees import container_tree
-from taggit.models import Tag
-from django.db.models import Q
 
 from django.shortcuts import (
     render, 
@@ -49,11 +40,10 @@ from django.shortcuts import (
 )
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 from datetime import datetime
 
-from collections import OrderedDict
 import os
 import json
 import re
@@ -94,14 +84,7 @@ def view_container(request,cid):
         messages.info(request,"This container is private.")
         return redirect('collections')
 
-    try:
-        tree = container_tree(container)
-        context = {"container":container,
-                   "graph":tree['graph'],
-                   "files":tree['files']}
-        return render(request, 'singularity/container_tree.html', context)
-    except:
-        messages.info(request,"We had an issue retrieving files for this container! Try another build?")
+    messages.info(request,"We haven't decided what we want for this view yet! Do you have ideas?")
     return redirect('collection_details',cid=container.collection.id)
 
 
@@ -137,20 +120,6 @@ def delete_container(request,cid):
     messages.info(request,'Container successfully deleted.')
 
     return redirect(collection.get_absolute_url())
-
-
-# Look only at container log
-def container_log(request,cid):
-    container = get_container(cid)
-
-    if container.collection.private == True and request.user != container.collection.owner:
-        messages.info(request,"This container is private.")
-        return redirect('collections')
-
-    log = get_container_log(container) # prettify = True is default
-    context = {"container":container,
-               "log":log}
-    return render(request, 'containers/container_log.html', context)
 
 
 # View container tags

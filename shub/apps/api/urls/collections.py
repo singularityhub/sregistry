@@ -128,18 +128,19 @@ class CollectionDetailByName(APIView):
         try:
             collection = Collection.objects.get(name=collection_name.lower())
         except Collection.DoesNotExist:
-            raise Http404
+            collection = None
         return collection
 
     def get(self, request, collection_name):
         collection = self.get_object(collection_name)
 
-        if not collection.private:
+        if collection is None:
+            return Response({})
+
+        if collection.private is False:
             serializer = CollectionSerializer(collection)
             return Response(serializer.data)
     
-        return Response(400)
-
 
 
 #########################################################################
@@ -153,15 +154,13 @@ class CollectionSearch(APIView):
     """
     def get_object(self, query):
         from shub.apps.main.query import collection_query
-        return collection_query(query.lower())
-        
+        collections = collection_query(query.lower())
+        return collections
+
     def get(self, request, query):
         collections = self.get_object(query)
         serializer = CollectionSerializer(collections)
-        return Response(serializer.data)
-    
-
-    
+        return Response(serializer.data)    
 
 
 #########################################################################
@@ -171,7 +170,7 @@ class CollectionSearch(APIView):
 
 urlpatterns = [
 
+    url(r'^collection/search/(?P<query>.+?)$', CollectionSearch.as_view()),
     url(r'^collection/(?P<collection_name>.+?)$', CollectionDetailByName.as_view()),
-    url(r'collection/search/(?P<query>.+?)$', CollectionSearch.as_view()),
 
 ]

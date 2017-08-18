@@ -30,11 +30,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from django.conf.urls import url
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.http import Http404
 
 import os
-from shub.apps.api.utils import ObjectOnlyPermissions
 from shub.apps.main.models import Container, Collection
 
 from rest_framework import generics
@@ -43,6 +43,7 @@ from shub.apps.main.query import container_lookup
 
 from rest_framework import serializers
 from rest_framework import viewsets
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from shub.settings import (
@@ -57,8 +58,11 @@ from shub.settings import (
 
 class SingleContainerSerializer(serializers.ModelSerializer):
 
-    collection = serializers.PrimaryKeyRelatedField(queryset=Collection.objects.all())
+    collection = serializers.SerializerMethodField('collection_name')
     image = serializers.SerializerMethodField('get_download_url')
+
+    def collection_name(self, container):
+        return container.collection.name
 
     def get_download_url(self, container):
         url = reverse('download_container', kwargs= {'cid':container.id,
@@ -78,10 +82,15 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
+    collection = serializers.SerializerMethodField('collection_name')
+
+    def collection_name(self, container):
+        return container.collection.name
+
     class Meta:
         model = Container
         fields = ('id','name','tag','add_date', 'metrics',
-                  'version','tag', 'frozen', 'metadata')
+                  'version','tag', 'frozen', 'metadata', 'collection')
 
     id = serializers.ReadOnlyField()
 
@@ -108,18 +117,48 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
-    """Retrieve a container instance based on it's name
-    """
-    def get_object(self, collection_name, container_name, container_tag):
-        container = container_lookup(collection=collection_name, 
-                                     name=container_name, 
-                                     tag=container_tag)
-        if container is not None:
-            return container
-        raise Http404
+    '''Retrieve a container instance based on it's name
+    '''
+    def get_object(self, collection, name, tag):
 
-    def get(self, request, collection_name, container_name, container_tag=None):
-        container = self.get_object(collection_name, container_name, container_tag)
+        try:
+            if tag is not None:
+                container = Container.objects.get(collection__name=collection,
+                                                  name=name,
+                                                  tag=tag)
+            else:
+                container = Container.objects.get(collection__name=collection,
+                                                  name=name)
+        except Container.DoesNotExist:
+            container = None
+        return container
+
+
+    def delete(self, request, collection, name, tag=None):
+        from shub.apps.api.actions import delete_container
+        container = self.get_object(collection=collection, 
+                                    name=name,
+                                    tag=tag)
+
+        if container is None:
+            return status.HTTP_404_NOT_FOUND 
+
+        if container.frozen is True:
+            return status.HTTP_304_NOT_MODIFIED
+
+        delete = delete_container(request,container)
+        if delete is True:
+            container.delete()       
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        raise PermissionDenied("Unauthorized")
+
+
+    def get(self, request, collection, name, tag=None):
+        container = self.get_object(collection=collection, 
+                                    name=name,tag=tag)
+        if container is None:
+            return Response({})
+
         serializer = SingleContainerSerializer(container)
         is_private = container.collection.private
         if not is_private: 
@@ -130,17 +169,23 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
 
 
 class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
-    """Retrieve a container instance based on it's id
-    """
+    '''Retrieve a container instance based on it's id
+    '''
     def get_object(self, cid):
         from shub.apps.main.views.containers import get_container
         container = get_container(cid)
-        if container is not None:
-            return container
-        raise Http404
+        return container
 
+    def delete(self, request, cid):
+        from shub.apps.api.actions import delete_container
+        container = self.get_object(cid)
+        return delete_container(request,container)
+        
     def get(self, request, cid):
         container = self.get_object(cid)
+        if container is None:
+            return Response({})
+
         serializer = SingleContainerSerializer(container)
         is_private = container.collection.private
         if not is_private: 
@@ -155,31 +200,16 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
 
 
 class ContainerSearch(APIView):
-    """search for a list of containers depending on a query
-    """
-    def get_object(self, query, across_collections):
-        from shub.apps.main.query import container_query
-        return container_query(query.lower(), across_collections)
-        
-    def get(self, request, query, across_collections=1):
-        containers = self.get_object(query, across_collections)
-        serializer = ContainerSerializer(containers)
-        return Response(serializer.data)
-
-
-class SpecificContainerSearch(APIView):
-    """search for a list of containers depending on a query
-    """
+    '''search for a list of containers depending on a query
+    '''
     def get_object(self, name, collection, tag):
         from shub.apps.main.query import specific_container_query
-        return specific_container_query(collection=collection,
-                                        name=name,
+        return specific_container_query(name=name,
+                                        collection=collection,
                                         tag=tag)
         
     def get(self, request, name, collection=None, tag=None):
-        containers = self.get_object(collection=collection,
-                                     name=name, tag=tag)
-        print(containers)
+        containers = self.get_object(name,collection,tag)
         data = [ContainerSerializer(c).data for c in containers]
         return Response(data)
     
@@ -190,18 +220,12 @@ class SpecificContainerSearch(APIView):
 
 urlpatterns = [
 
-    # General container search
-    #url(r'^container/search/(?P<query>.+?)/(?P<across_collections>[0-1])$', ContainerSearch.as_view()),
-    #url(r'^container/search/(?P<query>.+?)$', ContainerSearch.as_view()),
-
-    # Specific Container Search
-    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/tag/(?P<tag>.+?)$', SpecificContainerSearch.as_view()),
-    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)$', SpecificContainerSearch.as_view()),
-    url(r'^container/search/name/(?P<name>.+?)/tag/(?P<tag>.+?)$', SpecificContainerSearch.as_view()),
-    url(r'^container/search/name/(?P<name>.+?)$', SpecificContainerSearch.as_view()),
-
-    url(r'^container/(?P<collection_name>.+?)/(?P<container_name>.+?):(?P<container_tag>.+?)$', ContainerDetailByName.as_view()),
-    url(r'^container/(?P<collection_name>.+?)/(?P<container_name>.+?)$', ContainerDetailByName.as_view()),
-    url(r'^containers/(?P<cid>.+?)$', ContainerDetailById.as_view())
+    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/tag/(?P<tag>.+?)/$', ContainerSearch.as_view()),
+    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/$', ContainerSearch.as_view()),
+    url(r'^container/search/name/(?P<name>.+?)/tag/(?P<tag>.+?)/$', ContainerSearch.as_view()),
+    url(r'^container/search/name/(?P<name>.+?)/$', ContainerSearch.as_view()),
+    url(r'^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)/$', ContainerDetailByName.as_view()),
+    url(r'^container/(?P<collection>.+?)/(?P<name>.+?)/$', ContainerDetailByName.as_view()),
+    url(r'^containers/(?P<cid>.+?)/$', ContainerDetailById.as_view())
 
 ]

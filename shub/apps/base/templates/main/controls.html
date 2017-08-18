@@ -61,7 +61,7 @@
 <div id="containerbox">
 <button class="btn btn-default" id="show_container_set"><i id='show_container_set_icon' class="fa fa-3x fa-plus-square"></i></a></li></button>
 <nav id="controls" class="navbar navbar-fixed-bottom hidden" style="background-color:#F7F7F7;margin-left:15%;margin-right:15%">
-  <div class="navbar-brand notransition" id="tool-toggle" style="color:rgb(227, 41, 41)" href="#">Container Snacks
+  <div class="navbar-brand notransition" id="tool-toggle" style="color:rgb(227, 41, 41)" href="#">Saved Containers
       <i style="padding-left:10px;float:right" id="tool_direction" class="fa fa-chevron-up"></i>
       </div>
   <br>
@@ -72,10 +72,8 @@
        <hr>
        <div id="container-operations" class="hidden">
            <button id="reset_container_box" class="save btn btn-default btn-sm">Empty Container Box</button>
-           <button id="compare_containers" class="save btn btn-default btn-sm">Intersect Containers</button>
-           <button id="subtract_containers" class="save btn btn-default btn-sm">Subtract Containers</button>
        </div> 
-       <p id="empty_message" class="alert alert-info hidden">You don't have any snacks in your container box! Try a <a href="{% url 'search' %}">search</a> to add some.</p>
+       <p id="empty_message" class="alert alert-info hidden">You don't have any containers in your box! Try a <a href="{% url 'search' %}">search</a> to add some.</p>
        <p id="message_box" class="alert alert-info hidden"></p>
   </div>
 </nav>

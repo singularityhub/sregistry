@@ -29,8 +29,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-#from django.conf.urls import url, include
-from .create import create_container
-from .delete import delete_container
+from rest_framework.authtoken.models import Token
 
-
+def get_usertoken(user):
+    try:
+        token = Token.objects.get(user=user)
+    except TokenDoesNotExist:
+        token = Token.objects.create(user=user)
+    return token.key

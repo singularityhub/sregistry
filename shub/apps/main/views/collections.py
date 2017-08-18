@@ -35,38 +35,12 @@ from shub.apps.main.models import (
     Star
 )
 
-from shub.apps.main.utils import (
-    get_collection_users,
-    get_nightly_comparisons,
-    get_container_log,
-    write_tmpfile
-)
-
-from singularity.analysis.classify import estimate_os
-from singularity.analysis.compare import (
-    calculate_similarity,
-    compare_containers
-)
-
 from singularity.utils import read_file
-from singularity.views.trees import (
-    container_tree,
-    container_similarity,
-    container_difference
-)
-
 from shub.apps.users.views import validate_credentials
-
-from taggit.models import Tag
-
 from django.shortcuts import (
-    get_object_or_404, 
-    render_to_response, 
     render, 
     redirect
 )
-
-from django.http import JsonResponse
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -175,80 +149,20 @@ def edit_collection(request,cid):
                
     if request.method == "POST":
 
-        # Set the new padding
-        padding = request.POST.get("padding",None)
+        # Make private?
+        private = request.POST.get("private", None)
         try:
-            if padding != None:
-                previous_padding = collection.build_padding
-                collection.build_padding = int(padding)
-                collection.save()
-                if collection.build_padding != previous_padding:
-                    messages.info(request,"Padding is set to %s" %padding)
+            if private != None:
+                if private == "True" and collection.private == False:
+                    collection.private = True
+                    messages.info(request,"The collection is now private.")
+                    collection.save()
+                elif private == "False" and collection.private == True:
+                    collection.private = False
+                    collection.save()
+                    messages.info(request,"The collection is now public to share.")
         except:
             pass
-            messages.info(request,"Padding %s is not valid, skipping save." %(padding)) 
-
-        # Set the new size
-        build_size = request.POST.get("build_size",None)
-        try:
-            if build_size != None:
-                previous_size = collection.build_size
-                if build_size != previous_size:
-                    if build_size == '':
-                        collection.build_size = None
-                        messages.info(request,"Build size specification removed from build.")
-                    else:
-                        collection.build_size = int(build_size)
-                        messages.info(request,"Build size is set to %s" %(build_size))
-                    collection.save()
-        except:
-            pass
-            messages.info(request,"Build size %s is not valid, skipping save." %(build_size))
-
-        # Enable or disable debug
-        build_debug = request.POST.get("build_debug",None)
-        try:
-            if build_debug != None:
-                if build_debug == "True" and collection.build_debug == False:
-                    collection.build_debug = True
-                    messages.info(request,"Debug set to True.")
-                    collection.save()
-                elif build_debug == "False" and collection.build_debug == True:
-                    collection.build_debug = False
-                    collection.save()
-                    messages.info(request,"Build debug set to False")
-        except:
-            pass
-
-        # Build on deployment instead
-        build_trigger = request.POST.get("build_trigger",None)
-        if build_trigger is not None:
-            try:           
-                collection.build_trigger = build_trigger
-                collection.save()
-                if build_trigger == "DEPLOYMENT":
-                    messages.info(request,"Build set to trigger on successful deployment testing status.")
-                elif build_trigger == "COMMIT":
-                    messages.info(request,"Build set to trigger on commits.")
-            except:
-                pass
-
-        # Set the new builder
-        new_builder = request.POST.get("builder_name",None) 
-        if new_builder == None:
-            messages.info(request,"Please specify a builder.")
-
-        elif new_builder not in BUILDER_OPTIONS: 
-            messages.info(request,"This is not a valid builder! Choices are %s" %(",".join(BUILDER_OPTIONS)))
-
-        elif new_builder == current_selection:
-            messages.info(request,"Builder %s is already selected for this collection." %(new_builder))
-
-        else:       
-            builder.specs['builder_name'] = new_builder
-            builder.save()
-            messages.info(request,"Builder changed from %s to %s. This builder will be used for new builds." %(current_selection,new_builder))
-            current_selection = new_builder
 
     context = {'collection':collection,
                'edit_permission':edit_permission }
@@ -296,23 +210,6 @@ def delete_collection(request,cid):
 #######################################################################################
 # COLLECTION PRIVACY / ACTIVE
 #######################################################################################
-
-@login_required
-def change_build_enabled(request,cid):
-    '''change_build_enabled will change the build from enabled/disabled,
-    or vice versa. This is the user's control for turning Github hooks on/off
-    :param cid: the collection id to make private/public
-    '''
-    collection = get_collection(cid)
-    edit_permission = collection.has_edit_permission(request)
-
-    if edit_permission == True:
-        collection.enabled = not collection.enabled
-        collection.save()
-        messages.info(request,"Collection enabled set to %s." %(collection.enabled))
-    else:
-        messages.info(request,"You do not have permissions to perform this operation.")
-    return redirect('collection_details', cid=collection.id)
 
 
 @login_required

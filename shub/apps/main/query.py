@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from shub.apps.main.models import Container, Collection
 from singularity.registry.utils import parse_image_name
+from shub.logger import bot
 from django.db.models import Q
 import os
 
@@ -40,11 +41,11 @@ def collection_query(q):
                 Q(name__contains=q) |
                 Q(containers__name__contains=q) |
                 Q(tags__name__contains=q) |
-                Q(containers__tag__contains=q)).order_by('modify_date').distinct()
+                Q(containers__tag__contains=q)).distinct()
 
 
 
-def container_query(q, across_collections=0):
+def container_query(q, across_collections=1):
     '''query for a container depending on the provided query string'''
     across_collections = bool(int(across_collections))
 
@@ -87,12 +88,15 @@ def specific_container_query(name, collection=None, tag=None):
     if tag is not None:
         tag = tag.lower()
 
-    if tag is None and collection is None and container is None:
+    if tag is None and collection is None and name is None:
         return Container.objects.all()
+
     if tag is None and collection is None:
         return Container.objects.filter(name=name)
+
     if tag is None:
         return Container.objects.filter(collection__name=collection,name=name)
+
     if collection is None:
         return Container.objects.filter(tag=tag,name=name) 
     return Container.objects.filter(collection__name=collection,name=name, tag=tag)
