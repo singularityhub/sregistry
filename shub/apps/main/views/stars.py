@@ -63,11 +63,18 @@ import uuid
 ###############################################################################################
 
 def starred_collections(request):
-    '''return view of collections to user with number of stars.'''
-    collections = Collection.objects.filter(
-                              private=False).annotate(Count('star', distinct=True)).order_by('-star__count')
+    '''This is a "favorite" view. It show collections ordered based on number of stars.'''
+    from shub.apps.logs.models import APIRequestCount
+    
+    # First set: favorites based on stars
+    collections = Collection.objects.filter(private=False).annotate(Count('star', distinct=True)).order_by('-star__count')
     collections = [x for x in collections if x.star__count>0]
-    context = {"collections": collections }
+
+    # Second set: favorites based on usage
+    favorites = APIRequestCount.objects.filter(method="get",path__contains="ContainerDetailByName").order_by('-count')
+
+    context = {"collections": collections,
+               "favorites": favorites }
     return render(request, 'stars/collections.html', context)
 
 

@@ -29,44 +29,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-# Which social auths do you want to use?
-ENABLE_GOOGLE_AUTH=False
-ENABLE_TWITTER_AUTH=True
-ENABLE_GITHUB_AUTH=False
-ENABLE_GITLAB_AUTH=False
 
-# NOTE you will need to set them up.
-# see https://singularityhub.github.io/sregistry/config.html
+from shub.apps.main.models import Container
+from singularity.utils import read_json
+from shub.settings import MEDIA_ROOT
 
-
-DOMAIN_NAME = "http://127.0.0.1"
-DOMAIN_NAME_HTTP = "http://127.0.0.1"
-DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://','')
-
-ADMINS = (('vsochat', 'vsochat@gmail.com'),)
-MANAGERS = ADMINS
-
-HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
-HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
-REGISTRY_NAME = "Tacosaurus Computing Center"
-REGISTRY_URI = "taco"
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',
-        'PORT': '5432',
-    }
-}
+from itertools import chain
+import os
+import json
+import re
+import requests
+import tempfile
 
 
-# Logging
+def get_request_collection(instance):
+    '''obtain the collection from a request
 
-# Do you want to save complete response metadata per each pull?
-# If you disable, we still keep track of collection pull counts, but not specific versions
-LOGGING_SAVE_RESPONSES=True
+    Parameters
+    ==========
+    instance: should be an APIRequestLog object, with a response
+              and path to parse
+    '''
+    from singularity.registry.utils import parse_image_name
+    from shub.apps.main.models import Collection 
+    
+    try: 
+        response = json.loads(instance.response)   
+        name = response['collection']
+    except:
+        collection_name = instance.path.replace('/api/container/','')
+        name = parse_image_name(collection_name)['collection']
+
+    try:
+        collection = Collection.objects.get(name=name)
+    except Collection.DoesNotExist:
+        collection = None
+
+    return collection

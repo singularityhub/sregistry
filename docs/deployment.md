@@ -156,9 +156,12 @@ DATABASES = {
 }
 ```
 
+#### Logging
+By default, Singularity Registry keeps track of all requests to pull containers, and you have control over the level of detail that is kept. If you want to save complete metadata (meaning the full json response for each call) then you should set `LOGGING_SAVE_RESPONSES` to True. If you expect heavy use and want to save the minimal (keep track of which collections are pulled how many times) the reccomendation is to set this to False. 
 
-
-
+```
+LOGGING_SAVE_RESPONSES=True
+```
 
 ## Setup
 Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.

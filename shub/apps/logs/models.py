@@ -43,11 +43,41 @@ class APIRequestLog(BaseAPIRequestLog):
     pass
 
 
-                   # BaseAPIRequestLog (instance)
-def remove_response(sender, instance, **kwargs):
-    print(instance.response)
-    instance.response = None
-    instance.save()
+class APIRequestCount(models.Model):
+    ''' Keep track of a count of requests based on path and
+    view type, for quick querying later'''
+    from shub.apps.main.models import Collection
+    collection = models.ForeignKey(Collection, default=None, blank=False, null=True)
+    count = models.PositiveIntegerField(default=0)
+    path = models.CharField(max_length=200, db_index=True)
+    method = models.CharField(max_length=200, db_index=True)
+ 
+   class Meta:
+        verbose_name = 'Container Request Counter'
 
-# TODO: need to 1) parse container from req.response, then 2) clean the request, then 3) add variable to index
-pre_save.connect(remove_response, sender=BaseAPIRequestLog)
+    def __str__(self):
+        return '%s %s: %s' %(self.method, 
+                             self.collection.name,
+                             self.count)
+
+                   # BaseAPIRequestLog (instance)
+def finalize_request(sender, instance, **kwargs):
+    '''finalize request will add a counter object for the collection,
+       method, and path'''
+    from shub.apps.logs.utils import get_request_collection
+    from shub.settings import LOGGING_SAVE_RESPONSES
+    collection = get_request_collection(instance)
+
+    if collection is not None:    
+        counter,created = APIRequestCount.objects.get_or_create(path=instance.view,
+                                                                method=instance.view_method,
+                                                                collection=collection)
+        counter.count += 1
+        counter.save()
+
+    # Clear the response, we've saved minimal detail
+    if LOGGING_SAVE_RESPONSES is False:
+        instance.response = {}
+
+
+pre_save.connect(finalize_request, sender=APIRequestLog)

@@ -99,8 +99,7 @@ def user_collections(request,uid):
         return redirect('collections')
 
         
-    collections = Collection.objects.filter(private=False,
-                                            owner=user)
+    collections = Collection.objects.filter(owner=user)
 
     # Get information about if they have storage, and repo access
     context = validate_credentials(user=request.user)
