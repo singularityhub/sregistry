@@ -44,6 +44,9 @@ html * {
     transition: all .3s ease;
 }
 
+/* Google */
+
+
 #google-connect {
     color: #DC4A3D;
     background: rgb(255, 255, 255) url('/static/img/social-buttons/google-plus.png') no-repeat scroll 5px 0px / 50px 50px padding-box border-box;
@@ -84,6 +87,9 @@ html * {
     -o-transition: all .3s ease;
     transition: all .3s ease;
 }
+
+/* Twitter */
+
 
 #twitter-connect {
     background: rgb(255, 255, 255) url('/static/img/social-buttons/twitter.png') no-repeat scroll 5px 1px / 45px 45px padding-box border-box;
@@ -126,6 +132,9 @@ html * {
     transition: all .3s ease;
 }
 
+/* Github */
+
+
 #github-connect {
     color: black;
     background: rgb(255, 255, 255) url('/static/img/social-buttons/github.png') no-repeat scroll 13px 10px / 28px 28px padding-box border-box;
@@ -159,6 +168,49 @@ html * {
 }
 
 #github-connect:hover span {
+    color: #FFF;
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+/* Gitlab */
+
+#gitlab-connect {
+    color: black;
+    background: rgb(255, 255, 255) url('/static/img/social-buttons/gitlab.png') no-repeat scroll 13px 10px / 28px 28px padding-box border-box;
+    border: 1px solid black;
+}
+
+#gitlab-connect:hover {
+    color: white;
+    border-color: rgb(0, 119, 181);
+    background: black url('/static/img/social-buttons/gitlab.png') no-repeat scroll 13px 10px / 28px 28px padding-box border-box;
+    -webkit-transition: all .8s ease-out;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease-out;
+}
+
+#gitlab-connect span {
+	box-sizing: border-box;
+    color: rgb(0, 119, 181);
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    border: 0px none rgb(0, 119, 181);
+    outline: rgb(255, 255, 255) none 0px;
+	-webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+#gitlab-connect:hover span {
     color: #FFF;
     -webkit-transition: all .3s ease;
     -moz-transition: all .3s ease;

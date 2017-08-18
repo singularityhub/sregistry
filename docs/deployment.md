@@ -32,6 +32,7 @@ One thing I (@vsoch) can't do for you in advance is produce application keys and
 ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=True
 ENABLE_GITHUB_AUTH=False
+ENABLE_GITLAB_AUTH=False
 
 ```
 
@@ -74,6 +75,25 @@ For users to connect to Github, you need to [register a new application](https:/
 
 
 The callback url should be in the format `http://127.0.0.1/complete/github`, and replace the localhost address with your domain. 
+
+
+#### Gitlab OAuth2
+Instructions are provided [here](https://github.com/python-social-auth/social-docs/blob/master/docs/backends/gitlab.rst). Basically:
+
+1. You need to [register an application](https://gitlab.com/profile/applications), be sure to add the `read_user` scope. If you need `api`, add it to (you shouldn't).
+2. Set the callback URL to `http://registry.domain/complete/gitlab/`. The URL **must** match the value sent. If you are having issues, try adjusting the trailing slash or http/https/. 
+3. In your `secrets.py` file under settings, add:
+
+```
+SOCIAL_AUTH_GITLAB_SCOPE = ['api', 'read_user']
+SOCIAL_AUTH_GITLAB_KEY = ''
+SOCIAL_AUTH_GITLAB_SECRET = ''
+```
+Where the key and secret are replaced by the ones given to you. If you have a private Gitlab, you need to add it's url too:
+
+```
+SOCIAL_AUTH_GITLAB_API_URL = 'https://example.com'
+```
 
 
 #### Setting up Twitter OAuth2
