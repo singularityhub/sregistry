@@ -1,10 +1,9 @@
 # sregistry
 
-The Singularity Registry Client is provided by [Singularity Python](https://github.com/vsoch/singularity-python), currently the development branch of user @vsoch until it's ready to go into Singularityware's version. A demo is provided:
-
-
 <script src="assets/js/asciinema-player.js"></script>
 <link rel="stylesheet" href="assets/css/asciinema-player.css"/>
+
+The Singularity Registry Client is provided by [Singularity Python](https://github.com/vsoch/singularity-python/tree/development), currently the development branch of user @vsoch until it's ready to go into Singularityware's version. A demo is provided below, along with the same documentation here [as a script](https://github.com/vsoch/singularity-python/blob/development/examples/registry/run_client.sh).
 
 <asciinema-player src="assets/asciicast/registry.json" poster="data:text/plain,Intro to sregistry client" title="Introduction to the Singularity Registry client" author="vsochat@stanford.edu" cols="80" rows="40" speed="2.0" theme="asciinema"></asciinema-player>
 
