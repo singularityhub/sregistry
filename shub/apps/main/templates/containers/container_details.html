@@ -31,13 +31,28 @@
 
 <div id="fh5co-portfolio">
 
-<!-- Meta data about container-->
+<div class="row" style="margin:20px; display:none" id="share_box">
+    <p>
+       <span class="well" id="share_prompt">For how many days should this temporary download link be active?</span> 
+       <span id="expire_days" 
+             style="padding:19px;margin-right:15px";
+             contenteditable="true" 
+             class="alert alert-info">7</span> days.
+       <button id="generate_share" 
+               class="btn btn-xs btn-primary"
+               style="margin-top: 15px; margin-left: 20px; padding:20px">Generate Link</button>
+    <p id="share_result" 
+       style="display:none; max-width:640px" 
+       class="alert alert-info"></p>
+</div>
+
 <div class="row">
 
     <div class="col-md-12">
         <div class="card" style="padding:20px">
             <div class="header">
-                <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">{{ container.collection.name }}</a>/{{ container.name }}:{{ container.tag }}</h2>
+                <a href="{% url 'collection_details' container.collection.id %}">
+                    <h2 class="title">{{ container.collection.name }}</a>/{{ container.name }}:{{ container.tag }}</h2>
                 <p>Version {{ container.version }}</p>
                 <h3>
                      <span class="icon-controls" style="position:relative;top:-70px">
@@ -48,16 +63,35 @@
 
                 {% if edit_permission %}
                      {% if container.frozen %}
-                     <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Unfreeze</button></a>
+                     <a data-toggle="tooltip" 
+                        data-placement="right" 
+                        title="freezing a container will ensure that building the tag does not override the current version" 
+                        href="{% url 'change_freeze_status' container.id %}">
+                        <button class="btn btn-sm btn-default">Unfreeze</button>
+                     </a>
                      {% else %}
-                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="{% url 'change_freeze_status' container.id %}"><button class="btn btn-sm btn-default">Freeze</button></a>
-                         {% endif %}
-                    {% else %}
-                         {% if container.frozen %}
-                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="#"><button class="btn btn-sm btn-default" disabled>Unfreeze</button></a>
-                         {% else %}
-                         <a data-toggle="tooltip" data-placement="right" title="freezing a container will ensure that building the tag does not override the current version" href="#"><button class="btn btn-sm btn-default" disabled>Freeze</button></a>
+                         <a data-toggle="tooltip" 
+                            data-placement="right" 
+                            title="freezing a container will ensure that building the tag does not override the current version" 
+                            href="{% url 'change_freeze_status' container.id %}">
+                            <button class="btn btn-sm btn-default">Freeze</button>
+                         </a>
                      {% endif %}
+                {% else %}
+                    {% if container.frozen %}
+                    <a data-toggle="tooltip" 
+                       data-placement="right" 
+                       title="freezing a container will ensure that building the tag does not override the current version" 
+                       href="#"><button class="btn btn-sm btn-default" disabled>Unfreeze</button>
+                    </a>
+                    {% else %}
+                    <a data-toggle="tooltip"
+                       data-placement="right" 
+                       title="freezing a container will ensure that building the tag does not override the current version" 
+                       href="#"><button 
+                       class="btn btn-sm btn-default" disabled>Freeze</button>
+                    </a>
+                    {% endif %}
                 {% endif %}
 
                 {% if container.tags.all %}
@@ -65,9 +99,32 @@
                 {% endif %} 
 
                 {% if container.image %}
-                <a href="{% url 'download_container' container.id container.secret %}" target="_blank"><button class="btn btn-sm btn-default">Download</button></a>
-                <a class="save_container" data-id="container_{{ container.id }}" data-name="{{ container.collection.repo.owner.login }}/{{ container.collection.repo.name }}:{{ container.branch}}" class="btn btn-default btn-sm save_container" >
-                 <button data-toggle="tooltip" data-placement="right" title="add container to your snackbox for visualizations and comparisons!" class="btn btn-sm btn-default"><i data-id="container_{{ container.id }}" data-name="{{ container.collection.repo.owner.login }}/{{ container.collection.repo.name }}:{{ container.branch}}" class="fa fa-plus"></i></button></a>
+                <a href="{% url 'download_container' container.id container.secret %}" 
+                   target="_blank">
+                   <button class="btn btn-sm btn-default">Download</button>
+                </a>
+                <a class="save_container" 
+                   data-id="container_{{ container.id }}" 
+                   data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
+                   class="btn btn-default btn-sm save_container">
+                   <button data-toggle="tooltip" 
+                           data-placement="right" 
+                           title="add container to your snackbox for visualizations and comparisons!" 
+                           class="btn btn-sm btn-default">
+                           <i data-id="container_{{ container.id }}" 
+                              data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
+                              class="fa fa-plus">
+                           </i>
+                   </button>
+                </a>
+                {% if edit_permission %}
+                <a id="share_container" 
+                   class="btn btn-default btn-sm"
+                   title="generate a temporary link to download your container" 
+                   class="btn btn-sm btn-default">
+                   <i class="fa fa-share"></i>
+                </a>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -110,26 +167,12 @@
             {% if container.metrics  %}
 
             <div class="col-md-6 card" style="padding:10px;background-color:white;border-radius:5px">
-                <h4>Build Metrics</h4>
+
+                <h4>Metrics</h4>
                 {% for key, value in container.metrics.items %} 
-
-                    {% if key == "build_time" %}
-                    <p class="metric">Build Time: {{ value }} seconds</p>
-                    {% endif %}
-
-                    {% if key == "estimated_os" %}
-                    <p class="metric">Estimated OS: {{ value }}<a href="https://github.com/singularityware/singularity-python/blob/master/examples/classify_image/estimate_os.py" target="_blank"><i style="cursor:pointer;margin-left:10px" class="fa fa-question-circle"></i></a></p>
-                    {% endif %}
-
-                    {% if key == "size" %}
-                    <p class="metric">Padded Size: {{ value }} MB</p>
-                    {% endif %}
-
-                    {% if key == "singularity_version" %}
-                    <p class="metric">Singularity Version {{ value }}</p>
-                    {% endif %}
-
+                    <p class="metric">{{ key }}: {{ value }}</p>
                 {% endfor %}
+
             </div>
             {% endif %}
         </div>
@@ -196,6 +239,9 @@
 {% endblock %}
 
 {% block scripts %}
+{% if edit_permission %}
+<script src="{% static "js/cookie-token.js" %}"></script>
+{% endif %}
 <script src="{% static "js/jquery.dataTables.min.js"%}"></script>
 <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 <script src="{% static "js/materialize.min.js"%}"></script>
@@ -248,6 +294,47 @@ $(document).ready(function(){
 
     // Load highlighter for highlight js (log)
     hljs.initHighlightingOnLoad();
+
+    {% if container.image %}
+    $("#share_container").click(function(){
+        $("#generate_share").show();
+        $("#share_prompt").text("For how many days should this temporary download link be active?");
+        $("#share_box").toggle();
+    })
+
+    $("#generate_share").click(function(){
+        var number_days = $("#expire_days").text();
+
+        $.ajax({
+                url : "{% url 'generate_share' container.id %}",
+                type : "POST",
+                data: { days: number_days },
+
+                success : function(json) {
+                    if (json['status'] == "success"){
+                        var share_link = '<a href="' + json['link'] + '">' + json['link'] + '</a>';
+                        var days = json['days'];
+                        var expire = json['expire'];
+                        var message = "This link is valid for " + days + " days, and will expire on " + expire;
+                        $("#generate_share").hide();
+                        $("#share_prompt").text(message);
+                        $("#share_result").append(share_link)
+                        $("#share_result").show()
+                        console.log(":D shared!");
+                    } else {
+                        $("#share_prompt").text("There was a problem sharing your container! Submit an issue for help.");
+                        console.log(":( Not shared.")
+                    }
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+             });
+        
+
+    })
+
+    {% endif %}
 
 })
 

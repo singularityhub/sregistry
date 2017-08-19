@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from shub.apps.main.models import (
     Container, 
     Collection,
+    Share,
     Star
 )
 
@@ -47,9 +48,16 @@ from django.http import (
     HttpResponse
 )
 
-from django.http.response import Http404
+from shub.apps.main.utils import (
+    calculate_expiration_date,
+    validate_share
+)
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http.response import Http404
+from rest_framework import status
+from rest_framework.response import Response
 
 import os
 import re
@@ -59,13 +67,12 @@ from .containers import get_container
 
 
 
-
 #######################################################################################
 # CONTAINER DOWNLOAD
 #######################################################################################
 
 def download_recipe(request,cid):
-    '''manually add a tag to the collection
+    '''download a container recipe
     '''
     container = get_container(cid)
     if "deffile" in container.metadata:
@@ -78,8 +85,40 @@ def download_recipe(request,cid):
         return response
 
 
+def download_share(request,cid,secret):
+    '''download a custom share for a container
+    '''
+    container = get_container(cid)
+    import pickle
+    pickle.dump({'cid':cid,'secret':secret},open('days.pkl','wb'))
+
+    # Is the container secret valid?
+    try:
+        share = Share.objects.get(secret=secret,
+                                  container=container)
+    except Share.DoesNotExist:
+        raise Http404
+
+    # If the share exists, ensure active
+    if validate_share(share) is False:
+        share.delete()
+        raise Response(status.HTTP_403_FORBIDDEN)
+
+    # Now validate the secret
+    if secret != share.secret:
+        raise Response(status.HTTP_401_UNAUTHORIZED)
+
+    # If we make it here, link is good
+    filename = "%s.img" %container.get_uri().replace('/','-')
+    response = HttpResponse(container.image.datafile.file,
+                            content_type='application/img')
+    response['Content-Disposition'] = 'attachment; filename="%s"' %filename
+    return response
+
+
+
 def download_container(request,cid,secret):
-    '''manually add a tag to the collection
+    '''download a container
     '''
     container = get_container(cid)
 

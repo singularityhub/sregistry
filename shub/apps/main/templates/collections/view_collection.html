@@ -263,6 +263,7 @@ $(document).ready(function(){
 
         {% if user.is_authenticated %}
         console.log('Hello {{ user.username }}!')
+
         $("#star").click(function(){
             do_star();
         })

@@ -194,25 +194,6 @@ class Collection(models.Model):
         )
 
 
-#################################################################################
-# Ratings #######################################################################
-#################################################################################
-
-
-class Star(models.Model):
-    '''a user can star a particular collection
-    '''
-    user = models.ForeignKey('users.User')
-    collection = models.ForeignKey(Collection)
-
-    def get_label(self):
-        return "collection"
-
-    class Meta:
-        unique_together = ('user','collection',)
-        app_label = 'main'
-
-
 
 #######################################################################################################
 # Containers ##########################################################################################
@@ -319,6 +300,52 @@ class Demo(models.Model):
     def get_absolute_url(self):
         return_id = self.id
         return reverse('view_demo', args=[str(return_id)])
+
+
+#################################################################################
+# Ratings and Sharing ###########################################################
+#################################################################################
+
+
+class Star(models.Model):
+    '''a user can star a particular collection
+    '''
+    user = models.ForeignKey('users.User')
+    collection = models.ForeignKey(Collection)
+
+    def get_label(self):
+        return "collection"
+
+    class Meta:
+        unique_together = ('user','collection',)
+        app_label = 'main'
+
+
+
+class Share(models.Model):
+    '''a temporary share / link for a container
+    '''
+    container = models.ForeignKey(Container)
+    expire_date = models.DateTimeField('share expiration date')
+    secret = models.CharField(max_length=250,null=True,blank=True)
+
+    def generate_secret(self):
+        self.secret = str(uuid.uuid4())
+
+    def save(self, *args, **kwargs):
+        if self.secret in ['',None]:
+            self.generate_secret()
+        super(Share, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.container.name
+
+    def get_label(self):
+        return "main"
+
+    class Meta:
+        unique_together = ('expire_date','container',)
+        app_label = 'main'
 
 
 

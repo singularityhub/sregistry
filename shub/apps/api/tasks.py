@@ -29,67 +29,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
+from celery import shared_task, Celery
+from django.conf import settings
+import os
 
-from .demos import (
-    edit_demo,
-    view_demo,
-    collection_demos
-)
-
-from .download import (
-    download_container,
-    download_share,
-    download_recipe
-)
-
-from .collections import (
-    all_collections,
-    collection_commands,
-    delete_collection,
-    edit_collection,
-    get_collection,    
-    make_collection_private,
-    make_collection_public,
-    my_collections,
-    user_collections,
-    view_collection
-)
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shub.settings')
+app = Celery('shub')
+app.config_from_object('django.conf:settings','shub.settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-from .containers import (
-    view_container,
-    get_container,
-    change_freeze_status,
-    container_details,
-    container_tags,
-    delete_container
-)
-
-from .compare import (
-    compare_all,
-    compare_containers_view,
-    subtract_containers_view,
-)
-
-from .labels import (
-    view_label,
-    all_labels,
-    get_label,
-    update_container_labels
-)
-
-from .stars import (
-    star_collection,
-    starred_collections
-)
-
-from .share import (
-    generate_share
-)
-
-from .tags import (
-    remove_tag,
-    add_tag,
-    all_tags,
-    view_tag
-)
+@shared_task
+def expire_share(sid):
+    from shub.apps.main.models import Share
+    try:
+        share = Share.objects.get(id=sid)
+        share.delete()
+    except Share.DoesNotExist:
+        bot.warning("Share %s expired." %sid)

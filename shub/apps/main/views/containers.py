@@ -61,16 +61,6 @@ def get_container(cid):
         return container
 
 
-# get spec
-def get_container_spec(sid,request):
-    keyargs = {'id':sid}
-    try:
-        spec = ContainerSpec.objects.get(**keyargs)
-    except ContainerSpec.DoesNotExist:
-        raise Http404
-    else:
-        return spec
-
 
 ###############################################################################################
 # HELPERS #####################################################################################

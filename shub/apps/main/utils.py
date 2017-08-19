@@ -29,6 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
+from datetime import timedelta
+from django.utils import timezone
 
 from shub.apps.main.models import Container
 from singularity.utils import read_json
@@ -84,3 +86,28 @@ def format_container_name(name,special_characters=None):
     if special_characters == None:
         special_characters = []
     return ''.join(e.lower() for e in name if e.isalnum() or e in special_characters)
+
+
+def validate_share(share):
+    '''compare the share expiration date with the current date
+
+    Parameters
+    ==========
+    share: a shub.apps.main.models.Share object, holding a container,
+           and an expiration date.
+
+    Returns
+    =======
+    True if valid, False if not. If False, will delete share.
+    '''
+    today = timezone.now()
+    if today <= share.expire_date:
+        return True
+    return False
+
+
+def calculate_expiration_date(days=7):
+    '''calculate the expiration date of a share, in days,
+    from the current time.'''
+    today = timezone.now()
+    return today + timedelta(days)

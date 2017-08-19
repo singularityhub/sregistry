@@ -35,7 +35,11 @@ import shub.apps.main.views as views
 
 urlpatterns = [
 
-
+    # Share
+    url(r'^containers/(?P<cid>\d+)/download/share/(?P<secret>.+?)$', views.download_share,name='download_share'),
+    url(r'^containers/(?P<cid>\d+)/share$', views.generate_share,name='generate_share'),
+ 
+    # Containers
     url(r'^tags/(?P<tid>.+?)/view$', views.view_tag,name='view_tag'),
     url(r'^containers/(?P<cid>\d+)/view$', views.view_container,name='view_container'),
     url(r'^containers/(?P<cid>\d+)/$', views.container_details,name='container_details'),
