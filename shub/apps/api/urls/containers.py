@@ -30,7 +30,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from django.conf.urls import url
-from django.core.exceptions import PermissionDenied
+from rest_framework.exceptions import (
+    PermissionDenied,
+    NotFound
+)
 from django.urls import reverse
 from django.http import Http404
 
@@ -141,16 +144,18 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
                                     tag=tag)
 
         if container is None:
-            return status.HTTP_404_NOT_FOUND 
+            raise NotFound(detail="Container Not Found")
 
         if container.frozen is True:
-            return status.HTTP_304_NOT_MODIFIED
+            message = "%s is frozen, delete not allowed." %container.get_short_uri()
+            raise PermissionDenied(detail=message, code=304)
+
 
         delete = delete_container(request,container)
         if delete is True:
             container.delete()       
             return Response(status=status.HTTP_204_NO_CONTENT)
-        raise PermissionDenied("Unauthorized")
+        raise PermissionDenied(detail="Unauthorized")
 
 
     def get(self, request, collection, name, tag=None):

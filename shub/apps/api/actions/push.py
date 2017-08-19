@@ -30,7 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from shub.logger import bot
-from django.core.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import FormParser, MultiPartParser
 from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
@@ -63,7 +63,7 @@ class ContainerPushViewSet(ModelViewSet):
         collection_name=self.request.data.get('collection')
 
         if auth is None:
-            raise PermissionDenied("Authentication Required")
+            raise PermissionDenied(detail="Authentication Required")
 
         timestamp = generate_timestamp()
         payload = "push|%s|%s|%s|%s|" %(collection_name,
@@ -71,9 +71,8 @@ class ContainerPushViewSet(ModelViewSet):
                                         name,
                                         tag)
 
-        bot.debug("Request payload %s" %payload)
         if not validate_request(auth,payload,"push",timestamp):
-            raise PermissionDenied("Unauthorized")
+            raise PermissionDenied(detail="Unauthorized")
 
         create_new=False
 
@@ -86,8 +85,8 @@ class ContainerPushViewSet(ModelViewSet):
         if collection is not None:
             try:
                 container = Container.objects.get(collection=collection,
-                                                  tag=tag,
-                                                  name=name)
+                                                  name=name,
+                                                  tag=tag)
                 if container.frozen is False:
                     create_new = True
             except Container.DoesNotExist:
@@ -99,3 +98,5 @@ class ContainerPushViewSet(ModelViewSet):
                             tag=self.request.data.get('tag','latest'),
                             name=self.request.data.get('name'),
                             metadata=self.request.data.get('metadata'))
+        else:
+            raise PermissionDenied(detail="%s is frozen, push not allowed." %container.get_short_uri())

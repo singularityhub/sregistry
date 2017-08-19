@@ -137,7 +137,6 @@ class Collection(models.Model):
     def __str__(self):
         return self.get_uri()
 
-
     def __unicode__(self):
         return self.get_uri()
 
@@ -236,12 +235,18 @@ class Container(models.Model):
                                  verbose_name="is the container frozen, meaning builds will not be replaced?")
 
     # A container only gets a version when it's frozen, otherwise known by tag
-    def get_uri(self): # shub://username/reponame:branch@tag
-        version = self.tag
-        if self.frozen is True:
-           version = "%s@%s" %(self.tag,self.version)
+    def get_short_uri(self):
         return "%s/%s:%s" %(self.collection.name,
-                            self.name,version)
+                            self.name,
+                            self.tag)
+
+    def get_uri(self): # shub://username/reponame:branch@tag
+        if self.frozen is False:
+            return self.get_short_uri()
+        version = "%s@%s" %(self.tag,self.version)
+        return "%s/%s:%s" %(self.collection.name,
+                            self.name,
+                            version)
 
     def update_secret(self,save=True):
         '''secret exists to make brute force download not possible'''
