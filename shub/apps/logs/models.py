@@ -52,7 +52,7 @@ class APIRequestCount(models.Model):
     path = models.CharField(max_length=200, db_index=True)
     method = models.CharField(max_length=200, db_index=True)
  
-   class Meta:
+    class Meta:
         verbose_name = 'Container Request Counter'
 
     def __str__(self):

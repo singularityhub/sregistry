@@ -4,6 +4,8 @@
 .*
 !/.gitignore
 __pycache__
+*.img
+sregistry
 
 # Other #
 #########
