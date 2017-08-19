@@ -9,7 +9,7 @@
         <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{% block title %}Singularity Hub{% endblock %}</title>
+        <title>{% block title %}Singularity Registry{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="singularity container and workflow management" />
         <meta name="keywords" content="singularity, containers" />
@@ -18,13 +18,13 @@
         <link rel="icon" type="image/ico" href="/static/img/favicon.ico"/>
 
         <!-- Facebook and Twitter integration -->
-        <meta property="og:title" content="singularity-hub"/>
+        <meta property="og:title" content="sregistry: singularity registry"/>
         <meta property="og:image" content=""/>
         <meta property="og:url" content=""/>
-        <meta property="og:site_name" content="Singularity Hub"/>
-        <meta property="og:description" content="singularity container and workflow management"/>
+        <meta property="og:site_name" content="Singularity Registry: {{ REGISTRY_URI }}"/>
+        <meta property="og:description" content="registry and management for singularity images"/>
         <meta name="twitter:title" content="SingularityApp" />
-        <meta name="twitter:image" content="" />
+        <meta name="twitter:image" content="{% static 'img/logo/logo.png' %}" />
         <meta name="twitter:url" content="https://www.twitter.com/SingularityApp" />
         <meta name="twitter:card" content="" />
 
