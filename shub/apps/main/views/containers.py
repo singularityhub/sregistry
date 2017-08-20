@@ -82,7 +82,7 @@ def view_named_container(request,collection,name,tag):
     '''view a specific container based on a collection, container, and tag name'''
     try:
         container = Container.objects.get(collection__name=collection,
-                                          name=container,
+                                          name=name,
                                           tag=tag)
     except Container.DoesNotExist:
         messages.info(request,"Container not found.")
