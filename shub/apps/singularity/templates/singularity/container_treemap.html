@@ -28,7 +28,21 @@ tspan:last-child {
 {% endblock %}
 
 {% block content %}
-    <svg width="960" height="1060"></svg>
+<div class="row">
+    <div class="col-md-8">
+        <h3 style="margin-bottom:0px">Container Sizes (MB)</h3>
+        <small>{{ generation_date }}</small>
+    </div>
+    <div class="col-md-4">
+        <p class="alert alert-info">Registry "{{ REGISTRY_URI }}" has {{ containers_count }} containers across {{ collections_count }} collections. </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <svg width="1400" height="900"></svg>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -80,7 +94,11 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
       .attr("id", function(d) { return "rect-" + d.id; })
       .attr("width", function(d) { return d.x1 - d.x0; })
       .attr("height", function(d) { return d.y1 - d.y0; })
-      .style("fill", function(d) { return color(sum += d.value); });
+      .style("fill", function(d) { return color(sum += d.value); })
+      .on('click', function(d){
+          var container_name = d.id.split('.').slice(-1).pop();
+          document.location = "{{ domain }}/containers/" + container_name;
+       });
 
   cell.append("clipPath")
       .attr("id", function(d) { return "clip-" + d.id; })
@@ -98,7 +116,10 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
 
   cell.append("title")
       .text(function(d) { return d.id + "\n" + format(d.value); });
+
 });
+
+  //rect-collection.dinosaur.avocado.dinosaur/avocado-milkshake
 
 </script>
 {% endblock %}

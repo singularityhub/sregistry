@@ -78,6 +78,19 @@ def view_container(request,cid):
     return redirect('collection_details',cid=container.collection.id)
 
 
+def view_named_container(request,collection,name,tag):
+    '''view a specific container based on a collection, container, and tag name'''
+    try:
+        container = Container.objects.get(collection__name=collection,
+                                          name=container,
+                                          tag=tag)
+    except Container.DoesNotExist:
+        messages.info(request,"Container not found.")
+        return redirect('collections')
+
+    return container_details(request,container.id)
+
+
 # Look at container spec,log,asciicast (details)
 def container_details(request,cid):
     container = get_container(cid)

@@ -81,26 +81,36 @@ def generate_size_data(collections):
         for container in containers:
             if container.name not in data[collection.name]:
                 data[collection.name][container.name] = dict()
-                if 'size_mb' in container.metadata:
-                    data[collection.name][container.name][container.tag] = container.metadata['size_mb']
+            if 'size_mb' in container.metadata:
+                data[collection.name][container.name][container.tag] = container.metadata['size_mb']
     return data
+
+
+
+def get_filtered_collections(request):
+    '''return all collections or only public, given user accessing'''
+    if request.user.is_superuser or request.user.admin is True:
+        collections = Collection.objects.all() 
+    else:
+        collections = Collection.objects.filter(private=False) 
+    return collections
 
 
 def container_treemap(request):
     '''show disk usage with a container treemap.
     '''
+    collections = get_filtered_collections(request)
+    containers = Container.objects.filter(collection__in=collections)
     date = datetime.datetime.now().strftime('%m-%d-%y')
-    context = {"date":date}
+    context = {"generation_date": date,
+               "containers_count": containers.count(),
+               "collections_count": collections.count() }
     return render(request, 'singularity/container_treemap.html', context)
 
 
 
 def container_size_data(request):
-    if request.user.is_superuser or request.user.admin is True:
-        collections = Collection.objects.all() 
-    else:
-        collections = Collection.objects.filter(private=False) 
-
+    collections = get_filtered_collections(request)
     collections = generate_size_data(collections)
     context = {'collections':collections}
 

@@ -58,6 +58,7 @@ from .collections import (
 
 from .containers import (
     view_container,
+    view_named_container,
     get_container,
     change_freeze_status,
     container_details,

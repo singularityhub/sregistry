@@ -2,6 +2,6 @@ id,value{% for collection_name, containers in collections.items %}
 {% if forloop.first %}collection,{% endif %}
 collection.{{ collection_name }},
 {% for container_name,container_items in containers.items %}collection.{{ collection_name }}.{{ container_name }},
-{% for tag_name, container_size in container_items.items %}collection.{{ collection_name }}.{{ container_name }}.{{ tag_name }},{{ container_size }}
+{% for tag_name, container_size in container_items.items %}collection.{{ collection_name }}.{{ container_name }}.{{ collection_name }}/{{ container_name }}:{{ tag_name }},{{ container_size }}
 {% endfor %}
 {% endfor %}{% endfor %}
