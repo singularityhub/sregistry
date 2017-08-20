@@ -50,7 +50,15 @@ var treemap = d3.treemap()
     .round(true)
     .padding(1);
 
-d3.csv("{% url 'container_size_data' %}", function(error, data) {
+d3.csv("{% url 'container_size_data' %}", function(error, raw) {
+  var data = [];
+
+  $.each(raw, function( index, value ) {
+     if (value.id != ''){
+         data.push(value);
+     }
+  });
+
   if (error) throw error;
 
   var sum = 0;

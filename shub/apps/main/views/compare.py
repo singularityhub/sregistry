@@ -56,6 +56,35 @@ import shutil
 # FILE SYSTEM USAGE ###########################################################################
 ###############################################################################################
 
+def generate_size_data(collections):
+    '''generate a datastructure that can be rendered as:
+    id,value
+    flare,
+    flare.analytics,
+    flare.analytics.cluster,
+    flare.analytics.cluster.AgglomerativeCluster,3938
+    flare.analytics.cluster.CommunityStructure,3812
+    flare.analytics.cluster.HierarchicalCluster,6714
+    flare.analytics.cluster.MergeEdge,743
+    flare.analytics.graph,
+    flare.analytics.graph.BetweennessCentrality,3534
+    flare.analytics.graph.LinkDistance,5731
+    flare.analytics.graph.MaxFlowMinCut,7840
+    flare.analytics.graph.ShortestPaths,5914
+    flare.analytics.graph.SpanningTree,3416
+    '''
+    data = dict()
+    for collection in collections:
+        if collection.name not in data:
+            data[collection.name] = {}
+        containers = collection.containers.all()
+        for container in containers:
+            if container.name not in data[collection.name]:
+                data[collection.name][container.name] = dict()
+                if 'size_mb' in container.metadata:
+                    data[collection.name][container.name][container.tag] = container.metadata['size_mb']
+    return data
+
 
 def container_treemap(request):
     '''show disk usage with a container treemap.
@@ -72,6 +101,7 @@ def container_size_data(request):
     else:
         collections = Collection.objects.filter(private=False) 
 
+    collections = generate_size_data(collections)
     context = {'collections':collections}
 
     return render(request, 'singularity/container_size_data.csv', context)
