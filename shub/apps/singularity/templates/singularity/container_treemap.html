@@ -29,12 +29,15 @@ tspan:last-child {
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-4">
         <h3 style="margin-bottom:0px">Container Sizes (MB)</h3>
         <small>{{ generation_date }}</small>
     </div>
     <div class="col-md-4">
-        <p class="alert alert-info">Registry "{{ REGISTRY_URI }}" has {{ containers_count }} containers across {{ collections_count }} collections. </p>
+        <h4 id="container_metrics" style="color:333;margin-top:10px;margin-bottom:0px"></h4>
+    </div>
+    <div class="col-md-4">
+        <p class="alert alert-info">Registry "<span style="font-weight:500">{{ REGISTRY_URI }}</span>" has {{ containers_count }} containers across {{ collections_count }} collections. </p>
     </div>
 </div>
 
@@ -98,7 +101,9 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
       .on('click', function(d){
           var container_name = d.id.split('.').slice(-1).pop();
           document.location = "{{ domain }}/containers/" + container_name;
-       });
+       })
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut);
 
   cell.append("clipPath")
       .attr("id", function(d) { return "clip-" + d.id; })
@@ -118,6 +123,17 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
       .text(function(d) { return d.id + "\n" + format(d.value); });
 
 });
+
+
+      function handleMouseOver(d, i) {  // Add interactivity
+        var container_name = d.id.split('.').slice(-1).pop();
+        $('#container_metrics').text(container_name);
+
+       }
+
+      function handleMouseOut(d, i) {
+            $('#container_metrics').text("");
+      }
 
   //rect-collection.dinosaur.avocado.dinosaur/avocado-milkshake
 
