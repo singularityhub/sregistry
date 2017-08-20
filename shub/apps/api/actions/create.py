@@ -64,6 +64,14 @@ def create_container(sender, instance, **kwargs):
     add_metadata(container,metadata,'test')
     add_metadata(container,metadata,'environment')
 
+    # If exists, add size
+    try:
+        container_size = metadata['labels']['SREGISTRY_SIZE_MB']
+        container.metadata['size_mb'] = container_size
+        container.save()
+    except:
+        pass
+
     # Add labels
     if metadata['labels'] not in [None,'']:
         container = update_container_labels(container,metadata['labels'])
