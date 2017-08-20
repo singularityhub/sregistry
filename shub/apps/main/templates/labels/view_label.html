@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h2>{{ label.key }}: <a href="#">{{ label.value }}</a> <span class="small">label</span></h2>
+        <h2><a href="{% url 'view_label_key' label.key %}">{{ label.key }}</a>:{{ label.value }} > <span class="small">label</span></h2>
 
         {% if label.containers.all|length > 0 %}
             <table>

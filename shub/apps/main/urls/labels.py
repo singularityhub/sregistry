@@ -35,7 +35,9 @@ import shub.apps.main.views as views
 urlpatterns = [
 
 
-    url(r'^labels/(?P<lid>\d+)$', views.view_label,name='view_label'),
+    url(r'^labels/(?P<lid>\d+)$', views.view_label,name='view_label_id'),
+    url(r'^labels/key/(?P<key>.+?)/value/(?P<value>.+?)$', views.view_label_keyval, name='view_label'),
+    url(r'^labels/key/(?P<key>.+?)$', views.view_label_key,name='view_label_key'),
     url(r'^labels$', views.all_labels,name='all_labels'),
 
 ]

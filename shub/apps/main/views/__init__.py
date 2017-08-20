@@ -66,13 +66,14 @@ from .containers import (
 )
 
 from .compare import (
-    compare_all,
-    compare_containers_view,
-    subtract_containers_view,
+    container_treemap,
+    container_size_data
 )
 
 from .labels import (
     view_label,
+    view_label_key,
+    view_label_keyval,
     all_labels,
     get_label,
     update_container_labels

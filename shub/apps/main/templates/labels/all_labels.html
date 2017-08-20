@@ -68,7 +68,7 @@
 
     <div class="list">
         {% for label in labels %}
-        <div class="item"><a href="{% url 'view_label' label.id %}">{{ label.key }}</a></div>
+        <div class="item"><a href="{% url 'view_label_key' label.key %}">{{ label.key }} ({{ label.id__count }})</a></div>
         {% endfor %}
     </div>
 

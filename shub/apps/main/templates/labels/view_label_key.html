@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% block head %}
+{% include "style/search.html" %}
+{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>{{ key }}:<span class="small">label</span></h2>
+
+            <table>
+                {% for label in labels %}
+                 <tr class="{% cycle 'odd' 'even' %}">
+                     <td><strong>{{ forloop.counter }}.</strong></td>
+                     <td><a href="{% url 'view_label' label.key label.value %}">{{ label.value }}</a></td>
+                     <td>
+                         {% for container in label.containers.all %}
+                          <a href="{{ container.get_absolute_url }}">{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}</a><br/>
+                         {% endfor %}
+                     </td>
+                     <td class="right">
+                         <span class="hint">
+                         N = {{ label.containers.count }} <br/>
+                         </span>                         
+                     </td>
+                  </tr>
+                  {% endfor %}
+            </table>
+    </div>
+</div>
+{% endblock %}
