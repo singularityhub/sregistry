@@ -53,7 +53,7 @@
                class="btn btn-sm btn-primary">Generate Link</button>
     <p id="share_result" 
        style="display:none;"
-       class="alert alert-info"></p>
+       class="well"></p>
     </div>
 </div>
 
@@ -375,6 +375,7 @@ $(document).ready(function(){
     $("#share_container").click(function(){
         $("#generate_share").show();
         $("#share_prompt").text("For how many days should this temporary download link be active?");
+        $('#expire_days').show();
         $("#share_box").toggle();
     })
 
@@ -388,11 +389,12 @@ $(document).ready(function(){
 
                 success : function(json) {
                     if (json['status'] == "success"){
-                        var share_link = '<a href="' + json['link'] + '">' + json['link'] + '</a>';
+                        var share_link = '<a href="{{ domain }}' + json['link'] + '">{{ domain }}' + json['link'] + '</a>';
                         var days = json['days'];
                         var expire = json['expire'];
                         var message = "This link is valid for " + days + " days, and will expire on " + expire;
                         $("#generate_share").hide();
+                        $('#expire_days').hide();
                         $("#share_prompt").text(message);
                         $("#share_result").append(share_link)
                         $("#share_result").show()
