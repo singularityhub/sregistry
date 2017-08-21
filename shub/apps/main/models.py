@@ -245,6 +245,15 @@ class Container(models.Model):
             return self.image.datafile.path
         return None
 
+    def get_download_name(self):
+        extension = "img"
+        image_path = self.get_image_path()
+        if image_path is not None:
+            if image_path.endswith('gz'):
+                extension = "img.gz"
+        return "%s.%s" %(self.get_uri().replace('/','-'), extension)
+
+
     def get_download_url(self):
         if self.image not in [None,""]:
             return self.image.datafile.file
@@ -373,4 +382,4 @@ class Label(models.Model):
         app_label = 'main'
         unique_together =  (("key","value"),)
 
-#post_delete.connect(delete_imagefile, sender=Container)
+post_delete.connect(delete_imagefile, sender=Container)

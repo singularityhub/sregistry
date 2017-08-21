@@ -52,7 +52,7 @@ span.even { background: rgba(91, 192, 222, 0.32); }
     <!-- Navigation to different groups of collections -->
     <div class="col-md-12">
         <div class="content"  style="padding-bottom:20px">
-                <a href="{% url 'starred_collections' %}"><button class="btn btn-sm btn-default">Top Collections</button></a> 
+                <a href="{% url 'collection_stars' %}"><button class="btn btn-sm btn-default">Top Collections</button></a> 
                 {% if page_title == "Container Collections" %}
                 <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default" disabled>All Collections</button></a>
                 {% else %}
