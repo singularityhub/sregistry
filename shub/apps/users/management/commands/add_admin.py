@@ -39,7 +39,7 @@ from shub.logger import bot
 import re
 
 class Command(BaseCommand):
-    '''remove superuser will remove admin privs for a singularity 
+    '''add admin will add admin and manager privs singularity 
     registry. The super user is an admin that can build, delete,
     and manage images
     '''
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         # Positional arguments
         parser.add_argument('--username', dest='username', default=None, type=str)
 
-    help = "Removes superuser priviledges for the registry."
+    help = "Generates an admin for the registry."
     def handle(self,*args, **options):
         if options['username'] is None:
             raise CommandError("Please provide a username with --username")
@@ -59,9 +59,10 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             raise CommandError("This username does not exist.")
 
-        if user.is_superuser is False:
-            raise CommandError("This user already is not a superuser.")        
+        if user.admin is True: #and user.manager is True:
+            raise CommandError("This user can already manage and build.")        
 
-        user.is_superuser = False
-        bot.debug("%s is no longer a superuser." %(user.username))
+        user.admin = True
+        #user.manager = True
         user.save()
+        bot.debug("%s can now manage and build." %(user.username))

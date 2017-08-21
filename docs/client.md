@@ -137,3 +137,5 @@ sregistry labels --value vanessasaur
 # A specific key and value
 sregistry labels --key maintainer --value vanessasaur
 ```
+
+That's all for now folks! We will next be writing up interaction with the registry with Singularity proper, and other details like visualizations, sharing, views, labels, and topic tags.

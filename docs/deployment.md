@@ -174,6 +174,25 @@ cp $INSTALL_ROOT/sregistry/scripts/nginx-index.html /var/www/html/index.html
 rm /var/www/html/index.nginx-debian.html
 ```
 
+If you don't care about user experience during updates and server downtime, you can just ignore this.
+
+### Storage
+The containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. By default, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](docker-compose.yml) that looks something like this:
+
+
+```
+    - ./static:/var/www/static
+    - ./images:/var/www/images
+```
+
+The line reads specifically "map `./images` (the folder "images" in the base directory sregistry on the host) to (`:`) the folder `/var/www/images` (inside the container). This means a few important things:
+
+ - if you container goes away and dies, your image files do not. If the folder wasn't mapped, this wouldn't be the case.
+ - when the container is running, since Docker is run as sudo, you won't be able to interact with the files without sudo either.
+
+Thus, you are free to test different configurations of mounting this folder. If you find a more reasonable default than is set, please [let us know!](https://www.github.com/singularityhub/sregistry/issues).
+
+
 ### SSL
 Getting https certificates is really annoying, and getting `dhparams.pem` takes forever. But after the domain is obtained, it's important to do. Again, remember that we are working on the host, and we have an nginx server running. You should follow the instructions (and I do this manually) in [generate_cert.sh](../scripts/generate_cert.sh). It basically comes down to:
 

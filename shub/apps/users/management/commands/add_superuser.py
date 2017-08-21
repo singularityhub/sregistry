@@ -47,7 +47,7 @@ class Command(BaseCommand):
         # Positional arguments
         parser.add_argument('--username', dest='username', default=None, type=str)
 
-    help = "Generates a superuser for the registry. Only for admins."
+    help = "Generates a superuser for the registry."
     def handle(self,*args, **options):
         if options['username'] is None:
             raise CommandError("Please provide a username with --username")
@@ -59,10 +59,9 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             raise CommandError("This username does not exist.")
 
-        if user.admin is True and user.manager is True:
-            raise CommandError("This user can already manage and build.")        
+        if user.is_superuser is True:
+            raise CommandError("This user is already a superuser.")        
 
-        user.admin = True
-        user.manager = True
+        user.is_superuser = True
         user.save()
-        bot.debug("%s can now manage and build." %(user.username))
+        bot.debug("%s is now a superuser." %(user.username))

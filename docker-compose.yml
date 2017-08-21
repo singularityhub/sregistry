@@ -7,6 +7,7 @@ uwsgi:
   volumes:
     - .:/code
     - ./static:/var/www/static
+    - ./images:/var/www/images
   links:
     - redis
     - db
