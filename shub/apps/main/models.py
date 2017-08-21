@@ -114,7 +114,6 @@ class Collection(models.Model):
     modify_date = models.DateTimeField('date modified', auto_now=True)
     secret = models.CharField(max_length=200, null=False, verbose_name="Collection secret for webhook")
     metadata = JSONField(default={}) # open field for metadata about a collection
-    tags = TaggableManager()
 
     # Users
     owner = models.ForeignKey('users.User', blank=True, default=None, null=True)
@@ -211,6 +210,7 @@ class Container(models.Model):
     tag = models.CharField(max_length=250,null=False,blank=False,default="latest")
     secret = models.CharField(max_length=250,null=True,blank=True)
     version = models.CharField(max_length=250,null=True,blank=True)
+    tags = TaggableManager()
     frozen = models.BooleanField(choices=FROZEN_CHOICES,
                                  default=False,
                                  verbose_name="is the container frozen, meaning builds will not be replaced?")
@@ -260,7 +260,6 @@ class Container(models.Model):
 
     def __unicode__(self):
         return self.get_uri()
-
 
 
     class Meta:

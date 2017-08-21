@@ -39,8 +39,8 @@ urlpatterns = [
     url(r'^tags$', views.all_tags,name='all_tags'),
     url(r'^collections/stars$', views.starred_collections,name='starred_collections'),
     url(r'^collections/(?P<cid>\d+)/favorite$', views.star_collection,name='favorite'),
-    url(r'^collections/(?P<cid>\d+)/tags/add$', views.add_tag,name='add_tag'),
-    url(r'^collections/(?P<cid>\d+)/tags/remove$', views.remove_tag,name='remove_tag'),
+    url(r'^tags/containers/(?P<cid>\d+)/add$', views.add_tag,name='add_tag'),
+    url(r'^tags/containers/(?P<cid>\d+)/remove$', views.remove_tag,name='remove_tag'),
 
 ]
 

@@ -40,7 +40,7 @@ def collection_query(q):
     return Collection.objects.filter(
                 Q(name__contains=q) |
                 Q(containers__name__contains=q) |
-                Q(tags__name__contains=q) |
+                Q(containers__tags__name__contains=q) |
                 Q(containers__tag__contains=q)).distinct()
 
 
@@ -69,7 +69,7 @@ def container_query(q, across_collections=1):
         return Collection.objects.filter(
                     Q(name__contains=q['image']) |
                     Q(collection__name__contains=q['collection']) |
-                    Q(tag__contains=q['tag'])).distinct()
+                    Q(containers_tags__contains=q['tag'])).distinct()
 
     # Query a particular collection for image name
     return Collection.objects.filter(

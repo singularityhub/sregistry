@@ -1,5 +1,4 @@
 {% extends "base/base.html" %}
-{% load crispy_forms_tags %}
 {% load staticfiles %}
 
 {% block css %}
@@ -13,13 +12,7 @@
   padding-left: 7px !important;
   min-width:20px !important;
 }
-#collection_tags {
-    float:right;
-    background:white; 
-    border-radius:10px;
-    border:none;
-    margin-bottom:50px
-}
+
 #star {
     padding-left:25px; 
     float:right; 
@@ -28,8 +21,6 @@
     cursor:pointer;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="{% static "css/tagit.theme.css" %}">
-<link href="{% static "css/jquery.tagit.css"%}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -39,34 +30,19 @@
 <div class="row" style="margin-top:30px">
 
     <!-- Container collection meta -->
-    <div class="col-md-4">
+    <div class="col-md-10">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
-    </div>
-    <div class="col-md-6">
-
-        <div class="card">
-            <div class="header">
-
-           {% if collection.tags.count > 0 %}
-           <ul id="collection_tags">
-           {% for tag in collection.tags.all %}
-               <li name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</li>
-           {% endfor %}
-           </ul>
-           {% endif %}
-            </div>
-       </div>   
     </div>
     <div class="col-md-2">
 
-               <!--Star Rating-->
-               {% if user.is_authenticated %}
-                   {% if star %}
-                   <i id="star" class="fa fa-star"></i>
-                   {% else %}
-                   <i id="star" class="fa fa-star-o"></i>
-                   {% endif %}
-               {% endif %}
+        <!--Star Rating-->
+        {% if user.is_authenticated %}
+            {% if star %}
+            <i id="star" class="fa fa-star"></i>
+            {% else %}
+            <i id="star" class="fa fa-star-o"></i>
+             {% endif %}
+        {% endif %}
 
     </div>
 </div>
@@ -245,23 +221,8 @@ $(document).ready(function(){
     $('.table-header').css('width',$("table").css('width'))
     $('.paginate_button').remove()
 
-    {% if collection.tags.count > 0 %}
-    $("#collection_tags").tagit({
-        removeConfirmation:true,
-        {% if edit_permission %}
-        afterTagRemoved: function(event, ui) {
-            removeTag(ui.tagLabel);
-        },
-        afterTagAdded: function(event, ui) {
-            addTag(ui.tagLabel);
-        }
-        {% else %}
-        readOnly:true
-        {% endif %}
-    });
-    {% endif %}
 
-        {% if user.is_authenticated %}
+   {% if user.is_authenticated %}
         console.log('Hello {{ user.username }}!')
 
         $("#star").click(function(){
@@ -290,42 +251,8 @@ $(document).ready(function(){
                 }
              });
         }
-        {% endif %}
+    {% endif %}
 
-
-        {% if edit_permission %}
-        function addTag(tag) {
-
-            $.ajax({
-                url : "{% url 'add_tag' collection.id %}",
-                type : "POST",
-                data: { tag : tag },
-
-                success : function(json) {
-                    console.log("Woohoo, tagalicious!");
-                },
-                error : function(xhr,errmsg,err) {
-                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                }
-             });
-        }
-
-        function removeTag(tag) {
-
-            $.ajax({
-                url : "{% url 'remove_tag' collection.id %}",
-                type : "POST",
-                data: { tag : tag },
-
-                success : function(json) {
-                    console.log(json);
-                },
-                error : function(xhr,errmsg,err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
-                }
-             });
-        }
-     {% endif %}
 
     // Check with the user before deleting a container
     $(".delete_container").click(function(){

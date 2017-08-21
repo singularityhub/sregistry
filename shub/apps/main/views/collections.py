@@ -138,7 +138,7 @@ def view_collection(request,cid):
     context = {"collection":collection,
                "containers":containers,
                "edit_permission":edit_permission,
-               "star":has_star }
+               "star":has_star}
     return render(request, 'collections/view_collection.html', context)
 
 

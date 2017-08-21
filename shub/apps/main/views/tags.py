@@ -31,8 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from shub.apps.main.models import (
     Container, 
-    Collection,
-    Star
+    Collection
 )
 
 from taggit.models import Tag
@@ -53,7 +52,7 @@ import os
 import re
 import uuid
 
-from .collections import get_collection
+from .containers import get_container
 
 
 
@@ -95,9 +94,9 @@ def view_tag(request,tid):
         messages.info(request,"This tag does not exist.")
         return redirect('all_tags')
 
-    collections = Collection.objects.filter(tags__name=tag,
-                                            private=False)
-    context = {"collections":collections,
+    containers = Container.objects.filter(tags__name=tag,
+                                          collection__private=False)
+    context = {"containers":containers,
                "tag":tag }
 
     return render(request, 'tags/view_tag.html', context)
@@ -111,37 +110,44 @@ def view_tag(request,tid):
 def add_tag(request,cid):
     '''manually add a tag to the collection
     '''
-    collection = get_collection(cid)
-    edit_permission = collection.has_edit_permission(request)
+    container = get_container(cid)
+    edit_permission = container.collection.has_edit_permission(request)
 
     if edit_permission and request.method == "POST":
         tag = request.POST.get("tag",None)
         if tag is not None:
-            collection.tags.add(tag.lower())
-            collection.save()
-            message = "Tag %s added to collection." %(tag)
+            container.tags.add(tag.lower())
+            container.save()
+            message = "Tag %s added to container." %(tag)
     else:
         message = "You do not have permissions to perform this operation."
     return JsonResponse({"message":message})
+
 
 
 @login_required
 def remove_tag(request,cid):
     '''remove a tag from a collection
     '''
-    collection = get_collection(cid)
-    edit_permission = collection.has_edit_permission(request)
+    container = get_container(cid)
+    edit_permission = container.collection.has_edit_permission(request)
 
     if edit_permission and request.method == "POST":
-        tag = request.POST.get("tag",None)
+        tag = request.POST.get("tag", None)
         if tag is not None:
-            tags = [x for x in collection.tags.all() if x.name==tag.lower()]
+            tags = [x for x in container.tags.all() if x.name==tag.lower()]
             if len(tags) > 0:
-                collection.tags.remove(tag)
-                collection.save()
-                message = "Tag %s removed from collection." %(tag)
+                container.tags.remove(tag)
+                container.save()
+
+                # Check if remaining containers have tag
+                tag = Tag.objects.get(name=tag.lower())
+                if Container.objects.filter(tags__name=tag.lower()).count() == 0:
+                    tag.delete()
+
+                message = "Tag %s removed from continer." %(tag)
             else:
-                message = "This tag is not present in this collection."    
+                message = "This tag is not present for this container"  
     else:
         message = "You do not have permissions to perform this operation."
     return JsonResponse({"message":message})

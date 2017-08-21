@@ -4,7 +4,7 @@
                         {% if results|length %}
                         <table>
                             <tr class="even">
-                                <td colspan="5" class="right">
+                                <td colspan="4" class="right">
                                     <strong>Found {{ results|length }} collections</strong>
                                 </td>
                             </tr>
@@ -18,22 +18,6 @@
                                 </td>
                                 <td>
                                   <a href="{% url 'collection_details' collection.id %}">
-                                      {% if collection.tags.count > 0 %}
-                                          {% for tag in collection.tags.all %}
-                                          <a href="{% url 'view_tag' tag.id %}">
-                                              <button style="margin-top:15px" class="btn btn-default btn-xs">
-                                                            {{ tag.name }}</button></a>
-                                          {% endfor %}
-                                      {% endif %}
-                                </td>
-                                <td>
-                                    {% for container in collection.containers.all %}
-                                        {% for label in container.labels %}
-                                        <a href="{% url 'view_label' label.id %}">
-                                              <button class="btn btn-default btn-xs">
-                                                            {{ label.key }}</button></a>
-                                         {% endfor %}
-                                    {% endfor %}
                                 </td>
                                 <td class="right">
                                     <span class="hint">

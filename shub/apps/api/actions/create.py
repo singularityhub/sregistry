@@ -72,6 +72,14 @@ def create_container(sender, instance, **kwargs):
     except:
         pass
 
+    # If exists, add From line as tag
+    try:
+        container_from = metadata['labels']['SREGISTRY_FROM']
+        container.tags.add(container_from)
+        container.save()
+    except:
+        pass
+
     # Add labels
     if metadata['labels'] not in [None,'']:
         container = update_container_labels(container,metadata['labels'])

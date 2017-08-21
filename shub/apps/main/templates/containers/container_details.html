@@ -14,6 +14,15 @@
   margin-bottom:2px;
 }
 
+#container_tags {
+    float:right;
+    background:white; 
+    border-radius:10px;
+    border:none;
+    margin-bottom:50px
+}
+
+
 #id_spec { 
      position: absolute;
      height:800px;
@@ -23,6 +32,8 @@
      left: 0;
 }
 </style>
+<link rel="stylesheet" type="text/css" href="{% static "css/tagit.theme.css" %}">
+<link href="{% static "css/jquery.tagit.css"%}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -47,7 +58,6 @@
 </div>
 
 <div class="row">
-
     <div class="col-md-12">
         <div class="card" style="padding:20px">
             <div class="header">
@@ -58,7 +68,16 @@
                      <span class="icon-controls" style="position:relative;top:-70px">
                      </span>
                 </h3>
+
+                {% if container.tags.count > 0 %}
+                <ul id="container_tags">
+                     {% for tag in container.tags.all %}
+                     <li name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</li>
+                     {% endfor %}
+                </ul>
+                {% endif %}
             </div>
+ 
             <div class="content"  style="padding-bottom:20px">
 
                 {% if edit_permission %}
@@ -249,6 +268,8 @@
 <script src="{% static "js/ace.js"%}" type="text/javascript" charset="utf-8"></script>
 <script src="{% static "js/clipboard.min.js"%}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script src="{% static "js/jquery-ui.min.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/tag-it.min.js"%}" type="text/javascript" charset="utf-8"></script>
 <script>
 
 function make_editor(divname) {
@@ -291,6 +312,58 @@ $(document).ready(function(){
     {% if container.metadata.environment %}    
     make_editor("environment")
     {% endif %}    
+
+
+    // Add topic tags to container
+    $("#container_tags").tagit({
+        removeConfirmation:true,
+        {% if edit_permission %}
+        afterTagRemoved: function(event, ui) {
+            removeTag(ui.tagLabel);
+        },
+        afterTagAdded: function(event, ui) {
+            addTag(ui.tagLabel);
+        }
+        {% else %}
+        readOnly:true
+        {% endif %}
+    });
+
+
+        {% if edit_permission %}
+        function addTag(tag) {
+
+            $.ajax({
+                url : "{% url 'add_tag' container.id %}",
+                type : "POST",
+                data: { tag : tag },
+
+                success : function(json) {
+                    console.log("Woohoo, tagalicious!");
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+             });
+        }
+
+        function removeTag(tag) {
+
+            $.ajax({
+                url : "{% url 'remove_tag' container.id %}",
+                type : "POST",
+                data: { tag : tag },
+
+                success : function(json) {
+                    console.log(json);
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+             });
+        }
+     {% endif %}
+
 
     // Load highlighter for highlight js (log)
     hljs.initHighlightingOnLoad();
