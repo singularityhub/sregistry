@@ -18,7 +18,7 @@ function populate_box(div,contents){
     var contents = JSON.parse(contents);
     $(div).empty();
     $.each(contents,function(container_id,container){      
-        var new_box = '<div class="input-group container-box"><span class="input-group-addon"><input class="container-input" type="checkbox" aria-label="' + container_id +'"></span><div class="container-button">'+ container +'</div></div>'
+        var new_box = '<div class="input-group container-box"><span class="input-group-addon"><input class="container-input" type="checkbox" aria-label="' + container_id +'"></span><div class="container-button"><a href="{{ domain }}/containers/' + container_id + '">'+ container +'</a></div></div>'
         $(div).append(new_box);
     })
 }
