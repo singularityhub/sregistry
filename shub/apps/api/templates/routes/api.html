@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+        <div id="fh5co-team">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1">
+                        <div class="row">
+                            <h2 class="section-lead text-center">API</h2>
+                            <p class="text-center">Application Programming Interface (under development)</p>
+
+                            <em>The Singularity Hub RESTful API</em> provides programmatic access to public containers. You can use this interface to explore the data, and we recommend our command line client for deploying containers (under development).</p>
+
+                            <div class="panes">
+                                <div class="pane">
+                                    <div>
+                                        <strong>Sitemap</strong> <a href="{% url 'sitemap' %}" target="_blank">{{ domain }}/sitemap.xml</a><br>
+                                        <strong>Containers</strong> <a href="/api/containers" target="_blank">{{ domain }}/api/containers</a><br>
+                                        <strong>Collections</strong> <a href="/api/collections" target="_blank">{{ domain }}/api/collections</a><br>
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>     
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
