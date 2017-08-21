@@ -40,22 +40,25 @@
 
 {% include "messages/message.html" %}
 
-<div id="fh5co-portfolio">
+<div class="row" style="margin-top:20px; display:none" id="share_box">
 
-<div class="row" style="margin:20px; display:none" id="share_box">
-    <p>
-       <span class="well" id="share_prompt">For how many days should this temporary download link be active?</span> 
+    <div class="col-md-7" style="margin-bottom:30px; margin-left:20px;">
+       <span id="share_prompt">For how many days should this temporary download link be active?</span> 
        <span id="expire_days" 
-             style="padding:19px;margin-right:15px";
              contenteditable="true" 
+             style="padding:10px; margin-right:10px;"
              class="alert alert-info">7</span> days.
-       <button id="generate_share" 
-               class="btn btn-xs btn-primary"
-               style="margin-top: 15px; margin-left: 20px; padding:20px">Generate Link</button>
+       <button id="generate_share"
+               style="margin-left:30px" 
+               class="btn btn-sm btn-primary">Generate Link</button>
     <p id="share_result" 
-       style="display:none; max-width:640px" 
+       style="display:none;"
        class="alert alert-info"></p>
+    </div>
 </div>
+
+
+<div id="fh5co-portfolio">
 
 <div class="row">
     <div class="col-md-12">
