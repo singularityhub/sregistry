@@ -82,7 +82,8 @@ from .labels import (
 
 from .stars import (
     star_collection,
-    starred_collections
+    collection_stars,
+    collection_downloads
 )
 
 from .share import (

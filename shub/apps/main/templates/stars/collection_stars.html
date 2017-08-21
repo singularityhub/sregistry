@@ -16,7 +16,7 @@
             <div class="header" style="padding-bottom:10px">
                    <h3 class="title">
                    <img src="{% static 'img/robot1.png' %}" width="80px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
-                   {{ page_title }}</h3>
+                   Star Collections</h3>
             </div>
         </div>    
     </div>
@@ -25,13 +25,12 @@
 <!-- Containers! -->
 <div class="row">
     <div class="col-md-12">
-        <p>The robots have some favorites. Container collections are ranked based on the number of stars, then downloads.</p>
+        <p>The robots have some favorites. Container collections are ranked based on the number of stars.</p>
     </div>
     <div class="col-md-12">
         <div class="content"  style="padding-bottom:20px">
             <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default">All Collections</button></a>
-            <a href="#stars"><button class="btn btn-sm btn-default">Favorites</button></a>
-            <a href="#favorites"><button class="btn btn-sm btn-default">Downloads</button></a>
+            <a href="{% url 'collection_downloads' %}"><button class="btn btn-sm btn-default">Top Downloads</button></a>
         </div>
     </div>
 </div>
@@ -40,7 +39,6 @@
 <div id="stars" class="row" style="padding-top:20px;">
 
     <div class="col-md-12" class="table card material-table mdl-data-table--selectable">
-        <h2>Favorites</h2>
         <table id="datatable" class="table">
         <thead>
             <tr>
@@ -67,41 +65,6 @@
 {% else %}
 <div id="stars" class="row" style="padding-top:20px;">
     <p class="alert alert-info">We don't have any starred collections yet! What are you waiting for? <a href="{% url 'collections' %}">Star away</a>!</p>
-</div>
-{% endif %}
-
-
-{% if favorites %}
-<div id ="favorites" class="row" style="padding-top:50px;">
-
-    <div class="col-md-12" class="table card material-table mdl-data-table--selectable">
-        <h2>Downloads</h2>
-        <table id="datatable" class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Containers</th>
-                <th>Last Modified</th>
-                <th><i class="fa fa-2x fa-download" 
-                       style="color:gold"></i></th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for favorite in favorites %}
-            <tr>
-               <td><a href="{% url 'collection_details' favorite.collection.id %}">{{ favorite.collection.name }}</a></td>
-               <td>{{ favorite.collection.containers.count }}</td>
-               <td>{{ favorite.collection.modify_date|date:"Y-m-d"}}</td>
-               <td>{{ favorite.count }}</td>
-             </tr>
-        {% endfor %}
-        </tbody>
-        </table>
-    </div>
-</div>
-{% else %}
-<div id="favorites" class="row" style="padding-top:20px;">
-    <p class="alert alert-info">Nobody has pulled any containers yet :(</p>
 </div>
 {% endif %}
 
