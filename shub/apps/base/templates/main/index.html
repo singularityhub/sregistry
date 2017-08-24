@@ -7,9 +7,9 @@
 <div class="fh5co-intro text-center">
     <div class="container">
         <div class="row">
-            <div style="width:750px" class="col-md-8 col-md-offset-2">
-                <h1 class="intro-lead" style="font-weight:500">Make containers, run, done.</h1>
-                <p class="">A collaboration between <a href="https://srcc.stanford.edu/">Stanford University</a> and <a href="http://singularity.lbl.gov/" target="_blank"> SingularityLLC</a></p>
+            <div class="col-md-12">
+                <h1 class="intro-lead" style="font-weight:500">{% if REGISTRY_NAME %}{{ REGISTRY_NAME }}{% else %}Make containers, run, done.{% endif %}</h1>
+                <p class="">A Registry for <a href="http://singularity.lbl.gov/" target="_blank"> Singularity</a> containers.</p>
             </div>
         </div>
     </div>
@@ -34,40 +34,45 @@
     </div>
 </div>
 
+<!-- Visualize Containers -->
+<div class="fh5co-portfolio-item fh5co-img-right">
+    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/robot_vision.png); background-size: 350px 350px;"></div>
+    <div class="fh5co-portfolio-description">
+        <h2>Visualize your containers</h2>
+        <p>The registry provides a summary view for comparison of its containers.</p>
+        <p><a href="{% url 'container_treemap' %}" 
+              target="_blank"
+              class="btn btn-primary">See the Registry</a></p>
+    </div>
+</div>
+
+<!-- Contact -->
+<div class="fh5co-portfolio-item ">
+    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/reproducible_robots.png); background-size: 370px 250px;"></div>
+    <div class="fh5co-portfolio-description">
+        <h2>Request a Build</h2>
+        <p>Want to have your container served by the registry {{ REGISTRY_URI }}?
+        {% if HELP_CONTACT_EMAIL %}
+        contact <a href="mailto:{{ HELP_CONTACT_EMAIL }}">{{ HELP_CONTACT_EMAIL }}</a>.
+        {% endif %} {% if HELP_INSTITUTION_SITE %}Learn more at <a href="{{ HELP_INSTITUTION_SITE }}">{{ HELP_INSTITUTION_SITE }}</a>{% endif %}
+        </p>
+        <p><a href="mailto:{{ HELP_CONTACT_EMAIL }}" 
+              class="btn btn-primary">Contact {{ REGISTRY_URI }}</a></p>
+    </div>
+</div>
+
 <!-- Deploy an Analysis -->
 <div class="fh5co-portfolio-item fh5co-img-right">
     <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/hang10_robot.png); background-size: 300px 300px;"></div>
     <div class="fh5co-portfolio-description">
         <h2>Deploy an Analysis</h2>
-        <p>Containers built with Singularity Hub are immediately programatically accessible, so you can access them with our API to run custom analysis pipelines in your environment of choice.</p>
+        <p>Containers provided by a Singularity Registry are immediately programatically accessible with the Singularity software, so you can access them to run custom analysis pipelines in your environment of choice.</p>
         <p><a href="https://github.com/singularityhub/singularityhub.github.io/wiki/Deploy" 
               target="_blank" 
               class="btn btn-primary">Deploy an Analysis</a></p>
     </div>
 </div>
 
-<!-- Visualize your results -->
-<div class="fh5co-portfolio-item fh5co-img-right">
-    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/robot_vision.png); background-size: 350px 350px;"></div>
-    <div class="fh5co-portfolio-description">
-        <h2>Visualize your containers</h2>
-        <p>We provide simple views for seeing inside of your containers, and making comparisons between containers.</p>
-        <p><a href="https://github.com/singularityhub/singularityhub.github.io/wiki/Visualize-your-Container" 
-              target="_blank"
-              class="btn btn-primary">Visualization Templates</a></p>
-    </div>
-</div>
-
-<!-- Reproducible Results -->
-<div class="fh5co-portfolio-item ">
-    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/reproducible_robots.png); background-size: 370px 250px;"></div>
-    <div class="fh5co-portfolio-description">
-        <h2>Reproducible Results</h2>
-        <p>Your finished containers can be immediately deployed, reproduced by anyone, and shared via social media.</p>
-        <p><a href="https://github.com/singularityhub/singularityhub.github.io/wiki/Share-Containers" 
-              class="btn btn-primary">Share your containers</a></p>
-    </div>
-</div>
 
 </div>
 {% endblock %}
