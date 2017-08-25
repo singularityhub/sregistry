@@ -1,11 +1,6 @@
 # Singularity Pull
 
-<script src="assets/js/asciinema-player.js"></script>
-<link rel="stylesheet" href="assets/css/asciinema-player.css"/>
-
-Support for Singularity Registry pull via the Singularity software was added to the development branch in a [recent pull request](https://github.com/singularityware/singularity/pull/889), and will be in the release of Singularity 2.4.
-
-<asciinema-player src="assets/asciicast/singularity-registry.json" poster="data:text/plain,Singularity Registry Pull with Singularity" title="Registry pull with Singularity" author="vsochat@stanford.edu" cols="80" rows="40" speed="2.0" theme="asciinema"></asciinema-player>
+Support for Singularity Registry pull via the Singularity software was added to the development branch in a [recent pull request](https://github.com/singularityware/singularity/pull/889), and will be in the release of Singularity 2.4 [demo](https://asciinema.org/a/134694?speed=3).
 
 ## Install
 
