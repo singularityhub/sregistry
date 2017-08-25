@@ -6,15 +6,19 @@ Singularity Registry is a Dockerized web application that an institution or indi
 <br>
 You can log in via the social backends that you've configured, in this case, the default is Twitter because it has the easiest setup:
 <br>
+
 ![assets/img/login.png](assets/img/login.png)
 
 <br>
 And your registry "About" page is specific to your group, meaning a customized contact email and help link:
 <br>
+
 ![assets/img/about.png](assets/img/about.png)
+
 <br>
 And you can quickly glimpse at the names, links, and relative sizes for all containers in the registry:
 <br>
+
 ![assets/img/sizes.png](assets/img/sizes.png)
 Enough screen shots! Let's get familiar first with some of the basics.
 
@@ -55,6 +59,7 @@ singularity pull shub://127.0.0.1/science/rocks:latest # localhost
 ```
 
 You can also generate an expiring link for a user to download the image equivalently:
+<br>
 
 ![assets/img/share.png](assets/img/share.png)
 
@@ -69,15 +74,19 @@ The registry refers to this entire application. When you set up your registry, y
 ### collections
 Each container image (eg, `shub://fishman/snacks`) is actually a set of images called a `collection`. This is the view looking at all collections in a registry:
 
+<br>
 ![assets/img/collection.png](assets/img/collection.png)
 
+<br>
 Within a collection you might have different tags or versions for images. For example:
 
  - `milkshake/banana:pudding`
  - `milkshake/chocolate:pudding`
  - `milkshake/vanilla:pudding`
 
+<br>
 ![assets/img/containers.png](assets/img/containers.png)
+<br>
 
 All of these images are derivations of `milkshake`, and so we find them in the same collection. I chose above to change the name of the container and maintain the same tag, you could of course have more granular detail, different versions of the same container:
 
@@ -97,37 +106,36 @@ MAINTAINER vanessasaur
 ```
 
 The registry automatically parses these labels, and makes them searchable for the user.
-
+<br>
 ![assets/img/labels.png](assets/img/labels.png)
-
+<br>
 When you investiage an individual label, you can see all containers in the registry that have it! For example, here I reveal that my testing images are in fact the same image named differently, or at least they have two unique sizes:
-
+<br>
 ![assets/img/label_single.png](assets/img/label_single.png)
-
 
 ### Topic Tags
 
 Topic tags are a way for users to (after build, within the Registry) add "topic words" to describe containers. They are searchable in the same way that labels are:
-
+<br>
 ![assets/img/topic_tags.png](assets/img/topic_tags.png)
-
+<br>
 While a label may be something relevant to the build environment, a topic tag is more something like "biology" or the operating system. For example, if you look at the single container view, the Singularity Registry automatically parses the "From" statement to create a topic for each operating system type:
-
+<br>
 ![assets/img/single_tag.png](assets/img/single_tag.png)
-
+<br>
 Notably, if you are logged in, you can dynamically click and write in a new tag for the container, and it is automatically saved.
 
 
 ## Favorites
 Do you have a favorite collection? You can star it! Each Singularity Registry keeps track of the number of downloads (pull) of the containers, along with stars! Here we see the number of stars for our small registry:
-
+<br>
 ![assets/img/stars.png](assets/img/stars.png)
-
+<br>
 
 and equally, container downloads:
-
+<br>
 ![assets/img/downloads.png](assets/img/downloads.png)
-
+<br>
 If there is other metadata you would like to see about usage, please let me know.
 
 ## Background
