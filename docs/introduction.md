@@ -1,22 +1,21 @@
 # Introduction
-Singularity Registry is a Dockerized web application that an institution or individual can deploy to organize and manage Singularity images. After you [deploy](deployment.md) and [setup](setup.md) your registry, you are welcomed with the home screen. In this case, our institution is called "Tacosaurus Computer Center":
-
+Singularity Registry is a Dockerized web application that an institution or individual can deploy to organize and manage Singularity images. After you [deploy](deployment.md) and [setup](setup.md) your registry, you are welcomed with the home screen. In this case, our institution is called "Tacosaurus Computing Center":
+<br>
 ![assets/img/registry-home.png](assets/img/registry-home.png)
 
-
+<br>
 You can log in via the social backends that you've configured, in this case, the default is Twitter because it has the easiest setup:
-
+<br>
 ![assets/img/login.png](assets/img/login.png)
 
-
+<br>
 And your registry "About" page is specific to your group, meaning a customized contact email and help link:
-
+<br>
 ![assets/img/about.png](assets/img/about.png)
-
+<br>
 And you can quickly glimpse at the names, links, and relative sizes for all containers in the registry:
-
+<br>
 ![assets/img/sizes.png](assets/img/sizes.png)
-
 Enough screen shots! Let's get familiar first with some of the basics.
 
 
