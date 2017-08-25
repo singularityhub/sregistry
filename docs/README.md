@@ -9,7 +9,7 @@ Hello there! It's so great that you want to use Singularity Registry. It's get f
 ## Use a Registry
 
  - [sregistry Client](client.md): A client provided by Singularity Python to push, pull, list, and delete.
- - [Singularity usage](singularity-cliend.md): The Singularity development branch has functionality to use your registry too.
+ - [Singularity usage](singularity-client.md): The Singularity development branch has functionality to use your registry too.
 
 ## Deploy a Registry
 
