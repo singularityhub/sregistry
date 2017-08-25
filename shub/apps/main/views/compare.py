@@ -89,11 +89,14 @@ def generate_size_data(collections):
 
 def get_filtered_collections(request):
     '''return all collections or only public, given user accessing'''
-    if request.user.is_superuser or request.user.admin is True:
-        collections = Collection.objects.all() 
-    else:
-        collections = Collection.objects.filter(private=False) 
-    return collections
+    private = True
+    if not request.user.is_anonymous():
+        if request.user.is_superuser or request.user.admin is True:
+             private = True
+
+    if not private:
+        return Collection.objects.filter()
+    return Collection.objects.filter(private=False) 
 
 
 def container_treemap(request):
