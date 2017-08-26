@@ -62,16 +62,16 @@ def generate_size_data(collections):
     flare,
     flare.analytics,
     flare.analytics.cluster,
-    flare.analytics.cluster.AgglomerativeCluster,3938
-    flare.analytics.cluster.CommunityStructure,3812
-    flare.analytics.cluster.HierarchicalCluster,6714
-    flare.analytics.cluster.MergeEdge,743
-    flare.analytics.graph,
-    flare.analytics.graph.BetweennessCentrality,3534
-    flare.analytics.graph.LinkDistance,5731
-    flare.analytics.graph.MaxFlowMinCut,7840
-    flare.analytics.graph.ShortestPaths,5914
-    flare.analytics.graph.SpanningTree,3416
+    flare.analytics.cluster.AgglomerativeCluster,3938,1
+    flare.analytics.cluster.CommunityStructure,3812,2
+    flare.analytics.cluster.HierarchicalCluster,6714,3
+    flare.analytics.cluster.MergeEdge,743,4
+    flare.analytics.graph,,5
+    flare.analytics.graph.BetweennessCentrality,3534,6
+    flare.analytics.graph.LinkDistance,5731,7
+    flare.analytics.graph.MaxFlowMinCut,7840,8
+    flare.analytics.graph.ShortestPaths,5914,9
+    flare.analytics.graph.SpanningTree,3416,10
     '''
     data = dict()
     for collection in collections:
@@ -82,7 +82,8 @@ def generate_size_data(collections):
             if container.name not in data[collection.name]:
                 data[collection.name][container.name] = dict()
             if 'size_mb' in container.metadata:
-                data[collection.name][container.name][container.tag] = container.metadata['size_mb']
+                data[collection.name][container.name][container.tag] = {"size": container.metadata['size_mb'],
+                                                                        "id":   container.id }
     return data
 
 

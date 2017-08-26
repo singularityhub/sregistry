@@ -24,6 +24,9 @@ tspan:last-child {
   z-index:10;
 }
 
+rect {
+  cursor: pointer;
+}
 </style>
 {% endblock %}
 
@@ -70,9 +73,15 @@ var treemap = d3.treemap()
 d3.csv("{% url 'container_size_data' %}", function(error, raw) {
   var data = [];
 
+  // uid: is the container id
+  // size: is the size in MB
+  // id: is the container name
+  var lookup = Object();
+
   $.each(raw, function( index, value ) {
      if (value.id != ''){
          data.push(value);
+         lookup[value.id] = value.uid;
      }
   });
 
@@ -99,11 +108,12 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
       .attr("height", function(d) { return d.y1 - d.y0; })
       .style("fill", function(d) { return color(sum += d.value); })
       .on('click', function(d){
-          var container_name = d.id.split('.').slice(-1).pop();
-          document.location = "{{ domain }}/containers/" + container_name;
+          console.log(d)
+          var container_id = lookup[d.id]
+          document.location = "{{ domain }}/containers/" + container_id;
        })
       .on("mouseover", handleMouseOver)
-      .on("mouseout", handleMouseOut);
+      .on("mouseout", handleMouseOut)
 
   cell.append("clipPath")
       .attr("id", function(d) { return "clip-" + d.id; })
