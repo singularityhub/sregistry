@@ -1,6 +1,6 @@
 # Singularity Registry Documentation
 
-Hello there! It's so great that you want to use Singularity Registry. It's get familiar with the Registry, see Introduction Let's get started. 
+Hello there! It's so great that you want to use Singularity Registry. Let's get started. 
 
 ## Introduction
 
