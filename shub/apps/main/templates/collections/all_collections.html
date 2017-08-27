@@ -79,9 +79,11 @@ span.even { background: rgba(91, 192, 222, 0.32); }
             <tr>
                <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
                <td>{{ collection.containers.count }}</td>
-               <td>{% for label in collection.labels %}
-                      {{ label.key }}:<span class="even">{{ label.value }}</span>
-                   {% endfor %}</td>
+               <td>
+                   {% for label in collection.labels %}
+                      {{ label.key }}:<a href="{% url 'view_label_id' label.id %}">{{ label.value }}</a>
+                   {% endfor %}
+               </td>
                <td style="width:15px">{% if collection.private %}Yes{% else %}No{% endif %}</td>
                <td style="width:100px">{{ collection.modify_date|date:"Y-m-d"}}</td>
             </tr>
