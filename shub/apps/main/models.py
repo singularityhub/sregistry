@@ -149,18 +149,9 @@ class Collection(models.Model):
 
 
     def labels(self):
-        labels = dict()
-        for container in self.containers.all():
-            for label in container.labels():
-                if label.key not in labels:
-                    labels[label.key] = {}
-                if label.value not in labels[label.key]:
-                    labels[label.key][label.value] = 1
-                else:
-                    labels[label.key][label.value] += 1 
-        return labels
- 
-  
+        '''return common *shared* collection labels'''
+        return Label.objects.filter(containers__in=self.containers.all()).distinct()
+   
     # Permissions
 
     def has_edit_permission(self,request):
