@@ -6,6 +6,13 @@
     <a href="#" style="color:white" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
     Administration
     <span class="caret"></span></a>
+    {% if PRIVATE_ONLY %}
+    <ul class="dropdown-menu">
+        <li><a href="#"
+               style="text-transform:none"
+               title="This setting is not changeable">Private</a></li>
+    </ul>
+    {% else %}
     <ul class="dropdown-menu">
         {% if collection.private %}
         <li><a href="{% url 'make_collection_public' collection.id %}"
@@ -17,6 +24,7 @@
               title="each user is allowed one private collections.">Make Private</a></li>
         {% endif %}
     </ul>
+    {% endif %}
 </button>
 {% endif %}
 </div>

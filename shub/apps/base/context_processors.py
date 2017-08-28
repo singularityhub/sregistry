@@ -39,6 +39,7 @@ from shub.settings import (
     ENABLE_GITLAB_AUTH,
     HELP_CONTACT_EMAIL,
     HELP_INSTITUTION_SITE,
+    PRIVATE_ONLY,
     REGISTRY_URI,
     REGISTRY_NAME
 )
@@ -53,6 +54,9 @@ def domain_processor(request):
 def help_processor(request):
     return {'HELP_CONTACT_EMAIL': HELP_CONTACT_EMAIL,
             'HELP_INSTITUTION_SITE':HELP_INSTITUTION_SITE}
+
+def settings_processor(request):
+    return {'PRIVATE_ONLY':PRIVATE_ONLY }
 
 
 def auth_processor(request):

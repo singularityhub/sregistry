@@ -68,6 +68,10 @@ ACTIVE_CHOICES = ((True, 'Active'),
                   (False, 'Disabled'))
 
 
+def get_privacy_default():
+    from shub.settings import PRIVATE_ONLY
+    return PRIVATE_ONLY
+
 
 def has_edit_permission(instance,request):
     '''can the user of the request edit the collection or container?
@@ -126,7 +130,7 @@ class Collection(models.Model):
 
     # By default, collections are public
     private = models.BooleanField(choices=PRIVACY_CHOICES, 
-                                  default=False,
+                                  default=get_privacy_default,
                                   verbose_name="Accessibility")
     
     def get_absolute_url(self):
