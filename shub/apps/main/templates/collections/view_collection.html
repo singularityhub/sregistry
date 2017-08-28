@@ -74,6 +74,7 @@
 
 
              <!-- Settings -->
+             {% if edit_permission %}
              <button class="btn btn-sm btn-default dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     Settings
@@ -84,10 +85,11 @@
                                title="Add more metadata about your collection.">Edit</a></li>
                   </ul>
               </button>
+              {% endif %}
 
-                {% if collection.containers.count > 0 %}
-                <a href="{% url 'collection_commands' collection.id %}"><button class="btn btn-sm btn-default">Usage</button></a>
-                {% endif %}
+              {% if collection.containers.count > 0 %}
+              <a href="{% url 'collection_commands' collection.id %}"><button class="btn btn-sm btn-default">Usage</button></a>
+              {% endif %}
 
                 <!--{% if collection.active %}
                 <a data-toggle="tooltip" data-placement="right" title="the builder will build the most recent Singularity file in the base of master branch" href="#"><button class="btn btn-sm btn-default">Trigger Build</button></a>
