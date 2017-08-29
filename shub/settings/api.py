@@ -29,9 +29,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-#JWT_AUTH_HEADER_PREFIX='Bearer'
-#JWT_GET_USER_SECRET_KEY="shub.apps.users.utils.get_jwttoken"
-
-# Api
 API_VERSION = "v1"
+REST_FRAMEWORK = {
+    #'DEFAULT_PERMISSION_CLASSES': (
+    #    'rest_framework.permissions.IsAuthenticated',
+    #),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'PAGE_SIZE': 10
+}
+
 
