@@ -1,0 +1,5 @@
+{% load to_dash %}id,value,uid{% for collection_name, containers in collections.items %}
+{% if forloop.first %}collection,{% endif %}
+collection.{{ collection_name|to_dash }},
+{% for container_name,container_items in containers.items %}collection.{{ collection_name|to_dash }}.{{ container_name|to_dash }},{{ container_items.size }},{{ container_items.id }}
+{% endfor %}{% endfor %}

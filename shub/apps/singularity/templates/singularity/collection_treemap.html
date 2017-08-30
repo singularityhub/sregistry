@@ -33,12 +33,13 @@ rect {
 {% block content %}
 <div class="row">
     <div class="col-md-4">
-        <h3 style="margin-bottom:0px">Container Sizes (MB)</h3>
+        <h3 style="margin-bottom:0px">Collection Mean Sizes (MB)</h3>
         <small>{{ generation_date }}</small>
         <a id="save_as_svg" 
            value="" 
            style="margin-left:10px; cursor:pointer"
            onclick="save_svg()"><i class="fa fa-save"></i></a>
+            
     </div>
     <div class="col-md-4">
         <h4 id="container_metrics" style="color:333;margin-top:10px;margin-bottom:0px"></h4>
@@ -74,7 +75,7 @@ var treemap = d3.treemap()
     .round(true)
     .padding(1);
 
-d3.csv("{% url 'container_size_data' %}", function(error, raw) {
+d3.csv("{% url 'collection_size_data' %}", function(error, raw) {
   var data = [];
 
   // uid: is the container id
@@ -112,9 +113,8 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
       .attr("height", function(d) { return d.y1 - d.y0; })
       .style("fill", function(d) { return color(sum += d.value); })
       .on('click', function(d){
-          console.log(d)
-          var container_id = lookup[d.id]
-          document.location = "{{ domain }}/containers/" + container_id;
+          var collection_id = lookup[d.id]
+          document.location = "{{ domain }}/collections/" + collection_id;
        })
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
@@ -127,7 +127,9 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
   cell.append("text")
       .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
     .selectAll("tspan")
-      .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value)); })
+      .data(function(d) {              
+           return d.id.split('.').slice(-2).join('/').split(/(?=[A-Z][^A-Z])/g).concat(format(d.value));
+    })
     .enter().append("tspan")
       .attr("x", 4)
       .attr("y", function(d, i) { return 13 + i * 10; })
@@ -140,7 +142,7 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
 
 
       function handleMouseOver(d, i) {  // Add interactivity
-        var container_name = d.id.split('.').slice(-1).pop();
+        var container_name = d.id.split('.').slice(-2).join('/')
         $('#container_metrics').text(container_name);
 
        }
@@ -148,6 +150,8 @@ d3.csv("{% url 'container_size_data' %}", function(error, raw) {
       function handleMouseOut(d, i) {
             $('#container_metrics').text("");
       }
+
+  //rect-collection.dinosaur.avocado.dinosaur/avocado-milkshake
 
 //Vanessa's Hacky save svg function!
 function save_svg(evt) {
@@ -158,7 +162,6 @@ function save_svg(evt) {
     var url = URL.createObjectURL(svg_blob);
     var svg_win = window.open(url, "svg_win");
 }
-
 
 </script>
 {% endblock %}

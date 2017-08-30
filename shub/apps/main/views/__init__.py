@@ -68,7 +68,8 @@ from .containers import (
 
 from .compare import (
     container_treemap,
-    container_size_data
+    container_size_data,
+    collection_size_data
 )
 
 from .labels import (

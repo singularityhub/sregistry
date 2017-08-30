@@ -37,6 +37,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, DO_NOTHING
 from django.db.models.signals import post_delete
+from django.db.models import Avg, Sum
 
 from django.contrib.postgres.fields import JSONField
 from polymorphic.models import PolymorphicModel
@@ -142,6 +143,23 @@ class Collection(models.Model):
 
     def __unicode__(self):
         return self.get_uri()
+
+    def sizes(self, container_name=None):
+        '''return list of sizes for containers across collection.
+           Optionally limited to container name'''
+        if container_name is not None:
+            queryset = self.containers.filter(name=container_name)
+        else:
+            queryset = self.containers.all()
+        return [x.metadata['size_mb'] for x in queryset if 'size_mb' in x.metadata]
+
+
+    def mean_size(self, container_name=None):
+        sizes = self.sizes(container_name=container_name)
+        total = sum(sizes)
+        if total == 0:
+            return total
+        return sum(sizes) / len(sizes)
 
 
     def get_uri(self):

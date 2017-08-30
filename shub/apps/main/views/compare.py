@@ -36,7 +36,10 @@ from shub.apps.main.models import (
 
 from django.template import loader, Context
 from django.http import HttpResponse
-from shub.settings import BASE_DIR
+from shub.settings import (
+    BASE_DIR,
+    VISUALIZATION_TREEMAP_COLLECTION_SWITCH
+)
 
 from django.shortcuts import (
     render, 
@@ -56,7 +59,7 @@ import shutil
 # FILE SYSTEM USAGE ###########################################################################
 ###############################################################################################
 
-def generate_size_data(collections):
+def generate_size_data(collections, truncate_tags):
     '''generate a datastructure that can be rendered as:
     id,value
     flare,
@@ -82,8 +85,13 @@ def generate_size_data(collections):
             if container.name not in data[collection.name]:
                 data[collection.name][container.name] = dict()
             if 'size_mb' in container.metadata:
-                data[collection.name][container.name][container.tag] = {"size": container.metadata['size_mb'],
-                                                                        "id":   container.id }
+                if truncate_tags is True:
+                    mean_size =  collection.mean_size(container_name=container.name)
+                    data[collection.name][container.name] = {"size": mean_size,
+                                                             "id":   collection.id }         
+                else:
+                    data[collection.name][container.name][container.tag] = {"size": container.metadata['size_mb'],
+                                                                            "id":   container.id }
     return data
 
 
@@ -103,19 +111,27 @@ def get_filtered_collections(request):
 def container_treemap(request):
     '''show disk usage with a container treemap.
     '''
+    template = "singularity/container_treemap.html"
     collections = get_filtered_collections(request)
     containers = Container.objects.filter(collection__in=collections)
     date = datetime.datetime.now().strftime('%m-%d-%y')
+    if containers.count() >= VISUALIZATION_TREEMAP_COLLECTION_SWITCH:
+        template = "singularity/collection_treemap.html"
     context = {"generation_date": date,
                "containers_count": containers.count(),
                "collections_count": collections.count() }
-    return render(request, 'singularity/container_treemap.html', context)
+    return render(request, template, context)
 
 
+def base_size_data(request, truncate_tags=False):
+    collections = get_filtered_collections(request)
+    collections = generate_size_data(collections, truncate_tags)
+    return {'collections':collections}
 
 def container_size_data(request):
-    collections = get_filtered_collections(request)
-    collections = generate_size_data(collections)
-    context = {'collections':collections}
-
+    context = base_size_data(request)
     return render(request, 'singularity/container_size_data.csv', context)
+
+def collection_size_data(request):
+    context = base_size_data(request, truncate_tags=True)
+    return render(request, 'singularity/collection_size_data.csv', context)
