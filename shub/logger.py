@@ -231,6 +231,9 @@ class ShubMessage:
     def info(self,message):
         self.emit(INFO,message)        
 
+    def newline(self):
+        self.write(self.outputStream,'\n')  
+
     def verbose(self,message):
         self.emit(VERBOSE,message,"VERBOSE")        
 

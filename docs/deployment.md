@@ -279,4 +279,4 @@ NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 
-Good job! Now it's time to read the [configuration](config.md) guide to better understand how to configure and interact with your Singularity Registry.
+Good job! Now it's time to read the [setup](setup.md) guide to better understand how to configure and interact with your Singularity Registry.
