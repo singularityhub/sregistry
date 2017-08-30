@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% block head %}
+<style>
+#spinner { display: none; position: relative; }
+</style>
+{% endblock %}
+{% block content %}
+
+        <div id="fh5co-team">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+  
+                        <input id="q" type="text"/>
+                        <input id="searchSubmit" type="submit" value="Search"/>
+                        <br/>
+                        <span class="hint">Type in a query string to search for containers</span>
+                        <div class="margin">
+                            <span id="spinner"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
+                        <div id="results">
+                              {% include "search/result.html" %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+$(document).ready( function() {
+    $('#searchSubmit').click( function() {
+        q = $('#q').val();
+        $('#results').html('&nbsp;').load('{% url "container_search" %}?q=' + q);
+    });
+});
+ 
+// Control spinner
+$(document).ajaxStart( function() {
+    $('#spinner').show();
+
+}).ajaxStop( function() {
+    $('#spinner').hide();
+});
+</script>
+{% endblock %}

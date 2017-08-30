@@ -42,6 +42,17 @@ def search_view(request):
     return render(request, 'search/search.html', context)
 
 
+def search_query(request,query=None):
+    '''query is a post, and results returned immediately'''
+    from shub.apps.main.query import collection_query
+    context = {'submit_result':'anything'}
+    if query is not None:
+        results = collection_query(query)
+        context["results"] = results
+ 
+    return render(request, 'search/search_single_page.html', context)
+
+
 def container_search(request):
     '''container_search is the ajax driver to show results for a container search.
     by default we search container collection name.
@@ -55,5 +66,3 @@ def container_search(request):
                        "submit_result": "anything"}
 
             return render(request, 'search/result.html', context)
-
-

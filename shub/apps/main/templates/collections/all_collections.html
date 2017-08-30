@@ -80,6 +80,9 @@ span.even { background: rgba(91, 192, 222, 0.32); }
                <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
                <td>{{ collection.containers.count }}</td>
                <td>
+                   {% for name in collection.container_names %}
+                      <a href="{% url 'search_query' name %}">{{ name }}{% if forloop.last %}{% else %},{% endif %}</a>
+                   {% endfor %}
                </td>
                <td style="width:15px">{% if collection.private %}Yes{% else %}No{% endif %}</td>
                <td style="width:100px">{{ collection.modify_date|date:"Y-m-d"}}</td>

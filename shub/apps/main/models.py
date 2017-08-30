@@ -155,6 +155,11 @@ class Collection(models.Model):
     def labels(self):
         '''return common *shared* collection labels'''
         return Label.objects.filter(containers__in=self.containers.all()).distinct()
+
+
+    def container_names(self):
+        '''return distinct container names'''
+        return list([x[0] for x in self.containers.values_list('name').distinct() if len(x)>0])
    
     # Permissions
 
