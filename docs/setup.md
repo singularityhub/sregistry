@@ -47,7 +47,6 @@ DEBUG vsoch is now a superuser.
 $ python manage.py add_superuser --username vsoch
 DEBUG Username: vsoch
 DEBUG vsoch can now manage and build.
-```
 
 # And from outside the Docker image
 NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
