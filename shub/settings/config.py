@@ -73,7 +73,7 @@ DATABASES = {
 
 # After how many single containers should we switch to showing collections
 # only? >= 1000
-VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1
+VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
 
 
 ########################################################################
