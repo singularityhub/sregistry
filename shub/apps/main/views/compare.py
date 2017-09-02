@@ -59,7 +59,7 @@ import shutil
 # FILE SYSTEM USAGE ###########################################################################
 ###############################################################################################
 
-def generate_size_data(collections, truncate_tags):
+def generate_size_data(collections, collection_level):
     '''generate a datastructure that can be rendered as:
     id,value
     flare,
@@ -80,18 +80,22 @@ def generate_size_data(collections, truncate_tags):
     for collection in collections:
         if collection.name not in data:
             data[collection.name] = {}
-        containers = collection.containers.all()
-        for container in containers:
-            if container.name not in data[collection.name]:
-                data[collection.name][container.name] = dict()
-            if 'size_mb' in container.metadata:
-                if truncate_tags is True:
-                    mean_size =  collection.mean_size(container_name=container.name)
-                    data[collection.name][container.name] = {"size": mean_size,
-                                                             "id":   collection.id }         
-                else:
+
+        # Generate data on the level of containers
+        if collection_level is False:
+            containers = collection.containers.all()
+            for container in containers:
+                if container.name not in data[collection.name]:
+                    data[collection.name][container.name] = dict()
+                if 'size_mb' in container.metadata:
                     data[collection.name][container.name][container.tag] = {"size": container.metadata['size_mb'],
                                                                             "id":   container.id }
+        # Generate data on the level of collections
+        else:
+            data[collection.name] = {'size': collection.mean_size(),
+                                     'id': collection.id,
+                                     'n': collection.containers.count() }
+                
     return data
 
 
@@ -123,9 +127,9 @@ def container_treemap(request):
     return render(request, template, context)
 
 
-def base_size_data(request, truncate_tags=False):
+def base_size_data(request, collection_level=False):
     collections = get_filtered_collections(request)
-    collections = generate_size_data(collections, truncate_tags)
+    collections = generate_size_data(collections, collection_level)
     return {'collections':collections}
 
 def container_size_data(request):
@@ -133,5 +137,5 @@ def container_size_data(request):
     return render(request, 'singularity/container_size_data.csv', context)
 
 def collection_size_data(request):
-    context = base_size_data(request, truncate_tags=True)
+    context = base_size_data(request, collection_level=True)
     return render(request, 'singularity/collection_size_data.csv', context)

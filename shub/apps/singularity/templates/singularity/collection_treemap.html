@@ -86,7 +86,8 @@ d3.csv("{% url 'collection_size_data' %}", function(error, raw) {
   $.each(raw, function( index, value ) {
      if (value.id != ''){
          data.push(value);
-         lookup[value.id] = value.uid;
+         lookup[value.id] = {'uid': value.uid,
+                             'n': value.N };
      }
   });
 
@@ -113,7 +114,7 @@ d3.csv("{% url 'collection_size_data' %}", function(error, raw) {
       .attr("height", function(d) { return d.y1 - d.y0; })
       .style("fill", function(d) { return color(sum += d.value); })
       .on('click', function(d){
-          var collection_id = lookup[d.id]
+          var collection_id = lookup[d.id].uid
           document.location = "{{ domain }}/collections/" + collection_id;
        })
       .on("mouseover", handleMouseOver)
@@ -127,8 +128,10 @@ d3.csv("{% url 'collection_size_data' %}", function(error, raw) {
   cell.append("text")
       .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
     .selectAll("tspan")
-      .data(function(d) {              
-           return d.id.split('.').slice(-2).join('/').split(/(?=[A-Z][^A-Z])/g).concat(format(d.value));
+      .data(function(d) { 
+           var cname = d.id.split('.').slice(-1)
+           cname.push(d.data.n)
+           return cname.join(' n=').split(/(?=[A-Z][^A-Z])/g).concat(format(d.value) + " MB");
     })
     .enter().append("tspan")
       .attr("x", 4)
@@ -136,13 +139,13 @@ d3.csv("{% url 'collection_size_data' %}", function(error, raw) {
       .text(function(d) { return d; });
 
   cell.append("title")
-      .text(function(d) { return d.id + "\n" + format(d.value); });
-
-});
+      .text(function(d) { 
+           return d.id + "\n" + format(d.value) + " MB"; });
+       });
 
 
       function handleMouseOver(d, i) {  // Add interactivity
-        var container_name = d.id.split('.').slice(-2).join('/')
+        var container_name = d.id.split('.').slice(-1).join('/')
         $('#container_metrics').text(container_name);
 
        }
