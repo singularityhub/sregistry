@@ -3,7 +3,7 @@ From: continuumio/miniconda3
 
 %runscript
 
-exec /usr/local/bin/sregistry "$@"
+exec /opt/conda/bin/sregistry "$@"
 
 %labels
 maintainer vsochat@stanford.edu
