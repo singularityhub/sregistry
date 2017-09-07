@@ -20,6 +20,6 @@ git clone -b development https://www.github.com/vsoch/singularity-python
 cd singularity-python
 /opt/conda/bin/pip install setuptools
 /opt/conda/bin/pip install -r requirements.txt
-/opt/conda/bin/pip install pyasn1==0.3.2
+/opt/conda/bin/pip install pyasn1==0.3.4
 /opt/conda/bin/python setup.py sdist
 /opt/conda/bin/python setup.py install
