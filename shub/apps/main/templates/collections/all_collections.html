@@ -80,7 +80,7 @@ span.even { background: rgba(91, 192, 222, 0.32); }
                <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
                <td>{{ collection.containers.count }}</td>
                <td>
-                   {% for name in collection.container_names %}
+                   {% for name in collection.container_names|slice:":50" %}
                       <a href="{% url 'search_query' name %}">{{ name }}{% if forloop.last %}{% else %},{% endif %}</a>
                    {% endfor %}
                </td>

@@ -89,6 +89,9 @@
 
               {% if collection.containers.count > 0 %}
               <a href="{% url 'collection_commands' collection.id %}"><button class="btn btn-sm btn-default">Usage</button></a>
+              <a href="{% url 'collection_treemap' collection.id %}">
+                      <button class="btn btn-sm btn-default">
+                      View</button></a>
               {% endif %}
 
                 <!--{% if collection.active %}

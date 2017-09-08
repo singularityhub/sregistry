@@ -92,7 +92,7 @@ def generate_size_data(collections, collection_level):
                                                                             "id":   container.id }
         # Generate data on the level of collections
         else:
-            data[collection.name] = {'size': collection.mean_size(),
+            data[collection.name] = {'size': collection.total_size(),
                                      'id': collection.id,
                                      'n': collection.containers.count() }
                 
@@ -101,7 +101,9 @@ def generate_size_data(collections, collection_level):
 
 
 def get_filtered_collections(request):
-    '''return all collections or only public, given user accessing'''
+    '''return all collections or only public, given user accessing
+    this function will return all collections based on a permission level
+    '''
     private = True
     if not request.user.is_anonymous():
         if request.user.is_superuser or request.user.admin is True:
@@ -112,23 +114,60 @@ def get_filtered_collections(request):
     return Collection.objects.filter(private=False) 
 
 
-def container_treemap(request):
-    '''show disk usage with a container treemap.
-    '''
-    template = "singularity/container_treemap.html"
+
+### Treemap Views and Context
+
+
+def generate_treemap_context(request):
     collections = get_filtered_collections(request)
     containers = Container.objects.filter(collection__in=collections)
     date = datetime.datetime.now().strftime('%m-%d-%y')
-    if containers.count() >= VISUALIZATION_TREEMAP_COLLECTION_SWITCH:
-        template = "singularity/collection_treemap.html"
-    context = {"generation_date": date,
-               "containers_count": containers.count(),
-               "collections_count": collections.count() }
-    return render(request, template, context)
+    return {"generation_date": date,
+            "containers_count": containers.count(),
+            "collections_count": collections.count() }
+    
+
+def containers_treemap(request):
+    '''show disk usage with a container treemap, 
+       for all containers across collections.
+    '''
+    context = generate_treemap_context(request)   
+    if context['containers_count'] >= VISUALIZATION_TREEMAP_COLLECTION_SWITCH:
+        return collections_treemap(request,context)
+    return render(request, "singularity/containers_treemap.html", context)
 
 
-def base_size_data(request, collection_level=False):
-    collections = get_filtered_collections(request)
+def collections_treemap(request,context=None):
+    ''' collection treemap shows total size of a collection'''
+    if context is None:
+        context = generate_treemap_context(request)
+    return render(request, "singularity/collections_treemap.html", context)
+
+
+def collection_treemap(request,cid):
+    ''' collection treemap shows size of containers across a single collection'''
+    try:
+        collection = Collection.objects.get(id=cid)
+    except Collection.DoesNotExist:
+        messages.info(request,"This collection could not be found.")
+        return redirect("collections_treemap")
+
+    if not collection.has_view_permission(request):
+        messages.info(request,"You don't have permission to view this collection.")
+        return redirect("collections_treemap")
+
+    context = {'collection':collection,
+               'generation_date': datetime.datetime.now().strftime('%m-%d-%y')}
+
+    return render(request, "singularity/collection_treemap.html", context)
+
+
+
+### Size Data Files Read into D3
+
+def base_size_data(request, collection_level=False, collections=None):
+    if collections is None:
+        collections = get_filtered_collections(request)
     collections = generate_size_data(collections, collection_level)
     return {'collections':collections}
 
@@ -136,6 +175,28 @@ def container_size_data(request):
     context = base_size_data(request)
     return render(request, 'singularity/container_size_data.csv', context)
 
+
 def collection_size_data(request):
+    ''' generate container size data for all collections
+    '''
     context = base_size_data(request, collection_level=True)
     return render(request, 'singularity/collection_size_data.csv', context)
+
+
+def single_collection_size_data(request,cid):
+    ''' generate size data for single collection treemap
+    '''
+    try:
+        collection = Collection.objects.get(id=cid)
+    except Collection.DoesNotExist:
+        messages.info(request,"This collection could not be found.")
+        return redirect("collections_treemap")
+
+    if not collection.has_view_permission(request):
+        messages.info(request,"You don't have permission to view this collection.")
+        return redirect("collections_treemap")
+
+    context = base_size_data(request, 
+                             collection_level=False,
+                             collections=[collection])
+    return render(request, 'singularity/container_size_data.csv', context)
