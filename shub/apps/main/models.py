@@ -94,6 +94,31 @@ def has_edit_permission(instance,request):
     return False
 
 
+def has_view_permission(instance,request):
+    '''can the user of the request edit the collection or container?
+    '''
+    if isinstance(instance, Container):
+        instance = instance.collection
+
+    if instance.private is False:
+        return True
+
+    if request.user.is_authenticated() is False:
+        return False
+        
+    # Global Admins
+    if request.user.admin is True or request.user.is_superuser:
+        return True
+
+    # Collection Contributors
+    contributors = get_collection_users(instance)
+    if request.user in contributors:
+        return True
+
+    return False
+
+
+
 def delete_imagefile(sender,instance,**kwargs):
     if instance.image not in ['',None]:
         instance.image.datafile.delete()
@@ -155,12 +180,16 @@ class Collection(models.Model):
 
 
     def mean_size(self, container_name=None):
-        sizes = self.sizes(container_name=container_name)
-        total = sum(sizes)
+        total = self.total_size(container_name=container_name)
         if total == 0:
             return total
         return sum(sizes) / len(sizes)
 
+
+    def total_size(self, container_name=None):
+        sizes = self.sizes(container_name=container_name)
+        return sum(sizes)
+       
 
     def get_uri(self):
         return "%s:%s" %(self.name,
@@ -185,6 +214,13 @@ class Collection(models.Model):
         '''can the user of the request edit the collection
         '''
         return has_edit_permission(request=request,
+                                   instance=self)
+
+
+    def has_view_permission(self,request):
+        '''can the user of the request view the collection
+        '''
+        return has_view_permission(request=request,
                                    instance=self)
 
 
@@ -307,6 +343,9 @@ class Container(models.Model):
         return has_edit_permission(request=request,
                                    instance=self.collection)
 
+    def has_view_permission(self,request):
+        return has_view_permission(request=request,
+                                   instance=self.collection)
 
 
 class Demo(models.Model):
