@@ -47,6 +47,7 @@ from django.shortcuts import (
 )
 
 from django.contrib import messages
+from itertools import chain
 
 import datetime
 import os
@@ -99,7 +100,6 @@ def generate_size_data(collections, collection_level):
     return data
 
 
-
 def get_filtered_collections(request):
     '''return all collections or only public, given user accessing
     this function will return all collections based on a permission level
@@ -110,7 +110,7 @@ def get_filtered_collections(request):
              private = True
 
     if not private:
-        return Collection.objects.filter()
+        return Collection.objects.all()
     return Collection.objects.filter(private=False) 
 
 
