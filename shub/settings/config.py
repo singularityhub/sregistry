@@ -51,8 +51,11 @@ HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
-# Should registires by default be private, with no option for public?
+# Should registries by default be private, with no option for public?
 PRIVATE_ONLY = False
+
+# Should the default for a new registry be private or public?
+DEFAULT_PRIVATE = False
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases

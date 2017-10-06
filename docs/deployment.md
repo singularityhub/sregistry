@@ -144,7 +144,14 @@ By default Singularity Registry will provide public images, with an option to se
 PRIVATE_ONLY=True
 ```
 
-The above would eliminate public status and make private the default.
+The above would eliminate public status and make private the default. Alternatively, if you want to allow for public images but make the default private (and collection owners can make collections of their choice public) set `DEFAULT_PRIVATE` to True.
+
+```
+DEFAULT_PRIVATE=True
+```
+
+`PRIVATE_ONLY` takes preference to `DEFAULT_PRIVATE`. In other words, if you set `PRIVATE_ONLY` to True, the default has to be private, the change to `DEFAULT_PRIVATE` is meaningless, and a user cannot change a collection to be public.
+
 
 #### Database
 By default, the database itself will be deployed as a postgres image called `db`. You probably don't want this for production (for example, I use a second instance with postgres and a third with a hot backup, but it's an ok solution for a small cluster or single user. Either way, we recommend backing it up every so often.
