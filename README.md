@@ -1,7 +1,8 @@
 # Singularity Registry
 
 [![status](http://joss.theoj.org/papers/050362b7e7691d2a5d0ebed8251bc01e/status.svg)](http://joss.theoj.org/papers/050362b7e7691d2a5d0ebed8251bc01e)
-[Documentation](https://singularityhub.github.io/sregistry)
+
+- [Documentation](https://singularityhub.github.io/sregistry)
 
 ## What is Singularity Registry
 Singularity Registry is a management and storage of Singularity images for an institution or user to deploy locally. It does not manage building, but serves endpoints to obtain and save containers. The Registry is expected to be available for use in the Fall.
