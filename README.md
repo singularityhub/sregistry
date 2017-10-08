@@ -1,5 +1,6 @@
 # Singularity Registry
 
+[![status](http://joss.theoj.org/papers/050362b7e7691d2a5d0ebed8251bc01e/status.svg)](http://joss.theoj.org/papers/050362b7e7691d2a5d0ebed8251bc01e)
 [Documentation](https://singularityhub.github.io/sregistry)
 
 ## What is Singularity Registry

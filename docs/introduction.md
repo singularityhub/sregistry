@@ -1,5 +1,6 @@
-# Introduction
-Singularity Registry is a Dockerized web application that an institution or individual can deploy to organize and manage Singularity images. After you [deploy](deployment.md) and [setup](setup.md) your registry, you are welcomed with the home screen. In this case, our institution is called "Tacosaurus Computing Center":
+f# Introduction
+Singularity Registry is a Dockerized web application that an institution or individual can deploy to organize and manage Singularity images. After you [install](install.md) and [setup](setup.md) your registry, you are welcomed with the home screen. In this case, our institution is called "Tacosaurus Computing Center":
+
 <br>
 ![assets/img/registry-home.png](assets/img/registry-home.png)
 
@@ -154,4 +155,4 @@ As was stated in the base [README.md](./README.md) The components of the applica
  - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [celery](http://www.celeryproject.org/), a distributed job queue that fits nicely into Django. The celery worker uses a
  - **redis**: database to organize the jobs themselves.
 
-This means that, given a pretty basic server to run the application, and enough space connected to it to store the images, you can bring the entire thing up relatively quickly. Awesome! Let's get started and talk about first steps of [deployment](deployment.md).
+This means that, given a pretty basic server to run the application, and enough space connected to it to store the images, you can bring the entire thing up relatively quickly. Awesome! Let's get started and talk about first steps of [install](install.md).
