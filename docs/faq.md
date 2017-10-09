@@ -11,6 +11,10 @@ Importantly, both deliver image manifests that plug seamlessly into the Singular
 singularity pull shub://vsoch/hello-world
 ```
 
+## Why do we need Singularity containers?
+Singularity containers allow you to package your entire scientific analysis, including dependencies, libraries, and environment, and run it anywhere. Inside a Singularity container you are the same user as outside the container, so you could not escalate to root and act maliciously on a shared resource. For more information on containers, see [the Singularity site](https://singularityware.github.io).
+
+
 ## Why isn't the storage backed up?
 At the initial release of the software, because there are many different options for storage, enforcing a particular backup strategy would possibly make the registry less flexible to fit into many different use cases. In the same way that the institution is able to decide how to build, it is also under their decision for how to backup. For the database, django has different options for backup (for example [django-backup](https://github.com/django-backup/django-backup)), along with a proper mirror (called a [hot standby](https://cloud.google.com/community/tutorials/setting-up-postgres-hot-standby)) of the database itself. An institution might simply want to mirror the filesystem, or to create freezes at consistent timepoints. The [InterPlanetary File System](https://en.wikipedia.org/wiki/InterPlanetary_File_System) has also been suggested, and we hope to have discussion and testing with the larger community to either provide a default or suggest top choices.
 
