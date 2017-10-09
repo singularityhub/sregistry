@@ -1,11 +1,18 @@
 # Deployment
-If starting from scratch, the [basic commands](../scripts/prepare_instance.sh) are provided that were used to set up an instance. This is just done once, and (in testing) was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
+If starting from scratch, you need the following dependencies on the host:
 
-- The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it.
-- Anaconda3 is installed for python libraries needed for `docker-compose`. 
-- Make sure to add all users to the docker group that need to maintain the application.
+ - [Docker](http://54.71.194.30:4111/engine/installation): a container engine
+ - [docker-compose](http://54.71.194.30:4111/compose/install/): an orchestration tool for Docker images.
+ - [python]: docker compose requires some additional python libraries, `ipaddress` and `oauth2client`
 
-Updated docs on how to install Docker or docker-compose are provided for [installing Docker](http://54.71.194.30:4111/engine/installation) and [docker-compose](http://54.71.194.30:4111/compose/install/).
+Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
+
+For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](../scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
+
+- The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it. If it's for personal use, `$HOME` is fine.
+- Anaconda3 is installed for python libraries needed for `docker-compose`. You can use whatever python you with (system installed or virtual environment)
+- Make sure to add all users to the docker group that need to maintain the application, and log in and out before use.
+
 
 ## Settings
 See that folder called [settings](../shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a [settings/secrets.py](../shub/settings/secrets.py) for application secrets, and [settings/config.py](../shub/settings/config.py) to configure your database and registry information.
@@ -280,12 +287,19 @@ Specifically, pay close attention to the fields in the last two sections that ne
 If you run into strange errors regarding any kind of authentication / server / nginx when you start the images, likely it has to do with not having moved these files, or a setting about https in the [settings](../shub/settings). If you have trouble, please post an issue on the [issues board](https://www.github.com/singularityhub/sregistry/issues) and I'd be glad to help.
 
 
-## Build the Image
-Next, you should build your image, and run the application with `docker-compose`. By the time this code is public we should also be providing the image on Docker Hub, so likely you can skip the build:
+## Build the Image (Optional)
+If you want to try it, you can build the image. Note that this step isn't necessary as the image is provided on [Docker Hub](https://hub.docker.com/r/vanessa/sregistry/). This step is optional - if you want to try building locally, you would do:
+
 
 ```bash
 cd sregistry
 docker build -t vanessa/sregistry .
+```
+
+## Compose the Images
+Whether you build or not, the compose command will bring up the application (and download `vanessa/sregistry` image if not found in your cache).
+
+```
 docker-compose up -d
 ```
 
