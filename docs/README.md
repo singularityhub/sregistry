@@ -5,7 +5,7 @@ Hello there! It's so great that you want to use Singularity Registry. Let's get 
 ## Introduction
 This section covers rationale, background, and frequently asked questions.
 
- - [introduction](introduction.md): Covers some background and basic information.
+ - [Introduction](introduction.md): Covers some background and basic information.
  - [Use Cases](use-cases.md): a few examples of when Singularity Registry is useful
  - [Frequenty Asked Questions](faq.md): Quick answers to some questions you might have on your mind.
 
