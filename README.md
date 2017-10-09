@@ -15,4 +15,4 @@ Singularity Registry consists of several Docker images, and they are integrated 
  - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [celery](http://www.celeryproject.org/), a distributed job queue that fits nicely into Django. The celery worker uses a
  - **redis**: database to organize the jobs themselves.
 
-For more information about Singularity Registry, please reference the [docs](https://singularityhub.github.io/sregistry). If you have any issues, please [let me know!](https://github.com/singularityhub/sregistry/issues).
+For more information about Singularity Registry, please reference the [docs](https://singularityhub.github.io/sregistry). If you have any issues, please [let me know](https://github.com/singularityhub/sregistry/issues)!
