@@ -147,4 +147,4 @@ thumb: custom/taco-logo.png
 You can then add your files, and submit a PR to the main repo. We will have tests that ping your registry to ensure correct naming of files and registry address, along with a preview of the content that is added. If you want to prevew locally, you can run `jekyll serve`.
 
 
-Great! Now that you have your accounts, you probably want to learn about how to build and push images! You will need to read about the [client](client.md) to do this.
+Great! Now that you have your accounts, you probably want to learn about how to build and push images! First you need to generate a [credential](credentials.md), and then you will can read about the [client](client.md).
