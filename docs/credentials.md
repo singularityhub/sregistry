@@ -7,7 +7,7 @@ After you create a user, you will need a way to communicate to the registry, and
 ERROR Client secrets file not found at /home/vanessa/.sregistry or $SREGISTRY_CLIENT_SECRETS.
 ```
 
-Ruhroh! The reason is because we need to put our credentials in a file called `sregistry` in our `$HOME` directory. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](setup.md), making yourself a superuser and admin and logging in (remember this part?)
+Ruhroh! The reason is because we need to put our credentials in a hidden file called `.sregistry` in our `$HOME` directory. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](setup.md), making yourself a superuser and admin and logging in (remember this part?)
 
 
 ```
