@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libhdf5-dev \
     libgeos-dev \
     build-essential \
+    cmake \
     openssl \
     wget \
     vim
