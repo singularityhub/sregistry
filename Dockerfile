@@ -3,6 +3,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y \
     anacron \
     libopenblas-dev \
+    libglib2.0-dev \
     gfortran \
     pkg-config \
     libxml2-dev \
