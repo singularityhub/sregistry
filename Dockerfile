@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libtool \
     autotools-dev \
-    squashfs-tools \
     debootstrap \
     automake \
     autoconf \
