@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     vim
 
 # Install Singularity
-RUN git clone -b development https://www.github.com/singularityware/singularity.git
+RUN git clone https://www.github.com/singularityware/singularity.git
 WORKDIR singularity
 RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 
