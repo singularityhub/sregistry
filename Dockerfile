@@ -5,11 +5,6 @@ RUN apt-get update && apt-get install -y \
     libopenblas-dev \
     gfortran \
     pkg-config \
-    libtool \
-    autotools-dev \
-    debootstrap \
-    automake \
-    autoconf \
     libxml2-dev \
     libxmlsec1-dev \
     libhdf5-dev \

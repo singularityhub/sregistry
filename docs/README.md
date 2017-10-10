@@ -14,8 +14,8 @@ This section covers rationale, background, and frequently asked questions.
 This section is going to cover installation, which means configuration of a Docker image, building of the image, and then starting your image with other services (docker-compose) to run your registry.
 
  - [install](install.md): configure, build, and deploy your registry.
- - [setup](setup.md): setting up the running application, including user accounts and application registration.
-
+ - [setup](setup.md): setting up and registering the running application.
+ - [credentials](credentials.md): User accounts and credentials for using the client.
 
 ## Use a Registry
 
