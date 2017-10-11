@@ -81,6 +81,22 @@
 		</div>
             </div>
         </div>
+
+        <!-- Build Example-->
+        <div class="row">
+            <div class="col-md-10">
+                <p><strong>Build</strong> using as a base:</p>
+                <p id="build_well" class="well">
+                    sudo singularity build {{ collection.name }}.simg shub://{{ collection.containers.first.name }}:{{collection.containers.first.tag }}</p>
+            </div>
+            <div class="col-md-2">
+                <button style="margin-top:55px" id="run" class="btn copyme" data-clipboard-target="#run"><i class="fa fa-copy"></i></button>
+                <div style="width:58px" class="alert alert-info hidden" id="buildb-alert" role="alert">
+		</div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 {% include "messages/notification.html" %}
