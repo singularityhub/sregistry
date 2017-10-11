@@ -3,7 +3,7 @@ If starting from scratch, you need the following dependencies on the host:
 
  - [Docker](http://54.71.194.30:4111/engine/installation): a container engine
  - [docker-compose](http://54.71.194.30:4111/compose/install/): an orchestration tool for Docker images.
- - [python]: docker compose requires some additional python libraries, `ipaddress` and `oauth2client`
+ - python: docker compose requires some additional python libraries, `ipaddress` and `oauth2client`
 
 Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
 
@@ -317,4 +317,9 @@ NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 
+If you make changes to the image itself, you will need to build again. However, if you just make changes to some static code, since it's mounted at `/code`, you can generally just restart:
+
+```
+docker-compose restart
+```
 Good job! Now it's time to read the [setup](setup.md) guide to better understand how to configure and interact with your Singularity Registry.
