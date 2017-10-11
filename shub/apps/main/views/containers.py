@@ -121,7 +121,6 @@ def delete_container(request,cid):
 
     # Delete files and running instance, and container
     messages.info(request,'Container successfully deleted.')
-
     return redirect(collection.get_absolute_url())
 
 
