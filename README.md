@@ -1,6 +1,7 @@
 # Singularity Registry
 
 [![status](http://joss.theoj.org/papers/050362b7e7691d2a5d0ebed8251bc01e/status.svg)](http://joss.theoj.org/papers/050362b7e7691d2a5d0ebed8251bc01e)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1012531.svg)](https://doi.org/10.5281/zenodo.1012531)
 
 - [Documentation](https://singularityhub.github.io/sregistry)
 
