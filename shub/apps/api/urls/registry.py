@@ -84,6 +84,6 @@ class RegistryViewSet(viewsets.ViewSet):
 
 urlpatterns = [
 
-    url(r'^registry/identity$', RegistryViewSet.as_view({'get':'get'})),
+    url(r'^registry/identity/?$', RegistryViewSet.as_view({'get':'get'})),
 
 ]

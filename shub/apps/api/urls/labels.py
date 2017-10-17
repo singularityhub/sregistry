@@ -123,9 +123,9 @@ class LabelDetail(APIView):
 
 urlpatterns = [
 
-    url(r'^labels/search$', LabelDetail.as_view()),                                        # all labels
-    url(r'^labels/search/(?P<key>.+?)/key/(?P<value>.+?)/value$', LabelDetail.as_view()),  # key and value
-    url(r'^labels/search/(?P<key>.+?)/key$', LabelDetail.as_view()),                       # key
-    url(r'^labels/search/(?P<value>.+?)/value$', LabelDetail.as_view())   # value
+    url(r'^labels/search/?$', LabelDetail.as_view()),                                        # all labels
+    url(r'^labels/search/(?P<key>.+?)/key/(?P<value>.+?)/value/?$', LabelDetail.as_view()),  # key and value
+    url(r'^labels/search/(?P<key>.+?)/key/?$', LabelDetail.as_view()),                       # key
+    url(r'^labels/search/(?P<value>.+?)/value/?$', LabelDetail.as_view())   # value
 
 ]
