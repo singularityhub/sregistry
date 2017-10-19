@@ -60,6 +60,12 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
+from .config import ENABLE_LDAP_AUTH
+
+if ENABLE_LDAP_AUTH:
+    AUTHENTICATION_BACKENDS = ('django_auth_ldap.backend.LDAPBackend',) + AUTHENTICATION_BACKENDS
+
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',

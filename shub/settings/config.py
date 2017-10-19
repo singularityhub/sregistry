@@ -36,7 +36,14 @@ ENABLE_GITHUB_AUTH=False
 ENABLE_GITLAB_AUTH=False
 
 # NOTE you will need to set them up.
-# see https://singularityhub.github.io/sregistry/config.html
+# see https://singularityhub.github.io/sregistry/install.html
+
+# Do you want to use LDAP authentication?
+ENABLE_LDAP_AUTH=False
+
+# LDAP Settings go in secrets.py
+# See secrets.py.ldap for an example configuration
+# see https://singularityhub.github.io/sregistry/install.html
 
 
 DOMAIN_NAME = "http://127.0.0.1"
