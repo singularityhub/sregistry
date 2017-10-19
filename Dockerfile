@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     libxmlsec1-dev \
     libhdf5-dev \
     libgeos-dev \
+    libsasl2-dev \
+    libldap2-dev \
     build-essential \
     openssl \
     wget \

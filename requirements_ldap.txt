@@ -1,2 +1,2 @@
-python-ldap
+python3-ldap
 django-auth-ldap
