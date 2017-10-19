@@ -60,13 +60,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-from .config import ENABLE_LDAP_AUTH
-
-if ENABLE_LDAP_AUTH:
-    AUTHENTICATION_BACKENDS = ('django_auth_ldap.backend.LDAPBackend',) + AUTHENTICATION_BACKENDS
-    LOGIN_REDIRECT_URL = '/'
-
-
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -80,6 +73,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
 
@@ -98,3 +92,5 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
 #SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 #SOCIAL_AUTH_INACTIVE_USER_URL = '/inactive-user/'
 
+# On any admin or plugin login redirect to standard social-auth entry point for agreement to terms
+LOGIN_REDIRECT_URL = '/login'
