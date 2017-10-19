@@ -64,6 +64,7 @@ from .config import ENABLE_LDAP_AUTH
 
 if ENABLE_LDAP_AUTH:
     AUTHENTICATION_BACKENDS = ('django_auth_ldap.backend.LDAPBackend',) + AUTHENTICATION_BACKENDS
+    LOGIN_REDIRECT_URL = '/'
 
 
 SOCIAL_AUTH_PIPELINE = (

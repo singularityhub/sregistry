@@ -33,11 +33,14 @@ from django.conf.urls import url, include
 from django.conf import settings
 import shub.apps.users.views as user_views
 from social_django import urls as social_urls
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
 
     # Twitter, and social auth
     url(r'^login/$', user_views.login, name="login"),
+    url(r'^ldap-login/$', auth_views.login,
+        {'template_name': 'social/ldap-login.html'}, name="ldap-login"),
     url(r'^accounts/login/$', user_views.login),
     url(r'^logout/$', user_views.logout, name="logout"),
     url('', include(social_urls, namespace='social')),
