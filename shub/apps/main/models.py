@@ -29,14 +29,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-from shub.settings import MEDIA_ROOT
-
+from shub.settings import (
+    MEDIA_ROOT,
+    PRIVATE_ONLY, 
+    DEFAULT_PRIVATE
+)
 from shub.apps.api.models import ImageFile
 from shub.apps.users.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, DO_NOTHING
 from django.db.models.signals import post_delete
+from django.db.models import Avg, Sum
 
 from django.contrib.postgres.fields import JSONField
 from polymorphic.models import PolymorphicModel
@@ -68,6 +72,11 @@ ACTIVE_CHOICES = ((True, 'Active'),
                   (False, 'Disabled'))
 
 
+def get_privacy_default():
+    if PRIVATE_ONLY is True:
+        return PRIVATE_ONLY
+    return DEFAULT_PRIVATE
+
 
 def has_edit_permission(instance,request):
     '''can the user of the request edit the collection or container?
@@ -87,6 +96,31 @@ def has_edit_permission(instance,request):
     if request.user in contributors:
         return True
     return False
+
+
+def has_view_permission(instance,request):
+    '''can the user of the request edit the collection or container?
+    '''
+    if isinstance(instance, Container):
+        instance = instance.collection
+
+    if instance.private is False:
+        return True
+
+    if request.user.is_authenticated() is False:
+        return False
+        
+    # Global Admins
+    if request.user.admin is True or request.user.is_superuser:
+        return True
+
+    # Collection Contributors
+    contributors = get_collection_users(instance)
+    if request.user in contributors:
+        return True
+
+    return False
+
 
 
 def delete_imagefile(sender,instance,**kwargs):
@@ -126,7 +160,7 @@ class Collection(models.Model):
 
     # By default, collections are public
     private = models.BooleanField(choices=PRIVACY_CHOICES, 
-                                  default=False,
+                                  default=get_privacy_default,
                                   verbose_name="Accessibility")
     
     def get_absolute_url(self):
@@ -139,6 +173,27 @@ class Collection(models.Model):
     def __unicode__(self):
         return self.get_uri()
 
+    def sizes(self, container_name=None):
+        '''return list of sizes for containers across collection.
+           Optionally limited to container name'''
+        if container_name is not None:
+            queryset = self.containers.filter(name=container_name)
+        else:
+            queryset = self.containers.all()
+        return [x.metadata['size_mb'] for x in queryset if 'size_mb' in x.metadata]
+
+
+    def mean_size(self, container_name=None):
+        total = self.total_size(container_name=container_name)
+        if total == 0:
+            return total
+        return sum(sizes) / len(sizes)
+
+
+    def total_size(self, container_name=None):
+        sizes = self.sizes(container_name=container_name)
+        return sum(sizes)
+       
 
     def get_uri(self):
         return "%s:%s" %(self.name,
@@ -149,24 +204,27 @@ class Collection(models.Model):
 
 
     def labels(self):
-        labels = dict()
-        for container in self.containers.all():
-            for label in container.labels():
-                if label.key not in labels:
-                    labels[label.key] = {}
-                if label.value not in labels[label.key]:
-                    labels[label.key][label.value] = 1
-                else:
-                    labels[label.key][label.value] += 1 
-        return labels
- 
-  
+        '''return common *shared* collection labels'''
+        return Label.objects.filter(containers__in=self.containers.all()).distinct()
+
+
+    def container_names(self):
+        '''return distinct container names'''
+        return list([x[0] for x in self.containers.values_list('name').distinct() if len(x)>0])
+   
     # Permissions
 
     def has_edit_permission(self,request):
         '''can the user of the request edit the collection
         '''
         return has_edit_permission(request=request,
+                                   instance=self)
+
+
+    def has_view_permission(self,request):
+        '''can the user of the request view the collection
+        '''
+        return has_view_permission(request=request,
                                    instance=self)
 
 
@@ -245,6 +303,15 @@ class Container(models.Model):
             return self.image.datafile.path
         return None
 
+    def get_download_name(self):
+        extension = "img"
+        image_path = self.get_image_path()
+        if image_path is not None:
+            if image_path.endswith('gz'):
+                extension = "img.gz"
+        return "%s.%s" %(self.get_uri().replace('/','-'), extension)
+
+
     def get_download_url(self):
         if self.image not in [None,""]:
             return self.image.datafile.file
@@ -280,6 +347,9 @@ class Container(models.Model):
         return has_edit_permission(request=request,
                                    instance=self.collection)
 
+    def has_view_permission(self,request):
+        return has_view_permission(request=request,
+                                   instance=self.collection)
 
 
 class Demo(models.Model):
@@ -373,4 +443,4 @@ class Label(models.Model):
         app_label = 'main'
         unique_together =  (("key","value"),)
 
-#post_delete.connect(delete_imagefile, sender=Container)
+post_delete.connect(delete_imagefile, sender=Container)

@@ -52,7 +52,7 @@ span.even { background: rgba(91, 192, 222, 0.32); }
     <!-- Navigation to different groups of collections -->
     <div class="col-md-12">
         <div class="content"  style="padding-bottom:20px">
-                <a href="{% url 'starred_collections' %}"><button class="btn btn-sm btn-default">Top Collections</button></a> 
+                <a href="{% url 'collection_stars' %}"><button class="btn btn-sm btn-default">Top Collections</button></a> 
                 {% if page_title == "Container Collections" %}
                 <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default" disabled>All Collections</button></a>
                 {% else %}
@@ -69,7 +69,7 @@ span.even { background: rgba(91, 192, 222, 0.32); }
             <tr>
                 <th>Name</th>
                 <th>Builds</th>
-                <th>Labels</th>
+                <th></th>
                 <th>Private</th>
                 <th>Modified</th>
             </tr>
@@ -79,11 +79,11 @@ span.even { background: rgba(91, 192, 222, 0.32); }
             <tr>
                <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
                <td>{{ collection.containers.count }}</td>
-               <td>{% for key,values in collection.labels.items %}
-                      {{ key }}:<span class="even">{% for val,count in values.items %}{{ val }}</span>
-                      {% if forloop.last %}{% else %},{% endif %}
-                      {% endfor %}
-                   {% endfor %}</td>
+               <td>
+                   {% for name in collection.container_names|slice:":50" %}
+                      <a href="{% url 'search_query' name %}">{{ name }}{% if forloop.last %}{% else %},{% endif %}</a>
+                   {% endfor %}
+               </td>
                <td style="width:15px">{% if collection.private %}Yes{% else %}No{% endif %}</td>
                <td style="width:100px">{{ collection.modify_date|date:"Y-m-d"}}</td>
             </tr>

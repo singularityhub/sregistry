@@ -11,5 +11,6 @@ from .main import (
 
 from .search import (
     container_search,
+    search_query,
     search_view
 )

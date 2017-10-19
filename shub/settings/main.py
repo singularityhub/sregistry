@@ -73,6 +73,7 @@ TEMPLATES = [
                 'social_django.context_processors.login_redirect',
                 'shub.apps.base.context_processors.auth_processor',
                 'shub.apps.base.context_processors.domain_processor',
+                'shub.apps.base.context_processors.settings_processor',
                 'shub.apps.base.context_processors.help_processor' #custom context processors
             ],
         },

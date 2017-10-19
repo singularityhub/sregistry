@@ -1,7 +1,7 @@
-id,value{% for collection_name, containers in collections.items %}
+{% load to_dash %}id,value,uid{% for collection_name, containers in collections.items %}
 {% if forloop.first %}collection,{% endif %}
-collection.{{ collection_name }},
-{% for container_name,container_items in containers.items %}collection.{{ collection_name }}.{{ container_name }},
-{% for tag_name, container_size in container_items.items %}collection.{{ collection_name }}.{{ container_name }}.{{ collection_name }}/{{ container_name }}:{{ tag_name }},{{ container_size }}
+collection.{{ collection_name|to_dash }},
+{% for container_name,container_items in containers.items %}collection.{{ collection_name|to_dash }}.{{ container_name|to_dash }},
+{% for tag_name, container_meta in container_items.items %}collection.{{ collection_name|to_dash }}.{{ container_name|to_dash }}.{{ collection_name|to_dash }}/{{ container_name|to_dash }}:{{ tag_name|to_dash }},{{ container_meta.size }},{{ container_meta.id }}
 {% endfor %}
 {% endfor %}{% endfor %}

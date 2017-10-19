@@ -35,4 +35,5 @@ import shub.apps.base.views as views
 urlpatterns = [
     url(r'^search$', views.search_view, name="search"),
     url(r'^searching$', views.container_search, name="container_search"),
+    url(r'^search/(?P<query>.+?)$', views.search_query, name="search_query"),
 ]

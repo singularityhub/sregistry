@@ -109,7 +109,7 @@ def download_share(request,cid,secret):
         raise Response(status.HTTP_401_UNAUTHORIZED)
 
     # If we make it here, link is good
-    filename = "%s.img" %container.get_uri().replace('/','-')
+    filename = container.get_download_name()
     response = HttpResponse(container.image.datafile.file,
                             content_type='application/img')
     response['Content-Disposition'] = 'attachment; filename="%s"' %filename
@@ -126,7 +126,7 @@ def download_container(request,cid,secret):
     if container.secret != secret:
         return Http404
 
-    filename = "%s.img" %container.get_uri().replace('/','-')
+    filename = container.get_download_name()
     response = HttpResponse(container.image.datafile.file,
                             content_type='application/img')
     response['Content-Disposition'] = 'attachment; filename="%s"' %filename

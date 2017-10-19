@@ -25,7 +25,7 @@
                 <h2 class="title" style="margin-bottom:0px">Usage: <a href="{% url 'collection_details' collection.id %}">
                       {{ collection.name }}</a>
                 </h2>
-                <p> The following shows example usage for the container {{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}
+                <p> The following shows example usage for the container {{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}
                 <hr>
             </div>
         </div>
@@ -34,17 +34,16 @@
 
 <div class="row">
     <div class="col-md-12">
-        <p class="alert alert-info">Note to testers - registry accession has not yet been added to the Singularity software proper. You can use the sregistry client to test</p>
 
         <!-- Pull Example-->
         <div class="row">
             <div class="col-md-10">
                 <p><strong>Pull</strong> the container to your machine (and optionally name custom, or by hash/commit:</p>
                 <p class="well" id="pull_well">
-                     sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}<br>
-                     sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }} --name customname.img<br>
-                     singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}<br>
-                     singularity pull --name customname.img shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}<br>
+                     sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
+                     sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }} --name customname.img<br>
+                     singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}:{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
+                     singularity pull --name customname.img shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
                 </p>
             </div>
             <div class="col-md-2">
@@ -59,7 +58,7 @@
             <div class="col-md-10"> 
                 <p><strong>Shell</strong> into the container:</p>
                 <p class="well" id="shell_well">
-                    singularity shell shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}
+                    singularity shell shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}
                 </p>
             </div>
             <div class="col-md-2">
@@ -74,7 +73,7 @@
             <div class="col-md-10">
                 <p><strong>Run</strong> the container:</p>
                 <p id="run_well" class="well"><br>
-                    singularity run shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}/{{ collection.containers.first.tag }}</p>
+                    singularity run shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}</p>
             </div>
             <div class="col-md-2">
                 <button style="margin-top:55px" id="run" class="btn copyme" data-clipboard-target="#run"><i class="fa fa-copy"></i></button>
@@ -82,6 +81,22 @@
 		</div>
             </div>
         </div>
+
+        <!-- Build Example-->
+        <div class="row">
+            <div class="col-md-10">
+                <p><strong>Build</strong> using as a base:</p>
+                <p id="build_well" class="well">
+                    sudo singularity build {{ collection.name }}.simg shub://{{ collection.containers.first.name }}:{{collection.containers.first.tag }}</p>
+            </div>
+            <div class="col-md-2">
+                <button style="margin-top:55px" id="run" class="btn copyme" data-clipboard-target="#run"><i class="fa fa-copy"></i></button>
+                <div style="width:58px" class="alert alert-info hidden" id="buildb-alert" role="alert">
+		</div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 {% include "messages/notification.html" %}

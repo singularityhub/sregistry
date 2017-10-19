@@ -52,6 +52,12 @@ HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
+# Should registries by default be private, with no option for public?
+PRIVATE_ONLY = False
+
+# Should the default for a new registry be private or public?
+DEFAULT_PRIVATE = False
+
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
@@ -64,6 +70,19 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+########################################################################
+# Visualizations
+########################################################################
+
+# After how many single containers should we switch to showing collections
+# only? >= 1000
+VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
+
+
+########################################################################
+# Logging
+########################################################################
 
 
 # Logging

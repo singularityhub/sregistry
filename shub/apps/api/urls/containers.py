@@ -150,9 +150,7 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
             message = "%s is frozen, delete not allowed." %container.get_short_uri()
             raise PermissionDenied(detail=message, code=304)
 
-
-        delete = delete_container(request,container)
-        if delete is True:
+        if delete_container(request,container) is True:
             container.delete()       
             return Response(status=status.HTTP_204_NO_CONTENT)
         raise PermissionDenied(detail="Unauthorized")
@@ -184,7 +182,10 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
     def delete(self, request, cid):
         from shub.apps.api.actions import delete_container
         container = self.get_object(cid)
-        return delete_container(request,container)
+        if delete_container(request,container) is True:
+            container.delete()       
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(400)
         
     def get(self, request, cid):
         container = self.get_object(cid)
@@ -225,12 +226,12 @@ class ContainerSearch(APIView):
 
 urlpatterns = [
 
-    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/tag/(?P<tag>.+?)/$', ContainerSearch.as_view()),
-    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/$', ContainerSearch.as_view()),
-    url(r'^container/search/name/(?P<name>.+?)/tag/(?P<tag>.+?)/$', ContainerSearch.as_view()),
-    url(r'^container/search/name/(?P<name>.+?)/$', ContainerSearch.as_view()),
-    url(r'^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)/$', ContainerDetailByName.as_view()),
-    url(r'^container/(?P<collection>.+?)/(?P<name>.+?)/$', ContainerDetailByName.as_view()),
-    url(r'^containers/(?P<cid>.+?)/$', ContainerDetailById.as_view())
+    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/tag/(?P<tag>.+?)/?$', ContainerSearch.as_view()),
+    url(r'^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/?$', ContainerSearch.as_view()),
+    url(r'^container/search/name/(?P<name>.+?)/tag/(?P<tag>.+?)/?$', ContainerSearch.as_view()),
+    url(r'^container/search/name/(?P<name>.+?)/?$', ContainerSearch.as_view()),
+    url(r'^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)/?$', ContainerDetailByName.as_view()),
+    url(r'^container/(?P<collection>.+?)/(?P<name>.+?)/?$', ContainerDetailByName.as_view()),
+    url(r'^containers/(?P<cid>.+?)/?$', ContainerDetailById.as_view())
 
 ]

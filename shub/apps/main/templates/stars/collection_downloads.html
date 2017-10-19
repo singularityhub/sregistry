@@ -1,0 +1,106 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+{% endblock %}
+
+{% block content %}
+
+{% include 'messages/message.html' %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card" style="padding:20px">
+            <div class="header" style="padding-bottom:10px">
+                   <h3 class="title">
+                   <img src="{% static 'img/robot1.png' %}" width="80px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
+                   Top Downloads</h3>
+            </div>
+        </div>    
+    </div>
+</div>
+
+<!-- Containers! -->
+<div class="row">
+    <div class="col-md-12">
+        <p>The robots have some favorites. Container collections are ranked based on the number of downloads.</p>
+    </div>
+    <div class="col-md-12">
+        <div class="content"  style="padding-bottom:20px">
+            <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default">All Collections</button></a>
+            <a href="{% url 'collection_stars' %}"><button class="btn btn-sm btn-default">Starred Collections</button></a>
+        </div>
+    </div>
+</div>
+
+{% if favorites %}
+<div id ="favorites" class="row" style="padding-top:50px;">
+
+    <div class="col-md-12" class="table card material-table mdl-data-table--selectable">
+        <table id="datatable" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Containers</th>
+                <th>Last Modified</th>
+                <th><i class="fa fa-2x fa-download" 
+                       style="color:gold"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for favorite in favorites %}
+            <tr>
+               <td><a href="{% url 'collection_details' favorite.collection.id %}">{{ favorite.collection.name }}</a></td>
+               <td>{{ favorite.collection.containers.count }}</td>
+               <td>{{ favorite.collection.modify_date|date:"Y-m-d"}}</td>
+               <td>{{ favorite.count }}</td>
+             </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div id="favorites" class="row" style="padding-top:20px;">
+    <p class="alert alert-info">Nobody has pulled any containers yet :(</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script>
+$(document).ready(function(){
+
+    // Hack until figure out why pagination ugly
+    $('.material-pagination').hide();
+
+    $('#collection_table').DataTable( {
+       pageLength: 100, 
+       columnDefs: [
+            {
+                targets: [ 0, 1, 2 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            },
+          ],
+       columns: [
+            { "width": "40%" },
+            { "width": "10%" },
+               null,
+            ]
+    } );
+
+
+    $(".browser-default").change(function(){
+        $('.material-pagination').hide();
+    })
+
+})
+</script>
+{% endblock %}

@@ -1,11 +1,18 @@
 # Deployment
-If starting from scratch, the [basic commands](../scripts/prepare_instance.sh) are provided that were used to set up an instance. This is just done once, and (in testing) was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
+If starting from scratch, you need the following dependencies on the host:
 
-- The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it.
-- Anaconda3 is installed for python libraries needed for `docker-compose`. 
-- Make sure to add all users to the docker group that need to maintain the application.
+ - [Docker](http://54.71.194.30:4111/engine/installation): a container engine
+ - [docker-compose](http://54.71.194.30:4111/compose/install/): an orchestration tool for Docker images.
+ - python: docker compose requires some additional python libraries, `ipaddress` and `oauth2client`
 
-Updated docs on how to install Docker or docker-compose are provided for [installing Docker](http://54.71.194.30:4111/engine/installation) and [docker-compose](http://54.71.194.30:4111/compose/install/).
+Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
+
+For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](../scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
+
+- The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it. If it's for personal use, `$HOME` is fine.
+- Anaconda3 is installed for python libraries needed for `docker-compose`. You can use whatever python you with (system installed or virtual environment)
+- Make sure to add all users to the docker group that need to maintain the application, and log in and out before use.
+
 
 ## Settings
 See that folder called [settings](../shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a [settings/secrets.py](../shub/settings/secrets.py) for application secrets, and [settings/config.py](../shub/settings/config.py) to configure your database and registry information.
@@ -137,6 +144,21 @@ REGISTRY_URI = "taco"
 
 The `HELP_CONTACT_EMAIL` should be an email address that you want your users (and/or visitors to your registry site, if public) to find if they need help. The `HELP_INSTITUTION_SITE` is any online documentation that you want to be found in that same spot. Finally, `REGISTRY_NAME` is the long (human readable with spaces) name for your registry, and `REGISTRY_URI` is a string, all lowercase, 12 or fewer characters to describe your registry.
 
+#### Registry Private
+By default Singularity Registry will provide public images, with an option to set them to private. If you are working with sensitive data and/or images, you might want all images to be private, with no option to make public. You can control that with the variable `PRIVATE_ONLY`.
+
+```
+PRIVATE_ONLY=True
+```
+
+The above would eliminate public status and make private the default. Alternatively, if you want to allow for public images but make the default private (and collection owners can make collections of their choice public) set `DEFAULT_PRIVATE` to True.
+
+```
+DEFAULT_PRIVATE=True
+```
+
+`PRIVATE_ONLY` takes preference to `DEFAULT_PRIVATE`. In other words, if you set `PRIVATE_ONLY` to True, the default has to be private, the change to `DEFAULT_PRIVATE` is meaningless, and a user cannot change a collection to be public.
+
 
 #### Database
 By default, the database itself will be deployed as a postgres image called `db`. You probably don't want this for production (for example, I use a second instance with postgres and a third with a hot backup, but it's an ok solution for a small cluster or single user. Either way, we recommend backing it up every so often.
@@ -154,6 +176,23 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+```
+
+#### Visualizations
+We show a nice treemap as one of the registry tools:
+
+![assets/img/container_treemap.png](assets/img/container_treemap.png)
+
+Also in this file you have the option to "tweak" this threshold of when we go from showing all containers (eg, specific tags) to just containers under collections. If this second approach is still too detailed, we may also make the fallback to just show collections.
+
+```
+########################################################################
+# Visualizations
+########################################################################
+
+# After how many single containers should we switch to showing collections
+# only? >= 1000
+VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
 ```
 
 #### Logging
@@ -248,12 +287,19 @@ Specifically, pay close attention to the fields in the last two sections that ne
 If you run into strange errors regarding any kind of authentication / server / nginx when you start the images, likely it has to do with not having moved these files, or a setting about https in the [settings](../shub/settings). If you have trouble, please post an issue on the [issues board](https://www.github.com/singularityhub/sregistry/issues) and I'd be glad to help.
 
 
-## Build the Image
-Next, you should build your image, and run the application with `docker-compose`. By the time this code is public we should also be providing the image on Docker Hub, so likely you can skip the build:
+## Build the Image (Optional)
+If you want to try it, you can build the image. Note that this step isn't necessary as the image is provided on [Docker Hub](https://hub.docker.com/r/vanessa/sregistry/). This step is optional - if you want to try building locally, you would do:
+
 
 ```bash
 cd sregistry
 docker build -t vanessa/sregistry .
+```
+
+## Compose the Images
+Whether you build or not, the compose command will bring up the application (and download `vanessa/sregistry` image if not found in your cache).
+
+```
 docker-compose up -d
 ```
 
@@ -271,4 +317,9 @@ NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 
-Good job! Now it's time to read the [configuration](config.md) guide to better understand how to configure and interact with your Singularity Registry.
+If you make changes to the image itself, you will need to build again. However, if you just make changes to some static code, since it's mounted at `/code`, you can generally just restart:
+
+```
+docker-compose restart
+```
+Good job! Now it's time to read the [setup](setup.md) guide to better understand how to configure and interact with your Singularity Registry.

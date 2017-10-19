@@ -1,10 +1,21 @@
 FROM python:3.5.1
 ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y \
-    anacron \
-    libopenblas-dev \
-    gfortran \
     pkg-config \
+    cmake \
+    openssl \
+    wget \
+    git \
+    vim
+
+RUN apt-get update && apt-get install -y \
+    anacron \
+    autoconf \
+    automake \
+    libtool \
+    libopenblas-dev \
+    libglib2.0-dev \
+    gfortran \
     libxml2-dev \
     libxmlsec1-dev \
     libhdf5-dev \
@@ -12,9 +23,6 @@ RUN apt-get update && apt-get install -y \
     libsasl2-dev \
     libldap2-dev \
     build-essential \
-    openssl \
-    wget \
-    vim
 
 # Install Singularity
 RUN git clone https://www.github.com/singularityware/singularity.git

@@ -170,7 +170,7 @@ class CollectionSearch(APIView):
 
 urlpatterns = [
 
-    url(r'^collection/search/(?P<query>.+?)$', CollectionSearch.as_view()),
-    url(r'^collection/(?P<collection_name>.+?)$', CollectionDetailByName.as_view()),
+    url(r'^collection/search/(?P<query>.+?)/?$', CollectionSearch.as_view()),
+    url(r'^collection/(?P<collection_name>.+?)/?$', CollectionDetailByName.as_view()),
 
 ]

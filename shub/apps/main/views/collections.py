@@ -44,6 +44,7 @@ from django.shortcuts import (
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from shub.settings import PRIVATE_ONLY
 from itertools import chain
 
 import os
@@ -160,7 +161,7 @@ def edit_collection(request,cid):
         # Make private?
         private = request.POST.get("private", None)
         try:
-            if private != None:
+            if private != None and PRIVATE_ONLY is False:
                 if private == "True" and collection.private == False:
                     collection.private = True
                     messages.info(request,"The collection is now private.")
@@ -233,6 +234,7 @@ def change_collection_privacy(request,cid,make_private=True):
     # Customize message based on making public or private
     status = "private"
     if make_private == False:
+ 
         status = "public"
 
     # If the user has edit permission, make the repo private
@@ -268,5 +270,8 @@ def make_collection_public(request,cid):
     '''make collection public will make a collection public
     :param cid: the collection id to make private
     '''
+    if PRIVATE_ONLY is True:
+        messages.info(request,"This registry only allows private collections.")
+        return redirect('collection_details', cid=cid)
     return change_collection_privacy(request,cid,make_private=False)
 

@@ -55,4 +55,5 @@ def delete_container(request, container):
     if not validate_request(auth,payload,"delete",timestamp):
         bot.debug("request is invalid.")
         return False
+
     return True

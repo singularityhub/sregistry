@@ -32,13 +32,16 @@
                     name="private" 
                     class="form-control">
 
+                {% if PRIVATE_ONLY %}
+                 <option value="True">True</option>
+                {% else %}
                 {% if collection.private %}
                  <option value="True">True</option>
                  <option value="False">False</option>
                 {% else %}
                  <option value="False">False</option>
                  <option value="True">True</option>
-                {% endif %}
+                {% endif %}{% endif %}
             </select>
             <small>A private collection requires authentication for use, and is not revealed for public sharing.</small><br>
             <input class="btn btn-primary" type="submit" value="Save" style="margin-top:20px">

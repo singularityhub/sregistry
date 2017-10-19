@@ -35,10 +35,10 @@ import shub.apps.main.views as views
 
 urlpatterns = [
 
-    url(r'^collection/demos/(?P<cid>\d+)/$', views.collection_demos,name='collection_demos'),
-    url(r'^demos/(?P<did>\d+)/$', views.view_demo,name='view_demo'),
-    url(r'^demos/(?P<cid>\d+)/(?P<did>.+?)/edit$', views.edit_demo,name='edit_demo'),
-    url(r'^demos/(?P<cid>\d+)/new$', views.edit_demo,name='new_demo')
+    url(r'^collection/demos/(?P<cid>\d+)/?$', views.collection_demos,name='collection_demos'),
+    url(r'^demos/(?P<did>\d+)/?$', views.view_demo,name='view_demo'),
+    url(r'^demos/(?P<cid>\d+)/(?P<did>.+?)/edit$/?$', views.edit_demo,name='edit_demo'),
+    url(r'^demos/(?P<cid>\d+)/new/?$$', views.edit_demo,name='new_demo')
 
 ]
 

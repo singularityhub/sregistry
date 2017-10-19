@@ -41,7 +41,7 @@ from rest_framework.permissions import (
 from singularity.utils import write_file
 from shub.apps.users.models import User
 
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import hmac
 import base64
@@ -152,9 +152,9 @@ def validate_secret(secret,payload,request_signature):
 
 
 def generate_timestamp():
-    return datetime.utcnow().strftime('%Y%m%dT%HZ')
-
-
+    ts = datetime.now()
+    ts = ts.replace(tzinfo=timezone.utc)
+    return ts.strftime('%Y%m%dT%HZ')
 
 def JsonResponseMessage(status=500,message=None,status_message='error'):
     response = {'status':status_message}

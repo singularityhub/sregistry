@@ -40,22 +40,25 @@
 
 {% include "messages/message.html" %}
 
-<div id="fh5co-portfolio">
+<div class="row" style="margin-top:20px; display:none" id="share_box">
 
-<div class="row" style="margin:20px; display:none" id="share_box">
-    <p>
-       <span class="well" id="share_prompt">For how many days should this temporary download link be active?</span> 
+    <div class="col-md-7" style="margin-bottom:30px; margin-left:20px;">
+       <span id="share_prompt">For how many days should this temporary download link be active?</span> 
        <span id="expire_days" 
-             style="padding:19px;margin-right:15px";
              contenteditable="true" 
+             style="padding:10px; margin-right:10px;"
              class="alert alert-info">7</span> days.
-       <button id="generate_share" 
-               class="btn btn-xs btn-primary"
-               style="margin-top: 15px; margin-left: 20px; padding:20px">Generate Link</button>
+       <button id="generate_share"
+               style="margin-left:30px" 
+               class="btn btn-sm btn-primary">Generate Link</button>
     <p id="share_result" 
-       style="display:none; max-width:640px" 
-       class="alert alert-info"></p>
+       style="display:none;"
+       class="well"></p>
+    </div>
 </div>
+
+
+<div id="fh5co-portfolio">
 
 <div class="row">
     <div class="col-md-12">
@@ -128,7 +131,7 @@
                    class="btn btn-default btn-sm save_container">
                    <button data-toggle="tooltip" 
                            data-placement="right" 
-                           title="add container to your snackbox for visualizations and comparisons!" 
+                           title="add container to your box to save for later." 
                            class="btn btn-sm btn-default">
                            <i data-id="container_{{ container.id }}" 
                               data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
@@ -372,6 +375,7 @@ $(document).ready(function(){
     $("#share_container").click(function(){
         $("#generate_share").show();
         $("#share_prompt").text("For how many days should this temporary download link be active?");
+        $('#expire_days').show();
         $("#share_box").toggle();
     })
 
@@ -385,11 +389,12 @@ $(document).ready(function(){
 
                 success : function(json) {
                     if (json['status'] == "success"){
-                        var share_link = '<a href="' + json['link'] + '">' + json['link'] + '</a>';
+                        var share_link = '<a href="{{ domain }}' + json['link'] + '">{{ domain }}' + json['link'] + '</a>';
                         var days = json['days'];
                         var expire = json['expire'];
                         var message = "This link is valid for " + days + " days, and will expire on " + expire;
                         $("#generate_share").hide();
+                        $('#expire_days').hide();
                         $("#share_prompt").text(message);
                         $("#share_result").append(share_link)
                         $("#share_result").show()

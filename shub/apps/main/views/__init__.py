@@ -67,8 +67,11 @@ from .containers import (
 )
 
 from .compare import (
-    container_treemap,
-    container_size_data
+    containers_treemap,
+    collection_treemap,
+    container_size_data,
+    collection_size_data,
+    single_collection_size_data
 )
 
 from .labels import (
@@ -82,7 +85,8 @@ from .labels import (
 
 from .stars import (
     star_collection,
-    starred_collections
+    collection_stars,
+    collection_downloads
 )
 
 from .share import (
