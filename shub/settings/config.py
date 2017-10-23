@@ -40,6 +40,9 @@ ENABLE_GITLAB_AUTH=False
 # see https://singularityhub.github.io/sregistry/install.html
 # secrets.py.example provides a template to work from
 
+# See below for additional authentication module, e.g. LDAP that are
+# available, and configured, as plugins.
+
 DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
 DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://','')
@@ -93,6 +96,9 @@ LOGGING_SAVE_RESPONSES=True
 
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it
+
+# Available Plugins:
+# - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
 PLUGINS_ENABLED = [
 #    'ldap_auth'
 ]
