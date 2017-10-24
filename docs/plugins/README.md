@@ -10,28 +10,9 @@ Plugins distributed with sregistry are found in the `shub/plugins` directory.
 
 The following plugins are included with sregistry, and can be enabled by adding them to the
 `PLUGINS_ENABLED` entry in `shub/settings/config.py`. Plugins may require further configuration in
-your registries' local `shub/settings/secrets/py` file.
+your registries' local `shub/settings/secrets.py` file.
 
-
-### ldap-auth - Authentication against LDAP directories
-
-The `ldap-auth` plugin allows users to login to sregistry using account information stored in an
-LDAP directory. This supports logins against Microsoft Active Directory, as well open-source
-OpenLDAP etc.
-
-To enable LDAP authentication you must:
-
-  * Add `ldap-auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Configure the details of your LDAP directory in `shub/settings/secrets.py`. See
-    `shub/settings/secrets.py.example` for an example OpenLDAP configuration.
-  
-Because no two LDAP directories are the same, configuration can be complex and there are no
-standard settings. The plugin uses `django-auth-ldap`, which provides more [detailed documentation
-at Read the Docs here](https://django-auth-ldap.readthedocs.io/en/1.2.x/authentication.html).
-
-To test LDAP authentication you may wish to use a docker container that provides an OpenLDAP
-directory. `mwaeckerlin/openldap` [(GitHub)](https://github.com/mwaeckerlin/openldap) [(Docker
-Hub)](https://hub.docker.com/r/mwaeckerlin/openldap/) is a useful container configured with SSL and
+ - [LDAP-AUTH](ldap.md): authentication against LDAP directories
 
 
 ## Writing a Plugin

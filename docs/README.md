@@ -16,7 +16,7 @@ This section is going to cover installation, which means configuration of a Dock
  - [install](install.md): configure, build, and deploy your registry.
  - [setup](setup.md): setting up and registering the running application.
  - [credentials](credentials.md): User accounts and credentials for using the client.
- - [plugins](plugins.md): Details about available plugins, and how to configure them.
+ - [plugins](plugins/README.md): Details about available plugins, and how to configure them.
 
 ## Use a Registry
 

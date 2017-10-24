@@ -56,29 +56,6 @@ from rest_framework.views import APIView
 # Single Object Serializers
 ##############################################################################
 
-class CollectionSerializer(serializers.ModelSerializer):
-    '''A single collection is a set of containers of the same reponame/containername
-    '''
-
-    containers = serializers.SerializerMethodField('list_containers')
-
-    def list_containers(self, collection):
-        container_list = []
-        for c in collection.containers.all():
-            container_list.append("%s/containers/%s" %(DOMAIN_NAME, c.id))
-        return container_list
-
-    class Meta:
-        model = Collection
-        fields = ('name','add_date','modify_date',
-                  'metadata', 'containers')
-
-
-
-##############################################################################
-# Multiple Object Serializers
-##############################################################################
-
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     containers = serializers.SerializerMethodField('list_containers')

@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
     libgeos-dev \
     libsasl2-dev \
     libldap2-dev \
-    build-essential \
+    build-essential
 
 # Install Singularity
 RUN git clone https://www.github.com/singularityware/singularity.git
