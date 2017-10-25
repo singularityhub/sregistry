@@ -19,5 +19,3 @@ for plugin in PLUGINS_ENABLED:
     # Add AUTHENTICATION_BACKENDS if defined, for authentication plugins
     if hasattr(plugin, 'AUTHENTICATION_BACKENDS'):
         AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + plugin.AUTHENTICATION_BACKENDS
-
-

@@ -6,9 +6,14 @@ OpenLDAP etc.
 
 To enable LDAP authentication you must:
 
+  * Uncomment the Dockerfile section to install LDAP dependencies *before* building the image
   * Add `ldap-auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
   * Configure the details of your LDAP directory in `shub/settings/secrets.py`. See
-    `shub/settings/secrets.py.example` for an example OpenLDAP configuration.
+    `shub/settings/dummy_secrets` for an example OpenLDAP configuration. A good start is to do the following:
+
+```
+cp shub/settings/dummy_secrets.py shub/settings/secrets.py
+```
   
 Because no two LDAP directories are the same, configuration can be complex and there are no
 standard settings. The plugin uses `django-auth-ldap`, which provides more [detailed documentation
@@ -36,17 +41,17 @@ To test sregistry LDAP authentication we can use a dockerized OpenLDAP server.
 
 
 #### Create the server
-As instructed in [https://github.com/mwaeckerlin/openldap](https://github.com/mwaeckerlin/openldap) let's bring 
+As instructed in [https://github.com/mwaeckerlin/openldap](https://github.com/mwaeckerlin/openldap) and [(here!)](https://marc.xn--wckerlin-0za.ch/computer/setup-openldap-server-in-docker)  let's bring 
 up a dummy LDAP server:
 
 ```
-docker run -it --rm --name openldap \
-           -p 389:389 \
-           -e DEBUG_LEVEL=1 \
-           -e DOMAIN=my-company.com \
-           -e ORGANIZATION="Tacosaurus" \
-           -e PASSWORD=avocados \
-           mwaeckerlin/openldap
+docker run -d --restart unless-stopped \
+              --name openldap \
+              -p 389:389 \
+              -e DOMAIN=my-company.com \
+              -e ORGANIZATION="Tacosaurus" \
+              -e PASSWORD=avocados \
+              mwaeckerlin/openldap
 ```
 
 With this command we are:
@@ -56,33 +61,76 @@ With this command we are:
     basedn is the root of the LDAP directory tree. It is usally created by
     breaking your domain name into domain components (dc).
   - Creating an admin account, which will have the dn (distinguished name)
-    `cn=admin,dc=my-company,dc=com` and password `avacados`.
+    `cn=admin,dc=my-company,dc=com` and password `avocados`.
 
-If all goes well, you will see output that ends in:
-
-```
-59ef5b78 backend_startup_one: starting "dc=my-company,dc=com"
-59ef5b78 hdb_db_open: database "dc=my-company,dc=com": dbenv_open(/var/lib/ldap).
-59ef5b78 slapd starting
-```
-
-Press `<ctrl+c>` to stop the container. We'll restart an openldap server in the background:
+The `-d` means "detached" so you won't see the output in the terminal. If you need to see output, remove the `-d`. Here is the 
+running container:
 
 ```
-docker run -d --name openldap \
-           -p 389:389 \
-           -e DOMAIN=my-company.com \
-           -e ORGANIZATION="Tacosaurus" \
-           -e PASSWORD=avocados \
-           mwaeckerlin/openldap
-           
 docker ps
 
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                           NAMES
 398b6297d6ff        mwaeckerlin/openldap   "/bin/sh -c /start.sh"   3 minutes ago       Up 3 minutes        0.0.0.0:389->389/tcp, 636/tcp   openldap
 ```
 
+#### Interact with it
+Here is a way to get familiar with the executables inside the image for ldap:
+
+```
+docker exec -it openldap bash
+
+root@docker[72b21bd3c290]:/# which ldapadd
+/usr/bin/ldapadd
+
+root@docker[72b21bd3c290]:/# which ldapwhoami
+/usr/bin/ldapwhoami
+```
+
+Note that the long string with cn= through dc= is your username! The password is the one you set for the image.
+
+```
+root@docker[4ec2c4f2737a]:/# ldapwhoami -x -D 'cn=admin,dc=my-company,dc=com' -W
+Enter LDAP Password: 
+dn:cn=admin,dc=my-company,dc=com
+```
+
 #### Add a user and group to the directory
+
+If all has gone well we can check the content of the directory with:
+
+```
+$ ldapsearch -x -b 'dc=my-company,dc=com'
+
+# extended LDIF
+#
+# LDAPv3
+# base <dc=my-company,dc=com> with scope subtree
+# filter: (objectclass=*)
+# requesting: ALL
+#
+
+# my-company.com
+dn: dc=my-company,dc=com
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: Tacosaurus
+dc: my-company
+
+# admin, my-company.com
+dn: cn=admin,dc=my-company,dc=com
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 3
+# numEntries: 2
+```
 
 We now need to add some test users and groups to our directory. Create a file
 called 'example.ldif' with the following content:
@@ -182,22 +230,19 @@ This will create a directory with:
   - A user *testadmin* with password *testadmin* who belongs to the *test* and
     *admin* groups.
 
-We use the `ldapadd` command to import this ldif file into our directory:
+We use the `ldapadd` command to import this ldif file into our directory (note this will prompt for the password):
 
 ```bash
-cat example.ldif  | docker exec -i openldap ldapadd -x -H ldap://localhost -D 'cn=admin,dc=my-company,dc=com'
--w 'avacados' -v
+cat example.ldif  | ldapadd -x -H ldap://localhost -D 'cn=admin,dc=my-company,dc=com' -W -v
 ```
 
-Here `-x` uses simple authentication, `-H` specifies the LDAP server to connect
-to, `-D` specifies we want to bind as our admin account and `-w` provides the
-password for that account (`-W` would prompt instead).
+The variables mean the following:
 
-If all goes well we can check the content of the directory with:
+  - `-x` uses simple authentication
+  - `-H` specifies the LDAP server to connect to
+  - `-D` specifies we want to bind as our admin account
+  - `-W` prompts for the password for that account
 
-```
-docker exec openldap ldapsearch -x -b 'dc=my-company,dc=com'
-```
 
 #### Configure sregistry
 
@@ -206,6 +251,8 @@ To configure sregistry to authenticate against our LDAP directory we need to set
 the following options in `shub/settings/secrets.py`:
 
 ```
+from django_auth_ldap.config import LDAPSearch, PosixGroupType
+
 # The URI to our LDAP server (may be ldap_auth:// or ldaps://)
 AUTH_LDAP_SERVER_URI = "ldap://127.0.0.1"
 

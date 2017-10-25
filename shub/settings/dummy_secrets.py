@@ -1,4 +1,4 @@
-# This file, secrets.py.example, provides an example of how to configure
+# This file, dummy_secrets, provides an example of how to configure
 # sregistry with your authentication secrets. Copy it to secrets.py and
 # configure the settings you need.
 
