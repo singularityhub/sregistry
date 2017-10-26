@@ -100,7 +100,7 @@ LOGGING_SAVE_RESPONSES=True
 # Available Plugins:
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
 PLUGINS_ENABLED = [
-#    'ldap_auth'
+    'ldap_auth'
 ]
 
 

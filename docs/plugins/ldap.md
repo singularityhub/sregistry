@@ -1,15 +1,15 @@
 # ldap-auth - Authentication against LDAP directories
 
 The `ldap-auth` plugin allows users to login to sregistry using account information stored in an
-LDAP directory. This supports logins against Microsoft Active Directory, as well open-source
-OpenLDAP etc.
+LDAP directory. This supports logins against [Microsoft Active Directory](https://msdn.microsoft.com/en-us/library/bb742424.aspx), as well open-source
+[OpenLDAP](https://www.openldap.org/) etc.
 
 To enable LDAP authentication you must:
 
   * Uncomment the Dockerfile section to install LDAP dependencies *before* building the image
   * Add `ldap-auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
   * Configure the details of your LDAP directory in `shub/settings/secrets.py`. See
-    `shub/settings/dummy_secrets` for an example OpenLDAP configuration. A good start is to do the following:
+    `shub/settings/dummy_secrets.py` for an example OpenLDAP configuration. A good start is to do the following:
 
 ```
 cp shub/settings/dummy_secrets.py shub/settings/secrets.py
@@ -17,7 +17,7 @@ cp shub/settings/dummy_secrets.py shub/settings/secrets.py
   
 Because no two LDAP directories are the same, configuration can be complex and there are no
 standard settings. The plugin uses `django-auth-ldap`, which provides more [detailed documentation
-at Read the Docs here](https://django-auth-ldap.readthedocs.io/en/1.2.x/authentication.html).
+at Read the Docs](https://django-auth-ldap.readthedocs.io/en/1.2.x/authentication.html).
 
 To test LDAP authentication you may wish to use a docker container that provides an OpenLDAP
 directory. `mwaeckerlin/openldap` [(GitHub)](https://github.com/mwaeckerlin/openldap) [(Docker
@@ -37,7 +37,7 @@ directory hold records for each user, and groups which users may belong to.
 LDAP directories are implemented by many different directory servers. The most
 commonly encountered are OpenLDAP on Linux, and Microsoft Active Directory on Windows platforms.
 
-To test sregistry LDAP authentication we can use a dockerized OpenLDAP server.
+To test sregistry LDAP authentication we can use a Dockerized OpenLDAP server.
 
 
 #### Create the server
@@ -90,9 +90,11 @@ Note that the long string with cn= through dc= is your username! The password is
 
 ```
 root@docker[4ec2c4f2737a]:/# ldapwhoami -x -D 'cn=admin,dc=my-company,dc=com' -W
-Enter LDAP Password: 
+Enter LDAP Password:
 dn:cn=admin,dc=my-company,dc=com
 ```
+
+For the password above you would enter the one we set in the environment for the image. In our case this was `avocados`.
 
 #### Add a user and group to the directory
 
@@ -243,9 +245,16 @@ The variables mean the following:
   - `-D` specifies we want to bind as our admin account
   - `-W` prompts for the password for that account
 
+Finally, you need to get the ipaddress of your registry. Since we aren't using docker-compose,
+the containers won't magically see one another. You can do that as follows:
+
+```
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' openldap
+172.17.0.2
+```
+Note that you will need this address in the next step for `AUTH_LDAP_SERVER_URI`.
 
 #### Configure sregistry
-
 
 To configure sregistry to authenticate against our LDAP directory we need to set
 the following options in `shub/settings/secrets.py`:
@@ -255,7 +264,7 @@ import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
 
 # The URI to our LDAP server (may be ldap_auth:// or ldaps://)
-AUTH_LDAP_SERVER_URI = "ldap://127.0.0.1"
+AUTH_LDAP_SERVER_URI = "ldap://172.17.0.2"
 
 # Any user account that has valid auth credentials can login
 AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=users,dc=my-company,dc=com",
@@ -282,6 +291,12 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 ```
 
 Also ensure 'ldap-auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/config.py`.
+
+It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
+
+```
+docker-compose logs -f uwsgi
+```
 
 Once you have set these options, startup sregistry and you should be able to
 login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*.

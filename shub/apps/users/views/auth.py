@@ -39,6 +39,7 @@ from django.contrib.auth import logout as auth_logout
 from shub.apps.users.models import User
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from django.utils import timezone
 
 
 #######################################################################################
@@ -86,7 +87,7 @@ def agree_terms(request):
     '''ajax view for the user to agree'''
     if request.method == 'POST':
         request.user.agree_terms = True
-        request.user.agree_terms_date = datetime.now()
+        request.user.agree_terms_date = timezone.now()
         request.user.save()
         response_data = {'status': request.user.agree_terms }
         return JsonResponse(response_data)
