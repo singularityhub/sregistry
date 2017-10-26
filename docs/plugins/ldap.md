@@ -251,6 +251,7 @@ To configure sregistry to authenticate against our LDAP directory we need to set
 the following options in `shub/settings/secrets.py`:
 
 ```
+import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
 
 # The URI to our LDAP server (may be ldap_auth:// or ldaps://)
