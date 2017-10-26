@@ -245,7 +245,7 @@ The variables mean the following:
   - `-D` specifies we want to bind as our admin account
   - `-W` prompts for the password for that account
 
-Finally, you need to get the ipaddress of your registry. Since we aren't using docker-compose,
+**Important** You need to get the ip-address of your ldap server. Since we aren't using docker-compose,
 the containers won't magically see one another. You can do that as follows:
 
 ```
@@ -298,8 +298,16 @@ It's recommended to have the uwsgi logs open so any issue with ldap is shown cle
 docker-compose logs -f uwsgi
 ```
 
+For example, if you put in an incorrect credential, you would see the following in the logs:
+
+```
+uwsgi_1   | [pid: 56|app: 0|req: 4/4] 172.17.0.1 () {42 vars in 1025 bytes} [Thu Oct 26 07:18:10 2017] GET /ldap_auth/login/?next=http://127.0.0.1/login/ => generated 13475 bytes in 26 msecs (HTTP/1.1 200) 7 headers in 382 bytes (1 switches on core 0)
+uwsgi_1   | search_s('ou=users,dc=my-company,dc=com', 2, '(uid=%(user)s)') returned 0 objects: 
+uwsgi_1   | Authentication failed for adminuser: failed to map the username to a DN.
+```
+
 Once you have set these options, startup sregistry and you should be able to
-login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*.
+login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*. As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker-compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.y
 
 
 [..back](../README.md)
