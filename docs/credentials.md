@@ -37,3 +37,5 @@ No container collections found.
 ```
 
 Don't worry, I haven't showed you that command and toolset yet. The functions for doing this will be provided in [singularity-python](https://www.github.com/singularityware/singularity-python), but actually we will build a singularity image [in the next client instructions](client.md) to do this.
+
+Next, see if you are interested in activating any additional [plugins](plugins/) for your Singularity Registry.

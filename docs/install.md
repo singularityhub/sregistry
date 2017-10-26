@@ -19,7 +19,15 @@ See that folder called [settings](../shub/settings)? inside are a bunch of diffe
 
 
 ### Secrets
-There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials. First, create this file
+There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
+
+An template to work from is provided `secrets.py.example`. You can copy this template:
+
+```bash
+cp shub/settings/secrets.py.example shub/settings/secrets.py
+```
+
+Or, if you prefer a clean secrets file, create a blank one as below:
 
 ```bash
 touch shub/settings/secrets.py
@@ -44,6 +52,10 @@ ENABLE_GITLAB_AUTH=False
 ```
 
 and you will need at least one to log in. I've found that Twitter works the fastest and easiest, and then Github and Google. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
+
+Other authentication methods, such as LDAP, are implemented as [plugins](plugins.md) to sregistry.
+See the [plugins documentation](plugins.md) for details on how to configure these.
+
 
  - [Github Developers](https://github.com/settings/developers)
 

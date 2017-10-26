@@ -35,15 +35,19 @@ ENABLE_TWITTER_AUTH=True
 ENABLE_GITHUB_AUTH=False
 ENABLE_GITLAB_AUTH=False
 
-# NOTE you will need to set them up.
-# see https://singularityhub.github.io/sregistry/config.html
+# NOTE you will need to set autehtication methods up.
+# Configuration goes into secrets.py
+# see https://singularityhub.github.io/sregistry/install.html
+# secrets.py.example provides a template to work from
 
+# See below for additional authentication module, e.g. LDAP that are
+# available, and configured, as plugins.
 
 DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
 DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://','')
 
-ADMINS = (('vsochat', 'vsochat@gmail.com'),)
+ADMINS = (( 'vsochat', 'vsochat@gmail.com'),)
 MANAGERS = ADMINS
 
 HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
@@ -89,3 +93,18 @@ VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
 # Do you want to save complete response metadata per each pull?
 # If you disable, we still keep track of collection pull counts, but not specific versions
 LOGGING_SAVE_RESPONSES=True
+
+# Plugins
+# Add the name of a plugin under shub.plugins here to enable it
+
+# Available Plugins:
+# - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+PLUGINS_ENABLED = [
+    'ldap_auth'
+]
+
+
+
+
+
+

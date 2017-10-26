@@ -3,6 +3,10 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/social-auth.css"%}">
+{% if 'ldap_auth' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/ldap_auth.css"%}">
+{% endif %}
+
 {% endblock %}
 
 {% block content %}
@@ -39,6 +43,11 @@
         {% if ENABLE_GOOGLE_AUTH %}
         <a class="social-button" id="google-connect" href="{% url 'social:begin' 'google-oauth2' %}?next={{ domain }}{{ request.path }}">Login with Google</a>
         {% endif %}
+
+        {% if 'ldap_auth' in PLUGINS_ENABLED %}
+        <a class="social-button" id="ldap-login" href="{% url 'ldap_auth-login' %}?next={{ domain }}{{ request.path }}">Login with LDAP</a>
+        {% endif %}
+
     {% endif %}
     </div>
 

@@ -1,0 +1,42 @@
+/* An LDAP login button */
+
+#ldap-login {
+    color: black;
+    background: rgb(255, 255, 255) url('/static/img/social-buttons/ldap.png') no-repeat scroll 13px 10px / 28px 28px padding-box border-box;
+    border: 1px solid black;
+}
+
+#ldap-login:hover {
+    color: white;
+    border-color: rgb(0, 119, 181);
+    background: black url('/static/img/social-buttons/ldap.png') no-repeat scroll 13px 10px / 28px 28px padding-box border-box;
+    -webkit-transition: all .8s ease-out;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease-out;
+}
+
+#ldap-login span {
+	box-sizing: border-box;
+    color: rgb(0, 119, 181);
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    border: 0px none rgb(0, 119, 181);
+    outline: rgb(255, 255, 255) none 0px;
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+#ldap-login:hover span {
+    color: #FFF;
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}

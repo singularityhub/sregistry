@@ -41,7 +41,8 @@ from shub.settings import (
     HELP_INSTITUTION_SITE,
     PRIVATE_ONLY,
     REGISTRY_URI,
-    REGISTRY_NAME
+    REGISTRY_NAME,
+    PLUGINS_ENABLED,
 )
 
 def domain_processor(request):
@@ -63,6 +64,7 @@ def auth_processor(request):
     return {"ENABLE_GOOGLE_AUTH":ENABLE_GOOGLE_AUTH,
             "ENABLE_TWITTER_AUTH":ENABLE_TWITTER_AUTH,
             "ENABLE_GITHUB_AUTH":ENABLE_GITHUB_AUTH,
-            "ENABLE_GITLAB_AUTH":ENABLE_GITLAB_AUTH}
+            "ENABLE_GITLAB_AUTH":ENABLE_GITLAB_AUTH,
+            "PLUGINS_ENABLED":PLUGINS_ENABLED,}
 
 

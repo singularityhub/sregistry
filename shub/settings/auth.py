@@ -58,6 +58,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
+
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
 
 # http://psa.matiasaguirre.net/docs/configuration/settings.html#urls-options
@@ -75,3 +76,5 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
 #SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 #SOCIAL_AUTH_INACTIVE_USER_URL = '/inactive-user/'
 
+# On any admin or plugin login redirect to standard social-auth entry point for agreement to terms
+LOGIN_REDIRECT_URL = '/login'
