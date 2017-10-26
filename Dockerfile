@@ -44,8 +44,8 @@ RUN pip install -r /tmp/requirements.txt
 # You are free to comment out those plugins that you don't want to use
 
 # Install LDAP (uncomment if wanted)
-RUN pip install python3-ldap
-RUN pip install django-auth-ldap
+# RUN pip install python3-ldap
+# RUN pip install django-auth-ldap
 
 
 RUN mkdir /code
