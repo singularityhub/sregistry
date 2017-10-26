@@ -276,7 +276,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # Map LDAP group membership into Django admin flags
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     # Anyone in this group is a superuser for the app
-    "is_superuser": "cn=admin,ou=groups,dc=my-example,dc=com"
+    "is_superuser": "cn=admin,ou=groups,dc=my-company,dc=com"
 }
 ```
 
