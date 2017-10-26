@@ -248,8 +248,8 @@ The variables mean the following:
 **Important** You need to get the ip-address of your ldap server. Since we aren't using docker-compose,
 the containers won't magically see one another. You can do that as follows:
 
-```
-docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" openldap
+`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' openldap`
+'''
 172.17.0.2
 ```
 Note that you will need this address in the next step for `AUTH_LDAP_SERVER_URI`.
