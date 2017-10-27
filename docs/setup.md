@@ -18,6 +18,17 @@ NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 
+## Roles
+Before we make accounts, let's talk about the different roles that can be associated with a registry.
+
+ - **superuser**: you can think of as an application master. They have the highest level of permissions (akin to root) to shell into the application, add and remove users and roles, and do pretty much whatever they want. In that you are reading this and setting up the registry, you are going to be a superuser.
+ - **admin**: has a credential file to push images, but without access and permissions to use docker on the server, has no power to add or remove users. An admin is a manager, but only of images, not the application.
+ - **authenticated user**: is a user that creates an account via the interface, but does not have the ability to push images. 
+ - **unathenticated user**: is an anonymous user of the registry. In the case of a private registry, this individual cannot pull images. In the case of a public registry, there is no huge benefit to being authenticated. 
+
+We will add more roles as the need arises. For example, it might be the case that an authenticated user is granted some level of permissions to push to a particular collection, or a token is needed for an environment to complete testing, etc. Thus, based on the above and granted that you are setting up the server and reading this, you will be a **superuser** because you have permissions to control the Docker images and grant other users (and yourself) the ability to push with the role **admin**.
+
+
 ## Accounts
 To create your admin account, the first thing you need to do (in the web interface) is click Login on the top right. You should see the social account options that you configured in the [install](install.md) step. You can now log in with your social account of choice. This will create a user account for yourself that you can use to manage the application, and when you are logged in you should see your username in the top right. It usually corresponds with the one from your social account.
 
