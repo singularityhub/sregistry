@@ -30,6 +30,11 @@ We have provided a Singularity build definition for you, for which you can use t
 
 ```
 cd sregistry/
+
+# Singularity 2.4 and up
+sudo singularity build sregistry Singularity
+
+# For Singularity earlier than 2.4 (deprecated)
 singularity create --size 2000 sregistry
 sudo singularity bootstrap sregistry Singularity
 ```
