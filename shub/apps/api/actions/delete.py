@@ -30,10 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from shub.logger import bot
-from shub.apps.api.utils import (
-    validate_request,
-    generate_timestamp
-)
+from singularity.registry.auth import generate_timestamp
+from shub.apps.api.utils import validate_request
 
 
 def delete_container(request, container):
