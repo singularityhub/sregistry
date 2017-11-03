@@ -39,7 +39,7 @@ from shub.apps.users.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, DO_NOTHING
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, pre_delete
 from django.db.models import Avg, Sum
 
 from django.contrib.postgres.fields import JSONField
@@ -125,9 +125,8 @@ def has_view_permission(instance,request):
 
 def delete_imagefile(sender,instance,**kwargs):
     if instance.image not in ['',None]:
-        instance.image.datafile.delete()
-        instance.image.delete()
-
+        if hasattr(instance.image,'datafile'):
+            instance.image.datafile.delete()
 
 #######################################################################################################
 # Collections #########################################################################################
@@ -443,4 +442,4 @@ class Label(models.Model):
         app_label = 'main'
         unique_together =  (("key","value"),)
 
-post_delete.connect(delete_imagefile, sender=Container)
+pre_delete.connect(delete_imagefile, sender=Container)

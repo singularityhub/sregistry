@@ -143,6 +143,7 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
                                     name=name,
                                     tag=tag)
 
+        print(container)
         if container is None:
             raise NotFound(detail="Container Not Found")
 

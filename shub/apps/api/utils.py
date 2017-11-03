@@ -151,11 +151,6 @@ def validate_secret(secret,payload,request_signature):
     return hmac.compare_digest(digest, request_signature)
 
 
-def generate_timestamp():
-    ts = datetime.now()
-    ts = ts.replace(tzinfo=timezone.utc)
-    return ts.strftime('%Y%m%dT%HZ')
-
 def JsonResponseMessage(status=500,message=None,status_message='error'):
     response = {'status':status_message}
     if message != None:

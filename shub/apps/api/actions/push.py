@@ -36,10 +36,8 @@ from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
-from shub.apps.api.utils import (
-    validate_request,
-    generate_timestamp
-)
+from shub.apps.api.utils import validate_request
+from singularity.registry.auth import generate_timestamp
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
 
