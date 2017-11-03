@@ -92,5 +92,11 @@ class ImageFile(models.Model):
     name = models.CharField(max_length=200, null=False)
     datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
 
+    def get_label(self):
+        return "imagefile"
+
+    class Meta:
+        app_label = 'api'
+
 
 post_save.connect(create_container, sender=ImageFile)
