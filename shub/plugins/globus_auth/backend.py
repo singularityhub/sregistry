@@ -48,18 +48,9 @@ class GlobusOAuth2(BaseOAuth2):
        https://auth.globus.org/v2/oauth2/token 
      '''
     name = 'globus'
-    API_URL = "https://auth.globus.org/v2/oauth2"
     AUTHORIZATION_URL = "https://auth.globus.org/v2/oauth2/authorize"
     ACCESS_TOKEN_URL = "https://auth.globus.org/v2/oauth2/token"
     ACCESS_TOKEN_METHOD = 'POST'
-
-    # Defaults can remove
-    #REFRESH_TOKEN_URL = None
-    #REFRESH_TOKEN_METHOD = 'POST'
-    #RESPONSE_TYPE = 'code'
-    #REDIRECT_STATE = True
-    #STATE_PARAMETER = True
-    #CODE_VERIFIER = uuid.uuid4()
 
     # If you need to customize per deployment, define this in settings/secrets.py
     # as SOCIAL_AUTH_GLOBUS_SCOPE and do not repeat here
@@ -67,6 +58,8 @@ class GlobusOAuth2(BaseOAuth2):
                      "profile",
                      "email",
                      "urn:globus:auth:scope:transfer.api.globus.org:all"]
+
+    # Need to look into what is/isn't necessary here
     EXTRA_DATA = [
         ('refresh_token', 'refresh_token', True),
         ('expires_in', 'expires'),
@@ -74,8 +67,6 @@ class GlobusOAuth2(BaseOAuth2):
         ('token_type', 'token_type', True)
     ]
 
-    def api_url(self):
-        return self.API_URL
 
     def get_user_details(self, response):
         '''return Globus user details'''
@@ -97,12 +88,10 @@ class GlobusOAuth2(BaseOAuth2):
              'code': auth_code.encode('utf-8'),
              'code_verifier': self.verifier,
              'redirect_uri': self.redirect_uri})
+
         '''
         params = super(GlobusOAuth2, self).auth_complete_params(state)
         print(params)
-        if self.data.get('access_token'):
-            # Don't add postmessage if this is plain server-side workflow
-            params['redirect_uri'] = 'postmessage'
         params['grant_type'] = 'authorization_code'
         params['client_id'] = self.strategy.get_session('id')
         params['code_verifier'] = self.strategy.get_session('verifier')
