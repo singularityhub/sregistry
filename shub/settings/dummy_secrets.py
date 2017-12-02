@@ -9,7 +9,6 @@
 #SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'
 
 
-
 # =============================================================================
 # Social Authentication
 # Set keys and secrets for social authentication methods that you have
@@ -104,3 +103,8 @@
 #    # Anyone in this group is a superuser for the app
 #    "is_superuser": "cn=sregistry_admin,ou=groups,dc=example,dc=com"
 #}
+
+# LDAP Authentication (globus-auth)
+# Only required if 'globus_auth' is added to PLUGINS_ENABLED in config.py
+
+#SOCIAL_AUTH_GLOBUS_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

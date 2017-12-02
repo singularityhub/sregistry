@@ -6,6 +6,9 @@
 {% if 'ldap_auth' in PLUGINS_ENABLED %}
     <link rel="stylesheet" href="{% static "css/ldap_auth.css"%}">
 {% endif %}
+{% if 'globus_auth' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
+{% endif %}
 
 {% endblock %}
 
@@ -46,6 +49,11 @@
 
         {% if 'ldap_auth' in PLUGINS_ENABLED %}
         <a class="social-button" id="ldap-login" href="{% url 'ldap_auth-login' %}?next={{ domain }}{{ request.path }}">Login with LDAP</a>
+        {% endif %}
+
+        {% if 'globus_auth' in PLUGINS_ENABLED %}
+        <!--<a class="social-button" id="globus-login" href="{% url 'globus_auth-login' %}?next={{ domain }}{{ request.path }}">Login with Globus</a>-->
+        <a class="social-button" id="globus-login" href="{% url 'social:begin' 'globus' %}?next={{ domain }}{{ request.path }}">Login with Globus</a>
         {% endif %}
 
     {% endif %}

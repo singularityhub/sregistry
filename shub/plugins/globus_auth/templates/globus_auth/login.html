@@ -1,0 +1,41 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/social-auth.css"%}">
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+
+    {% include 'messages/message.html' %}
+    {% if user and not user.is_anonymous %}
+    <h3>Hello, {{ user.get_full_name }}!</h3>
+    <br>
+    <div>
+
+       <!-- If all credentials provided, give user full access -->
+       <a href="{% url 'my_collections' %}"><button class="btn btn-default">My Container Collections</button></a>
+       <a href="{% url 'logout' %}"><button class="btn btn-default">Logout</button></a>
+
+    {% else %}
+
+    <!-- User isn't logged in yet! -->
+    <div class="login-box">
+
+      <h2>Login With LDAP</h2>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Login</button>
+        </form>
+
+
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}
+{% block footer %}
+{% include 'main/footer.html' %}
+{% endblock %}
