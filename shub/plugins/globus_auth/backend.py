@@ -33,8 +33,13 @@ from social_core.backends.oauth import BaseOAuth2
 from social_core.utils import handle_http_errors
 from social_core.exceptions import AuthMissingParameter
 from shub.logger import bot
+from shub.settings import (
+    SOCIAL_AUTH_GLOBUS_KEY, 
+    SOCIAL_AUTH_LOGIN_REDIRECT_URL
+)
 from shub.apps.users.utils import create_code_challenge
 import pickle
+import requests
 import globus_sdk
 
 class GlobusOAuth2(BaseOAuth2):
@@ -82,6 +87,10 @@ class GlobusOAuth2(BaseOAuth2):
         '''
         The request to get a token should look like the following
 
+       curl --request POST \
+  
+  --header 'content-type: application/json' \
+
           self.auth_client.oauth2_token(
             {'client_id': self.client_id,
              'grant_type': 'authorization_code',
@@ -93,7 +102,7 @@ class GlobusOAuth2(BaseOAuth2):
         params = super(GlobusOAuth2, self).auth_complete_params(state)
         print(params)
         params['grant_type'] = 'authorization_code'
-        params['client_id'] = self.strategy.get_session('id')
+        params['client_id'] = SOCIAL_AUTH_GLOBUS_KEY
         params['code_verifier'] = self.strategy.get_session('verifier')
         return params
 
@@ -114,15 +123,18 @@ class GlobusOAuth2(BaseOAuth2):
         print(self.strategy.__dict__)
 
         if 'code' in self.data:
-            response = self.request_access_token(
+                          
+            data = {"grant_type":"authorization_code",
+                    "client_id":SOCIAL_AUTH_GLOBUS_KEY,
+                    "code_verifier": verifier,
+                    "code": code}
 
-                self.ACCESS_TOKEN_URL,
-                data=self.auth_complete_params(),
-                headers=self.auth_headers(),
-                method=self.ACCESS_TOKEN_METHOD
+            #TODO: add http header here
+            response = requests.post(url=self.ACCESS_TOKEN_URL,
+                                     headers=self.auth_headers(),
+                                     data=data)
 
-            )
-            self.process_error(response)
+            pickle.dump(response,open('response.pkl','wb'))
             return self.do_auth(response['access_token'],
                                 response=response,
                                 *args, **kwargs)
@@ -146,8 +158,11 @@ class GlobusOAuth2(BaseOAuth2):
         verifier, challenge = create_code_challenge()
         self.strategy.session_set('verifier', verifier)
         extra_arguments.update({'code_challenge': challenge,
+                                "redirect_uri": "%s/complete/globus/" %SOCIAL_AUTH_LOGIN_REDIRECT_URL,
                                 'code_challenge_method': 'S256',
-                                'access_type': 'online' })
+                                'access_type': 'offline' })
+
+        bot.debug("REQUEST ARGUMENTS: %s" %extra_arguments)
         return extra_arguments
 
     def get_user_id(self, details, response):
@@ -161,6 +176,7 @@ class GlobusOAuth2(BaseOAuth2):
             'code_challenge_method':'S256',
             'code_verifier': self.strategy.session_get('verifier'),
             'grant_type': 'authorization_code',
+            "redirect_uri": "%s/login/" %SOCIAL_AUTH_LOGIN_REDIRECT_URL,
             'code': self.data.get('code', ''),
             'client_id': self.get_key_and_secret()[0]
         }

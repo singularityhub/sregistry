@@ -53,7 +53,7 @@
 
         {% if 'globus_auth' in PLUGINS_ENABLED %}
         <!--<a class="social-button" id="globus-login" href="{% url 'globus_auth-login' %}?next={{ domain }}{{ request.path }}">Login with Globus</a>-->
-        <a class="social-button" id="globus-login" href="{% url 'social:begin' 'globus' %}?next={{ domain }}{{ request.path }}">Login with Globus</a>
+        <a class="social-button" id="globus-login" href="{% url 'social:begin' 'globus' %}?next=http://localhost{{ request.path }}">Login with Globus</a>
         {% endif %}
 
     {% endif %}

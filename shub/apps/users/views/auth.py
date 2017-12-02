@@ -59,6 +59,7 @@ def validate_credentials(user,context=None):
     # Right now we have github for repos and google for storage
     credentials = [{'provider':'google-oauth2','key':'google_credentials'},
                    {'provider':'github','key':'github_credentials'},
+                   {'provider':'globus','key':'globus_credentials'},
                    {'provider':'twitter','key':'twitter_credentials'}] 
 
     # Iterate through credentials, and set each available to aok. This is how

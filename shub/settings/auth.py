@@ -59,7 +59,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://localhost'
 
 # http://psa.matiasaguirre.net/docs/configuration/settings.html#urls-options
 #SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
@@ -77,4 +77,4 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
 #SOCIAL_AUTH_INACTIVE_USER_URL = '/inactive-user/'
 
 # On any admin or plugin login redirect to standard social-auth entry point for agreement to terms
-LOGIN_REDIRECT_URL = '/login'
+LOGIN_REDIRECT_URL = 'http://localhost/login'
