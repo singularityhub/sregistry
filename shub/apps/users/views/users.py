@@ -30,9 +30,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from shub.apps.users.models import User
-from django.contrib.auth.decorators import login_required
+from shub.apps.main.models import Collection, Star
+from shub.apps.logs.models import APIRequestCount 
+from django.db.models.aggregates import Count
 from django.contrib import messages
-from django.shortcuts import render, redirect
+
+from django.db.models import Q, Sum
+from django.http import (
+    HttpResponseForbidden,
+)
+
+from django.shortcuts import (
+    render, 
+    redirect,
+    get_object_or_404
+)
+
+
+from django.contrib.auth.decorators import login_required
 
 
 @login_required
@@ -42,3 +57,38 @@ def view_token(request):
     else:
         messages.info(request,"You are not allowed to perform this action.")
         return redirect('collections')
+
+
+def view_profile(request, username=None):
+    '''view a user's profile'''
+
+    if not username:
+        if not request.user:
+            messages.info(request,"You must select a user or be logged in to view a profile.")
+            return redirect('collections')
+        user = request.user
+    else:
+        user = get_object_or_404(User, username=username)
+
+    if user == request.user:
+        collections = Collection.objects.filter(owner=user).annotate(Count('star', distinct=True)).order_by('-star__count')
+    else:
+        collections = Collection.objects.filter(owner=user, private=False).annotate(Count('star', distinct=True)).order_by('-star__count')
+
+    # Total Starred Collections
+    stars = Star.objects.filter(collection__owner=user).count()
+    favorites = Star.objects.filter(user=user)
+
+    # Total Downloads Across Collections
+    downloads = APIRequestCount.objects.filter(
+                   Q(method='get', path__contains="ContainerDetailByName", collection__owner=user) |
+                   Q(method='get', path__contains="ContainerBasicByName", collection__owner=user)).aggregate(Sum('count'))['count__sum']
+
+
+    context = {'profile': user,
+               'collections': collections,
+               'downloads': downloads,
+               'stars': stars,
+               'favorites': favorites}
+
+    return render(request, 'users/profile.html', context)

@@ -22,19 +22,9 @@
     <div>
 
        <!-- If all credentials provided, give user full access -->
-       <a href="{% url 'my_collections' %}"><button class="btn btn-default">My Container Collections</button></a>
-       <a href="{% url 'logout' %}"><button class="btn btn-default">Logout</button></a>
-
-        {% if 'globus' in PLUGINS_ENABLED %}
-        <div class="row">
-            <div class="col-md-3">  
-            <a class="social-button" 
-               id="globus-login" 
-               href="{% url 'globus_login' %}?next=http://localhost{{ request.path }}">Connect Globus</a>
-            </div>
-        </div>
-        {% endif %}
-
+       <a href="{% url 'my_collections' %}"><button class="btn btn-default btn-sm">My Container Collections</button></a>
+       <a href="{% url 'profile' %}"><button class="btn btn-default btn-sm">Profile</button></a>
+       <a href="{% url 'logout' %}"><button class="btn btn-default btn-sm">Logout</button></a>
 
     {% else %}
 

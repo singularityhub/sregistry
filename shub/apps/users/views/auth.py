@@ -66,7 +66,7 @@ def validate_credentials(user,context=None):
     # the templates will know to tell users which they need to add, etc.
     credentials_missing = "aok"
     for group in credentials:
-        credential = get_credentials(user,provider=group['provider'])
+        credential = user.get_credentials(provider=group['provider'])
         if credential != None:
             context[group['key']] = 'aok'
         else:
@@ -75,13 +75,6 @@ def validate_credentials(user,context=None):
     # This is a global variable to indicate all credentials good
     context['credentials'] = credentials_missing
     return context
-
-
-def get_credentials(user,provider):
-    try:
-        return user.social_auth.get(provider=provider)
-    except:
-        return None
 
 
 def agree_terms(request):

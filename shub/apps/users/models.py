@@ -58,6 +58,16 @@ class User(AbstractUser):
     def token(self):
         return get_usertoken(self)
 
+    def get_credentials(self, provider):
+        from social_django.models import UserSocialAuth
+        try:
+            return self.social_auth.get(provider=provider)
+        except UserSocialAuth.DoesNotExist:
+            return None
+
+    def get_providers(self):
+        return [x['provider'] for x in self.social_auth.all()]
+
 
 # Create a token for the user when the user is created (with oAuth2)
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

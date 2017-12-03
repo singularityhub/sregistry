@@ -1,4 +1,7 @@
-from .users import view_token
+from .users import (
+    view_token,
+    view_profile
+)
 from .auth import (
     login,
     logout,
