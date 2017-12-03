@@ -46,9 +46,18 @@ def get_client():
     return globus_sdk.ConfidentialAppAuthClient(SOCIAL_AUTH_GLOBUS_KEY,
                                                 SOCIAL_AUTH_GLOBUS_SECRET)
 
+def list_tokens(credentials):
+    '''return a list of tokens organized by token and token type
+    '''
+    token_list = []
+    tokens = credentials.extra_data
+    tokens = [tokens] + tokens['other_tokens']
+    for token in tokens:
+        for token_type in ['id_token', 'refresh_token', 'access_token']:
+            if token_type in token:
+                token_list = token_list + [(token[token_type],token_type)]
+    return token_list
 
-def social_details(backend, details, response, *args, **kwargs):
-    return {'details': dict(backend.get_user_details(response), **details)}
 
 
 def associate_user(user, client, code):

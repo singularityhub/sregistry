@@ -1,10 +1,15 @@
-# globus-auth - Authentication using Globus
+# Globus Connect
 
-The `globus-auth` plugin allows users to login to sregistry using Globus account information. You
-should be familiar with setting up a Globus endpoint on your cluster, and for this installation example we will
-walk through setting up a Globus endpoint on your local machine (or the same filesystem where your Registry will be installed).
+The `globus` plugin allows a logged in user to connect their Globus Globus account. This integration benefits both the user and the administrators of the Singularity Registry. Why? An integration with Globus allows for:
+
+ - adding registry images to Globus search (need to do this)
+ - automatic transfers of images to user endpoints
+
+In order to set up this integration, should be familiar with setting up a Globus endpoint on your cluster, and for this installation example we will walk through setting up a Globus endpoint on your local machine (or the same filesystem where your Registry will be installed).
 
 ## How does Singularity Registry work with Globus?
+
+### Verbose Answer
 Globus specializes in transfer and permissions. A Singularity Registry specializes in management of of images, and making those images accessible immediately to the Singularity command line tool. Thus, we have the two (somewhat conflicting) needs:
 
  1. Every image in a registry must have a web accessible URL (https) to be programmatically available to any user of Singularity (given the appropriate permissions for the image). An image provided in a Registry that is connected to Globus but not accessible by a URL is not acceptable.
@@ -14,16 +19,19 @@ Until a solution is implemented that guarantees that any cluster, via the Globus
 
 >> Singularity Registry works with Globus by serving its filesystem with images as a Globus endpoint.
 
-This strategy ensures that any image added to the Registry is available via standard Globus APIs but also accessible via an HTTPS address.  More details are discussed below.
+This strategy ensures that any image added to the Registry is available via standard Globus APIs but also accessible via an HTTPS address. It works as an integration and not solely a login option because it's likely the case that an administrator will want users to log in via institution credentials (e.g., LDAP) and then connect third party services.  More details are discussed below.
 
-### Summary of Plan
+### Quick Answer
 
  1. The purpose of the registry is to serve images that are accessible via the Singularity command line tool, for anyone using it. Thus, any Globus related content must also have a web-accessible URL (https).
  2. Since https with Globus is under development, the only way for this to be possible is to make the application filesystem a globus directory itself. The images are shared across cluster (with globus) but accessible via Singularity proper with https.
  3. When Globus is able to provide an https address for a cluster image (not sure how this would work for clusters that don't want open ports, it would likely be a proxy for it?) then we can think about having the image storage NOT with the application.
 
+
+## What does the integration add?
+
 ### Updates to the UI
-Given that an institution activates the Globus plugin, new to the UI would be:
+Given that an institution activates the Globus plugin, the user interface has:
 
 1. A "subscribe" or "share" button for users/containers applicable. Each image added to the Registry, still with a "push" would thus be shareable.
 2. An ability for a registry to subscribe / share all containers with another, and have it done automatically. How does this work?

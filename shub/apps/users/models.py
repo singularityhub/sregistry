@@ -58,6 +58,13 @@ class User(AbstractUser):
     def token(self):
         return get_usertoken(self)
 
+    def disconnect(self, provider):
+        '''disconnect means deleting the association for a user'''
+        credential = self.get_credentials(provider)
+        if credential is not None:
+            credential.delete()
+        return credential
+
     def get_credentials(self, provider):
         from social_django.models import UserSocialAuth
         try:
@@ -66,7 +73,7 @@ class User(AbstractUser):
             return None
 
     def get_providers(self):
-        return [x['provider'] for x in self.social_auth.all()]
+        return [x.provider for x in self.social_auth.all()]
 
 
 # Create a token for the user when the user is created (with oAuth2)

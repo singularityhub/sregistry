@@ -29,13 +29,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
+from shub.settings import DOMAIN_NAME
 from shub.logger import bot
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from shub.plugins.globus.utils import get_client
 from django.urls import reverse
 from django.contrib import messages
-from shub.plugins.globus.utils import associate_user
+from shub.plugins.globus.utils import (
+    associate_user,
+    list_tokens
+)
+
+@login_required
+def globus_logout(request):
+    '''log the user out of globus, meaning deleting the association,
+    and then revoking all tokens'''
+    credentials = request.user.disconnect('globus')
+    client = get_client()
+    for token, token_type in list_tokens(credentials):
+        client.oauth2_revoke_token(
+            token, additional_params={'token_type_hint': token_type})
+
+    # Redirect to globus logout page?
+    redirect_name = "Singularity Registry"
+    redirect_url = "%s%s" %(DOMAIN_NAME, reverse('profile'))
+    logout_url = 'https://auth.globus.org/v2/web/logout'
+    params = '?client=%s&redirect_uri=%s&redirect_name=%s' %(client.client_id,
+                                                             redirect_url,
+                                                             redirect_name)
+    return redirect("%s%s" %(logout_url, params))
+
 
 @login_required
 def globus_login(request):
