@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+{% include "style/sliders.html" %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+.active {
+    font-weight:400;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include "messages/message.html" %}
+
+<div id="fh5co-portfolio">
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                <a href="{% url 'profile' %}">
+                 <h3 class="title">{{ request.user.username }}: </a>
+                  endpoints
+                  </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <ul class="nav nav-pills nav-stacked" style="padding-left:25px">
+            {% for ep in endpoints %}
+            <li {% if forloop.first %}class="active"{% endif %}><a data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">{{ ep.display_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-8">
+        <div class="tab-content"> 
+            {% for ep in endpoints %}
+            <div id="{{ ep.name }}" class="tab-pane fade in {% if forloop.first %}active{% endif %}">
+                {% include "globus/_transfer_endpoints.html" %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script src="{% static "js/ace.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/clipboard.min.js"%}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script src="{% static "js/cookie-token.js" %}"></script>
+<script>
+
+$(document).ready(function(){
+
+  {% if active_tab %}
+    $('#pill-{{ active_tab }}').click()    
+  {% endif %}
+
+   $('.material-pagination').hide();
+   $(".browser-default").change(function(){
+       $('.material-pagination').hide();
+   })
+
+
+})
+
+</script>
+{% endblock %}

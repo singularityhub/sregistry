@@ -46,17 +46,31 @@ def get_client():
     return globus_sdk.ConfidentialAppAuthClient(SOCIAL_AUTH_GLOBUS_KEY,
                                                 SOCIAL_AUTH_GLOBUS_SECRET)
 
-def list_tokens(credentials):
-    '''return a list of tokens organized by token and token type
+
+def get_transfer_client(user):
+    '''return a transfer client for the user''' 
+    client = user.get_credentials('globus')
+    if client is not None:
+        print(client.extra_data)
+        access_token = client.extra_data['transfer.api.globus.org']['access_token']
+        authorizer = globus_sdk.AccessTokenAuthorizer(access_token)
+        client = globus_sdk.TransferClient(authorizer=authorizer)
+    return client
+
+
+def list_tokens(tokens):
+    '''return a lookup of tokens organized by token and token type
+       This function is first used to populate the Globus social auth
+       extra_data field that holds the organized tokens
     '''
-    token_list = []
-    tokens = credentials.extra_data
+    lookup = dict()
     tokens = [tokens] + tokens['other_tokens']
     for token in tokens:
+        lookup[token['resource_server']] = dict()
         for token_type in ['id_token', 'refresh_token', 'access_token']:
             if token_type in token:
-                token_list = token_list + [(token[token_type],token_type)]
-    return token_list
+                lookup[token['resource_server']][token_type] = token[token_type]
+    return lookup
 
 
 
@@ -86,6 +100,6 @@ def associate_user(user, client, code):
                                                uid=token_id["sub"])  
 
     # Update with token_id infos
-    social.extra_data = tokens.data
+    social.extra_data = list_tokens(tokens.data)
     social.save()  
     return user

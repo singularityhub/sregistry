@@ -66,6 +66,8 @@ class User(AbstractUser):
         return credential
 
     def get_credentials(self, provider):
+        ''' return the social auth object for a provider.
+        '''
         from social_django.models import UserSocialAuth
         try:
             return self.social_auth.get(provider=provider)
@@ -73,6 +75,7 @@ class User(AbstractUser):
             return None
 
     def get_providers(self):
+        ''' return a list of social auth providers'''
         return [x.provider for x in self.social_auth.all()]
 
 

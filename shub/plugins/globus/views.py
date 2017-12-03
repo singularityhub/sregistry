@@ -33,12 +33,12 @@ from shub.settings import DOMAIN_NAME
 from shub.logger import bot
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from shub.plugins.globus.utils import get_client
 from django.urls import reverse
 from django.contrib import messages
+from .actions import get_endpoints
 from shub.plugins.globus.utils import (
-    associate_user,
-    list_tokens
+    get_client, 
+    associate_user
 )
 
 @login_required
@@ -47,9 +47,10 @@ def globus_logout(request):
     and then revoking all tokens'''
     credentials = request.user.disconnect('globus')
     client = get_client()
-    for token, token_type in list_tokens(credentials):
-        client.oauth2_revoke_token(
-            token, additional_params={'token_type_hint': token_type})
+    for resource, token_info in credentials.extra_data.items(): 
+        for token, token_type in token_info.items():
+            client.oauth2_revoke_token(
+                token, additional_params={'token_type_hint': token_type})
 
     # Redirect to globus logout page?
     redirect_name = "Singularity Registry"
@@ -94,7 +95,13 @@ def globus_login(request):
 
 @login_required
 def globus_transfer(request):
+    ''' a main portal for working with globus
     '''
-    '''
-    context = {'user': request.user}
+    endpoints = get_endpoints(request.user)
+    context = {'user': request.user,
+               'endpoints': endpoints }
+    #STOPPED HERE: render list of endpoints for share,
+    # find API example to share,
+    # test doing some kind of image transfer
+
     return render(request, 'globus/transfer.html', context)
