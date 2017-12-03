@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from rest_framework.authtoken.models import Token
 import hashlib
 import base64
+import sys
 import os
 
 def get_usertoken(user):
@@ -62,3 +63,25 @@ def create_code_challenge():
 
     # return the verifier and the encoded hash
     return code_verifier, code_challenge
+
+
+################################################################################
+# HEADERS
+################################################################################
+
+
+def basic_auth_header(username, password):
+    '''return a base64 encoded header object to
+    generate a token
+    :param username: the username
+    :param password: the password
+    '''
+    s = "%s:%s" % (username, password)
+    if sys.version_info[0] >= 3:
+        s = bytes(s, 'utf-8')
+        credentials = base64.b64encode(s).decode('utf-8')
+    else:
+        credentials = base64.b64encode(s)
+    auth = {"Authorization": "Basic %s" % credentials}
+    return auth
+

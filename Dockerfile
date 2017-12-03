@@ -48,7 +48,7 @@ RUN pip install -r /tmp/requirements.txt
 # RUN pip install django-auth-ldap
 
 # Install Globus (uncomment if wanted)
-RUN pip install globus-sdk
+RUN pip install globus-sdk cryptography
 
 RUN mkdir /code
 RUN mkdir -p /var/www/images

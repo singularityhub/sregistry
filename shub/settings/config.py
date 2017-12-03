@@ -99,9 +99,9 @@ LOGGING_SAVE_RESPONSES=True
 
 # Available Plugins:
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
-# - globus_auth: Makes the image storage a globus endpoint, and globus authenticated users can interact with it.
+# - globus: Makes the image storage a globus endpoint, and globus authenticated users can interact with it.
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
-    'globus_auth'
+    'globus'
 ]

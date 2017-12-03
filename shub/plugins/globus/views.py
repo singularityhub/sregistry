@@ -29,38 +29,48 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.contrib.postgres.fields import JSONField
-from rest_framework.authtoken.models import Token
-from shub.apps.users.utils import get_usertoken
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-import datetime
-import re
+from shub.logger import bot
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from shub.plugins.globus.utils import get_client
+from django.urls import reverse
+from django.contrib import messages
+from shub.plugins.globus.utils import associate_user
+
+@login_required
+def globus_login(request):
+    '''
+       Associate the logged in user with a globus account based on email.
+       If the association doesn't exist, create it. Redirect to transfer
+       page.
+    '''
+
+    # redirect_uri = reverse('globus_login')
+    redirect_uri = "http://localhost/globus/login/"
+
+    client = get_client()
+    client.oauth2_start_flow(redirect_uri,
+                             refresh_tokens=True)
+
+    # First step of authentication flow - we need code
+    if "code" not in request.GET:
+        auth_uri = client.oauth2_get_authorize_url()
+        return redirect(auth_uri)
+
+    else:
+
+        # Second step of authentication flow - we need to ask for token  
+        code = request.GET.get('code')
+        user = associate_user(request.user, 
+                              client=client, 
+                              code=code)
+
+    return redirect('globus_transfer')
 
 
-class User(AbstractUser):
-    active = models.BooleanField(default=True)         # allowed to build, etc.
-    admin = models.BooleanField(default=False)         # is this a registry admin?
-    agree_terms = models.BooleanField(default=False)   # has the user agreed to terms?
-    agree_terms_date = models.DateTimeField(blank=True,default=None,null=True)
-    
-    class Meta:
-        app_label = 'users'
-    
-    def get_label(self):
-        return "users"
-
-    def token(self):
-        return get_usertoken(self)
-
-
-# Create a token for the user when the user is created (with oAuth2)
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+@login_required
+def globus_transfer(request):
+    '''
+    '''
+    context = {'user': request.user}
+    return render(request, 'globus/transfer.html', context)

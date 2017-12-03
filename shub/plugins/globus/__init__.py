@@ -1,4 +1,4 @@
-AUTHENTICATION_BACKENDS = ('shub.plugins.globus_auth.backend.GlobusOAuth2',)
+#AUTHENTICATION_BACKENDS = ('shub.plugins.globus.backend.GlobusOAuth2',)
 
 # Show Globus log messages
 import logging
