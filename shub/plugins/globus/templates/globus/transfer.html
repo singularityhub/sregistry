@@ -52,11 +52,10 @@
 <div class="row">
     <div class="col-md-3">
         <ul class="nav nav-pills nav-stacked" style="padding-left:25px">
-            {% if container %}
             <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" style="background-color:#2e609b;color:white" href="#transfer">Transfer</a></li>
-            {% endif %}
             {% for ep in endpoints %}
-            <li {% if container %}{% else %}class="active"{% endif %}><a style="color:#2e609b" data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">{{ ep.display_name }}</a></li>
+            <li><a style="color:#2e609b" data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">
+{{ ep.display_name }}</a></li>
             {% endfor %}
         </ul>
     </div>
@@ -64,43 +63,52 @@
     <div class="col-md-8">
         <div class="tab-content"> 
 
-            {% if container %}
             <div id="transfer" class="tab-pane fade in active">
 
-                {% if endpoints|length == 0 %}
-                <div class="row">
-                    <div class="col-md-12">
-                       <p class="alert alert-info">
-                            You don't have any shared or personal endpoints for transfer.
-                        </p> 
+                {% if container %}
+                    {% if endpoints|length == 0 %}
+                    <div class="row">
+                        <div class="col-md-12">
+                           <p class="alert alert-info">
+                               You don't have any shared or personal endpoints for transfer.
+                           </p> 
+                        </div>
                     </div>
-                </div>
-                {% endif %}
-                {% for ep in endpoints %}
-                <div class="row">
-                    <div class="col-md-4" style="margin-top:15px">
-                        <p class="alert alert-info">
-                            <span class="label label-info">From</span> Singularity Hub
-                        </p>
-                    </div>
-                    <div class="col-md-2">
-                        <a class="social-button btn-lg do_transfer transfer"
-                           data-endpoint="{{ ep.name }}"
-                           style="margin:auto; height:200px;cursor:pointer; color: #2e609b">
-                           <i class="fa fa fa-long-arrow-right fa-4x"></i></a>
-                    </div>
-                    <div class="col-md-4" style="margin-top:15px">
-                        <p class="alert alert-warning transfer {{ ep.name }}"
-                            <span class="label label-info">To</span> {{ ep.display_name }}
-                        </p>
-                    </div>
-               </div>
-               <hr>
-               {% endfor %}
-            </div>{% endif %}
+                    {% endif %}
+                    {% for ep in endpoints %}
+                    <div class="row">
+                        <div class="col-md-4" style="margin-top:15px">
+                            <p class="alert alert-info">
+                                <span class="label label-info">From</span> Singularity Hub
+                            </p>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="social-button btn-lg do_transfer transfer"
+                               data-endpoint="{{ ep.name }}"
+                               style="margin:auto; height:200px;cursor:pointer; color: #2e609b">
+                               <i class="fa fa fa-long-arrow-right fa-4x"></i></a>
+                        </div>
+                        <div class="col-md-4" style="margin-top:15px">
+                            <p class="alert alert-warning transfer {{ ep.name }}"
+                                <span class="label label-info">To</span> {{ ep.display_name }}
+                            </p>
+                        </div>
+                   </div>
+                   {% endfor %}
+                   {% else  %}
+                   <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                           <p class="alert alert-info">
+                             You are connected to Globus! Browse <a href="{% url 'collections' %}">container collections</a> and look for the <i class="fa fa-exchange" style="padding:20px"></i> icon to select an endpoint to transfer the image..
+                           </p> 
+                       </div>
+                   </div>
+               {% endif %}
+            </div>
             <hr>
             {% for ep in endpoints %}
-            <div id="{{ ep.name }}" style="color:#2e609b" class="tab-pane fade in {% if container %}{% else %}active{% endif %}">
+            <div id="{{ ep.name }}" style="color:#2e609b" class="tab-pane fade in">
                 {% include "globus/_transfer_endpoints.html" %}
             </div>
             {% endfor %}
