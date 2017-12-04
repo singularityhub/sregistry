@@ -30,6 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 
 from shub.apps.users.models import User
+from django.contrib.auth.decorators import login_required
 from social_django.models import UserSocialAuth
 from shub.plugins.globus.utils import (
     get_client,
@@ -47,27 +48,23 @@ def get_endpoints(user, client=None):
     if client is None:
         client = get_transfer_client(user)
     if client is not None:
-        for ep in client.endpoint_search(filter_scope="my-endpoints"):
-            endpoints.append(ep.__dict__['_data']) 
-        for ep in client.endpoint_search(filter_scope="shared-with-me"):
-            endpoints.append(ep.__dict__['_data']) 
-
+        for scope in ['my-endpoints', 'shared-with-me']:
+            for ep in client.endpoint_search(filter_scope=scope):
+                if ep.__dict__['_data']['name'] != settings.GLOBUS_ENDPOINT_ID:
+                    endpoints.append(ep.__dict__['_data'])
     return endpoints
 
 
-@login_required
-def submit_transfer(user, endpoint, container):
-    client = get_transfer_client(user)
+def do_transfer(user, endpoint, container):
 
-    endpoint_id = settings.GLOBUS_ENDPOINT_ID
->>> tc = globus_sdk.TransferClient(...)
->>> tdata = globus_sdk.TransferData(tc, source_endpoint_id,
->>>                                 destination_endpoint_id,
->>>                                 label="SDK example",
->>>                                 sync_level="checksum")
->>> tdata.add_item("/source/path/dir/", "/dest/path/dir/",
->>>                recursive=True)
->>> tdata.add_item("/source/path/file.txt",
->>>                "/dest/path/file.txt")
->>> transfer_result = tc.submit_transfer(tdata)
->>> print("task_id =", transfer_result["task_id"])
+    # Use relative paths, we are in container and endpoint is mapped
+    source = container.get_image_path().replace(settings.MEDIA_ROOT,'').strip('/')    
+    client = get_transfer_client(user)
+    source_endpoint = settings.GLOBUS_ENDPOINT_ID
+    tdata = globus_sdk.TransferData(client, source_endpoint,
+                                    endpoint,
+                                    label="Singularity Registry Transfer",
+                                    sync_level="checksum")
+    tdata.add_item(source, source)
+    transfer_result = client.submit_transfer(tdata)
+    return transfer_result

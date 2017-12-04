@@ -37,7 +37,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import messages
 from django.http import JsonResponse
-from .actions import get_endpoints
+from .actions import get_endpoints, do_transfer
 from .decorators import has_globus_association
 from shub.plugins.globus.utils import (
     get_client, 
@@ -123,12 +123,14 @@ def submit_transfer(request, endpoint, cid):
     '''
 
     container = get_container(cid)
-    elif container is None:
+    if container is None:
         message = "This container could not be found."
 
     else:
-        status = do_transfer(user=request.user,
+        result = do_transfer(user=request.user,
                              endpoint=endpoint,
                              container=container)
+        message = result['message']
 
+    status = {'message': message }
     return JsonResponse(status)
