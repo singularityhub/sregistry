@@ -92,6 +92,8 @@ We also need to define a robust query for finding and serving **all** of a user'
 
 3. When a Globus Endpoint is able to serve https, then we can think about having images hosted in the registry separate from the application itself.  When this time comes, we also need to add in another kind of model that (will eventually) support an https (or other external link) for an image. We could either add the model to the current (and an unused field Image.url) and then a local filesystem would have an image file and a remote would have a url, OR create a different kind of container model under the plugin. I'm thinkin the first.
 
+4. Ingestion of container metadata to the Globus search API. This would mean that, a registry with the globus plugin added would add metadata to be ingested by the Search api. This only makes sense if there is an existing way to easily search the API, and well defined use cases. It also is important that the Search API always remain open and free for all (and not become a pay-for enterprise service). The content added should take a general format that might be used for other things, and have metadata that makes the search results useful.
+
 ## Limitations
 Ideally, if a Globus image on a filesystem external to where the Registry is served can still be accessible via https, then a single registry is much more scalable in allowing for many disparate file systems (and thus a larger storage). It also helps that downloads / general bandwidth isn't the responsibility of one server.
 
