@@ -35,23 +35,18 @@ from social_django.models import UserSocialAuth
 from django.contrib.auth import login
 import requests
 import globus_sdk
-
-from shub.settings import (
-    SOCIAL_AUTH_GLOBUS_KEY,
-    SOCIAL_AUTH_GLOBUS_SECRET
-)
+from django.conf import settings
 
 def get_client():
     '''return client to handle authentication'''
-    return globus_sdk.ConfidentialAppAuthClient(SOCIAL_AUTH_GLOBUS_KEY,
-                                                SOCIAL_AUTH_GLOBUS_SECRET)
+    return globus_sdk.ConfidentialAppAuthClient(settings.SOCIAL_AUTH_GLOBUS_KEY,
+                                                settings.SOCIAL_AUTH_GLOBUS_SECRET)
 
 
 def get_transfer_client(user):
     '''return a transfer client for the user''' 
     client = user.get_credentials('globus')
     if client is not None:
-        print(client.extra_data)
         access_token = client.extra_data['transfer.api.globus.org']['access_token']
         authorizer = globus_sdk.AccessTokenAuthorizer(access_token)
         client = globus_sdk.TransferClient(authorizer=authorizer)

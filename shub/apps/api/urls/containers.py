@@ -49,11 +49,7 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from shub.settings import (
-    MEDIA_URL,
-    DOMAIN_NAME
-)
-
+from django.conf import settings
 
 ##############################################################################
 # Single Object Serializers
@@ -70,7 +66,7 @@ class SingleContainerSerializer(serializers.ModelSerializer):
     def get_download_url(self, container):
         url = reverse('download_container', kwargs= {'cid':container.id,
                                                      'secret':container.secret})
-        return "%s%s" %(DOMAIN_NAME,url)
+        return "%s%s" %(settings.DOMAIN_NAME,url)
 
     class Meta:
         model = Container

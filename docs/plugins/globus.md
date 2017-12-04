@@ -1,13 +1,17 @@
 # Globus Connect
 
-The `globus` plugin allows a logged in user to connect their Globus Globus account. This integration benefits both the user and the administrators of the Singularity Registry. Why? An integration with Globus allows for:
-
- - adding registry images to Globus search (need to do this)
- - automatic transfers of images to user endpoints
-
-In order to set up this integration, should be familiar with setting up a Globus endpoint on your cluster, and for this installation example we will walk through setting up a Globus endpoint on your local machine (or the same filesystem where your Registry will be installed).
+The `globus` plugin allows a logged in user to connect their Globus account to allow for transfer of images from the registry to a Globus endpoint. In order to set up this integration, you should be familiar with setting up a Globus personal endpoint, and for this installation example we will walk through doing this on your local machine (or the same filesystem where your Registry will be installed).
 
 ## How does Singularity Registry work with Globus?
+The quick answer:
+
+>> Singularity Registry works with Globus by serving its filesystem with images as a Globus endpoint.
+
+And the reasons for this design are the following:
+
+ 1. The purpose of the registry is to serve images that are accessible via the Singularity command line tool, for anyone using it. Thus, any Globus related content must also have a web-accessible URL (https).
+ 2. Since https with Globus is under development, the only way for this to be possible is to make the application filesystem a globus directory itself. This means that a single registry can dually share images across a cluster (with globus) and they are also accessible via Singularity proper with https.
+ 3. When Globus is able to provide an https address for a cluster image (not sure how this would work for clusters that don't want open ports, it would likely be a proxy for it?) then we can think about the possibility of having more distributed image storage.
 
 ### Verbose Answer
 Globus specializes in transfer and permissions. A Singularity Registry specializes in management of of images, and making those images accessible immediately to the Singularity command line tool. Thus, we have the two (somewhat conflicting) needs:
@@ -17,19 +21,12 @@ Globus specializes in transfer and permissions. A Singularity Registry specializ
 
 Until a solution is implemented that guarantees that any cluster, via the Globus transfer API, can guarantee a web accessible container to a file on a (closed off to world https) we will take a simple approach that, while it doesn't scale, meets the two criteria.
 
->> Singularity Registry works with Globus by serving its filesystem with images as a Globus endpoint.
-
 This strategy ensures that any image added to the Registry is available via standard Globus APIs but also accessible via an HTTPS address. It works as an integration and not solely a login option because it's likely the case that an administrator will want users to log in via institution credentials (e.g., LDAP) and then connect third party services.  More details are discussed below.
-
-### Quick Answer
-
- 1. The purpose of the registry is to serve images that are accessible via the Singularity command line tool, for anyone using it. Thus, any Globus related content must also have a web-accessible URL (https).
- 2. Since https with Globus is under development, the only way for this to be possible is to make the application filesystem a globus directory itself. The images are shared across cluster (with globus) but accessible via Singularity proper with https.
- 3. When Globus is able to provide an https address for a cluster image (not sure how this would work for clusters that don't want open ports, it would likely be a proxy for it?) then we can think about having the image storage NOT with the application.
 
 
 ## What does the integration add?
 
+TODO: write / take pictures of views here
 ### Updates to the UI
 Given that an institution activates the Globus plugin, the user interface has:
 
@@ -120,7 +117,7 @@ globus ls <endpoint_id>
 However, we would actually want to limit our endpoint to be a folder that is seen by the application, specifically the same folder that our application uses to store images. For our container, this is mounted at "images" and we want it to be read only:
 
 ```
-~/Documents/Dropbox/Code/sregistry/sregistry/images,0,0
+/~/Documents/Dropbox/Code/sregistry/sregistry/images,0,0
 ```
 
 You would want to stop and start the endpoint after this change:
@@ -130,27 +127,34 @@ You would want to stop and start the endpoint after this change:
 ./globusconnectpersonal -start &
 ```
 
-**QUESTION** It seems that the full path of an endpoint is always shown, and I'd prefer the user to just see it from the root. Is this possible?
+Finally, make sure to grab your endpoint's id, because we will need to add it to the application to be aware of next. I don't know of the "best way" to search for an endpoint, but I used my email to find it.
+
+```
+globus endpoint search vsochat
+ID                                   | Owner                | Display Name          
+------------------------------------ | -------------------- | ----------------------
+74f0809a-d11a-11e7-962c-22000a8cbd7d | vsochat@stanford.edu | vanessasaurus-endpoint
+```
+
+**QUESTION** It seems that the full path of an endpoint is always shown, and I'd prefer the user to just see it from the root. Is this possible? E.g., the path above starts at `Documents` and I just want the user to be aware of the content of `images`.
 
 
 ## Globus Configuration
+
+### Endpoint
 At this point, we have an image folder local to the application also configured as a Globus Endpoint. Next, we want to edit the configuration of our application to enable logging in with globus authentication, and generate a client.
 
 To enable Globus authentication you must:
 
   * Uncomment the Dockerfile section to install Globus dependencies *before* building the image
-  * Add `globus_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
+  * Uncomment `globus` in the `PLUGINS_ENABLED` list in `shub/settings/config.py`
+  * Add `GLOBUS_ENDPOINT_ID` to your secrets.py to be what you generated above with globus endpoint search.
 
-Then [follow the steps](http://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client) to generate a client. Add your client id to the `settings/secrets.py` as `GLOBUS_CLIENT_ID`.
+If you don't yet have a `secrets.py` you can copy the `dummy_secrets.py` in the same folder, which has commented out examples of the above. 
 
-  * Configure the details of your Globus shared directory in `shub/settings/secrets.py`. See
-    `shub/settings/dummy_secrets.py` for an example configuration. A good start is to do the following:
+### Client
+Once your Singularity Registry Then [follow the steps](http://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client) to generate a client. Add your client id to the `settings/secrets.py` as `GLOBUS_CLIENT_ID`.
 
-```
-cp shub/settings/dummy_secrets.py shub/settings/secrets.py
-```
-
-Stopped here... working on login.
 
 ## ToDos
 0. Finish login and instructions for making local globus endpoint?

@@ -35,6 +35,7 @@ from shub.plugins.globus.utils import (
     get_client,
     get_transfer_client
 )
+from django.conf import settings
 import requests
 import globus_sdk
 
@@ -48,4 +49,25 @@ def get_endpoints(user, client=None):
     if client is not None:
         for ep in client.endpoint_search(filter_scope="my-endpoints"):
             endpoints.append(ep.__dict__['_data']) 
+        for ep in client.endpoint_search(filter_scope="shared-with-me"):
+            endpoints.append(ep.__dict__['_data']) 
+
     return endpoints
+
+
+@login_required
+def submit_transfer(user, endpoint, container):
+    client = get_transfer_client(user)
+
+    endpoint_id = settings.GLOBUS_ENDPOINT_ID
+>>> tc = globus_sdk.TransferClient(...)
+>>> tdata = globus_sdk.TransferData(tc, source_endpoint_id,
+>>>                                 destination_endpoint_id,
+>>>                                 label="SDK example",
+>>>                                 sync_level="checksum")
+>>> tdata.add_item("/source/path/dir/", "/dest/path/dir/",
+>>>                recursive=True)
+>>> tdata.add_item("/source/path/file.txt",
+>>>                "/dest/path/file.txt")
+>>> transfer_result = tc.submit_transfer(tdata)
+>>> print("task_id =", transfer_result["task_id"])

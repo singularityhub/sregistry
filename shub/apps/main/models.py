@@ -29,11 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-from shub.settings import (
-    MEDIA_ROOT,
-    PRIVATE_ONLY, 
-    DEFAULT_PRIVATE
-)
+from django.conf import settings
 from shub.apps.api.models import ImageFile
 from shub.apps.users.models import User
 from django.core.urlresolvers import reverse
@@ -73,9 +69,9 @@ ACTIVE_CHOICES = ((True, 'Active'),
 
 
 def get_privacy_default():
-    if PRIVATE_ONLY is True:
-        return PRIVATE_ONLY
-    return DEFAULT_PRIVATE
+    if settings.PRIVATE_ONLY is True:
+        return settings.PRIVATE_ONLY
+    return settings.DEFAULT_PRIVATE
 
 
 def has_edit_permission(instance,request):

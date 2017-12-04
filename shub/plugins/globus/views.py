@@ -29,19 +29,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-from shub.settings import DOMAIN_NAME
+from django.conf import settings
 from shub.logger import bot
+from shub.apps.main.views import get_container
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import messages
+from django.http import JsonResponse
 from .actions import get_endpoints
+from .decorators import has_globus_association
 from shub.plugins.globus.utils import (
     get_client, 
     associate_user
 )
 
 @login_required
+@has_globus_association
 def globus_logout(request):
     '''log the user out of globus, meaning deleting the association,
     and then revoking all tokens'''
@@ -54,7 +58,7 @@ def globus_logout(request):
 
     # Redirect to globus logout page?
     redirect_name = "Singularity Registry"
-    redirect_url = "%s%s" %(DOMAIN_NAME, reverse('profile'))
+    redirect_url = "%s%s" %(settings.DOMAIN_NAME, reverse('profile'))
     logout_url = 'https://auth.globus.org/v2/web/logout'
     params = '?client=%s&redirect_uri=%s&redirect_name=%s' %(client.client_id,
                                                              redirect_url,
@@ -94,14 +98,37 @@ def globus_login(request):
 
 
 @login_required
-def globus_transfer(request):
-    ''' a main portal for working with globus
+@has_globus_association
+def globus_transfer(request, cid=None):
+    ''' a main portal for working with globus. If the user has navigated
+        here with a container id, it is presented with option to do a 
+        transfer
     '''
+    container = None
+    if cid is not None:
+        container = get_container(cid)
     endpoints = get_endpoints(request.user)
     context = {'user': request.user,
-               'endpoints': endpoints }
-    #STOPPED HERE: render list of endpoints for share,
-    # find API example to share,
-    # test doing some kind of image transfer
+               'endpoints': endpoints,
+               'container': container }
 
     return render(request, 'globus/transfer.html', context)
+
+
+@login_required
+@has_globus_association
+def submit_transfer(request, endpoint, cid):
+    '''submit a transfer request for a container id to an endpoint, also
+       based on id
+    '''
+
+    container = get_container(cid)
+    elif container is None:
+        message = "This container could not be found."
+
+    else:
+        status = do_transfer(user=request.user,
+                             endpoint=endpoint,
+                             container=container)
+
+    return JsonResponse(status)

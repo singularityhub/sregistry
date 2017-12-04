@@ -104,9 +104,10 @@
 #    "is_superuser": "cn=sregistry_admin,ou=groups,dc=example,dc=com"
 #}
 
-# LDAP Authentication (globus-auth)
+# Globus Assocation (globus)
 # Only required if 'globus' is added to PLUGINS_ENABLED in config.py
 
 #SOCIAL_AUTH_GLOBUS_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 #SOCIAL_AUTH_GLOBUS_USERNAME="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org"
 #SOCIAL_AUTH_GLOBUS_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#GLOBUS_ENDPOINT_ID="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

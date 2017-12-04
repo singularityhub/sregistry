@@ -34,7 +34,7 @@ from django.utils import timezone
 
 from shub.apps.main.models import Container
 from singularity.utils import read_json
-from shub.settings import MEDIA_ROOT
+from django.conf import settings
 
 from itertools import chain
 import os
@@ -47,7 +47,7 @@ def get_nightly_comparisons(date=None):
     '''load the latest nightly comparisons.
     :param date: if provided, will load specified date instead of latest.
     '''
-    root = os.path.abspath(os.path.join(MEDIA_ROOT,'trees','nightly'))
+    root = os.path.abspath(os.path.join(settings.MEDIA_ROOT,'trees','nightly'))
     base_name = "%s/container-tree" %(root)
     if date == None:
         date = "latest"

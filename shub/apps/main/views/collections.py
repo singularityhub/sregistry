@@ -44,7 +44,7 @@ from django.shortcuts import (
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from shub.settings import PRIVATE_ONLY
+from django.conf import settings
 from itertools import chain
 
 import os
@@ -161,7 +161,7 @@ def edit_collection(request,cid):
         # Make private?
         private = request.POST.get("private", None)
         try:
-            if private != None and PRIVATE_ONLY is False:
+            if private != None and settings.PRIVATE_ONLY is False:
                 if private == "True" and collection.private == False:
                     collection.private = True
                     messages.info(request,"The collection is now private.")

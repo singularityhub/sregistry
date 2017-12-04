@@ -43,7 +43,7 @@ from shub.apps.main.query import (
     container_query
 )
 
-from shub.settings import DOMAIN_NAME
+from django.conf import settings
 
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -66,7 +66,7 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
             entry = {"name": c.name,
                      "tag": c.tag,
                      "uri": c.get_uri(),
-                     "detail": "%s/containers/%s" %(DOMAIN_NAME, c.id)}
+                     "detail": "%s/containers/%s" %(settings.DOMAIN_NAME, c.id)}
             container_list.append(entry)
         return container_list
 

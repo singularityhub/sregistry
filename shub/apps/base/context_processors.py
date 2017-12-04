@@ -29,42 +29,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
-
-from shub.settings import ( 
-    DOMAIN_NAME,
-    DOMAIN_NAKED,
-    ENABLE_GOOGLE_AUTH,
-    ENABLE_TWITTER_AUTH,
-    ENABLE_GITHUB_AUTH,
-    ENABLE_GITLAB_AUTH,
-    HELP_CONTACT_EMAIL,
-    HELP_INSTITUTION_SITE,
-    PRIVATE_ONLY,
-    REGISTRY_URI,
-    REGISTRY_NAME,
-    PLUGINS_ENABLED,
-)
+from django.conf import settings
 
 def domain_processor(request):
-    return {'domain': DOMAIN_NAME,
-            'DOMAIN_NAKED':DOMAIN_NAKED,
-            'REGISTRY_URI': REGISTRY_URI,
-            'REGISTRY_NAME':REGISTRY_NAME }
+    return {'domain': settings.DOMAIN_NAME,
+            'DOMAIN_NAKED':settings.DOMAIN_NAKED,
+            'REGISTRY_URI': settings.REGISTRY_URI,
+            'REGISTRY_NAME': settings.REGISTRY_NAME}
 
 
 def help_processor(request):
-    return {'HELP_CONTACT_EMAIL': HELP_CONTACT_EMAIL,
-            'HELP_INSTITUTION_SITE':HELP_INSTITUTION_SITE}
+    return {'HELP_CONTACT_EMAIL': settings.HELP_CONTACT_EMAIL,
+            'HELP_INSTITUTION_SITE': settings.HELP_INSTITUTION_SITE}
 
 def settings_processor(request):
-    return {'PRIVATE_ONLY':PRIVATE_ONLY }
+    return {'PRIVATE_ONLY': settings.PRIVATE_ONLY }
 
 
 def auth_processor(request):
-    return {"ENABLE_GOOGLE_AUTH":ENABLE_GOOGLE_AUTH,
-            "ENABLE_TWITTER_AUTH":ENABLE_TWITTER_AUTH,
-            "ENABLE_GITHUB_AUTH":ENABLE_GITHUB_AUTH,
-            "ENABLE_GITLAB_AUTH":ENABLE_GITLAB_AUTH,
-            "PLUGINS_ENABLED":PLUGINS_ENABLED,}
+    return {"ENABLE_GOOGLE_AUTH": settings.ENABLE_GOOGLE_AUTH,
+            "ENABLE_TWITTER_AUTH": settings.ENABLE_TWITTER_AUTH,
+            "ENABLE_GITHUB_AUTH": settings.ENABLE_GITHUB_AUTH,
+            "ENABLE_GITLAB_AUTH": settings.ENABLE_GITLAB_AUTH,
+            "PLUGINS_ENABLED": settings.PLUGINS_ENABLED}
 
 

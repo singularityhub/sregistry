@@ -53,14 +53,14 @@
     <div class="col-md-12">
         <div class="card">
                  
-             <!-- Supplementary -->
+             <!-- Integrations -->
              <button class="btn btn-sm btn-default dropdown">
                 <a href="#" class="dropdown-toggle" 
                             data-toggle="dropdown" 
                             role="button" 
                             aria-haspopup="true" 
                             aria-expanded="false">
-                Supplementary
+                Integrations
                 <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     {% if collection.demo_set.count > 0 %}
@@ -107,11 +107,11 @@
 <div class="row">
         {% if containers %}
             <div class="col-md-12">
-                <div class="card material-table mdl-data-table--selectable">
+                <div class="card material-table mdl-data-table--selectable" style="width:100%">
                    <div class="table-header">
                        <span class="table-title">Builds</span>
                    </div>
-                   <table id="datatable">
+                   <table id="datatable" style="width:100%">
                        <thead>
                            <tr>
                                <th></th>
@@ -120,7 +120,6 @@
                                <th>Status</th>
                                <th>Tag</th>
                                <th>Build Date</th>
-                               <!--<th></th>-->
                                <th></th>
                            </tr>
                        </thead>
@@ -182,6 +181,12 @@
                                      data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}"  
                                              class="fa fa-plus"></i>
                                 </a>
+
+                                <!-- Add container-specific plugins here-->
+                                {% if "globus" in PLUGINS_ENABLED %}
+                                {% include "globus/_container_details.html" %}
+                                {% endif %}
+
                                {% endif %}
                            </td>                                
 

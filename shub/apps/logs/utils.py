@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from shub.apps.main.models import Container
 from singularity.utils import read_json
-from shub.settings import MEDIA_ROOT
 
 from itertools import chain
 import os
