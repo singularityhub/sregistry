@@ -17,3 +17,7 @@ Singularity Registry consists of several Docker images, and they are integrated 
  - **redis**: database to organize the jobs themselves.
 
 For more information about Singularity Registry, please reference the [docs](https://singularityhub.github.io/sregistry). If you have any issues, please [let me know](https://github.com/singularityhub/sregistry/issues)!
+
+## License
+
+This code is licensed under the Affero GPL, version 3.0 or later [LICENSE](LICENSE).
