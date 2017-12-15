@@ -12,6 +12,11 @@ such enhancements or derivative works thereof, in binary and source code
 form.
 
 
+## License
+This code is licensed under the Affero GPL, version 3.0 or later [LICENSE](LICENSE).
+
+
+
 # Contributing
 
 When contributing to Singularity Registry, it is important to properly communicate the
