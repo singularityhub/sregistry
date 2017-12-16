@@ -1,21 +1,15 @@
 # Contributor's Agreement
-
-You are under no obligation whatsoever to provide any bug fixes, patches,
-or upgrades to the features, functionality or performance of the source
-code ("Enhancements") to anyone; however, if you choose to make your
-Enhancements available either publicly, or directly to the project,
-without imposing a separate written license agreement for such
-Enhancements, then you hereby grant the following license: a non-exclusive,
-royalty-free perpetual license to install, use, modify, prepare derivative
-works, incorporate into other computer software, distribute, and sublicense
-such enhancements or derivative works thereof, in binary and source code
-form.
-
-
-## License
 This code is licensed under the Affero GPL, version 3.0 or later [LICENSE](LICENSE).
 
+The Affero GPL is a Copyleft license, meaning that it aims to ensure 
+that free and open software remains perpetually free and open by requiring 
+users of it to license their improvements under the same terms as the original.
 
+If you make changes to the software and make the modified software available
+to users within your organization (for example, students at a university)
+via a network, this is considered propogation (not conveyance) and you 
+do not need to share your modifications. if you transfer copies of the 
+software to others, this **is** considered a conveyance.
 
 # Contributing
 
@@ -35,27 +29,19 @@ all your interactions with the project members and users.
    branch.
 2. Follow the existing code style precedent. This does not need to be strictly
    defined as there are many thousands of lines of examples. Note the lack
-   of tabs anywhere in the project, parentheses and spacing, curly bracket
-   locations, source code layout, variable scoping, etc. and follow the
-   project's standards.
-3. Ensure any install or build dependencies are removed before doing a build
-   to test your PR locally.
-4. For any new functionality, please write a test to be added to Continuous
-   Integration (Travis) to test it (tests can be found in the `tests/`
-   directory).
-5. The project's default copyright and header have been included in any new
+   of tabs anywhere in the project, parentheses and spacing, documentation
+   style, source code layout, variable scoping, and follow the project's
+   standards.
+3. Test your PR locally, and provide the steps necessary to test for the
+   reviewers.
+4. The project's default copyright and header have been included in any new
    source files.
-6. Make sure you have implemented a local `make test` and all tests succeed
-   before submitting the PR.
-7. All (major) changes to Singularity Registry must be documented in
-   [docs](docs). If your PR
-   changes a core functionality, please include clear description of the
-   changes in your PR so that the docs can be updated, or better, submit a
-   sister PR to update the docs directly.
-8. If necessary, update the README.md.
-9. Is the code human understandable? This can be accomplished via a clear code
-   style as well as documentation and/or comments.
-10. The pull request will be reviewed by others, and the final merge must be
+5. All (major) changes to Singularity Registry must be documented in
+   [docs](docs). If your PR changes a core functionality, please 
+   include clear description of the changes in your PR so that the docs 
+   can be updated, or better, submit another PR to update the docs directly.
+6. If necessary, update the README.md.
+7. The pull request will be reviewed by others, and the final merge must be
    done by the Singularity project lead, @vsoch (or approved by her).
 
 
