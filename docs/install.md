@@ -61,8 +61,8 @@ ENABLE_GITLAB_AUTH=False
 
 and you will need at least one to log in. I've found that Twitter works the fastest and easiest, and then Github and Google. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
 
-Other authentication methods, such as LDAP, are implemented as [plugins](plugins.md) to sregistry.
-See the [plugins documentation](plugins.md) for details on how to configure these.
+Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry.
+See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these.
 
 
  - [Github Developers](https://github.com/settings/developers)
