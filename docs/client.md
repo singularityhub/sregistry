@@ -3,7 +3,9 @@
 <script src="assets/js/asciinema-player.js"></script>
 <link rel="stylesheet" href="assets/css/asciinema-player.css"/>
 
-The Singularity Registry Client is provided by [Singularity Python](https://github.com/vsoch/singularity-python/tree/development), currently the development branch of user @vsoch until it's ready to go into Singularityware's version. A demo is provided below, along with the same documentation here [as a script](https://github.com/vsoch/singularity-python/blob/development/examples/registry/run_client.sh).
+The original Singularity Registry Client was provided by [Singularity Python](https://github.com/vsoch/singularity-python), however we have moved the client to have its own module under [sregistry-cli](https://github.com/singularityhub/sregistry-cli). We recommend that you use the latter, and ask for features or updates when necessary.
+
+For the older version, you can use Singularity Python. A demo is provided below, along with the same documentation here [as a script](https://github.com/singularityware/singularity-python/blob/master/examples/registry/run_client.sh).
 
 <asciinema-player src="assets/asciicast/registry.json" poster="data:text/plain,Intro to sregistry client" title="Introduction to the Singularity Registry client" author="vsochat@stanford.edu" cols="80" rows="40" speed="2.0" theme="asciinema"></asciinema-player>
 
@@ -11,11 +13,19 @@ The Singularity Registry Client is provided by [Singularity Python](https://gith
 
 ## Install
 
-### Local Installation
+### Sregistry Installation
 To install, you can do the following:
 
 ```
-git clone -b development https://github.com/vsoch/singularity-python
+git clone https://github.com/singularityware/sregistry-cli
+cd sregistry-cli
+python setup.py install
+```
+
+or for the Singularity Python version:
+
+```
+git clone https://github.com/singularityware/singularity-python
 cd singularity-python
 python setup.py install
 ```
