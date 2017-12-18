@@ -41,7 +41,7 @@ NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 
-you will find yourself in a directory called `/code`, which is where the main application lives. For administration you will be using the file [manage.py](../manage.py) to interact with the registry. If you want to see all the different options, type `python manage.py` and it will show you.
+you will find yourself in a directory called `/code`, which is where the main application lives. For administration you will be using the file [manage.py](https://github.com/singularityhub/sregistry/blob/master/manage.py) to interact with the registry. If you want to see all the different options, type `python manage.py` and it will show you.
 
 Let's first make yourself a superuser and an admin, meaning that you are an administrator **and** have godlevel control of the registry. Just by way of being inside the Docker image you already have that. You will be able to set other people as admins. In summary:
 
