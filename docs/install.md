@@ -7,7 +7,7 @@ If starting from scratch, you need the following dependencies on the host:
 
 Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
 
-For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](../scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
+For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
 
 - The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it. If it's for personal use, `$HOME` is fine.
 - Anaconda3 is installed for python libraries needed for `docker-compose`. You can use whatever python you with (system installed or virtual environment)
@@ -23,7 +23,7 @@ cd sregistry
 For the files linked below, you should find the correspoinding file in the Github repository that you cloned. If you are setting this up for the first time, it's recommended to try locally and then move onto your production resource.
 
 ## Settings
-See that folder called [settings](../shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
+See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
 
 
 ### Secrets
