@@ -7,24 +7,32 @@ If starting from scratch, you need the following dependencies on the host:
 
 Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
 
-For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](../scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
+For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
 
 - The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it. If it's for personal use, `$HOME` is fine.
 - Anaconda3 is installed for python libraries needed for `docker-compose`. You can use whatever python you with (system installed or virtual environment)
 - Make sure to add all users to the docker group that need to maintain the application, and log in and out before use.
 
+For the rest of the install procedure, you should (if you haven't already) clone the repository:
+
+```
+git clone https://github.com/singularityhub/sregistry
+cd sregistry
+```
+
+For the files linked below, you should find the correspoinding file in the Github repository that you cloned. If you are setting this up for the first time, it's recommended to try locally and then move onto your production resource.
 
 ## Settings
-See that folder called [settings](../shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a [settings/secrets.py](../shub/settings/secrets.py) for application secrets, and [settings/config.py](../shub/settings/config.py) to configure your database and registry information.
+See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
 
 
 ### Secrets
 There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
 
-An template to work from is provided `secrets.py.example`. You can copy this template:
+An template to work from is provided in the settings folder called `dummy_secrets.py`. You can copy this template:
 
 ```bash
-cp shub/settings/secrets.py.example shub/settings/secrets.py
+cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 ```
 
 Or, if you prefer a clean secrets file, create a blank one as below:
@@ -53,8 +61,8 @@ ENABLE_GITLAB_AUTH=False
 
 and you will need at least one to log in. I've found that Twitter works the fastest and easiest, and then Github and Google. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
 
-Other authentication methods, such as LDAP, are implemented as [plugins](plugins.md) to sregistry.
-See the [plugins documentation](plugins.md) for details on how to configure these.
+Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry.
+See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these.
 
 
  - [Github Developers](https://github.com/settings/developers)
@@ -130,7 +138,7 @@ In the [config.py](../shub/settings/config.py) you need to define the following:
 
 
 #### Domain Name
-Singularity Registry should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is change the `DOMAIN_NAME_*` variables in your settings [settings/main.py](../shub/settings/main.py).
+Singularity Registry should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is change the `DOMAIN_NAME_*` variables in your settings [settings/main.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/main.py).
 
 For local testing, you will want to change `DOMAIN_NAME` and `DOMAIN_NAME_HTTP` to be localhost. Also note that I've set the regular domain name (which should be https) to just http because I don't have https locally:
 
@@ -175,7 +183,7 @@ DEFAULT_PRIVATE=True
 #### Database
 By default, the database itself will be deployed as a postgres image called `db`. You probably don't want this for production (for example, I use a second instance with postgres and a third with a hot backup, but it's an ok solution for a small cluster or single user. Either way, we recommend backing it up every so often.
 
-When your database is set up, you can define it in your secrets.py and it will override the Docker image one in the settings/main.py file. It should look something like this
+When your database is set up, you can define it in your `secrets.py` and it will override the Docker image one in the `settings/main.py file`. It should look something like this
 
 ```python
 DATABASES = {
