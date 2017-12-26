@@ -31,6 +31,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.github.GithubOAuth2',
     'guardian.backends.ObjectPermissionBackend',
+    'shub.backends.keyrock.KeyrockOAuth2',
 )
 
 
@@ -47,7 +48,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
-
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://127.0.0.1'
 

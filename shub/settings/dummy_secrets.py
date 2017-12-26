@@ -57,6 +57,16 @@
 #SOCIAL_AUTH_GITLAB_SECRET = ''
 
 
+# -----------------------------------------------------------------------------
+# Fiware Keyrock OAuth2
+# Only required if ENABLE_FIWARE_AUTH=TRUE in config.py
+
+#FIWARE_IDM_ENDPOINT = 'https://account.lab.fiware.org'
+#SOCIAL_AUTH_FIWARE_KEY = ''
+#SOCIAL_AUTH_FIWARE_SECRET = ''
+
+
+
 
 # =============================================================================
 # Plugin Authentication

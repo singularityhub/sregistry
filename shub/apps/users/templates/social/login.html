@@ -44,6 +44,10 @@
         <a class="social-button" id="google-connect" href="{% url 'social:begin' 'google-oauth2' %}?next={{ domain }}{{ request.path }}">Login with Google</a>
         {% endif %}
 
+        {% if ENABLE_FIWARE_AUTH %}
+        <a class="social-button" id="fiware-connect" href="{% url 'social:begin' 'fiware' %}?next={{ domain }}{{ request.path }}">Login with Fiware</a>
+        {% endif %}
+
         {% if 'ldap_auth' in PLUGINS_ENABLED %}
         <a class="social-button" id="ldap-login" href="{% url 'ldap_auth-login' %}?next={{ domain }}{{ request.path }}">Login with LDAP</a>
         {% endif %}
