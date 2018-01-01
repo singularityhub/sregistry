@@ -1,15 +1,5 @@
-# Contributor's Agreement
-This code is licensed under the Affero GPL, version 3.0 or later [LICENSE](LICENSE).
-
-The Affero GPL is a Copyleft license, meaning that it aims to ensure 
-that free and open software remains perpetually free and open by requiring 
-users of it to license their improvements under the same terms as the original.
-
-If you make changes to the software and make the modified software available
-to users within your organization (for example, students at a university)
-via a network, this is considered propogation (not conveyance) and you 
-do not need to share your modifications. if you transfer copies of the 
-software to others, this **is** considered a conveyance.
+## License
+This code is licensed under the MPL version 2.0 or later [LICENSE](LICENSE).
 
 # Contributing
 
