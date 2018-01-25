@@ -19,6 +19,7 @@ and changes prior to that are (unfortunately) done retrospectively. Critical ite
 **changed defaults**
  - changed internal functions to use sregistry client (instead of singularity)
  - authentication check added to sregistry pull, so private images can be pulled given correct credentials
+ - updating the token to have format with registry at top level of dictionary (to support other sregistry clients).
  - from the *sregistry client* provided by Singularity Python, to support use of squashfs images and singularity 2.4, the default upload is not compressed, assuming squashfs, and the default download is not decompressed. To still compress an image add the `--compress` flag on push, and the `--decompress` flag on pull.
 
 **bugs fixed**

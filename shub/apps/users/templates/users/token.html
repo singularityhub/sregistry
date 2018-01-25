@@ -26,7 +26,8 @@
                    <i class="fa fa-copy"></i></button>
        </div>
        <div style="padding-top:20px; overflow:scroll;" class="well col-md-11" id="token_well" role="alert">
-            { "registry": {
+            { "registry":
+               {
                 "token": 
                      "{{ request.user.token }}",
                 "username": "{{ request.user.username }}"{% if domain %},{% endif %} 
