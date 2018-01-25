@@ -20,11 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.postgres.fields import JSONField
 from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
 from django.contrib.auth.models import AbstractUser
@@ -38,7 +35,6 @@ import re
 
 class User(AbstractUser):
     active = models.BooleanField(default=True)         # allowed to build, etc.
-    admin = models.BooleanField(default=False)         # is this a registry admin?
     agree_terms = models.BooleanField(default=False)   # has the user agreed to terms?
     agree_terms_date = models.DateTimeField(blank=True,default=None,null=True)          # has the user agreed to terms?
     
