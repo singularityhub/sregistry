@@ -106,9 +106,6 @@
 
 # AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 
-#     # Not currently used, will be added to indicate active/not
-#    "is_active": "cn=active,ou=django,ou=groups,dc=example,dc=com",
-#
 #    # Anyone in this group can get a token to manage images, not superuser
 #    "is_staff": "cn=staff,ou=django,ou=groups,dc=example,dc=com",
 #
