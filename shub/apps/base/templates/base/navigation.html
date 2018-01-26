@@ -48,7 +48,7 @@
                 <li role="separator" class="divider"></li>
                 <!--<li class="dropdown-header">Settings</li>-->
                 <li><a href="/api">API</a></li>
-                {% if request.user.admin %}
+                {% if request.user.is_staff %}
                 <li><a href="{% url 'token' %}">Token</a></li>
                 {% endif %}
                 <li><a href="{% url 'logout' %}">Log Out</a></li>
