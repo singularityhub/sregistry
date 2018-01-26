@@ -49,10 +49,10 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             raise CommandError("This username does not exist.")
 
-        if user.admin is False: #and user.manager is False:
+        if user.is_staff is False: #and user.manager is False:
             raise CommandError("This user already can't manage and build.")        
 
-        user.admin = False
+        user.is_staff = False
         #user.manager = False
         bot.debug("%s can no longer manage and build." %(user.username))
         user.save()

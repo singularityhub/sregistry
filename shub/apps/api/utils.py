@@ -95,7 +95,7 @@ def validate_request(auth,
         return False
 
     if superuser is True:
-        if user.admin is False:
+        if user.is_staff is False:
             bot.debug('User %s is not a superuser, request invalid.' %user.username)
             return False
 

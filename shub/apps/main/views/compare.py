@@ -96,7 +96,7 @@ def get_filtered_collections(request):
     '''
     private = True
     if not request.user.is_anonymous():
-        if request.user.is_superuser or request.user.admin is True:
+        if request.user.is_superuser or request.user.is_staff is True:
              private = True
 
     if not private:

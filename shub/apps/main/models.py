@@ -75,7 +75,7 @@ def has_edit_permission(instance,request):
         return False
 
     # Global Admins
-    if request.user.admin is True:
+    if request.user.is_staff is True:
         return True
 
     if request.user.is_superuser is True:
@@ -101,7 +101,7 @@ def has_view_permission(instance,request):
         return False
         
     # Global Admins
-    if request.user.admin is True or request.user.is_superuser:
+    if request.user.is_staff is True or request.user.is_superuser:
         return True
 
     # Collection Contributors

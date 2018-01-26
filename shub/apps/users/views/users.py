@@ -27,7 +27,7 @@ from django.shortcuts import render, redirect
 
 @login_required
 def view_token(request):
-    if request.user.is_superuser or request.user.admin is True:
+    if request.user.is_superuser or request.user.is_staff is True:
         return render(request, 'users/token.html')
     else:
         messages.info(request,"You are not allowed to perform this action.")
