@@ -37,7 +37,7 @@
         {% endif %}
 
         {% if ENABLE_GITLAB_AUTH %}
-        <a class="social-button" id="gitlab-connect" href="{% url 'social:begin' 'gitlab-oauth2' %}?next={{ domain }}{{ request.path }}">Login with Gitlab</a>
+        <a class="social-button" id="gitlab-connect" href="{% url 'social:begin' 'gitlab' %}?next={{ domain }}{{ request.path }}">Login with Gitlab</a>
         {% endif %}
 
         {% if ENABLE_GOOGLE_AUTH %}

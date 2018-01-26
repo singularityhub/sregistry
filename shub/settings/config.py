@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=True
 ENABLE_GITHUB_AUTH=False
-ENABLE_GITLAB_AUTH=False
+ENABLE_GITLAB_AUTH=True
 
 # NOTE you will need to set autehtication methods up.
 # Configuration goes into secrets.py
