@@ -1,3 +1,11 @@
+---
+layout: default
+title: Installation
+pdf: true
+permalink: /install
+toc: false
+---
+
 # Deployment
 If starting from scratch, you need the following dependencies on the host:
 
@@ -226,7 +234,7 @@ LOGGING_SAVE_RESPONSES=True
 Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
 
 ### Under Maintenance Page
-If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](../scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.
+If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.
 
 ```bash
 cp $INSTALL_ROOT/sregistry/scripts/nginx-index.html /var/www/html/index.html
@@ -236,7 +244,7 @@ rm /var/www/html/index.nginx-debian.html
 If you don't care about user experience during updates and server downtime, you can just ignore this.
 
 ### Storage
-The containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. By default, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](docker-compose.yml) that looks something like this:
+The containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. By default, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
 
 
 ```
@@ -273,7 +281,7 @@ mv https/docker-compose.yml $PWD
 mv https/nginx.conf $PWD
 ```
 
-Most importantly, we use a text file to make sure that we generate a single certificate that covers both www* and without. This part of the [generate_cert.sh](../scripts/generate_cert.sh) you will need to update the location (town, city, etc) along with your email and the domain you are using:
+Most importantly, we use a text file to make sure that we generate a single certificate that covers both www* and without. This part of the [generate_cert.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/generate_cert.sh) you will need to update the location (town, city, etc) along with your email and the domain you are using:
 
 ```bash
 cat > csr_details.txt <<-EOF
@@ -304,7 +312,7 @@ EOF
 
 Specifically, pay close attention to the fields in the last two sections that need to be customized for the domain and region.
 
-If you run into strange errors regarding any kind of authentication / server / nginx when you start the images, likely it has to do with not having moved these files, or a setting about https in the [settings](../shub/settings). If you have trouble, please post an issue on the [issues board](https://www.github.com/singularityhub/sregistry/issues) and I'd be glad to help.
+If you run into strange errors regarding any kind of authentication / server / nginx when you start the images, likely it has to do with not having moved these files, or a setting about https in the [settings](https://github.com/singularityhub/sregistry/tree/master/shub/settings). If you have trouble, please post an issue on the [issues board](https://www.github.com/singularityhub/sregistry/issues) and I'd be glad to help.
 
 
 ## Build the Image (Optional)
@@ -342,4 +350,9 @@ If you make changes to the image itself, you will need to build again. However, 
 ```
 docker-compose restart
 ```
-Good job! Now it's time to read the [setup](setup.md) guide to better understand how to configure and interact with your Singularity Registry.
+Good job! Now it's time to read the [setup](/sregistry/setup) guide to better understand how to configure and interact with your Singularity Registry.
+
+<div>
+    <a href="/sregistry/faq"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/setup"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>

@@ -1,3 +1,11 @@
+---
+layout: default
+title: Singularity Client
+pdf: true
+permalink: /client-singularity
+toc: false
+---
+
 # Singularity Pull
 
 Support for Singularity Registry pull via the Singularity software was added to the development branch in a [recent pull request](https://github.com/singularityware/singularity/pull/889), and will be in the release of Singularity 2.4 [demo](https://asciinema.org/a/134694?speed=3).
@@ -32,3 +40,7 @@ This is different than the traditional shub pull command (which uses Github as a
 singularity pull shub://dinosaur/tacos:latest
 ```
 
+<div>
+    <a href="/sregistry/client"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/plugins"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>
