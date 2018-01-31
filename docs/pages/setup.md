@@ -1,5 +1,13 @@
+---
+layout: default
+title: Setup
+pdf: true
+permalink: /setup
+toc: false
+---
+
 # Setup
-By the time you get here, you have added all required secrets and settings to your [settings](../shub/settings) folder, and you've built and started the image. Next, you should navigate to [http://127.0.0.1](http://127.0.0.1) (localhost) to make sure the registry is up and running. 
+By the time you get here, you have added all required secrets and settings to your [settings](https://github.com/singularityhub/sregistry/tree/master/shub/settings) folder, and you've built and started the image. Next, you should navigate to [http://127.0.0.1](http://127.0.0.1) (localhost) to make sure the registry is up and running. 
 
 ## Image Interaction
 Before we work with accounts and other application setup, you need to know how to interact with the application, meaning Docker images. Here are the basic commands you should get comfortable with as an administrator of your registry. Note that these are really great for debugging too:
@@ -30,7 +38,7 @@ We will add more roles as the need arises. For example, it might be the case tha
 
 
 ## Accounts
-To create your admin account, the first thing you need to do (in the web interface) is click Login on the top right. You should see the social account options that you configured in the [install](install.md) step. You can now log in with your social account of choice. This will create a user account for yourself that you can use to manage the application, and when you are logged in you should see your username in the top right. It usually corresponds with the one from your social account.
+To create your admin account, the first thing you need to do (in the web interface) is click Login on the top right. You should see the social account options that you configured in the [install](/sregistry/install) step. You can now log in with your social account of choice. This will create a user account for yourself that you can use to manage the application, and when you are logged in you should see your username in the top right. It usually corresponds with the one from your social account.
 
 
 ## The Application Manager
@@ -158,4 +166,9 @@ thumb: custom/taco-logo.png
 You can then add your files, and submit a PR to the main repo. We will have tests that ping your registry to ensure correct naming of files and registry address, along with a preview of the content that is added. If you want to prevew locally, you can run `jekyll serve`.
 
 
-Great! Now that you have your accounts, you probably want to learn about how to build and push images! First you need to generate a [credential](credentials.md), and then you will can read about the [client](client.md).
+Great! Now that you have your accounts, you probably want to learn about how to build and push images! First you need to generate a [credential](/sregistry/credentials), and then you will can read about the [client](/sregistry/client).
+
+<div>
+    <a href="/sregistry/install"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/credentials"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>

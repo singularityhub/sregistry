@@ -1,8 +1,9 @@
-#Project Lead:
+# Project Lead:
 
-    - Vanessa Sochat <vsochat@stanford.edu>
+    - Vanessa Sochat <vsochat@stanford.edu> (@vsoch)
 
 
-#Contributors:
+# Contributors:
 
-    - David Trudgian <dave@trudgian.net>
+    - David Trudgian <dave@trudgian.net> (@dctrud)
+    - Victor <victorsv@gmail.com> (@victorsndvg)

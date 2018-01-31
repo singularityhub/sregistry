@@ -1,1 +1,22 @@
-theme: jekyll-theme-cayman
+# Setup
+title:        Singularity Registry
+tagline:      ""
+baseurl:      "/sregistry/"
+github:       "https://www.github.com/singularityhub/sregistry"
+
+# About/contact
+author:
+  name:       Vanessa Sochat
+  url:        https://singularityhub.github.io/sregistry
+
+# Defaults
+defaults:
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+#Others
+markdown: kramdown

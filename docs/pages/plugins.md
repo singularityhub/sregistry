@@ -1,4 +1,10 @@
-# Plugins
+---
+layout: default
+title: Plugins
+pdf: true
+permalink: /plugins
+toc: false
+---
 
 Singularity Registry supports added functionality through plugins. Plugins allow complex features,
 such as container scanning, LDAP authentication, to be added without complicating the core code of
@@ -12,7 +18,7 @@ The following plugins are included with sregistry, and can be enabled by adding 
 `PLUGINS_ENABLED` entry in `shub/settings/config.py`. Plugins may require further configuration in
 your registries' local `shub/settings/secrets.py` file.
 
- - [LDAP-AUTH](ldap.md): authentication against LDAP directories
+ - [LDAP-AUTH](/sregistry/plugin-ldap): authentication against LDAP directories
 
 
 ## Writing a Plugin
@@ -32,3 +38,14 @@ listed in the plugin `__init.py__` is merged into the project settings.
 
 More documentation will be added as the plugin interface is developed. For now, see plugins
 distrubuted with sregisty under `shub/plugins` for example code.
+
+## Writing Documentation
+Documentation for your plugin is just as important as the plugin itself! You should create a subfolder under
+`docs/pages/plugins/<your-plugin>` with an appropriate README.md that is linked to in this file.
+Use the others as examples to guide you.
+
+
+<div>
+    <a href="/sregistry/credentials"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/client"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>
