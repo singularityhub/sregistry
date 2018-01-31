@@ -1,15 +1,24 @@
-# Frequently Asked Questions
+---
+layout: default
+title: Frequently Asked Questions
+pdf: true
+permalink: /faq
+toc: false
+---
 
 ## How is Singularity Registry different from Singularity Hub?
 **Singularity Hub** is the predecessor to Singularity Registry, and while it also serves as an image registry, in addition it provides a cloud build service for users. Singularity Hub also takes advantage of Github for version control of build recipes. The user pushes to Github, a builder is deployed, and the image available to the user. Singularity Hub would allow a user to build and run an image from a resource where he or she doesn't have sudo simply by using Github as a middleman.
 
 **Singularity Registry** is similarly an image registry that plugs in natively to the singularity software, but it places no dependencies on Github, and puts the power of deciding how to build in the hands of the user. This could mean building after tests pass with a "push" command in a Github repository, building via a SLURM job, or on a private server. While Singularity Hub is entirely public and only allows for a minimum number of private images, a Singularity Registry can be entirely private, with expiring tokens that can be shared.
 
-Importantly, both deliver image manifests that plug seamlessly into the Singularity command like software, so a registry (or hub) image can be pulled easily:
+Importantly, both deliver image manifests that plug seamlessly into the Singularity command-line software, so a registry (or hub) image can be pulled easily:
 
 ```
 singularity pull shub://vsoch/hello-world
 ```
+
+**Singularity Global Clients**
+A base of clients for working with a Singularity Registry, Singularity Hub, and other backends. Since you can create a local database to manage images, the executable is called [sregistry](https://singularityhub.github.io/sregistry-cli).
 
 ## Why do we need Singularity containers?
 Singularity containers allow you to package your entire scientific analysis, including dependencies, libraries, and environment, and run it anywhere. Inside a Singularity container you are the same user as outside the container, so you could not escalate to root and act maliciously on a shared resource. For more information on containers, see [the Singularity site](https://singularityware.github.io).
@@ -36,3 +45,8 @@ There are really great use cases for both, and the decision of which to use is u
 ## Are there features of singularity that are particularly supported by singularityhub?
 
 Singularity aims to support scientific containers, so Singularity Hub and Registry take an extra step to serve metadata about the containers via the API. It's important to know about usage (downloads and stars) but also software, environment variables, labels, and runscripts. This supports being able to do more research analytics across containers to better understand how containers (and more broadly software) help answer scientific questions. Given the issues we have with reproducibility, this is essential.
+
+<div>
+    <a href="/sregistry/use-cases"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/install"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>

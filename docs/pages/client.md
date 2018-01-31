@@ -1,9 +1,15 @@
-# sregistry
+---
+layout: default
+title: sregistry client
+pdf: true
+permalink: /client
+toc: false
+---
 
 <script src="assets/js/asciinema-player.js"></script>
 <link rel="stylesheet" href="assets/css/asciinema-player.css"/>
 
-The original Singularity Registry Client was provided by [Singularity Python](https://github.com/vsoch/singularity-python), however we have moved the client to have its own module under [sregistry-cli](https://github.com/singularityhub/sregistry-cli). We recommend that you use the latter, and ask for features or updates when necessary.
+The original Singularity Registry Client was provided by [Singularity Python](https://github.com/singularityware/singularity-python), however we have moved the client to have its own module under [sregistry-cli](https://github.com/singularityhub/sregistry-cli). We recommend that you use the latter, and ask for features or updates when necessary. For the new version, see the [getting started guide here](https://singularityhub.github.io/sregistry-cli/client-registry).
 
 For the older version, you can use Singularity Python. A demo is provided below, along with the same documentation here [as a script](https://github.com/singularityware/singularity-python/blob/master/examples/registry/run_client.sh).
 
@@ -153,4 +159,7 @@ sregistry labels --value vanessasaur
 sregistry labels --key maintainer --value vanessasaur
 ```
 
-That's all for now folks! We will next be writing up interaction with the registry with Singularity proper, and other details like visualizations, sharing, views, labels, and topic tags.
+<div>
+    <a href="/sregistry-cli/"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry-cli/client-registry.html"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>

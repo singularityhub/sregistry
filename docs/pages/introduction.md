@@ -1,4 +1,10 @@
-# Introduction
+---
+layout: default
+title: Introduction
+pdf: true
+permalink: /intro
+toc: false
+---
 
 ## A Need for Reproducible Science
 Using computational methods to answer scientific questions of interest is an important task to increase our knowledge about the world. Along with careful assembly of protocol and relevant datasets, the scientist must also write software to perform the analysis, and use the software in combination with data to answer the question of interest. When a result of interest to the larger community is found, the scientist writes it up for publication in a scientific journal. This is what we might call a single scientific result.
@@ -39,13 +45,13 @@ Enough screen shots! Let's get familiar first with some of the basics.
 
 
 ## How are images named?
-When you deploy your registry, it lives at a web address. On your personal computer, this would be localhost (127.0.0.1), and on an institution server, it could be given its own domain or subdomain (eg, `containers.stanford.edu`). This means that, for example, if you had a container called `science/rocks` with tag `latest`, and if you wanted to pull it using the [Singularity software](singularity-client.md), the command would be:
+When you deploy your registry, it lives at a web address. On your personal computer, this would be localhost (127.0.0.1), and on an institution server, it could be given its own domain or subdomain (eg, `containers.stanford.edu`). This means that, for example, if you had a container called `science/rocks` with tag `latest`, and if you wanted to pull it using the [Singularity software](/sregistry/client-singularity), the command would be:
 
 ```
 singularity pull shub://127.0.0.1/science/rocks:latest
 ```
 
-If you use the [sregistry software](client.md) (the main controller that is configured for a specific registry) then you don't need to use the domain, or the `shub://` uri.
+If you use the [sregistry software](/sregistry/client) (the main controller that is configured for a specific registry) then you don't need to use the domain, or the `shub://` uri.
 
 ```
 sregistry pull science/rocks:latest
@@ -162,11 +168,16 @@ Singularity Registry needs a web accessible server that can install and run Dock
  2. Docker is great and optimized for orchestration of services. Singularity is not close to that, and with the default image type being an (unchangeable) squashfs, it does not seem to be moving in a direction to be optimized for service containers.
  3. Since images are pushed and pulled via `PUT` and `POST`, it isn't the case that the registry needs to be part of the cluster itself. We don't have the same security concerns as we do with running containers.
 
-As was stated in the base [README.md](./README.md) The components of the application include databases, a web server, worker, and application:
+As was stated in the base [README.md](/sregistry/) The components of the application include databases, a web server, worker, and application:
 
  - **vanessa/sregistry**: is the main uwsgi application, which serves a Django (python-based) application.
  - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly.
  - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [celery](http://www.celeryproject.org/), a distributed job queue that fits nicely into Django. The celery worker uses a
  - **redis**: database to organize the jobs themselves.
 
-This means that, given a pretty basic server to run the application, and enough space connected to it to store the images, you can bring the entire thing up relatively quickly. Awesome! Let's get started and talk about first steps of [install](install.md).
+This means that, given a pretty basic server to run the application, and enough space connected to it to store the images, you can bring the entire thing up relatively quickly. Awesome! Let's get started and talk about first steps of [install](/sregistry/install). Or read about [use cases first](/sregistry/use-cases)
+
+<div>
+    <a href="/sregistry/"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/use-cases"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+</div><br>
