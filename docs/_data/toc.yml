@@ -23,5 +23,5 @@
     url: "/sregistry/plugins"
     slug: plugins
   - title: "Clients"
-    url: "/sregistry-cli/client"
+    url: "/sregistry/client"
     slug: client
