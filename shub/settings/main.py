@@ -128,7 +128,29 @@ STATIC_URL = '/static/'
 GRAVATAR_DEFAULT_IMAGE = "retro"
 # An image url or one of the following: 'mm', 'identicon', 'monsterid', 'wavatar', 'retro'. Defaults to 'mm'
 
+
+# Default Django logging is WARNINGS+ to console
+# so visible via docker-compose logs uwsgi
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'WARNING'),
+        },
+    },
+}
+
+
 try:
     from .secrets import *
 except ImportError:
     pass
+
+
