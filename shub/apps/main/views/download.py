@@ -35,7 +35,8 @@ from django.shortcuts import (
 
 from django.http import (
     JsonResponse,
-    HttpResponse
+    HttpResponse,
+    FileResponse
 )
 
 from shub.apps.main.utils import (
@@ -100,9 +101,11 @@ def download_share(request,cid,secret):
 
     # If we make it here, link is good
     filename = container.get_download_name()
-    response = HttpResponse(container.image.datafile.file,
-                            content_type='application/img')
+
+    f = open(container.image.get_abspath(), 'rb')
+    response = FileResponse(f, content_type='application/img')
     response['Content-Disposition'] = 'attachment; filename="%s"' %filename
+    
     return response
 
 
@@ -117,7 +120,9 @@ def download_container(request,cid,secret):
         return Http404
 
     filename = container.get_download_name()
-    response = HttpResponse(container.image.datafile.file,
-                            content_type='application/img')
+
+    f = open(container.image.get_abspath(), 'rb')
+    response = FileResponse(f, content_type='application/img')
     response['Content-Disposition'] = 'attachment; filename="%s"' %filename
+
     return response

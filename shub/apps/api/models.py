@@ -85,6 +85,9 @@ class ImageFile(models.Model):
     def get_label(self):
         return "imagefile"
 
+    def get_abspath(self):
+        return os.path.join(settings.MEDIA_ROOT, self.datafile.name)
+
     class Meta:
         app_label = 'api'
 
