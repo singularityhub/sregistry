@@ -99,18 +99,11 @@ def download_share(request,cid,secret):
     if secret != share.secret:
         raise Response(status.HTTP_401_UNAUTHORIZED)
 
-    # If we make it here, link is good
-    filename = container.get_download_name()
-
-    f = open(container.image.get_abspath(), 'rb')
-    response = FileResponse(f, content_type='application/img')
-    response['Content-Disposition'] = 'attachment; filename="%s"' %filename
-    
-    return response
+    return _download_container(container)
 
 
 
-def download_container(request,cid,secret):
+def download_container(request, cid, secret):
     '''download a container
     '''
     container = get_container(cid)
@@ -119,10 +112,28 @@ def download_container(request,cid,secret):
     if container.secret != secret:
         return Http404
 
-    filename = container.get_download_name()
+    return _download_container(container)
 
-    f = open(container.image.get_abspath(), 'rb')
+
+def _download_container(container):
+    '''
+       download_container is the shared function between downloading a share
+       or a direct container download. For each, we create a FileResponse
+       with content type application/img, and stream it to the container's
+       download name. A FileResponse is returned.
+
+       Parameters
+       ==========
+       container: the container to download
+
+    '''
+
+    filename = container.get_download_name()
+    filepath = container.image.get_abspath()
+
+    f = open(filepath, 'rb')
     response = FileResponse(f, content_type='application/img')
     response['Content-Disposition'] = 'attachment; filename="%s"' %filename
+    response['Content-Length'] = os.path.getsize(filepath)
 
     return response
