@@ -128,7 +128,10 @@ STATIC_URL = '/static/'
 GRAVATAR_DEFAULT_IMAGE = "retro"
 # An image url or one of the following: 'mm', 'identicon', 'monsterid', 'wavatar', 'retro'. Defaults to 'mm'
 
+
 try:
     from .secrets import *
 except ImportError:
     pass
+
+
