@@ -24,6 +24,10 @@ from rest_framework.exceptions import (
     PermissionDenied,
     NotFound
 )
+
+from shub.apps.api.utils import validate_request
+from sregistry.auth import generate_timestamp
+
 from django.urls import reverse
 from django.http import Http404
 
@@ -155,9 +159,25 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
 
         serializer = SingleContainerSerializer(container)
         is_private = container.collection.private
-        if not is_private: 
+
+        if not is_private:
             return Response(serializer.data)
-    
+
+        # Determine if user has permission to get if private
+        auth = request.META.get('HTTP_AUTHORIZATION')
+
+        if auth is None:
+            raise PermissionDenied(detail="Authentication Required")
+
+        timestamp = generate_timestamp()
+        payload = "pull|%s|%s|%s|%s|" %(collection,
+                                        timestamp,
+                                        name,
+                                        tag)
+
+        if validate_request(auth,payload,"pull",timestamp):
+            return Response(serializer.data)    
+
         return Response(400)
 
 
@@ -185,9 +205,25 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
 
         serializer = SingleContainerSerializer(container)
         is_private = container.collection.private
+
         if not is_private: 
             return Response(serializer.data)
     
+        # Determine if user has permission to get if private
+        auth = request.META.get('HTTP_AUTHORIZATION')
+
+        if auth is None:
+            raise PermissionDenied(detail="Authentication Required")
+
+        timestamp = generate_timestamp()
+        payload = "pull|%s|%s|%s|%s|" %(collection,
+                                        timestamp,
+                                        name,
+                                        tag)
+
+        if validate_request(auth,payload,"pull",timestamp):
+            return Response(serializer.data)    
+
         return Response(400)
 
 

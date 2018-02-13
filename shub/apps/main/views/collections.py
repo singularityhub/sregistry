@@ -25,7 +25,7 @@ from shub.apps.main.models import (
     Star
 )
 
-from singularity.utils import read_file
+from sregistry.utils import read_file
 from shub.apps.users.views import validate_credentials
 from django.shortcuts import (
     render, 

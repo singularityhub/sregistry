@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 from shub.apps.main.models import Container, Collection
-from singularity.registry.utils import parse_image_name
+from sregistry.utils import parse_image_name
 from shub.logger import bot
 from django.db.models import Q
 import os

@@ -28,7 +28,7 @@ from rest_framework.permissions import (
     Http404
 )
 
-from singularity.utils import write_file
+from sregistry.utils import write_file
 from shub.apps.users.models import User
 
 from datetime import datetime, timezone
