@@ -43,7 +43,6 @@ THIRD_PARTY_APPS = [
     'django_gravatar',
     'django_extensions',
     'djcelery',
-    'guardian',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',

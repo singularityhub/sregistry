@@ -68,10 +68,18 @@ def get_privacy_default():
     return DEFAULT_PRIVATE
 
 
-def has_edit_permission(instance,request):
+def has_edit_permission(instance, request):
     '''can the user of the request edit the collection or container?
+
+       Parameters
+       ==========
+       instance: the container or collection to check
+       request: the request with the user object
+
     '''
-    if request.user.is_authenticated() is False:
+
+    # Visitor
+    if not request.user.is_authenticated():
         return False
 
     # Global Admins
@@ -89,19 +97,27 @@ def has_edit_permission(instance,request):
 
 
 def has_view_permission(instance,request):
-    '''can the user of the request edit the collection or container?
+    '''can the user of the request view the collection or container?
+
+       Parameters
+       ==========
+       instance: the container or collection to check
+       request: the request with the user object
+
     '''
     if isinstance(instance, Container):
         instance = instance.collection
 
+    # All public collections are viewable
     if instance.private is False:
         return True
 
-    if request.user.is_authenticated() is False:
+    # At this point we have a private collection
+    if not request.user.is_authenticated():
         return False
         
-    # Global Admins
-    if request.user.is_staff is True or request.user.is_superuser:
+    # Global Admins and Superusers
+    if request.user.is_staff or request.user.is_superuser:
         return True
 
     # Collection Contributors
@@ -120,7 +136,7 @@ def delete_imagefile(sender,instance,**kwargs):
 
 #######################################################################################################
 # Collections #########################################################################################
-#######################################################################################################
+#########################################b##############################################################
 
 class Collection(models.Model):
     '''A container collection is a build (multiple versions of the same image) created by an owner,

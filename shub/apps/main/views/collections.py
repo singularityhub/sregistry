@@ -134,10 +134,14 @@ def view_collection(request,cid):
 
 
 # Edit a build for a collection
-def edit_collection(request,cid):
+def edit_collection(request, cid):
     '''edit collection will let the user specify a different image for
-    their builds, in the case that the provided isn't large enough, etc.
-    :param cid: the id of the collection
+       their builds, in the case that the provided isn't large enough, etc.
+   
+       Parameters
+       ==========
+       cid: the id of the collection
+
     '''
     collection = get_collection(cid)
 
@@ -264,4 +268,3 @@ def make_collection_public(request,cid):
         messages.info(request,"This registry only allows private collections.")
         return redirect('collection_details', cid=cid)
     return change_collection_privacy(request,cid,make_private=False)
-

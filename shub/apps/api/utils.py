@@ -30,6 +30,7 @@ from rest_framework.permissions import (
 
 from sregistry.utils import write_file
 from shub.apps.users.models import User
+from shub.settings import USER_COLLECTIONS
 
 from datetime import datetime, timezone
 import hashlib
@@ -40,6 +41,66 @@ import requests
 import shutil
 import tempfile
 import re
+
+
+
+def _parse_header(auth):
+   '''parse a header and check for the correct digest.
+
+       Parameters
+       ==========
+       auth: the challenge from the header      
+   '''
+
+    header,content = auth.split(' ')
+    content = content.split(',')
+    values = dict()
+    for entry in content:
+         key,val = re.split('=', entry, 1)
+         values[key] = val
+
+    values['header'] = header
+    return values
+        
+
+def has_permission(auth, instance=None):
+    '''a simple function to parse an authentication challenge for the username,
+       and determine if the user has permission to perform the action.
+     
+       Parameters
+       ==========
+       auth: the challenge from the header
+       instance: the instance to check for
+       permission: the permission needed
+
+    '''
+    values = _parse_header(auth)
+
+    if "Credential" not in values:
+        bot.debug('Headers missing, request is invalid.')
+        return False
+
+    kind,username,ts = values['Credential'].split('/')
+    username = base64.b64decode(username)
+
+    try:
+        user = User.objects.get(username=username)
+    except:
+        bot.debug('%s is not a valid user, request invalid.' %username)
+        return False
+
+    # An existing collection
+    if instance is not None:
+        return instance.has_edit_permission(user)
+        
+    # A new collection
+    if user.is_superuser or user.is_staff:
+        return True
+
+    return False
+
+
+
 
 def validate_request(auth,
                      payload,
@@ -59,16 +120,11 @@ def validate_request(auth,
     Returns
     =======
     True if the request is valid, False if not
+
     '''
+    values = _parse_header(auth)
 
-    header,content = auth.split(' ')
-    content = content.split(',')
-    values = dict()
-    for entry in content:
-         key,val = re.split('=', entry, 1)
-         values[key] = val
-
-    if header != 'SREGISTRY-HMAC-SHA256':
+    if values['header'] != 'SREGISTRY-HMAC-SHA256':
         bot.debug('Invalid SREGISTRY Authentication scheme, request invalid.')
         return False
 
@@ -76,7 +132,6 @@ def validate_request(auth,
         bot.debug('Headers missing, request is invalid.')
         return False
 
-    bot.debug(values['Credential'])
     kind,username,ts = values['Credential'].split('/')
     username = base64.b64decode(username)
     if kind != sender:
@@ -93,11 +148,6 @@ def validate_request(auth,
     except:
         bot.debug('%s is not a valid user, request invalid.' %username)
         return False
-
-    if superuser is True:
-        if user.is_staff is False:
-            bot.debug('User %s is not a superuser, request invalid.' %user.username)
-            return False
 
     request_signature = values['Signature']
     secret = user.token()

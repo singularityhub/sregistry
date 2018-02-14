@@ -26,7 +26,7 @@ from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
-from shub.apps.api.utils import validate_request
+from shub.apps.api.utils ( import validate_request, has_permission )
 from sregistry.auth import generate_timestamp
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,6 +50,9 @@ class ContainerPushViewSet(ModelViewSet):
         auth=self.request.META.get('HTTP_AUTHORIZATION', None)
         collection_name=self.request.data.get('collection')
 
+
+        # Authentication always required for push
+
         if auth is None:
             raise PermissionDenied(detail="Authentication Required")
 
@@ -59,27 +62,37 @@ class ContainerPushViewSet(ModelViewSet):
                                         name,
                                         tag)
 
+
+        # Validate Payload
+
         if not validate_request(auth,payload,"push",timestamp):
             raise PermissionDenied(detail="Unauthorized")
 
         create_new=False
 
         try:
-            collection = Collection.objects.get(name=collection_name) 
+            collection = Collection.objects.get(name=collection_name)
         except Collection.DoesNotExist:
             collection = None
-            create_new=True
+            create_new = True
+
+        # Validate User Permissions
+
+        if not has_permission(auth, collection)
+            raise PermissionDenied(detail="Unauthorized")
         
         if collection is not None:
+
             try:
                 container = Container.objects.get(collection=collection,
                                                   name=name,
                                                   tag=tag)
                 if container.frozen is False:
                     create_new = True
+
             except Container.DoesNotExist:
                 create_new=True
-
+         
         if create_new is True:
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
