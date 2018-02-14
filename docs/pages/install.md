@@ -181,6 +181,9 @@ By default, any authenticated user in your Registry can create collections, and 
 USER_COLLECTIONS=True
 ```
 
+Any user, staff, or administrator can create new collections (or manage those that he or she owns, in the case of user) by way of having a token, and this variable determines that logic.
+
+
 #### Registry Private
 By default Singularity Registry will provide public images, with an option to set them to private. If you are working with sensitive data and/or images, you might want all images to be private, with no option to make public. You can control that with the variable `PRIVATE_ONLY`.
 

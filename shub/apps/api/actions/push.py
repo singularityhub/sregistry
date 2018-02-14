@@ -26,7 +26,7 @@ from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
-from shub.apps.api.utils ( import validate_request, has_permission )
+from shub.apps.api.utils import ( validate_request, has_permission )
 from sregistry.auth import generate_timestamp
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
@@ -78,7 +78,7 @@ class ContainerPushViewSet(ModelViewSet):
 
         # Validate User Permissions
 
-        if not has_permission(auth, collection)
+        if not has_permission(auth, collection):
             raise PermissionDenied(detail="Unauthorized")
         
         if collection is not None:

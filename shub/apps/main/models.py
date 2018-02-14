@@ -134,6 +134,8 @@ def delete_imagefile(sender,instance,**kwargs):
         if hasattr(instance.image,'datafile'):
             instance.image.datafile.delete()
 
+
+
 #######################################################################################################
 # Collections #########################################################################################
 #########################################b##############################################################
@@ -231,6 +233,7 @@ class Collection(models.Model):
         '''
         return has_view_permission(request=request,
                                    instance=self)
+
 
 
     def has_collection_star(self,request):

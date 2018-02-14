@@ -45,12 +45,12 @@ import re
 
 
 def _parse_header(auth):
-   '''parse a header and check for the correct digest.
+    '''parse a header and check for the correct digest.
 
        Parameters
        ==========
        auth: the challenge from the header      
-   '''
+    '''
 
     header,content = auth.split(' ')
     content = content.split(',')
@@ -190,12 +190,6 @@ def validate_secret(secret,payload,request_signature):
                       msg=payload).hexdigest().encode('utf-8')
     return hmac.compare_digest(digest, request_signature)
 
-
-def JsonResponseMessage(status=500,message=None,status_message='error'):
-    response = {'status':status_message}
-    if message != None:
-        response['message'] = message
-    return JsonResponse(response, status=500)
 
 
 #####################################################################################
