@@ -35,6 +35,7 @@ from .download import (
 from .collections import (
     all_collections,
     collection_commands,
+    collection_settings,
     delete_collection,
     edit_collection,
     get_collection,    

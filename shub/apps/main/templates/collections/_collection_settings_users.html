@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-md-12">
+
+         <form action="{% url 'edit_collection' collection.id %}" method="POST">
+
+            {% csrf_token %}
+
+            <hr>
+
+            <!-- Remove contributors -->
+            {% if contributors %}
+            <label for="builder_name">Remove Contributors</label>
+            <select id="remove_contributors" 
+                    name="remove_contributors" 
+                    class="form-control"
+                    style="margin-bottom:20px;" multiple>
+                
+                <option>--</option> 
+                {% for current in contributors.all %}
+                <option value="{{ current.id }}">{{ current.username }}</option>
+                {% endfor %}
+
+            </select>
+            {% else %}
+
+            <label for="builder_name">Remove Contributors</label>
+            <p>This collection does not have any additional contributors.</p><br>
+            {% endif %}
+
+            <hr>
+
+            <!-- Add team to contributors -->
+            {% if teams %}
+            <label for="builder_name">Add Contributors from Team</label>
+            <small>Users can be added based on teams. If you want to make a new team, <a href="">do that here.</a></small><br>
+            <select id="add_contributors" 
+                    name="add_contributors" 
+                    class="form-control"
+                    style="margin-bottom:20px;" multiple>
+                
+                <option>--</option> 
+                {% for current in collection.contributors.all %}
+                <option value="{{ current.id }}">{{ current.username }}</option>
+                {% endfor %}
+            </select>
+
+            {% else %}
+               <label for="builder_name">Add Team Contributors</label>               
+               <p>Users can be added based on teams. If you want to make a new team, <a href="">do that here.</a></p><br>
+            {% endif %}
+
+
+            <input class="btn btn-primary" type="submit" value="Save" style="margin-top:50px">
+
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,52 @@
+{% load staticfiles %}
+<div class="row">
+    <div class="col-md-12">
+
+         <p><a href="{% url 'collection_details' collection.id %}" rel="nofollow">
+         <img src="https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg" alt="https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg" data-canonical-src="https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg" style="max-width:100%;"></a></p>
+
+        <p>Copy the code below into a markdown file on Github to provide an easily accessible link to your container collection.</p>
+
+        <div class="row">
+            <div class="col-md-10">
+                <p class="well" id="badge_well">
+[![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)]({% url 'collection_details' collection.id %})
+                </p>
+            </div>
+            <div class="col-md-2">
+                <button style="margin-top:25px" id="badge" class="btn copyme" data-clipboard-target="#badge"><i class="fa fa-copy"></i></button>
+                <div style="width:58px" class="alert alert-info hidden" id="badgeb-alert" role="alert">
+		</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<hr>
+
+<script src="{% static "js/jquery.min.js"%}"></script>
+{% include "messages/notification.html" %}
+
+<script>
+$('.copyme').click(function(){
+    var copy_id = $(this).attr('id')
+    var content = $("#" + copy_id + "_well")
+    var range = document.createRange();  
+    range.selectNode(content[0])  
+    window.getSelection().addRange(range)
+
+  try {  
+        // Now that we've selected the anchor text, execute the copy command  
+        var successful = document.execCommand('copy');  
+        var msg = successful ? 'successful' : 'unsuccessful';  
+        toast_message('Copy ' + msg)
+      }  catch(err) {  
+        toast_message('Oops, unable to copy');  
+      }  
+
+    // removeRange(range) when it is supported  
+    window.getSelection().removeAllRanges();  
+
+});
+</script>
+

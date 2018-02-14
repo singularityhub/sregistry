@@ -1,5 +1,5 @@
 {% if messages %}
-    <ul class="row">
+    <ul class="row" style="margin-left:-28px">
         <div class="messages">
             {% for message in messages %}
             <p{% if message.tags %} style="border-radius:5px;" class="{{ message.tags }} alert alert-info"{% endif %}>{{ message }}</p>

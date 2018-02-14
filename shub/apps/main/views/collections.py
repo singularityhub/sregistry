@@ -45,8 +45,15 @@ import uuid
 ### AUTHENTICATION ####################################################
 
 
-# get build collection
 def get_collection(cid):
+    ''' get a collection based on its primary id, raise 404 not found
+        if... not found :)
+
+       Parameters
+       ==========
+       cid: the id of the collection to look up
+
+   '''
     keyargs = {'id':cid}
     try:
         collection = Collection.objects.get(**keyargs)
@@ -60,8 +67,12 @@ def get_collection(cid):
 # COLLECTIONS #################################################################################
 ###############################################################################################
 
-# All container collections
+
 def all_collections(request):
+    '''view all container collections. This only includes public collections,
+       and we add collections for which the user has permission.
+
+    '''
 
     # public collections
     collections = Collection.objects.filter(private=False)
@@ -80,8 +91,13 @@ def all_collections(request):
     return render(request, 'collections/all_collections.html', context)
 
 
-def user_collections(request,uid):
+def user_collections(request, uid):
     '''this view will provide a list of user collections.
+
+       Parameters
+       ==========
+       uid: the user id to look up
+
     '''
     try:
         user = User.objects.get(id=uid)
@@ -100,9 +116,10 @@ def user_collections(request,uid):
 
 
 
-# Personal collections
 @login_required
 def my_collections(request):
+    '''this view will provide a list of collections for the logged in user
+    '''
     collections = Collection.objects.filter(owner=request.user)
 
     # Get information about if they have storage, and repo access
@@ -112,12 +129,15 @@ def my_collections(request):
     return render(request, 'collections/all_collections.html', context)
 
 
-# View container build details (all container builds for a repo)
 def view_collection(request,cid):
+    '''View container build details (all container builds for a repo)
+ 
+    '''
+
     collection = get_collection(cid)
 
     # If private, and not the owner, no go.
-    if collection.private == True and collection.has_edit_permission(request) == False:
+    if collection.private is True and collection.has_edit_permission(request) == False:
         messages.info(request,"This collection is private.")
         return redirect('collections')
 
@@ -133,7 +153,41 @@ def view_collection(request,cid):
     return render(request, 'collections/view_collection.html', context)
 
 
-# Edit a build for a collection
+
+def collection_settings(request, cid):
+    '''Collection settings is the entrypoint for editing the builder, branches,
+       and administrative actions like disabling and deleting collections. if 
+       active tab is defined, it means we are coming from a submit to change one
+       of these tabs, and it will return the user to the page with the correct
+       tab active.
+    
+       Parameters
+       ==========
+       cid: the id of the collection
+
+    '''
+    from shub.apps.users.models import Team
+
+    collection = get_collection(cid)
+    edit_permission = collection.has_edit_permission(request)
+
+    if not edit_permission:
+        messages.info(request,"You are not permitted to perform this action.")
+        return redirect('collections')
+
+    # Filter out owner from list of contributors
+    contributors = [x for x in collection.contributors.all() 
+                    if x.id != collection.owner.id ]
+               
+    context = {'collection':collection,
+               'contributors':contributors,
+               'teams': Team.objects.all(),
+               'edit_permission':edit_permission}
+
+    return render(request, 'collections/collection_settings.html', context)
+
+
+
 def edit_collection(request, cid):
     '''edit collection will let the user specify a different image for
        their builds, in the case that the provided isn't large enough, etc.
@@ -143,6 +197,7 @@ def edit_collection(request, cid):
        cid: the id of the collection
 
     '''
+
     collection = get_collection(cid)
 
     edit_permission = collection.has_edit_permission(request)
@@ -153,19 +208,16 @@ def edit_collection(request, cid):
     if request.method == "POST":
 
         # Make private?
-        private = request.POST.get("private", None)
-        try:
-            if private != None and PRIVATE_ONLY is False:
-                if private == "True" and collection.private == False:
-                    collection.private = True
-                    messages.info(request,"The collection is now private.")
-                    collection.save()
-                elif private == "False" and collection.private == True:
-                    collection.private = False
-                    collection.save()
-                    messages.info(request,"The collection is now public to share.")
-        except:
-            pass
+        private = request.POST.get("private")
+        if private is not None and PRIVATE_ONLY is False:
+            private = bool(private)
+
+            # change is warranted
+            if collection.private != private:
+                collection = _change_collection_privacy(request=request,
+                                                        collection=collection,
+                                                        make_private=private)
+
 
     context = {'collection':collection,
                'edit_permission':edit_permission }
@@ -173,7 +225,16 @@ def edit_collection(request, cid):
     return render(request, 'collections/edit_collection.html', context)
 
 
-def collection_commands(request,cid):
+def collection_commands(request, cid):
+    '''collection commands will show the user example commands for interacting
+       with a collection
+
+       Parameters
+       ==========
+       cid: the collection id to view commands for
+
+    '''
+
     collection = get_collection(cid)
 
     # If private, and not the owner, no go.
@@ -185,13 +246,19 @@ def collection_commands(request,cid):
     return render(request, 'collections/collection_commands.html', context)
 
 
-# Look only at container log
+
 def delete_collection(request,cid):
     '''delete a container collection, including all containers and corresponding files.
+
+       Parameters
+       ==========
+       cid: the collection id to delete
+
     '''
     collection = get_collection(cid)
 
-    if request.user != collection.owner:
+    # Only an owner can delete
+    if request.user != collection.owner and request.user.is_superuser is False:
         messages.info(request,"This action is not permitted.")
         return redirect('collections')
 
@@ -209,43 +276,56 @@ def delete_collection(request,cid):
 
 
 
-
-#######################################################################################
+################################################################################
 # COLLECTION PRIVACY / ACTIVE
-#######################################################################################
+################################################################################
 
+def _change_collection_privacy(request, collection, make_private=True):
+    ''' the underlying driver for the view (and settings page) to change
+        the privacy for a collection. We check the ownership and permission,
+        make the change, and return the updated collection.
 
-@login_required
-def change_collection_privacy(request,cid,make_private=True):
-    '''change collection private is a wrapped for making a collection
-    public or private.
-    :param cid: the collection id to make private/public
-    :param make_private: make the collection private (or not)
+       Parameters
+       ==========
+       request: the request object with user permissions, etc.
+       collection: the collection to make private
+       make_private: boolean, True indicates asking for private
+
     '''
-    collection = get_collection(cid)
     edit_permission = collection.has_edit_permission(request)
 
     # Customize message based on making public or private
     status = "private"
     if make_private == False:
- 
         status = "public"
 
     # If the user has edit permission, make the repo private
-    if edit_permission == True:
+    if edit_permission is True:
 
-        # Making collection private must do check
-        if make_private == True:
-            collection.private = make_private 
-            collection.save()
-            messages.info(request,"Collection set to %s." %(status))
-        else:
-            collection.private = make_private    
-            messages.info(request,"Collection set to %s." %(status))
-            collection.save()
+        collection.private = make_private 
+        messages.info(request,"Collection set to %s." %(status))
+        collection.save()
 
     else:
-        messages.info(request,"You do not have permissions to perform this operation.")
+        messages.info(request,"You need permissions to perform this operation.")
+    return collection
+
+
+@login_required
+def change_collection_privacy(request,cid,make_private=True):
+    '''change collection privacy, if the user has permission
+
+       Parameters
+       ==========
+       cid: the collection id to make private/public
+       make_private: make the collection private (or not)
+
+    '''
+    collection = get_collection(cid)
+    collection = _change_collection_privacy(request=request,
+                                            collection=collection,
+                                            make_private=make_private)
+
     return redirect('collection_details', cid=collection.id)
 
 
@@ -254,15 +334,23 @@ def change_collection_privacy(request,cid,make_private=True):
 @login_required
 def make_collection_private(request,cid):
     '''make collection private will make a collection private
-    :param cid: the collection id to make private
+
+       Parameters
+       ==========
+       cid: the collection id to make private
+
     '''
-    return change_collection_privacy(request,cid,make_private=True)
+    return change_collection_privacy(request, cid, make_private=True)
 
 
 @login_required
 def make_collection_public(request,cid):
     '''make collection public will make a collection public
-    :param cid: the collection id to make private
+
+       Parameters
+       ==========
+       cid: the collection id to make public
+
     '''
     if PRIVATE_ONLY is True:
         messages.info(request,"This registry only allows private collections.")
