@@ -54,37 +54,43 @@
         <div class="card">
                  
              <!-- Supplementary -->
-             <button class="btn btn-sm btn-default dropdown">
-                <a href="#" class="dropdown-toggle" 
-                            data-toggle="dropdown" 
-                            role="button" 
-                            aria-haspopup="true" 
-                            aria-expanded="false">
-                Supplementary
-                <span class="caret"></span></a>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-default dropdown-toggle"
+                        data-toggle="dropdown"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        Supplementary
+                        <span class="caret"></span>
+                </button>
                 <ul class="dropdown-menu">
                     {% if collection.demo_set.count > 0 %}
-                    <li><a  style="text-transform:none"
-                            href="{% url 'collection_demos' collection.id %}">Demos and Tutorials</a></li>
+                    <li>
+                        <a style="text-transform:none" href="{% url 'collection_demos' collection.id %}">Demos and Tutorials</a>
+                    </li>
                     {% endif %}
-                    <li><a style="text-transform:none"
-                           href="{% url 'new_demo' collection.id %}">Add Demo or Tutorial</a></li>
-                 </ul>
-             </button>
+                    <li>
+                        <a style="text-transform:none" href="{% url 'new_demo' collection.id %}">Add Demo or Tutorial</a>
+                    </li>
+                </ul>
+            </div>
+
 
 
              <!-- Settings -->
              {% if edit_permission %}
-             <button class="btn btn-sm btn-default dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+             <div class="btn-group">
+             <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     Settings
-                    <span class="caret"></span></a>
+                    <span class="caret"></span>
+            </button>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'edit_collection' collection.id %}"
                                style="text-transform:none"
                                title="Add more metadata about your collection.">Edit</a></li>
                   </ul>
-              </button>
+              
+              </div>
               {% endif %}
 
               {% if collection.containers.count > 0 %}
