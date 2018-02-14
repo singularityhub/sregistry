@@ -145,6 +145,10 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
             message = "%s is frozen, delete not allowed." %container.get_short_uri()
             raise PermissionDenied(detail=message, code=304)
 
+        # TODO: here we need to check for permission pull_container.
+        # If doesn't exist and container is private, user is a visitor (denied)
+        # If exists and container is private, user has permission
+
         if delete_container(request,container) is True:
             container.delete()       
             return Response(status=status.HTTP_204_NO_CONTENT)

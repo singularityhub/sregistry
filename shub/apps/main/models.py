@@ -235,8 +235,9 @@ class Collection(models.Model):
     class Meta:
         app_label = 'main'
         permissions = (
-            ('del_container_collection', 'Delete container collection'),
-            ('edit_container_collection', 'Edit container collection')
+            ('pull_collection', 'Pull container collection'),
+            ('change_privacy_collection', 'Change the privacy of a collection'),
+            ('push_collection', 'Push container collection')
         )
 
 

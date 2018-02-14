@@ -15,7 +15,7 @@ django-form-utils
 django-crispy-forms
 django-taggit-templatetags
 django-dirtyfields
-psycopg2
+psycopg2-binary
 numexpr
 shapely
 Pillow
