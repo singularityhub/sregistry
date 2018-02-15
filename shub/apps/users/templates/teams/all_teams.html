@@ -1,0 +1,131 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<meta http-equiv="refresh" content="30000">
+<style>
+.btn-control {
+  margin-top:20px !important;
+  padding-right:5px !important;
+  padding-bottom:5px !important;
+  padding-left: 7px !important;
+  min-width:20px !important;
+}
+
+#star {
+    padding-left:25px; 
+    float:right; 
+    color:#e32929; 
+    font-size:30px;
+    cursor:pointer;
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+{% include 'messages/message.html' %}
+
+<div class="row" style="margin-top:30px">
+
+    <div class="col-md-12">
+
+        <article id="content">
+            <header>
+                <h2>Teams <i data-toggle="tooltip" style="font-size:20px" title="These are all teams on the registry" class="fa fa-2x fa-question-circle"></i></h2>
+                {% if not teams %}
+                <p>A Team is a group of users that can be assigned as collaborators to collections.<br> There aren't yet any teams! Why don't you <a href="{% url 'new_team' %}">make one?</p>
+                {% else %}
+                <p>A Team is a group of users that can be assigned as collaborators to collection.</p>
+                {% endif %}
+            </header>
+
+            {% if teams %}
+            <table id="teams_table" 
+                   class="mdl-data-table" 
+                   cellspacing="0" 
+                   width="100%" 
+                   style="padding-top:20px"> 
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                    <th></th>
+               </tr>
+           </thead>
+           <tbody>
+           {% for team in teams %}
+               <tr>
+                   <td><a href="{% url 'team_details' team.id %}">{{ team.name }}</a></td>
+                   <td>{% if request.user in team.get_members  %}
+                      <a href="{% url 'team_details' team.id %}">
+                          <button class="btn btn-primary btn-xs" 
+                                  type="button" id="team_details">View</button></a>
+                       {% else %}
+                       <a href="{% url 'join_team' team.id %}">
+                          <button class="btn btn-info btn-secondary" 
+                                  type="button" id="join_team">Join</button>
+                       </a>
+                       {% endif %}
+                   </td>
+                   <td>{% if team.team_image %}
+                       <img width="50px" src="{{ team.team_image.url }}">
+                       {% else %}
+                       <img width="50px" src="{% static 'img/logo.png' %}">
+                       {% endif %}
+                   </td>
+               </tr>
+          {% endfor %}
+          </tbody>
+          </table>
+         {% endif %}
+        </article>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        {% if not user_team %}{% if teams %}
+        <a href="{% url 'new_team' %}">
+            <button class="btn btn-default" 
+                    style="float:right; margin-right:100px">Create a Team</button></a>
+        {% endif %}{% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script>
+$(document).ready(function(){
+
+    // Enable tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('#teams_table').DataTable( {
+       pageLength: 100, 
+       columnDefs: [
+            {
+                targets: [ 0, 1, 2 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            },
+          ],
+       columns: [
+            { "width": "20%" },
+            { "width": "30%" },
+            { "width": "50%" },
+       ]
+    } );
+
+    $(".browser-default").change(function(){
+        $('.material-pagination').hide();
+    })
+
+    $('.material-pagination').hide();
+
+})
+</script>
+{% endblock %}

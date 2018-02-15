@@ -1,0 +1,38 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block content %}
+{% include 'messages/message.html' %}
+<span id="load" style="display:none">
+    <img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/>
+</span>
+<div class="row" style="margin-top:30px; margin-left:-10px">
+    <div class="col-md-12">
+        <h3 class="title">{{ title }}</h3>
+            <main>
+                <div>
+                     {% crispy form %}
+                </div>
+                <div class="footer">
+            </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function(){
+
+    // Submit for on save button push
+    $("#submid-id-submit").click(function(){
+        $("#fade").show();
+        $('#load').show();
+        $("form").attr("action","{% url 'edit_team' team.id %}");
+        $("form").submit();
+    });
+
+})
+</script>
+
+{% endblock %}

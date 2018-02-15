@@ -27,9 +27,10 @@ from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from itertools import chain
 import datetime
 import re
-
+import os
 
 ################################################################################
 # Supporting Functions
@@ -79,20 +80,17 @@ class Team(models.Model):
        teams.
     '''
 
-    name = models.CharField(max_length=50,
-                            null=False,
-                            blank=False,
-                            unique=True)
+    name = models.CharField(max_length=50, unique=True, default=None)
 
-    # Each team has a group created with the same name.
-    group = models.OneToOneField(Group, 
-                                 on_delete=models.CASCADE, 
-                                 primary_key=True)
-
-    owners = models.ManyToManyField(User, blank=True,
+    owners = models.ManyToManyField(User, blank=True, default=None,
                                     related_name="team_owners",
                                     related_query_name="team_owners", 
                                     help_text="Administrators of the team.")
+
+    contributors = models.ManyToManyField(User, blank=True, default=None,
+                                          related_name="contributors",
+                                          related_query_name="contributors", 
+                                          help_text="Contributors to the team.")
 
     created_at = models.DateTimeField('date of creation', auto_now_add=True)
     updated_at = models.DateTimeField('date of last update', auto_now=True)
@@ -100,12 +98,40 @@ class Team(models.Model):
     team_image = models.ImageField(upload_to=get_image_path,
                                    blank=True, null=True) 
 
+    def get_members(self):
+        ''' get a list of unique members, including both contributors and owners
+        '''
+        members = chain(self.owners.all(), self.contributors.all())
+        return list(set(list(members)))
+
+    def has_edit_permission(self, request):
+        ''' determine if a user has edit permission for a team, meaning he/she
+            is an owner.
+        '''
+        if request.user.is_superuser or request.user in self.get_members():
+            return True
+        return False
+
+
+    def has_member(self, username):
+        '''return True if the username is either a member or owner for the team
+          
+        Parameters
+        ==========
+        username: the username to check
+        '''
+        members = self.get_members()
+        names = [x.username for x in members]
+        if username in names:
+            return True
+        return False
+
         
     def __str__(self):
-        return "%s:%s" %(self.id,self.name)
+        return "%s" %(self.name)
 
     def __unicode__(self):
-        return "%s:%s" %(self.id,self.name)
+        return "%s" %(self.name)
 
     def get_label(self):
         return "users"
@@ -121,16 +147,12 @@ class Team(models.Model):
 
 
 @receiver(pre_save, sender=Team)
-def create_team_group(sender, instance, created, **kwargs):
+def create_team_group(sender, instance,  **kwargs):
 
     # Get the name from the team
-    name = (name.replace(' ','-').lower().strip()
-                                 .decode('utf-8','ignore')
-                                 .encode("utf-8"))
+    name = instance.name.replace(' ','-').lower().strip()
     instance.name = name
-    new_group, _ = Group.objects.get_or_create(name=name)
     
-    # Does the group get assigned some permission here? 
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -147,12 +169,3 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     '''
     if created:
         Token.objects.create(user=instance)
-
-    ''' Assign groups
-    if created and instance.username != settings.ANONYMOUS_USER_NAME:
-        from profiles.models import Profile
-        profile = Profile.objects.create(pk=user.pk, user=user, creator=user)
-
-        # Create collections?
-        assign_perm("change_user", user, user)
-        assign_perm("change_profile", user, profile)'''
