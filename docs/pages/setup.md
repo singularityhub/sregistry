@@ -57,12 +57,24 @@ is an anonymous user of the registry. In the case of a private registry, this in
 Based on the above and granted that you are setting up the server and reading this, you will be a **superuser** because you have permissions to control the Docker images and grant other users (and yourself) the ability to push with the role **admin**.
 
 ## Teams
-To add a level of organization of users, sregistry has created loose groups of users called Teams. Any authenticated user can create a team, meaning he or she becomes the Owner of the team that can add and remove users. There are two kinds of teams:
+To add a level of organization of users, sregistry has created loose groups of users called Teams. Any authenticated user can create a team, meaning he or she becomes the Owner of the team that can add and remove users. To create a team:
+
+ 1. Click on the "teams" tab in the navigation bar
+ 2. Choose a name, team name, and image.
+ 3. Decide if your team is "open" or "invite" only
+
+There are two kinds of teams:
 
  - **invite** only means that an owner must send an invitation link.
  - **open** means that anyone can join the team that is authenticated in the registry.
 
-The default setting is "invite." Teams are important because when you add individuals as collaborators to your collections, they must come from one of your teams. For example, if my lab has a set of users on sregistry and we intend to build images together, we would make a team for our lab, and then easily find one another to manage access to images.
+![team-edit.png](assets/img/team-edit.png)
+
+The default setting is "invite." Teams are important because when you add individuals as collaborators to your collections, they must come from one of your teams, and you do this on each Collection settings page:
+
+![team-settings.png](assets/img/team-settings.png)
+
+For example, if my lab has a set of users on sregistry and we intend to build images together, we would make a team for our lab, and then easily find one another to manage access to images.
 
 
 ## Create Accounts

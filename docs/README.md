@@ -24,17 +24,17 @@ This section covers rationale, background, and frequently asked questions.
  - [Use Cases](/sregistry/use-cases): a few examples of when Singularity Registry is useful
  - [Frequenty Asked Questions](/sregistry/faq): Quick answers to some questions you might have on your mind.
 
-
 ## Deploy a Registry
 This section is going to cover installation, which means configuration of a Docker image, building of the image, and then starting your image with other services (docker-compose) to run your registry.
 
  - [install](/sregistry/install): configure, build, and deploy your registry.
  - [setup](/sregistry/setup): setting up and registering the running application.
- - [credentials](/sregistry/credentials): User accounts and credentials for using the client.
+ - [accounts](/sregistry/credentials): User accounts, teams, and credentials for using the client.
  - [plugins](/sregistry/plugins): Details about available plugins, and how to configure them.
 
 ## Use a Registry
 
+ - [Interface](/sregistry/interface): interacting with your collections in the interface
  - [sregistry Client](/sregistry/client): The `sregistry-cli` to push, pull, list, and delete.
  - [Singularity Client](/sregistry/client-singularity): A client provided by Singularity natively to pull.
 

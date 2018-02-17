@@ -22,6 +22,9 @@
   - title: "Plugins"
     url: "/sregistry/plugins"
     slug: plugins
+  - title: "Collection Interface"
+    url: "/sregistry/interface"
+    slug: interface
   - title: "Clients"
     url: "/sregistry/client"
     slug: client

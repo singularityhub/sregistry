@@ -6,14 +6,7 @@ permalink: /credentials
 toc: false
 ---
 
-After you create a user, you will need a way to communicate to the registry, and validate your identity. If we jump ahead and tried running the `sregistry` [client](/sregistry/client) we would see a message like this:
-
-```
- sregistry list
-ERROR Client secrets file not found at `/home/vanessa/.sregistry` or $SREGISTRY_CLIENT_SECRETS.
-```
-
-Ruhroh! The reason is because we need to put our credentials in a hidden file called `.sregistry` in our `$HOME` directory. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](/sregistry/setup), making yourself a superuser and admin and logging in (remember this part?)
+After you create a user, you will need a way to communicate to the registry, and validate your identity. We need to put our credentials in a hidden file called `.sregistry` in our `$HOME` directory. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](/sregistry/setup), making yourself a superuser and admin and logging in (remember this part?)
 
 
 ```
@@ -35,14 +28,13 @@ Here is the token page - note the button on the left will copy the text to your 
 
 ![/assets/img/token.png](assets/img/token.png)
 
-Now when we try to communicate with the client, it finds the token and can identify us. 
+Now when we try to communicate with [the client](/sregistry-cli/client-registry), it finds the token and can identify us. 
 
 ```
+export SREGISTRY_CLIENT=registry
 sregistry list
 No container collections found.
 ```
-
-Don't worry, I haven't showed you that command and toolset yet. The functions for doing this will be provided in [singularity-python](https://www.github.com/singularityware/singularity-python), but actually we will build a singularity image [in the next client instructions](/sregistry/client) to do this.
 
 Next, see if you are interested in activating any additional [plugins](/sregistry/plugins) for your Singularity Registry.
 

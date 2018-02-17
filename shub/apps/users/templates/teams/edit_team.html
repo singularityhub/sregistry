@@ -9,7 +9,11 @@
 </span>
 <div class="row" style="margin-top:30px; margin-left:-10px">
     <div class="col-md-12">
+        {% if team.id %}
         <h3 class="title"><a href="{% url 'team_details' team.id %}" style="text-decoration:none; margin-right:15px"><< </a> {{ title }}</h3>
+        {% else %}
+        <h3 class="title"><a href="{% url 'teams' %}" style="text-decoration:none; margin-right:15px"><< </a> {{ title }}</h3>
+        {% endif %}
             <main>
                 <form method="POST" enctype="multipart/form-data"> 
                     {% csrf_token %}
@@ -18,7 +22,7 @@
                         <div class="controls">
                         <input type="text" 
                                name="name" 
-                               value="{{ team.name }}" 
+                               value="{% if team.name %}{{ team.name }}{% endif %}" 
                                required=""
                                maxlength="50" class="textinput textInput form-control"  
                                id="id_name"> 
