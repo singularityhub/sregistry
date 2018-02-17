@@ -3,8 +3,7 @@
 This is a manually generated log to track changes to the repository for each release. 
 Each section should include general headers such as **Implemented enhancements** 
 and **Merged pull requests**. All closed issued and bug fixes should be 
-represented by the pull requests that fixed them. This log originated with Singularity 2.4
-and changes prior to that are (unfortunately) done retrospectively. Critical items to know are:
+represented by the pull requests that fixed them. Critical items to know are:
 
  - renamed commands
  - deprecated / removed commands
@@ -14,13 +13,11 @@ and changes prior to that are (unfortunately) done retrospectively. Critical ite
  - changed behaviour (recipe sections work differently)
 
 
-## [v1.x](https://github.com/singularityhub/singularity-python/tree/development) (development)
+## [v1.x](https://github.com/singularityhub/singularity-python/tree/master) (master)
 
-**changed defaults**
+ - adding teams and basic permissions to view and edit collections
  - changed internal functions to use sregistry client (instead of singularity)
  - authentication check added to sregistry pull, so private images can be pulled given correct credentials
  - updating the token to have format with registry at top level of dictionary (to support other sregistry clients).
  - from the *sregistry client* provided by Singularity Python, to support use of squashfs images and singularity 2.4, the default upload is not compressed, assuming squashfs, and the default download is not decompressed. To still compress an image add the `--compress` flag on push, and the `--decompress` flag on pull.
-
-**bugs fixed**
  - the generation of the date used for the credential has been fixed, done via updating singularity-python.
