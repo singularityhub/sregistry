@@ -26,6 +26,26 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from shub.settings import USER_COLLECTIONS
 from django.http import HttpResponseRedirect
+from shub.apps.users.utils import get_user
+
+
+def get_team(tid):
+    ''' get a team based on its primary id
+
+       Parameters
+       ==========
+       tid: the id of the team to look up
+
+   '''
+    keyargs = {'id': tid}
+    try:
+        team = Team.objects.get(**keyargs)
+    except Team.DoesNotExist:
+        raise Http404
+    else:
+        return team
+
+
 
 ################################################################################
 # TEAM VIEWS ###################################################################
@@ -44,42 +64,24 @@ def edit_team(request, tid=None):
         title = "Edit Team"
     else:
         team = Team()
+        team.owner = request.user
         edit_permission = True
         title = "New Team"
 
-    # Only an owner is allowed to edit a team
     if edit_permission:
+        form = TeamForm(request.POST or None, 
+                        request.FILES or None,
+                        instance=team)
 
-        if request.method == "POST":
-
-            form = TeamForm(request.POST,
-                            request.FILES,
-                            instance=team)
-
-            if form.is_valid():
-                team = form.save(commit=False)
-    
-                # We will get integrity error if already exists
-                try:
-                    team.save()
-
-                    # An editor is always a member
-                    team.contributors.add(request.user)
-
-                    # If it's a new team, we add owner
-                    if not tid:
-                        team.owners.add(request.user)
-                    team.save()
-
-                    return HttpResponseRedirect(team.get_absolute_url())
-
-                except:
-                    message = "The name %s is already taken!" %team.name
-                    messages.info(request, message)
-
-
-        else:
-            form = TeamForm(instance=team)
+        if form.is_valid():
+            form.save()
+            print(team)
+            print(form)
+            # An editor is always a member
+            if request.user not in team.members.all():
+                team.members.add(request.user)
+                team.save()
+            messages.info(request, 'Team updated.')
 
         context = {"form": form,
                    "edit_permission": edit_permission,
@@ -126,12 +128,14 @@ def view_team(request, tid, code=None):
     team = get_team(tid)
 
     # Need to create annotation counts with "total" for all members
-    annotation_counts = summarize_team_annotations(team.members.all())
-    edit_permission = has_team_edit_permission(request,team)
+    edit_permission = team.has_edit_permission(request)
+    members = team.get_members()
+    count = len(members)
 
     context = {"team": team,
                "edit_permission":edit_permission,
-               "annotation_counts":annotation_counts}
+               "count": count,
+               "members": members}
 
     # If the user has generated an invitation code
     if code is not None:
@@ -140,51 +144,44 @@ def view_team(request, tid, code=None):
     return render(request, "teams/team_details.html", context)
 
 
-##################################################################################
-# TEAM REQUESTS ##################################################################
-##################################################################################
+################################################################################
+# TEAM REQUESTS ################################################################
+################################################################################
 
 
 @login_required
 def join_team(request, tid, code=None):
-    '''add a user to a new team, and remove from previous team
-    :parma tid: the team id to edit or create. If none, indicates a new team
-    :param code: if the user is accessing an invite link, the code is checked
-    against the generated request.
+    '''add a user to a new team. If the team is open, he/she can join without
+       needing a code. If is invite only, the code must be checked.
+
+       Parameters
+       ==========
+       tid: the team id to edit or create. If none, indicates a new team
+       code: if the user is accessing an invite link, the code is checked
+             against the generated request.
     '''
     team = get_team(tid)
     user = request.user
     add_user = True
-
-    if team.permission == "institution":
-        if not has_same_institution(request.user,team.owner):
-            add_user = False
-            # A user can be invited from a different institution
-            if code is not None:
-                add_user = is_invite_valid(team, code)
-                if add_user == False:
-                    messages.info(request, "You are not from the same institution, and this code is invalid to join.")
-            else:
-                messages.info(request,'''This team is only open to users in the team owner's institution.
-                                         If you have an email associated with the institution, use the SAML institution
-                                         log in.''')
             
-    elif team.permission == "invite":
+    if team.permission == "invite":
         if code is None:
-            messages.info(request,"This is not a valid invitation to join this team.")
+            messages.info(request,"This is not a valid invitation.")
             add_user = False
         else:    
             add_user = is_invite_valid(team, code)
-            if add_user == False:
+            if add_user is False:
                 messages.info(request, "This code is invalid to join this team.")
 
     if add_user:   
-        if user not in team.members.all():
+
+        # Add the user
+        if user not in team.get_members():
             team.members.add(user)
             team.save()
             messages.info(request,"You have been added to team %s" %(team.name))
         else:
-            messages.info(request,"You are already a member of %s!" %(team.name))
+            messages.info(request,"You are already a member of %s" %(team.name))
 
     return HttpResponseRedirect(team.get_absolute_url())
 
@@ -207,71 +204,185 @@ def add_collections(request,tid):
     return render(request, "teams/add_team_collections.html", context)
 
 
-##################################################################################
-# TEAM ACTIONS ###################################################################
-##################################################################################
+################################################################################
+# TEAM ACTIONS #################################################################
+################################################################################
 
 # Membership
 
 @login_required
 def request_membership(request,tid):
-    '''generate an invitation for a user, return to view
+    '''generate an invitation for a user, this is an Ajax call so it's
+       returned to the view
+
+       Parameters
+       ==========
+       tid: the team if to request to join
+
     '''
     team = get_team(tid)
-    if request.user not in team.members.all():
-        old_request = get_request(user=request.user,team=team)
-        if old_request is not None:
-            message = "You already have a request to join team %s with status %s" %(team.name,
-                                                                                    old_request.status)
+
+    if request.user not in team.get_members():
+
+        request = get_request(user=request.user, team=team)
+        if request is not None:
+            message = "You have already made a request (%s)" %(request.status)
         else:
-            new_request = MembershipRequest.objects.create(team=team,
-                                                           user=request.user)
-            new_request.save()
+            request = MembershipRequest.objects.create(team=team,
+                                                       user=request.user)
+            request.save()
             message = "Your request to join %s has been submit." %(team.name)
 
     else:
         message = "You are already a member of this team."
+
     return JsonResponse({"message":message})
 
 
 @login_required
-def leave_team(request,tid):
+def leave_team(request, tid):
+    '''leave team is the view for a user to leave his or her team. A user
+       doesn't need permission to remove him or herself.
+
+       Parameters
+       ==========
+       team: the team to remove the individual from
+    '''
     team = get_team(tid)
-    if request.user in team.members.all():
-        team.members.remove(member)
-        team.save()        
-        message = "You has been removed from %s" %(team.name)
-    else:
-        message = "You are not a part of %s" %(team.name)
+
+    team = _remove_member(team, request.user)
+    team = _remove_owner(team, request.user)
+
     return redirect('teams')
 
 
+def _remove_member(team, user):
+    '''remove a member from a team if they are a part of it.
+   
+       Parameters
+       ==========
+       team: the team to remove the individual from
+       user: the user to remove
+    '''
+    if user in team.members.all():
+        team.members.remove(member)
+        messages.info('%s is removed from %s' %(user.username, team.name))
+        team.save()        
+    return team
+
+
+def _remove_owner(team, user):
+    '''remove an owner from a team, if they are part of it, and there
+       is at least one other owner remaining.
+   
+       Parameters
+       ==========
+       team: the team to remove the individual from
+       user: the user to remove
+    '''
+    if team.owners.count() > 1 and user in team.owners.all():
+        team.owners.remove(user)
+        messages.info('%s is no longer owner of %s' %(user.username, team.name))
+        team.save()
+    else:
+        messages.info('At least one owner must be present for a team.')
+
+    return team
+
+
 @login_required
-def remove_member(request,tid,uid):
+def remove_member(request, tid, uid):
+    '''remove a member from a team.
+ 
+       Parameters
+       ==========
+       team: the team to remove the individual from
+       user: the user to remove
+    '''
+    
     team = get_team(tid)
     member = get_user(uid)
-    if request.user == team.owner:
-        if member in team.members.all():
-            team.members.remove(member)
-            team.save()        
-            message = "%s has been removed from the team" %member.username
-        else:
-            message = "%s is not a part of this team." %member.username
+
+    if request.user in team.owners.all():
+        team = _remove_member(team, user)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
 
 
 @login_required
-def generate_team_invite(request,tid):
-    '''generate an invitation for a user, return to view
+def remove_owner(request, tid, uid):
+    '''remove a member from a team.
+ 
+       Parameters
+       ==========
+       tid: the team id to remove the individual from
+       uid: the user id to remove
+    '''
+    
+    team = get_team(tid)
+    member = get_user(uid)
+
+    if request.user in team.owners.all():
+        team = _remove_owner(team, user)
+    else:
+        message = "You are not allowed to perform this action."
+    return JsonResponse({"message":message})
+
+
+@login_required
+def add_owner(request, tid, uid):
+    '''promote a user to be owner of a team
+ 
+       Parameters
+       ==========
+       tid: the team id to remove the individual from
+       uid: the user id to remove
+    '''
+    
+    team = get_team(tid)
+    member = get_user(uid)
+
+    if request.user in team.owners.all():
+        team.owners.add(member)
+        team.save()
+    else: 
+        message = "You are not allowed to perform this action."
+    return JsonResponse({"message":message})
+
+
+@login_required
+def delete_team(request, tid):
+    '''delete a team entirely, must be an owner
+
+       Parameters
+       ==========
+       tid: the team id
+
     '''
     team = get_team(tid)
-    if request.user == team.owner:
+
+    if request.user in team.owners.all():
+        messages.info(request,'%s has been deleted.' %team.name)
+        team.delete()
+    else:
+        messages.info(request, "You are not allowed to perform this action.")
+
+    return redirect('teams')
+
+
+@login_required
+def generate_team_invite(request,tid):
+    '''generate an invitation for a user, return to view.
+       The invitation is valid for a day.
+    '''
+    team = get_team(tid)
+    if request.user in team.owners.all():
         code = uuid.uuid4()
         new_invite = MembershipInvite.objects.create(team=team,
                                                      code=code)
         new_invite.save()
+        messages.info('This invitation is valid for one day.')
         return view_team(request, team.id, code=code)
 
     messages.info(request,"You do not have permission to invite to this team.")

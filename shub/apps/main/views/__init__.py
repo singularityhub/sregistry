@@ -38,6 +38,7 @@ from .collections import (
     collection_settings,
     delete_collection,
     edit_collection,
+    edit_contributors,
     get_collection,    
     make_collection_private,
     make_collection_public,

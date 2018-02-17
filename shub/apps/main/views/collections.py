@@ -40,9 +40,8 @@ from itertools import chain
 import os
 import re
 import uuid
+import pickle
 
-
-### AUTHENTICATION ####################################################
 
 
 def get_collection(cid):
@@ -174,13 +173,8 @@ def collection_settings(request, cid):
     if not edit_permission:
         messages.info(request,"You are not permitted to perform this action.")
         return redirect('collections')
-
-    # Filter out owner from list of contributors
-    contributors = [x for x in collection.contributors.all() 
-                    if x.id != collection.owner.id ]
                
     context = {'collection':collection,
-               'contributors':contributors,
                'teams': Team.objects.all(),
                'edit_permission':edit_permission}
 
@@ -217,6 +211,7 @@ def edit_collection(request, cid):
                 collection = _change_collection_privacy(request=request,
                                                         collection=collection,
                                                         make_private=private)
+
 
 
     context = {'collection':collection,
@@ -356,3 +351,42 @@ def make_collection_public(request,cid):
         messages.info(request,"This registry only allows private collections.")
         return redirect('collection_details', cid=cid)
     return change_collection_privacy(request,cid,make_private=False)
+
+
+
+
+################################################################################
+# Contributors #################################################################
+################################################################################
+
+
+@login_required
+def edit_contributors(request, cid):
+    '''edit_contributors is the submission to see, add, and delete contributors 
+       for a collection. Only owners are allowed to do this, and can only
+       see individuals in their teams.
+    '''
+    collection = get_collection(cid)
+
+    # Who are current contributors?
+    contributors = collection.contributors.all()
+
+    # Who are current owners?
+    owners = collection.owners.all()
+
+    if request.user in owners:
+
+        if request.method == "POST":
+
+            # Add and remove owners and contributors
+            add_contribs = request.POST.get('add_contributors')
+            remove_contribs = request.POST.get('remove_contributors')
+            add_owners = request.POST.get('add_owners')
+            remove_owners = request.POST.get('remove_owners')
+            res = {'remove_owners': remove_owners,
+                   'add_contribts': add_contribs,
+                   'remove_contribs': remove_contribs,
+                   'add_owners': add_owners }
+            pickle.dump(res, open('conributs.pkl', 'wb'))
+
+    return collection_settings(request, cid)

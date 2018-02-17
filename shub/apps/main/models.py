@@ -31,6 +31,7 @@ from django.db import models
 from django.db.models import Q, DO_NOTHING
 from django.db.models.signals import post_delete, pre_delete
 from django.db.models import Avg, Sum
+from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
 from polymorphic.models import PolymorphicModel
@@ -77,6 +78,8 @@ def has_edit_permission(instance, request):
        request: the request with the user object
 
     '''
+    if isinstance(instance, Container):
+        instance = instance.collection
 
     # Visitor
     if not request.user.is_authenticated():
@@ -89,15 +92,16 @@ def has_edit_permission(instance, request):
     if request.user.is_superuser is True:
         return True
 
-    # Collection Contributors
-    contributors = get_collection_users(instance)
-    if request.user in contributors:
+    # Collection Owners can edit
+    if request.user in instance.owners.all():
         return True
     return False
 
 
-def has_view_permission(instance,request):
-    '''can the user of the request view the collection or container?
+def has_view_permission(instance, request):
+    '''can the user of the request view the collection or container? This
+       permission corresponds with being a contributor, and being able to
+       pull
 
        Parameters
        ==========
@@ -120,7 +124,7 @@ def has_view_permission(instance,request):
     if request.user.is_staff or request.user.is_superuser:
         return True
 
-    # Collection Contributors
+    # Collection Contributors (owners and contributors)
     contributors = get_collection_users(instance)
     if request.user in contributors:
         return True
@@ -157,14 +161,17 @@ class Collection(models.Model):
     metadata = JSONField(default={}) # open field for metadata about a collection
 
     # Users
-    owner = models.ForeignKey('users.User', blank=True, default=None, null=True)
+    owners = models.ManyToManyField('users.User', blank=True, default=None,
+                                     related_name="container_collection_owners",
+                                     related_query_name="owners")
+
     contributors = models.ManyToManyField('users.User',
                                           related_name="container_collection_contributors",
                                           related_query_name="contributor", 
                                           blank=True,
                                           help_text="users with edit permission to the collection",
                                           verbose_name="Contributors")
-
+    
     # By default, collections are public
     private = models.BooleanField(choices=PRIVACY_CHOICES, 
                                   default=get_privacy_default,
@@ -188,6 +195,13 @@ class Collection(models.Model):
         else:
             queryset = self.containers.all()
         return [x.metadata['size_mb'] for x in queryset if 'size_mb' in x.metadata]
+
+
+    def members(self):
+        '''a compiled list of members (contributors and owners)
+        '''
+        members = list(chain(self.owners.all(), self.contributors.all()))
+        return list(set(members))
 
 
     def mean_size(self, container_name=None):

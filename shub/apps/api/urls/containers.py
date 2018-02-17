@@ -145,10 +145,6 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
             message = "%s is frozen, delete not allowed." %container.get_short_uri()
             raise PermissionDenied(detail=message, code=304)
 
-        # TODO: here we need to check for permission pull_container.
-        # If doesn't exist and container is private, user is a visitor (denied)
-        # If exists and container is private, user has permission
-
         if delete_container(request,container) is True:
             container.delete()       
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -164,6 +160,8 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
         serializer = SingleContainerSerializer(container)
         is_private = container.collection.private
 
+        # All public images are pull-able
+
         if not is_private:
             return Response(serializer.data)
 
@@ -173,6 +171,11 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
         if auth is None:
             raise PermissionDenied(detail="Authentication Required")
 
+        # Validate User Permissions - must have view to pull private image
+
+        if not has_permission(auth, container.collection):
+            raise PermissionDenied(detail="Unauthorized")
+
         timestamp = generate_timestamp()
         payload = "pull|%s|%s|%s|%s|" %(collection,
                                         timestamp,
@@ -181,6 +184,7 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
 
         if validate_request(auth,payload,"pull",timestamp):
             return Response(serializer.data)    
+
 
         return Response(400)
 

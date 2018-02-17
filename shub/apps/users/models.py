@@ -26,6 +26,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
 from django.contrib.auth.models import AbstractUser
+from django.core.urlresolvers import reverse
 from django.db import models
 from itertools import chain
 import datetime
@@ -45,8 +46,13 @@ def get_image_path(instance, filename):
     return os.path.join('teams', filename)
 
 
-# 2) once a user is added, he/she should be able to use refresh token
-# (eg add this http://getblimp.github.io/django-rest-framework-jwt/
+REQUEST_CHOICES = (("denied", 'Request has not been granted.'),
+                   ("pending", 'Request is pending.'),
+                   ("granted", 'Request has been granted'),)
+
+
+TEAM_TYPES = (('invite', 'Invite only. The user must be invited by an owner'),
+              ('open','Open. Anyone can join the team without asking.'))
 
 
 class User(AbstractUser):
@@ -87,13 +93,18 @@ class Team(models.Model):
                                     related_query_name="team_owners", 
                                     help_text="Administrators of the team.")
 
-    contributors = models.ManyToManyField(User, blank=True, default=None,
-                                          related_name="contributors",
-                                          related_query_name="contributors", 
-                                          help_text="Contributors to the team.")
+    members = models.ManyToManyField(User, blank=True, default=None,
+                                     related_name="contributors",
+                                     related_query_name="contributors", 
+                                     help_text="Contributors to the team.")
 
     created_at = models.DateTimeField('date of creation', auto_now_add=True)
     updated_at = models.DateTimeField('date of last update', auto_now=True)
+
+    permission = models.CharField(choices=TEAM_TYPES, 
+                                  default='invite',
+                                  max_length=100,
+                                  verbose_name="Permission needed to join team")
 
     team_image = models.ImageField(upload_to=get_image_path,
                                    blank=True, null=True) 
@@ -101,7 +112,7 @@ class Team(models.Model):
     def get_members(self):
         ''' get a list of unique members, including both contributors and owners
         '''
-        members = chain(self.owners.all(), self.contributors.all())
+        members = chain(self.owners.all(), self.members.all())
         return list(set(list(members)))
 
     def has_edit_permission(self, request):
@@ -111,6 +122,10 @@ class Team(models.Model):
         if request.user.is_superuser or request.user in self.get_members():
             return True
         return False
+
+
+    def get_absolute_url(self):
+        return reverse('team_details', args=[str(self.id)])
 
 
     def has_member(self, username):
@@ -139,6 +154,54 @@ class Team(models.Model):
     class Meta:
         app_label = 'users'
 
+
+
+class MembershipInvite(models.Model):
+    '''An invitation to join a team.
+    '''
+    code = models.CharField(max_length=200, null=False, blank=False) 
+    team = models.ForeignKey(Team)
+
+    def __str__(self):
+        return "<%s:%s>" %(self.id,self.team.name)
+
+    def __unicode__(self):
+        return "<%s:%s>" %(self.id,self.team.name)
+
+    def get_label(self):
+        return "users"
+
+    class Meta:
+        app_label = 'users'
+        unique_together =  (("code", "team"),)
+
+
+
+class MembershipRequest(models.Model):
+    '''A request for membership is tied to a team. 
+    A user is granted access if the owner grants him/her permission.
+    '''
+    user = models.ForeignKey(User)
+    team = models.ForeignKey(Team)
+    created_at = models.DateTimeField('date of request', auto_now_add=True)
+    status = models.CharField(max_length=200,
+                              null=False, 
+                              verbose_name="Status of request", 
+                              default="pending",
+                              choices=REQUEST_CHOICES)
+    
+    def __str__(self):
+        return "<%s:%s>" %(self.user,self.team.name)
+
+    def __unicode__(self):
+        return "<%s:%s>" %(self.user,self.team.name)
+
+    def get_label(self):
+        return "users"
+
+    class Meta:
+        app_label = 'users'
+        unique_together =  (("user", "team"),)
 
 
 ################################################################################

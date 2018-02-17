@@ -47,14 +47,23 @@ def get_nightly_comparisons(date=None):
     return None
 
 
-def get_collection_users(collection):
-    '''get_collection_users will return a list of all owners and contributors for
-    a collection
-    :param collection: the collection object to use
+def get_collection_users(instance):
+    '''get_collection_users will return a list of all owners and contributors
+        for a collection. The input instance can be a collection or container.
+
+        Parameters
+        ==========
+        instance: the collection or container object to use
+
     '''
+    collection = instance
+    if isinstance(collection, Container):
+        collection = collection.collection
+
     contributors = collection.contributors.all()
-    owner = collection.owner
-    return list(chain(contributors,[owner]))
+    owners = collection.owners.all()
+    return list(chain(contributors, owners))
+
 
 
 def write_tmpfile(memory_file):

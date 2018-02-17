@@ -24,16 +24,16 @@ docker exec $NAME python /code/manage.py add_admin --username vsoch
 
 You will want to go to [http://127.0.0.1/token](http://127.0.0.1/token) and copy paste the entire json object into a file called `.sregistry` in your `$HOME` folder. **Important** you must be a superuser **and** admin to build images. If you don't add yourself as an admin, the menu looks like this:
 
-![/assets/img/without-superuser.png](/assets/img/without-superuser.png)
+![/assets/img/without-superuser.png](assets/img/without-superuser.png)
 
 As an admin, you see the button for "token":
 
-![/assets/img/with-superuser.png](/assets/img/with-superuser.png)
+![/assets/img/with-superuser.png](assets/img/with-superuser.png)
 
 
 Here is the token page - note the button on the left will copy the text to your clipboard, for pasting in a file at `$HOME/sregistry`.
 
-![/assets/img/token.png](/assets/img/token.png)
+![/assets/img/token.png](assets/img/token.png)
 
 Now when we try to communicate with the client, it finds the token and can identify us. 
 

@@ -19,12 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-from shub.apps.main.models import (
-    Container,
-    Label,
-    Share
-)
-
 from shub.apps.main.utils import calculate_expiration_date
 from shub.apps.api.tasks import expire_share
 from django.shortcuts import (
@@ -38,15 +32,16 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from datetime import datetime
 
+from notifications.signals import notify
+from shub.apps.users.utils import get_user
+
 import os
 import json
 import re
 
-from .containers import get_container
-
 
 @login_required
-def generate_share(request,cid):
+def generate_share(request, cid):
     '''generate a temporary share link for a container
     :param cid: the container to generate a share link for
     '''

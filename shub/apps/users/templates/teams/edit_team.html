@@ -1,21 +1,58 @@
 {% extends "base/base.html" %}
-{% load crispy_forms_tags %}
 {% load staticfiles %}
 
 {% block content %}
 {% include 'messages/message.html' %}
+
 <span id="load" style="display:none">
     <img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/>
 </span>
 <div class="row" style="margin-top:30px; margin-left:-10px">
     <div class="col-md-12">
-        <h3 class="title">{{ title }}</h3>
+        <h3 class="title"><a href="{% url 'team_details' team.id %}" style="text-decoration:none; margin-right:15px"><< </a> {{ title }}</h3>
             <main>
-                <div>
-                     {% crispy form %}
-                </div>
-                <div class="footer">
-            </main>
+                <form method="POST" enctype="multipart/form-data"> 
+                    {% csrf_token %}
+                    <div id="div_id_name" class="form-group">
+                        <label for="id_name" class="control-label  requiredField">Name<span class="asteriskField">*</span></label>
+                        <div class="controls">
+                        <input type="text" 
+                               name="name" 
+                               value="{{ team.name }}" 
+                               required=""
+                               maxlength="50" class="textinput textInput form-control"  
+                               id="id_name"> 
+                        </div>
+                    </div>
+                    <div id="div_id_team_image" class="form-group">
+                        <label for="id_team_image" class="control-label ">Team image</label> <div class="controls ">
+                        {% if team.team_image %}
+                        Currently: <a href="{{ team.team_image.url }}">{{ team.team_image.file }}</a>
+                        {% endif %}
+                       <input type="file" name="team_image" class="clearablefileinput" id="id_team_image">
+                    </div>
+                    <div id="div_id_permission" class="form-group">
+                       <label for="id_permission" class="control-label  requiredField">
+                       Permission needed to join team<span class="asteriskField">*</span> 
+                       </label>
+                       <div class="controls">
+                           <select name="permission" 
+                               class="select form-control"
+                               id="id_permission">
+                               {% if team.permission == "invite" %}
+                               <option value="invite" selected="">Invite only. The user must be invited by an owner</option>
+                               <option value="open">Open. Anyone can join the team without asking.</option>
+                               {% else %}
+                               <option value="open" selected="">Open. Anyone can join the team without asking.</option>
+                               <option value="invite">Invite only. The user must be invited by an owner</option>
+                               {% endif %}
+                           </select>
+                       </div>
+                   </div>
+               </form>
+               <button class="btn btn-primary" id="submit-id-submit">Submit</button>
+
+        </main>
     </div>
 </div>
 {% endblock %}
@@ -24,12 +61,10 @@
 <script>
 $(document).ready(function(){
 
-    // Submit for on save button push
     $("#submid-id-submit").click(function(){
-        $("#fade").show();
-        $('#load').show();
-        $("form").attr("action","{% url 'edit_team' team.id %}");
-        $("form").submit();
+        alert('submit');
+        //$("form").attr("action","{% url 'edit_team' team.id %}");
+        //$("form").submit();
     });
 
 })

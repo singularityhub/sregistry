@@ -1,46 +1,50 @@
+{% load staticfiles %}
+
+{% if collection.members.count > 0 %}
+<!-- Show contributors -->
+<div class="row">
+    <div class="col-md-12">
+        <h2>Contributors</h2>
+            <table id="contributors" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for contributor in collection.members %}
+                <tr>
+                    <td>{{ contributor.username }}</td>
+                    <td>{% if contributor in collection.owners.all %}<span class="label label-info">owner</span>{% endif %}
+                    {% if contributor in collection.contributors.all %}<span class="label label-info">contributor</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="row">
     <div class="col-md-12">
 
-         <form action="{% url 'edit_collection' collection.id %}" method="POST">
+         <form action="{% url 'edit_contributors' collection.id %}" method="POST">
+
+            <!-- Only owners can edit here -->
+            {% if request.user in collection.owners.all %}
 
             {% csrf_token %}
 
             <hr>
 
             <!-- Remove contributors -->
-            {% if contributors %}
-            <label for="builder_name">Remove Contributors</label>
+            <label for="remove_contributors">Remove Contributors</label>
+
+            {% if collection.contributors.count > 0 %}
             <select id="remove_contributors" 
                     name="remove_contributors" 
-                    class="form-control"
-                    style="margin-bottom:20px;" multiple>
-                
-                <option>--</option> 
-                {% for current in contributors.all %}
-                <option value="{{ current.id }}">{{ current.username }}</option>
-                {% endfor %}
-
-            </select>
-            {% else %}
-
-            <label for="builder_name">Remove Contributors</label>
-            <p>This collection does not have any additional contributors.</p><br>
-            {% endif %}
-
-            <hr>
-
-             TODO: stopped here:
-             0. Make pages to manage / add to teams (how?)
-             1. make a view to parse the input here, look up teams, add or remove contributors
-             2. Make sure that when new person is added or removed, also removed from contributors for collections
-             3. Make team page (and profile pages) - the team owner should be able to selectively remove.
-
-            <!-- Add team to contributors -->
-            {% if teams %}
-            <label for="builder_name">Add Contributors from Team</label>
-            <small>Users can be added based on teams. If you want to make a new team, <a href="">do that here.</a></small><br>
-            <select id="add_contributors" 
-                    name="add_contributors" 
                     class="form-control"
                     style="margin-bottom:20px;" multiple>
                 
@@ -48,11 +52,77 @@
                 {% for current in collection.contributors.all %}
                 <option value="{{ current.id }}">{{ current.username }}</option>
                 {% endfor %}
-            </select>
 
+            </select>
             {% else %}
-               <label for="builder_name">Add Team Contributors</label>               
-               <p>Users can be added based on teams. If you want to make a new team, <a href="">do that here.</a></p><br>
+            <p>This collection does not have any additional contributors.</p><br>
+            {% endif %}
+
+            <hr>
+
+            <!-- Add contributors from teams -->
+            <label for="add_contributors">Add Contributors</label>
+            <p class="alert alert-info" style="padding:5px">Contributors to a collection can pull containers if the collection is private.</p>
+            <small>Users can be added based on your teams. If you want to make a new team, <a href="{% url 'new_team' %}">do that here.</a></small><br>
+            {% if teams %}
+            <select id="add_contributors"  
+                    name="add_contributors" 
+                    class="form-control"
+                    style="margin-bottom:20px;" multiple>
+                
+                {% for team in teams %}
+                    <option disabled>Team: {{ team.name }}</option> 
+                    {% for contender in team.get_members %}
+                        {% if contender in collection.members %}
+                        {% else %}
+                        <option value="{{ contender.id }}">{{ contender.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+
+                {% endfor %}
+            </select>
+            {% endif %}
+
+            <!-- Add owners -->
+            <label for="add_owners">Add Owners</label>
+            <p class="alert alert-info" style="padding:5px">Owners of a collection have full permissions to push, and delete containers. Grant this with caution.</p>
+            {% if teams %}
+            <select id="add_owners"  
+                    name="add_owners" 
+                    class="form-control"
+                    style="margin-bottom:20px;" multiple>
+                
+                {% for team in teams %}
+                    <option disabled>Team: {{ team.name }}</option> 
+                    {% for contender in team.get_members %}
+                        {% if contender in collection.owners.all %}
+                        {% else %}
+                        <option value="{{ contender.id }}">{{ contender.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </select>
+            {% endif %}
+
+            <hr>
+
+                <!-- Owners -->
+                {% if collection.owners.count > 1 %}
+                   <label for="remove_owners">Remove Owners</label>
+                   <select id="remove_owners" 
+                           name="remove_owners" 
+                           class="form-control"
+                           style="margin-bottom:20px;" multiple>
+                
+                   <option>--</option> 
+                   {% for current in collection.owners.all %}
+                   <option value="{{ current.id }}">{{ current.username }}</option>
+                   {% endfor %}
+
+                   </select>
+                   {% else %}
+                   <p>A collection must have at least one owner.</p><br>
+                   {% endif %}
             {% endif %}
 
 

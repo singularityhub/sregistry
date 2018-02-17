@@ -63,7 +63,7 @@ def _parse_header(auth):
     return values
         
 
-def has_permission(auth, instance=None):
+def has_permission(auth, instance=None, pull_permission=True):
     '''a simple function to parse an authentication challenge for the username,
        and determine if the user has permission to perform the action.
      
@@ -72,6 +72,7 @@ def has_permission(auth, instance=None):
        auth: the challenge from the header
        instance: the instance to check for
        permission: the permission needed
+       pull_permission: if True, the user is asking to pull. If False, push
 
     '''
     values = _parse_header(auth)
@@ -89,13 +90,20 @@ def has_permission(auth, instance=None):
         bot.debug('%s is not a valid user, request invalid.' %username)
         return False
 
-    # An existing collection
-    if instance is not None:
-        return instance.has_edit_permission(user)
-        
-    # A new collection
+    # A new collection, created by user or staff
     if user.is_superuser or user.is_staff:
         return True
+
+    # Are users allowed?
+    if USER_COLLECTIONS is False:
+        return False
+
+    # An existing collection for a user with permission
+    if instance is not None:
+        if pull_permission is True:
+            return instance.has_view_permission(user)
+        else:
+            return instance.has_edit_permission(user)
 
     return False
 
@@ -135,7 +143,7 @@ def validate_request(auth,
     kind,username,ts = values['Credential'].split('/')
     username = base64.b64decode(username)
     if kind != sender:
-        bot.debug('Mismatch between request kind (%s) and sender (%s), request invalid.' %(kind,sender))
+        bot.debug('Mismatch: type (%s) sender (%s) invalid.' %(kind,sender))
         return False
 
     if timestamp is not None:
@@ -192,9 +200,9 @@ def validate_secret(secret,payload,request_signature):
 
 
 
-#####################################################################################
+################################################################################
 # PERMISSIONS
-#####################################################################################
+################################################################################
 
 
 class ObjectOnlyPermissions(DjangoObjectPermissions):
