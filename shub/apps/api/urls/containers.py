@@ -37,6 +37,7 @@ from shub.apps.main.models import Container, Collection
 from rest_framework import generics
 from shub.apps.logs.mixins import LoggingMixin
 from shub.apps.main.query import container_lookup
+from shub.apps.api.utils import has_permission
 
 from rest_framework import serializers
 from rest_framework import viewsets
