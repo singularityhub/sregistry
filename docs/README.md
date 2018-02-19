@@ -17,14 +17,18 @@ permalink: /
 
 Hello there! It's so great that you want to use Singularity Registry. Let's get started. 
 
-## Introduction
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/singularityhub/lobby)
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00426/status.svg)](https://doi.org/10.21105/joss.00426)
+
+
+### Introduction
 This section covers rationale, background, and frequently asked questions.
 
  - [Introduction](/sregistry/intro): Covers some background and basic information.
  - [Use Cases](/sregistry/use-cases): a few examples of when Singularity Registry is useful
  - [Frequenty Asked Questions](/sregistry/faq): Quick answers to some questions you might have on your mind.
 
-## Deploy a Registry
+### Deploy a Registry
 This section is going to cover installation, which means configuration of a Docker image, building of the image, and then starting your image with other services (docker-compose) to run your registry.
 
  - [install](/sregistry/install): configure, build, and deploy your registry.
@@ -32,7 +36,7 @@ This section is going to cover installation, which means configuration of a Dock
  - [accounts](/sregistry/credentials): User accounts, teams, and credentials for using the client.
  - [plugins](/sregistry/plugins): Details about available plugins, and how to configure them.
 
-## Use a Registry
+### Use a Registry
 
  - [Interface](/sregistry/interface): interacting with your collections in the interface
  - [sregistry Client](/sregistry/client): The `sregistry-cli` to push, pull, list, and delete.
