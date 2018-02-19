@@ -7,29 +7,18 @@
 {% block content %}
 {% include 'messages/message.html' %}
 
-<div class="row" style="display:none" id="messages">
-    {% if edit_permission %}{% if code %}
-    <div class="col-md-12">
-        <p id="message" class="alert alert-info">You have generated an invite code! Copy this in a safe place, it will only be available once.        
-        </p>
-    </div>
-    {% endif %}{% endif %}
-    <div class="col-md-12">
-        <p id="message" class="alert alert-info"></p>
-    </div>
-</div>
-
 <div class="row">
     <div class="col-md-8">
         <div class="card card-block"  style='padding:20px'>
 
             <div class="row">
+
             <div class="col-md-12">
+            <h3>Team {{ team.name | title }}</h3>
+
             {% if request.user not in team.get_members %}
                 {% if team.permission == "invite" %}
-                <button id="request_button"
-                        type="button" 
-                        class="btn btn-default btn-sm waves-effect waves-light">Request to Join</button>
+                <p class="alert alert-info">This is an invitation only team.</p>
                 {% endif %}
                 {% if team.permission == "open" %}
                 <a href="{% url 'join_team' team.id %}">
@@ -37,19 +26,43 @@
                             class="btn btn-default btn-sm waves-effect waves-light">Join Team</button></a>
                 {% endif %}
             {% else %}
-                <a href="{% url 'leave_team' team.id %}">
-                    <button type="button" class="btn btn-default btn-sm waves-effect waves-light">Leave Team</button>
-                </a>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-default dropdown-toggle"
+                        data-toggle="dropdown"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        Membership
+                        <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+
+                    <li style="text-transform:none"><a href="{% url 'leave_team' team.id %}">Leave Team</a></li>
+
+                </ul>
+            </div>
             {% endif %}
 
             {% if edit_permission %}
-                <a href="{% url 'edit_team' team.id %}">
-                   <button type="button" class="btn btn-sm btn-default waves-effect waves-light">Edit Team</button></a>
-                <a href="{% url 'delete_team' team.id %}">
-                   <button type="button" class="btn btn-sm btn-default waves-effect waves-light">Delete Team</button></a>
-            {% endif %}
-            {% if collaborate %}    
-            <button onclick="TogetherJS(this); return false;" type="button" class="btn btn-default waves-effect waves-light">Go!</button>
+
+            <div class="btn-group">
+                <button class="btn btn-sm btn-default dropdown-toggle"
+                        data-toggle="dropdown"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        Users
+                        <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+
+                    <li style="text-transform:none"><a href="{% url 'generate_team_invite' team.id %}">Invite Users</a></li>
+                    <li style="text-transform:none"><a href="{% url 'edit_team' team.id %}">Edit Team</a></li>
+                    <li style="text-transform:none"><a href="{% url 'delete_team' team.id %}">Delete Team</a></li>
+
+                </ul>
+            </div>
+
             {% endif %}
 
             </div>
@@ -79,9 +92,7 @@
         <div class="col-md-12" 
              class="table card material-table mdl-data-table--selectable">
 
-        <h4 style="padding-top:30px">Team Members</h4>
-
-        <table id="annotators" 
+        <table id="members" 
                class="table" 
                cellspacing="0" width="100%" style="padding-top:20px"> 
            <thead>
@@ -109,10 +120,7 @@
                    <td>
                        <!-- Membership -->                  
                        {% if member in team.members.all %}
-                       {% if request.user == member %}
-                       <button class="btn btn-danger btn-xs leave_team" 
-                               id="userid_{{ member.id }}">Leave Team</button>
-                       {% else %}
+                       {% if request.user == member %}{% else %}
                        <button class="btn btn-danger btn-xs remove_member" 
                                id="userid_{{ member.id }}">Remove Member</button>
                        {% endif %}
@@ -164,7 +172,7 @@
 <script>
 $(document).ready(function(){
 
-    $('#annotators').DataTable( {
+    $('#members').DataTable( {
         columnDefs: [
             {
                 targets: [ 0, 1 ],
@@ -199,33 +207,6 @@ $(document).ready(function(){
          });
     }
    {% endif %}
-
-   // Flag a small or bad image
-   function requestInvite() {
-
-        $.ajax({
-            url : "{% url 'request_membership' team.id %}", // the endpoint
-            type : "POST", // http method
-
-            // handle a successful response
-            success : function(json) {
-                console.log(json); // log the returned json to the console
-                $("#message").text(json['message'])
-                $("#messages").show();
-            },
-
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText); 
-            }
-         });
-    }
-
-   $("#request_button").click(function(){
-      setTimeout(function(){
-           requestInvite();
-      },500)
-   })
 
    {% if edit_permission %}
 

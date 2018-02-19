@@ -26,38 +26,32 @@ NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
 docker exec -it ${NAME} bash
 ```
 
-## Roles
+### Roles
 Before we make accounts, let's talk about the different roles that can be associated with a registry. The core of Django supports some pre-defined roles, and we use those to the greatest extent that we can to keep things simple.
 
-admin (a collection admin) is just a user that can create his/her own collections (via a push) given that the registry admin has enabled USER_COLLECTIONS
-And then for each collection, the default is that it's public for pull. If the user makes it private, he/she can add/remove people to give permission to pull. They will be stored in a "collaborators" field of the collection.
-
-I'm thinking about the idea of adding a "Team" (or organization, or group, or lab) but not decided.
-
-
-### superuser
+## superuser
 You can think of as an application master. They have the highest level of permissions (akin to root) to shell into the application, add and remove users and roles, and do pretty much whatever they want. In that you are reading this and setting up the registry, you are going to be a superuser.
 
-### admin
-An admin corresponds with Django's "staff" role. An admin is designated by the superuser to have global ability to manage collections. This means the admin has a credential file to push images. An admin is a manager, but only of container collections, not the application.
+## admin
+An admin corresponds with Django's "staff" role. An admin is designated by the superuser to have global ability to manage collections. This also gives permission to create teams, or groups of one or more users that can be added as contributors to a collection. An admin has a credential file to push images. An admin is a manager, but only of container collections, not the application.
 
-### authenticated user
+## authenticated user
 is a user that creates an account via the interface, but does not have a global ability to push images. Instead, the authenticated user can edit and manage collections that he or she contributes to.
-  - If the variable `USER_COLLECTIONS` is set to True, the authenticated user can create and manage collections. Each collection can have one or more owners and contributors, and both can push and pull images. Only owners can delete the collection or containers within it.
-  - If the variable `USER_COLLECTIONS` is False, the authenticated user cannot create his or her own collections, but can still be added as a contributor to collections managed by admins.
+  - If the variable `USER_COLLECTIONS` is set to True, the authenticated user can create and manage collections, and create teams. Each collection can have one or more owners and contributors, and both can push and pull images. Only owners can delete the collection or containers within it.
+  - If the variable `USER_COLLECTIONS` is False, the authenticated user cannot create his or her own collections, but can still be added as a contributor to collections managed by admins. In this case, the admin is also in charge of creating teams.
 
 Since you get to choose your authentication backend (e.g., LDAP, Twitter) you get to decide who can become an authenticated user. Here are a couple of scenarios:
 
- - You can keep container management tightly controlled by setting `USER_COLLECTIONS` to False, and then making a small set of individuals `admin`, meaning they manage public and/or private collections of containers for all users. In the case that a collection is private, the authenticated users must be added as contributors in the settings to view and pull images.
- - You can allow your users to manage their own collections and images by setting `USER_COLLECTIONS` to True. You can still have `admin` roles to be global managers, but put users in charge of managing their own images. The same rules apply with public and private collections - if a collection is private, the user would need to add collaborators to give pull ability.
+ - You can keep container management tightly controlled by setting `USER_COLLECTIONS` to False, and then making a small set of individuals `admin`, meaning they manage public and/or private collections and teams for all users. In the case that a collection is private, the authenticated users must be added as contributors in the settings to view and pull images.
+ - You can allow your users to manage their own collections teams by setting `USER_COLLECTIONS` to True. You can still have `admin` roles to be global managers, but put users in charge of managing their own images. The same rules apply with public and private collections - if a collection is private, the user would need to add collaborators to give pull ability.
 
-### visitors
+## visitors
 is an anonymous user of the registry. In the case of a private registry, this individual cannot pull images. In the case of a public registry, there is no huge benefit to being authenticated.
 
 Based on the above and granted that you are setting up the server and reading this, you will be a **superuser** because you have permissions to control the Docker images and grant other users (and yourself) the ability to push with the role **admin**.
 
-## Teams
-To add a level of organization of users, sregistry has created loose groups of users called Teams. Any authenticated user can create a team, meaning he or she becomes the Owner of the team that can add and remove users. To create a team:
+### Teams
+To add a level of organization of users, sregistry has created loose groups of users called Teams. A registry admin can create a team, or if `USER_COLLECTIONS` is True, the an authenticated user can also create them. Creating a team means that the creator (admin or authenticated user) becomes the Owner of the team that can add and remove users. If an admin creates a team for a group of users, he or she must manage it or add a user to the list of owners to do the same. To create a team:
 
  1. Click on the "teams" tab in the navigation bar
  2. Choose a name, team name, and image.

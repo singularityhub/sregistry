@@ -26,12 +26,13 @@ import shub.apps.users.views as views
 urlpatterns = [
 
     url(r'^teams$', views.view_teams, name="teams"),
-    url(r'^users$', views.view_users, name="users"),
     url(r'^teams/(?P<tid>.+?)/view$', views.view_team, name="team_details"),
     url(r'^teams/(?P<tid>.+?)/edit$', views.edit_team, name="edit_team"),
     url(r'^teams/(?P<tid>.+?)/delete$', views.delete_team, name="delete_team"),
-    url(r'^teams/(?P<tid>.+?)/join$', views.join_team, name="join_team"),
+    url(r'^teams/(?P<tid>.+?)/invite$', views.generate_team_invite, name="generate_team_invite"),
     url(r'^teams/(?P<tid>.+?)/(?P<code>.+?)/join$', views.join_team, name="join_team"),
+    url(r'^teams/(?P<tid>.+?)/join$', views.join_team, name="join_team"),
+    url(r'^teams/(?P<tid>.+?)/leave$', views.leave_team, name="leave_team"),
 
     # Remove members and owners
     url(r'^teams/(?P<tid>.+?)/remove/member/(?P<uid>.+?)$', views.remove_member, name="remove_member"),
@@ -40,8 +41,6 @@ urlpatterns = [
     # Add members and owners
     url(r'^teams/(?P<tid>.+?)/add/owner/(?P<uid>.+?)$', views.add_owner, name="remove_owner"),
 
-    url(r'^teams/(?P<tid>.+?)/request/join$', views.request_membership, name="request_membership"),
-    url(r'^teams/(?P<tid>.+?)/request/leave$', views.leave_team, name="leave_team"),
     url(r'^teams/new$',views.edit_team,name='new_team'),
 
 ]

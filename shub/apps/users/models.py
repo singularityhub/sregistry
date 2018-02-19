@@ -46,11 +46,6 @@ def get_image_path(instance, filename):
     return os.path.join('teams', filename)
 
 
-REQUEST_CHOICES = (("denied", 'Request has not been granted.'),
-                   ("pending", 'Request is pending.'),
-                   ("granted", 'Request has been granted'),)
-
-
 TEAM_TYPES = (('invite', 'Invite only. The user must be invited by an owner'),
               ('open','Open. Anyone can join the team without asking.'))
 
@@ -115,12 +110,60 @@ class Team(models.Model):
         members = chain(self.owners.all(), self.members.all())
         return list(set(list(members)))
 
-    def has_edit_permission(self, request):
-        ''' determine if a user has edit permission for a team, meaning he/she
-            is an owner.
+
+    def get_invite(self, code):
+        ''' get the invitation for a user, if it exists.
+ 
+            Parameters
+            ==========
+            code: the code to validate the invitation
         '''
-        if request.user.is_superuser or request.user in self.get_members():
+        keyargs = {'code': code,
+                   'team': self}
+        try:
+            invite = MembershipInvite.objects.get(**keyargs)
+        except MembershipInvite.DoesNotExist:
+            return None
+        else:
+            return invite
+
+    def add_member(self, user, code=None):
+        '''add a user to a team. If a code is provided,
+        the invitation object is deleted.
+
+        Parameters 
+        ==========
+        user: the user to add as a member
+        code: if provided, ensure valid, then delete
+
+        '''
+        if code is not None:
+            invitation = self.get_invite(code)
+            if invitation is not None:
+                invitation.delete()
+
+        # Finally, add the user
+        self.members.add(user)
+        self.save()
+        return self
+
+
+    def has_edit_permission(self, request):
+        ''' determine if a user has edit permission for a team.
+
+            1. A superuser has edit permission, always
+            2. A global admin has edit permission, always
+            3. A user has edit permission if is one of the owners
+
+        '''
+        # Global edit permission for superuser and staff
+        if request.user.is_superuser or request.user.is_staff:
+            return True 
+
+        # Edit permission to owners given so
+        elif request.user in self.owners.all():
             return True
+
         return False
 
 
@@ -159,11 +202,12 @@ class Team(models.Model):
 class MembershipInvite(models.Model):
     '''An invitation to join a team.
     '''
+
     code = models.CharField(max_length=200, null=False, blank=False) 
     team = models.ForeignKey(Team)
 
     def __str__(self):
-        return "<%s:%s>" %(self.id,self.team.name)
+        return "<%s:%s>" %(self.id, self.team.name)
 
     def __unicode__(self):
         return "<%s:%s>" %(self.id,self.team.name)
@@ -171,37 +215,17 @@ class MembershipInvite(models.Model):
     def get_label(self):
         return "users"
 
+    def get_url(self):
+        '''return the reverse, invitation link for the user to follow
+        '''
+        return "%s%s" %(settings.DOMAIN_NAME, 
+                        reverse('join_team', args=[self.team.id, self.code]))
+
+    
     class Meta:
         app_label = 'users'
         unique_together =  (("code", "team"),)
 
-
-
-class MembershipRequest(models.Model):
-    '''A request for membership is tied to a team. 
-    A user is granted access if the owner grants him/her permission.
-    '''
-    user = models.ForeignKey(User)
-    team = models.ForeignKey(Team)
-    created_at = models.DateTimeField('date of request', auto_now_add=True)
-    status = models.CharField(max_length=200,
-                              null=False, 
-                              verbose_name="Status of request", 
-                              default="pending",
-                              choices=REQUEST_CHOICES)
-    
-    def __str__(self):
-        return "<%s:%s>" %(self.user,self.team.name)
-
-    def __unicode__(self):
-        return "<%s:%s>" %(self.user,self.team.name)
-
-    def get_label(self):
-        return "users"
-
-    class Meta:
-        app_label = 'users'
-        unique_together =  (("user", "team"),)
 
 
 ################################################################################

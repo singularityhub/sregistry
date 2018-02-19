@@ -63,7 +63,7 @@
             <!-- Add contributors from teams -->
             <label for="add_contributors">Add Contributors</label>
             <p class="alert alert-info" style="padding:5px">Contributors to a collection can pull containers if the collection is private.</p>
-            <small>Users can be added based on your teams. If you want to make a new team, <a href="{% url 'new_team' %}">do that here.</a></small><br>
+            <small>Users can be added based on your teams. {% if has_create_permission %}If you want to make a new team, <a href="{% url 'new_team' %}">do that here.</a>{% endif %}</small><br>
             {% if teams %}
             <select id="add_contributors"  
                     name="add_contributors" 

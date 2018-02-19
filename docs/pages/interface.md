@@ -19,6 +19,8 @@ You might want to give other users control of your collection (to push and pull 
 
 ![assets/img/team-settings.png](assets/img/team-settings.png)
 
+Remember that you can only choose to add individuals that are part of one of your teams. This means that you should generally make a team first.
+
 ### Danger Zone
 And of course if you need to delete, the settings page has a Danger Zone. Be careful!
 

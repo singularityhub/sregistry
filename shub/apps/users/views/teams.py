@@ -19,14 +19,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-from shub.apps.users.models import ( User, Team )
-from shub.apps.users.forms import TeamForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from shub.settings import USER_COLLECTIONS
 from django.http import HttpResponseRedirect
+
+from shub.settings import USER_COLLECTIONS
+from shub.apps.users.forms import TeamForm
+from shub.apps.users.models import ( User, Team, MembershipInvite )
+from shub.apps.users.permissions import ( 
+    has_create_permission, 
+    is_invite_valid 
+)
 from shub.apps.users.utils import get_user
+
+import uuid
 
 
 def get_team(tid):
@@ -57,30 +64,35 @@ def edit_team(request, tid=None):
     '''edit_team is the view to edit an existing team, or create a new team.
     :parma tid: the team id to edit or create. If none, indicates a new team
     '''
-
+ 
     if tid:
         team = get_team(tid)
         edit_permission = team.has_edit_permission(request)
-        title = "Edit Team"
+        title = "Edit Team" 
     else:
         team = Team()
-        team.owner = request.user
         edit_permission = True
         title = "New Team"
 
     if edit_permission:
+
         form = TeamForm(request.POST or None, 
                         request.FILES or None,
                         instance=team)
 
         if form.is_valid():
             form.save()
-            print(team)
-            print(form)
+
             # An editor is always a member
             if request.user not in team.members.all():
                 team.members.add(request.user)
                 team.save()
+
+            # If a team id was provided, we add request user as owner
+            if not tid:
+                team.owners.add(request.user)
+                team.save()
+
             messages.info(request, 'Team updated.')
 
         context = {"form": form,
@@ -100,24 +112,14 @@ def view_teams(request):
     :parma tid: the team id to edit or create. If none, indicates a new team
     '''
     teams = Team.objects.all()
-    context = {"teams": teams}
+
+    # Does the user have permission to create a team?
+    create_permission = has_create_permission(request)
+
+    context = {"teams": teams,
+               "has_create_permission" : create_permission }
+
     return render(request, "teams/all_teams.html", context)
-
-
-def view_users(request):
-    '''view all users
-    '''
-    users = User.objects.all()
-    lookups = []
-    for user in users:
-        if user.username != "AnonymousUser":
-            userinfo = {'team': user.team_members.first(),
-                        'name':user.username,
-                        'id':user.id}
-            lookups.append(userinfo)
-
-    context = {"users": lookups}
-    return render(request, "users/all_users.html", context)
 
 
 @login_required
@@ -135,11 +137,8 @@ def view_team(request, tid, code=None):
     context = {"team": team,
                "edit_permission":edit_permission,
                "count": count,
-               "members": members}
-
-    # If the user has generated an invitation code
-    if code is not None:
-        context['code'] = code
+               "members": members,
+               "code": code}
 
     return render(request, "teams/team_details.html", context)
 
@@ -160,13 +159,14 @@ def join_team(request, tid, code=None):
        code: if the user is accessing an invite link, the code is checked
              against the generated request.
     '''
+
     team = get_team(tid)
     user = request.user
     add_user = True
             
     if team.permission == "invite":
         if code is None:
-            messages.info(request,"This is not a valid invitation.")
+            messages.info(request, "This is not a valid invitation.")
             add_user = False
         else:    
             add_user = is_invite_valid(team, code)
@@ -175,7 +175,6 @@ def join_team(request, tid, code=None):
 
     if add_user:   
 
-        # Add the user
         if user not in team.get_members():
             team.members.add(user)
             team.save()
@@ -186,57 +185,10 @@ def join_team(request, tid, code=None):
     return HttpResponseRedirect(team.get_absolute_url())
 
 
-def add_collections(request,tid):
-    team = get_team(tid)
-    if request.method == "POST":
-        if request.user == team.owner:
-            collection_ids = request.POST.getlist("collection_ids",None)
-            if collection_ids is not None:
-                for collection_id in collection_ids:
-                    team.add_collection(collection_id)
-                team.save()
-                messages.info(request,"%s collections added to team!" %(len(collection_ids)))
-        else:
-            messages.info(request, "Only team owners can edit teams.")
-            return HttpResponseRedirect(team.get_absolute_url())
-
-    context = {"team": team}
-    return render(request, "teams/add_team_collections.html", context)
-
 
 ################################################################################
 # TEAM ACTIONS #################################################################
 ################################################################################
-
-# Membership
-
-@login_required
-def request_membership(request,tid):
-    '''generate an invitation for a user, this is an Ajax call so it's
-       returned to the view
-
-       Parameters
-       ==========
-       tid: the team if to request to join
-
-    '''
-    team = get_team(tid)
-
-    if request.user not in team.get_members():
-
-        request = get_request(user=request.user, team=team)
-        if request is not None:
-            message = "You have already made a request (%s)" %(request.status)
-        else:
-            request = MembershipRequest.objects.create(team=team,
-                                                       user=request.user)
-            request.save()
-            message = "Your request to join %s has been submit." %(team.name)
-
-    else:
-        message = "You are already a member of this team."
-
-    return JsonResponse({"message":message})
 
 
 @login_required
@@ -372,7 +324,7 @@ def delete_team(request, tid):
 
 
 @login_required
-def generate_team_invite(request,tid):
+def generate_team_invite(request, tid):
     '''generate an invitation for a user, return to view.
        The invitation is valid for a day.
     '''
@@ -382,8 +334,9 @@ def generate_team_invite(request,tid):
         new_invite = MembershipInvite.objects.create(team=team,
                                                      code=code)
         new_invite.save()
-        messages.info('This invitation is valid for one day.')
+        url = new_invite.get_url()
+        messages.info(request, 'This invitation is valid until use: %s' %url)
         return view_team(request, team.id, code=code)
 
-    messages.info(request,"You do not have permission to invite to this team.")
+    messages.info(request, "You do not have permission to invite to this team.")
     return HttpResponseRedirect(team.get_absolute_url())

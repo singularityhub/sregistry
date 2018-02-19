@@ -165,10 +165,12 @@ def collection_settings(request, cid):
        cid: the id of the collection
 
     '''
+    from shub.apps.users.permissions import has_create_permission
     from shub.apps.users.models import Team
 
     collection = get_collection(cid)
     edit_permission = collection.has_edit_permission(request)
+    has_create_permission = has_create_permission(request)
 
     if not edit_permission:
         messages.info(request,"You are not permitted to perform this action.")
@@ -176,6 +178,7 @@ def collection_settings(request, cid):
                
     context = {'collection':collection,
                'teams': Team.objects.all(),
+               'has_create_permission': has_create_permission,
                'edit_permission':edit_permission}
 
     return render(request, 'collections/collection_settings.html', context)
