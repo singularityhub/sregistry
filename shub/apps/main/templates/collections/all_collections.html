@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
+{% load gravatar %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
@@ -18,9 +19,13 @@ span.even { background: rgba(91, 192, 222, 0.32); }
     <div class="col-md-6">
         <div class="card" style="padding:20px">
             <div class="header" style="padding-bottom:10px">
-                   <h3 class="title">
-                   <img src="{% static 'img/robot_package.png' %}" width="160px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
-                   {{ page_title }}</h3>
+                   <h3 class="title">{% if my_collections %}
+                   {% gravatar user.email 90 %} <span style="padding-top:20px;padding-left:25px">My Collections</span>
+                    {% else %}
+                   <img src="{% static 'img/robot_package.png' %}" 
+                        width="160px" 
+                        style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>Collections
+                   {% endif %}</h3>
             </div>
         </div>    
     </div>

@@ -31,6 +31,7 @@ from django.shortcuts import (
     render, 
     redirect
 )
+from django.db.models import Q
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -85,51 +86,30 @@ def all_collections(request):
     # Get information about if they have storage, and repo access
     context = validate_credentials(user=request.user)
     context["collections"] = collections
-    context['page_title'] = "Container Collections"
 
     return render(request, 'collections/all_collections.html', context)
-
-
-def user_collections(request, uid):
-    '''this view will provide a list of user collections.
-
-       Parameters
-       ==========
-       uid: the user id to look up
-
-    '''
-    try:
-        user = User.objects.get(id=uid)
-    except:
-        messages.info(request,"This user does not exist.")
-        return redirect('collections')
-
-        
-    collections = Collection.objects.filter(owner=user)
-
-    # Get information about if they have storage, and repo access
-    context = validate_credentials(user=request.user)
-    context["collections"] = collections
-    context['page_title'] = "User %s Collections" %user.username
-    return render(request, 'collections/all_collections.html', context)
-
 
 
 @login_required
 def my_collections(request):
     '''this view will provide a list of collections for the logged in user
     '''
-    collections = Collection.objects.filter(owner=request.user)
+    collections = Collection.objects.filter(Q(owners=request.user) | 
+                                            Q(contributors=request.user))
 
     # Get information about if they have storage, and repo access
     context = validate_credentials(user=request.user)
     context["collections"] = collections
-    context["page_title"] = "My Container Collections"
+    context["my_collections"] = True
     return render(request, 'collections/all_collections.html', context)
 
 
-def view_collection(request,cid):
+def view_collection(request, cid):
     '''View container build details (all container builds for a repo)
+
+       Parameters
+       ==========
+       cid: the collection id
  
     '''
 
@@ -362,6 +342,41 @@ def make_collection_public(request,cid):
 # Contributors #################################################################
 ################################################################################
 
+def _edit_contributors(userids, collection, add_user=True, level="contributor"):
+    '''a general function to add a single (or list) of users to a collection,
+       given that each user exists.
+ 
+       Parameters
+       ==========
+       userids: a string list, or single string of a user id
+       add_user: if True, perform add on the collection. If False, remove.
+       level: one of contributor or owner.
+
+    '''
+    from shub.apps.users.utils import get_user
+
+    if not isinstance(userids, list):
+        userids = [userids]
+
+    for userid in userids:
+        user = get_user(userid)
+
+        if user is not None:
+
+            # Are we adding an owner or a contributor?
+            func = collection.owners
+            if level == "contributor":
+                func = collection.contributors
+
+            # Are we adding or removing?
+            if add_user is True:
+                func.add(user)
+            else:
+                func.remove(user)
+            collection.save()
+
+    return collection
+
 
 @login_required
 def edit_contributors(request, cid):
@@ -369,6 +384,7 @@ def edit_contributors(request, cid):
        for a collection. Only owners are allowed to do this, and can only
        see individuals in their teams.
     '''
+    
     collection = get_collection(cid)
 
     # Who are current contributors?
@@ -386,10 +402,24 @@ def edit_contributors(request, cid):
             remove_contribs = request.POST.get('remove_contributors')
             add_owners = request.POST.get('add_owners')
             remove_owners = request.POST.get('remove_owners')
-            res = {'remove_owners': remove_owners,
-                   'add_contribts': add_contribs,
-                   'remove_contribs': remove_contribs,
-                   'add_owners': add_owners }
-            pickle.dump(res, open('conributs.pkl', 'wb'))
+
+            if add_contribs is not None:
+                collection = _edit_contributors(userids=add_contribs, 
+                                                collection=collection)
+            if add_owners is not None:
+                collection = _edit_contributors(userids=add_owners, 
+                                                collection=collection,
+                                                level="owner")
+
+            if remove_contribs is not None:
+                collection = _edit_contributors(userids=remove_contribs, 
+                                                collection=collection,
+                                                add_user=False)
+
+            if remove_owners is not None:
+                collection = _edit_contributors(userids=remove_owners, 
+                                                collection=collection,
+                                                add_user=False,
+                                                level="owner")
 
     return collection_settings(request, cid)

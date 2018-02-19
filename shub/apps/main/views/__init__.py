@@ -43,7 +43,6 @@ from .collections import (
     make_collection_private,
     make_collection_public,
     my_collections,
-    user_collections,
     view_collection
 )
 

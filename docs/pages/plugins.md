@@ -6,6 +6,8 @@ permalink: /plugins
 toc: false
 ---
 
+# Plugins
+
 Singularity Registry supports added functionality through plugins. Plugins allow complex features,
 such as container scanning, LDAP authentication, to be added without complicating the core code of
 sregistry.

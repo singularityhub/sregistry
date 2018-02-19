@@ -35,7 +35,7 @@ def get_user(uid):
     try:
         user = User.objects.get(**keyargs)
     except User.DoesNotExist:
-        raise Http404
+        user = None
     else:
         return user
 
