@@ -422,4 +422,4 @@ def edit_contributors(request, cid):
                                                 add_user=False,
                                                 level="owner")
 
-    return collection_settings(request, cid)
+    return redirect('collection_settings', cid=cid)
