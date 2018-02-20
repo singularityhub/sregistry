@@ -16,7 +16,7 @@
   - title: "Setup"
     url: "/sregistry/setup"
     slug: setup
-  - title: "Credentials"
+  - title: "Accounts and Credentials"
     url: "/sregistry/credentials"
     slug: credentials
   - title: "Plugins"
