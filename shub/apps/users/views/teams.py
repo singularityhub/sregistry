@@ -217,9 +217,9 @@ def _remove_member(team, user):
        user: the user to remove
     '''
     if user in team.members.all():
-        team.members.remove(member)
+        team.members.remove(user)
         messages.info('%s is removed from %s' %(user.username, team.name))
-        team.save()        
+        team.save()
     return team
 
 

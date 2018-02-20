@@ -55,13 +55,16 @@
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'my_collections' %}">Containers</a></li>
+                <li><a href="{% url 'logout' %}">Log Out</a></li>
                 <li role="separator" class="divider"></li>
-                <!--<li class="dropdown-header">Settings</li>-->
                 <li><a href="/api">API</a></li>
+                {% if request.user.is_superuser %}
+                <li role="separator" class="divider"></li>
+                <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                {% endif %}
                 {% if request.user.is_staff %}
                 <li><a href="{% url 'token' %}">Token</a></li>
                 {% endif %}
-                <li><a href="{% url 'logout' %}">Log Out</a></li>
               </ul>
             </li>
             <li>{% gravatar user.email 30 %}</li>

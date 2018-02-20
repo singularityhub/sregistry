@@ -6,6 +6,21 @@ permalink: /credentials
 toc: false
 ---
 
+# Accounts
+
+### User Accounts
+If you remember from the [setup](/sregistry/setup#create-accounts) you created your first superuser account by giving permission to your account from the command line inside the container. For doing this again, you don't need to interact with the container in this way, but instead, you can manage admins (and other superusers) from the web interface. When logged in to your superuser account, you will see an "Admin" link in your profile in the top right:
+
+![admin-option.png](assets/img/admin-option.png)
+
+This will take you to the administrative panel. Once there, you can click on "Users" at the bottom of the list, and then see a list of users to edit, with filters in the right panel.
+
+![admin-users.png](assets/img/admin-users.png)
+
+Once you select a user, there will be checkboxes to give staff or superuser status, along with other options.
+
+
+### Secrets
 After you create a user, you will need a way to communicate to the registry, and validate your identity. We need to put our credentials in a hidden file called `.sregistry` in our `$HOME` directory. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](/sregistry/setup), making yourself a superuser and admin and logging in (remember this part?)
 
 

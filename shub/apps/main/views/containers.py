@@ -85,9 +85,10 @@ def view_named_container(request,collection,name,tag):
 def container_details(request,cid):
     container = get_container(cid)
 
-    if container.collection.private == True and request.user != container.collection.owner:
-        messages.info(request,"This container is private.")
-        return redirect('collections')
+    if container.collection.private is True:
+        if request.user not in container.collection.members():
+            messages.info(request,"This container is private.")
+            return redirect('collections')
 
     edit_permission = container.has_edit_permission(request)
     labels = Label.objects.filter(containers=container)

@@ -122,6 +122,15 @@ docker exec $NAME python /code/manage.py remove_superuser --username vsoch
 docker exec $NAME python /code/manage.py remove_admin --username vsoch
 ```
 
+Guess what! You don't need to continue to manage admins (and other superusers) from the command line after this step. When logged in to your superuser account, you will see an "Admin" link in your profile in the top right:
+
+![admin-option.png](assets/img/admin-option.png)
+
+This will take you to the administrative panel. Once there, you can click on "Users" at the bottom of the list, and select one or more checkboxes to assign other users to roles:
+
+![admin-users.png](assets/img/admin-users.png)
+
+
 ## Registration
 We maintain a "registry of registries" ([https://singularityhub.github.io/containers](https://singularityhub.github.io/containers))(one registry to rule them all...) where you can easily have your registry's public images available for others to find. Adding your registry is easy - it comes down to automatically generating a file, adding it to the repo, and then doing a pull request (PR). Specifically:
 

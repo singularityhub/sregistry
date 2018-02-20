@@ -15,6 +15,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 ## [v1.x](https://github.com/singularityhub/singularity-python/tree/master) (master)
 
+ - user customization possible by superusers in the admin panel
  - adding teams and basic permissions to view and edit collections
  - changed internal functions to use sregistry client (instead of singularity)
  - authentication check added to sregistry pull, so private images can be pulled given correct credentials
