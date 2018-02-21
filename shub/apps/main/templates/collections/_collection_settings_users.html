@@ -33,46 +33,46 @@
          <form action="{% url 'edit_contributors' collection.id %}" method="POST">
 
             <!-- Only owners can edit here -->
-            {% if request.user in collection.owners.all %}
+            {% if edit_permission %}
 
             {% csrf_token %}
 
             <hr>
 
-            <!-- Remove contributors -->
-            <label for="remove_contributors">Remove Contributors</label>
+                <!-- Remove contributors -->
+                <label for="remove_contributors">Remove Contributors</label>
 
-            {% if collection.contributors.count > 0 %}
-            <select id="remove_contributors" 
-                    name="remove_contributors" 
-                    class="form-control"
-                    style="margin-bottom:20px;" multiple>                
-                {% for current in collection.contributors.all %}
+                {% if collection.contributors.count > 0 %}
+                <select id="remove_contributors" 
+                        name="remove_contributors" 
+                        class="form-control"
+                        style="margin-bottom:20px;" multiple>                
+                    {% for current in collection.contributors.all %}
+                    <option value="{{ current.id }}">{{ current.username }}</option>
+                    {% endfor %}
+
+                </select>
+                {% else %}
+                <p>This collection does not have any additional contributors.</p><br>
+                {% endif %}
+
+                <hr>
+
+                <!-- Owners -->
+                {% if collection.owners.count > 1 %}
+                <label for="remove_owners">Remove Owners</label>
+                <select id="remove_owners" 
+                        name="remove_owners" 
+                        class="form-control"
+                        style="margin-bottom:20px;" multiple>
+                
+                {% for current in collection.owners.all %}
                 <option value="{{ current.id }}">{{ current.username }}</option>
                 {% endfor %}
-
-            </select>
-            {% else %}
-            <p>This collection does not have any additional contributors.</p><br>
-            {% endif %}
-
-            <hr>
-
-            <!-- Owners -->
-            {% if collection.owners.count > 1 %}
-            <label for="remove_owners">Remove Owners</label>
-            <select id="remove_owners" 
-                    name="remove_owners" 
-                    class="form-control"
-                    style="margin-bottom:20px;" multiple>
-                
-            {% for current in collection.owners.all %}
-            <option value="{{ current.id }}">{{ current.username }}</option>
-            {% endfor %}
-            </select>
-            {% else %}
-            <p>A collection must have at least one owner.</p><br>
-            {% endif %}{% endif %}
+                </select>
+                {% else %}
+                <p>A collection must have at least one owner.</p><br>
+                {% endif %}
 
             <hr>
 
@@ -85,13 +85,16 @@
                     name="add_contributors" 
                     class="form-control"
                     style="margin-bottom:20px;" multiple>
-                
+            
                 {% for team in teams %}
                     <option disabled>Team: {{ team.name }}</option> 
                     {% for contender in team.get_members %}
-                        {% if contender in collection.members %}
+                        {% if contender.id in contrib_ids %}
                         {% else %}
-                        <option value="{{ contender.id }}">{{ contender.username }}</option>
+                            <!-- an owner is by default a contributor -->
+                            {% if contender.id not in owners_ids %}
+                            <option value="{{ contender.id }}">{{ contender.username }}</option>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
 
@@ -111,14 +114,14 @@
                 {% for team in teams %}
                     <option disabled>Team: {{ team.name }}</option> 
                     {% for contender in team.get_members %}
-                        {% if contender in collection.owners.all %}
+                        {% if contender.id in owners_ids %}
                         {% else %}
                         <option value="{{ contender.id }}">{{ contender.username }}</option>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
             </select>
-            {% endif %}
+            {% endif %}{% endif %}
 
             <hr>
             <input class="btn btn-primary" type="submit" value="Save" style="margin-top:15px">

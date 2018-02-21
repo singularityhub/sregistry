@@ -26,7 +26,11 @@ from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
-from shub.apps.api.utils import ( validate_request, has_permission )
+from shub.apps.api.utils import ( 
+    validate_request, 
+    has_permission, 
+    get_request_user
+)
 from sregistry.auth import generate_timestamp
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
@@ -49,7 +53,6 @@ class ContainerPushViewSet(ModelViewSet):
         name=self.request.data.get('name')
         auth=self.request.META.get('HTTP_AUTHORIZATION', None)
         collection_name=self.request.data.get('collection')
-
 
         # Authentication always required for push
 
@@ -94,10 +97,14 @@ class ContainerPushViewSet(ModelViewSet):
                 create_new=True
          
         if create_new is True:
+
+            owner = get_request_user(auth)
+            print(owner)
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
                             tag=self.request.data.get('tag','latest'),
                             name=self.request.data.get('name'),
+                            owner_id=owner.id,
                             metadata=self.request.data.get('metadata'))
         else:
             raise PermissionDenied(detail="%s is frozen, push not allowed." %container.get_short_uri())

@@ -63,6 +63,26 @@ def _parse_header(auth):
     return values
         
 
+def get_request_user(auth):
+    '''get the user for the request from an authorization object
+    '''
+    user = None
+    values = _parse_header(auth)
+
+    if "Credential" not in values:
+        bot.debug('Headers missing, request is invalid.')
+        return user
+
+    kind,username,ts = values['Credential'].split('/')
+    username = base64.b64decode(username)
+
+    try:
+        user = User.objects.get(username=username)
+    except:
+        bot.debug('%s is not a valid user, request invalid.' %username)
+    return user
+
+
 def has_permission(auth, instance=None, pull_permission=True):
     '''a simple function to parse an authentication challenge for the username,
        and determine if the user has permission to perform the action.

@@ -24,12 +24,24 @@ import json
 
                    # ImageFile (instance)
 def create_container(sender, instance, **kwargs):
+    '''create container is the function called by the ImageFile (in models.py)
+       after a push to the registry, triggered by ContainerPushSerializer.
+    '''
+    from shub.apps.users.models import User
     from shub.apps.main.models import Container, Collection
     from shub.apps.main.views import update_container_labels
 
     collection = Collection.objects.get(name=instance.collection)
     metadata = instance.metadata
-   
+
+    # Add the owner
+    try:
+        owner = User.objects.get(id=instance.owner_id)
+        collection.owners.add(owner)
+        collection.save()
+    except:
+        pass   
+
     # Get a container, if it exists, we've already written file here
     containers = collection.containers.filter(tag=instance.tag,
                                               name=instance.name)
@@ -43,16 +55,16 @@ def create_container(sender, instance, **kwargs):
         
     def add_metadata(container,metadata,field):
         if field in metadata:
-            if field not in ['',None]:
+            if field not in ['', None]:
                 container.metadata[field] = metadata[field]
                 container.save()
 
     # Load container metadata
     metadata = json.loads(metadata)['data']['attributes']
-    add_metadata(container,metadata,'deffile')
-    add_metadata(container,metadata,'runscript')
-    add_metadata(container,metadata,'test')
-    add_metadata(container,metadata,'environment')
+    add_metadata(container, metadata, 'deffile')
+    add_metadata(container, metadata, 'runscript')
+    add_metadata(container, metadata, 'test')
+    add_metadata(container, metadata, 'environment')
 
     # If exists, add size
     try:
@@ -71,7 +83,7 @@ def create_container(sender, instance, **kwargs):
         pass
 
     # Add labels
-    if metadata['labels'] not in [None,'']:
+    if metadata['labels'] not in [None, '']:
         container = update_container_labels(container,metadata['labels'])
 
     container.save()

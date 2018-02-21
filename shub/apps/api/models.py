@@ -80,6 +80,7 @@ class ImageFile(models.Model):
     tag = models.CharField(max_length=200, null=False)
     metadata = models.TextField(default='') # will be converted to json
     name = models.CharField(max_length=200, null=False)
+    owner_id = models.CharField(max_length=200, null=True)
     datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
 
     def get_label(self):

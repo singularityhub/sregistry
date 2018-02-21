@@ -110,7 +110,6 @@ class Team(models.Model):
         members = chain(self.owners.all(), self.members.all())
         return list(set(list(members)))
 
-
     def get_invite(self, code):
         ''' get the invitation for a user, if it exists.
  

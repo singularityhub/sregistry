@@ -152,12 +152,18 @@ def collection_settings(request, cid):
     edit_permission = collection.has_edit_permission(request)
     has_create_permission = has_create_permission(request)
 
+    # Give view a list of owner and member ids
+    owners_ids = [x.id for x in collection.owners.all()]
+    contrib_ids = [x.id for x in collection.contributors.all()]
+
     if not edit_permission:
         messages.info(request,"You are not permitted to perform this action.")
         return redirect('collections')
                
     context = {'collection':collection,
                'teams': Team.objects.all(),
+               'owners_ids': owners_ids,
+               'contrib_ids': contrib_ids,
                'has_create_permission': has_create_permission,
                'edit_permission':edit_permission}
 
@@ -236,7 +242,7 @@ def delete_collection(request,cid):
     collection = get_collection(cid)
 
     # Only an owner can delete
-    if request.user != collection.owner and request.user.is_superuser is False:
+    if request.user not in collection.owners.all() and not request.user.is_superuser:
         messages.info(request,"This action is not permitted.")
         return redirect('collections')
 
