@@ -96,10 +96,12 @@ class ContainerPushViewSet(ModelViewSet):
             except Container.DoesNotExist:
                 create_new=True
          
+
+        # New collection, pusher is owner
+ 
         if create_new is True:
 
             owner = get_request_user(auth)
-            print(owner)
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
                             tag=self.request.data.get('tag','latest'),

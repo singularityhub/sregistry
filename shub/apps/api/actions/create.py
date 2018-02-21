@@ -22,10 +22,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json
 
 
-                   # ImageFile (instance)
 def create_container(sender, instance, **kwargs):
     '''create container is the function called by the ImageFile (in models.py)
        after a push to the registry, triggered by ContainerPushSerializer.
+
+       Parameters
+       ==========
+       sender: should be the sending model, which is an ImageFile instance
+       instance: is the instance of the ImageFile
+
     '''
     from shub.apps.users.models import User
     from shub.apps.main.models import Container, Collection
