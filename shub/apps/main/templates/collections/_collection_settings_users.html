@@ -87,6 +87,7 @@
                     style="margin-bottom:20px;" multiple>
             
                 {% for team in teams %}
+                    {% if request.user in team.get_members %}
                     <option disabled>Team: {{ team.name }}</option> 
                     {% for contender in team.get_members %}
                         {% if contender.id in contrib_ids %}
@@ -97,6 +98,7 @@
                             {% endif %}
                         {% endif %}
                     {% endfor %}
+                    {% endif %}
 
                 {% endfor %}
             </select>
@@ -112,6 +114,7 @@
                     style="margin-bottom:20px;" multiple>
                 
                 {% for team in teams %}
+                    {% if request.user in team.get_members %}
                     <option disabled>Team: {{ team.name }}</option> 
                     {% for contender in team.get_members %}
                         {% if contender.id in owners_ids %}
@@ -119,6 +122,7 @@
                         <option value="{{ contender.id }}">{{ contender.username }}</option>
                         {% endif %}
                     {% endfor %}
+                    {% endif %}
                 {% endfor %}
             </select>
             {% endif %}{% endif %}

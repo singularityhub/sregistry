@@ -76,7 +76,7 @@
             </div>
 
 
-            {% if edit_permission %}
+            {% if request.user in collection.owners.all %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
             {% endif %}
