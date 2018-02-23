@@ -19,13 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-
-from .demos import (
-    edit_demo,
-    view_demo,
-    collection_demos
-)
-
 from .download import (
     download_container,
     download_share,

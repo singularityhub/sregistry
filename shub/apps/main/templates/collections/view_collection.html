@@ -52,30 +52,7 @@
     <!-- Container collection meta -->
     <div class="col-md-12">
         <div class="card">
-                 
-             <!-- Supplementary -->
-            <div class="btn-group">
-                <button class="btn btn-sm btn-default dropdown-toggle"
-                        data-toggle="dropdown"
-                        role="button"
-                        aria-haspopup="true"
-                        aria-expanded="false">
-                        Supplementary
-                        <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    {% if collection.demo_set.count > 0 %}
-                    <li>
-                        <a style="text-transform:none" href="{% url 'collection_demos' collection.id %}">Demos and Tutorials</a>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <a style="text-transform:none" href="{% url 'new_demo' collection.id %}">Add Demo or Tutorial</a>
-                    </li>
-                </ul>
-            </div>
-
-
+                
             {% if request.user in collection.owners.all %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>

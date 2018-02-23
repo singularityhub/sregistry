@@ -53,6 +53,5 @@ class Command(BaseCommand):
             raise CommandError("This user can already manage and build.")        
 
         user.is_staff = True
-        #user.manager = True
         user.save()
         bot.debug("%s can now manage and build." %(user.username))

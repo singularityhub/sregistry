@@ -375,24 +375,6 @@ class Container(models.Model):
                                    instance=self.collection)
 
 
-class Demo(models.Model):
-    '''A demo is an supplementary materil (asciicast, youtube video, or other) provided by a user.
-    '''
-    description = models.CharField(max_length=250,null=False,blank=False)
-    creation_date = models.DateTimeField('date demo created', auto_now=True)
-    collection = models.ForeignKey(Collection,null=False,blank=False)
-    kind = models.CharField(max_length=250,choices=DEMO_KINDS)
-    url = models.CharField(max_length=250,null=False,blank=False,
-                           help_text="URL for an asciicast, video, or other kind of documentation.")
-    tags = TaggableManager()
-
-    class Meta:
-        app_label = 'main'
- 
-    def get_absolute_url(self):
-        return_id = self.id
-        return reverse('view_demo', args=[str(return_id)])
-
 
 #################################################################################
 # Ratings and Sharing ###########################################################

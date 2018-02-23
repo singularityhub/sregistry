@@ -53,6 +53,5 @@ class Command(BaseCommand):
             raise CommandError("This user already can't manage and build.")        
 
         user.is_staff = False
-        #user.manager = False
         bot.debug("%s can no longer manage and build." %(user.username))
         user.save()
