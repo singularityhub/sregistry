@@ -107,8 +107,8 @@ def download_container(request, cid, secret):
     container = get_container(cid)
 
     # The secret must be up to date
-    if container.secret != secret:
-        return Http404
+    if container.collection.secret != secret:
+        raise Http404
 
     return _download_container(container)
 

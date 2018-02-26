@@ -401,7 +401,7 @@ class Share(models.Model):
     '''
     container = models.ForeignKey(Container)
     expire_date = models.DateTimeField('share expiration date')
-    secret = models.CharField(max_length=250,null=True,blank=True)
+    secret = models.CharField(max_length=250, null=True, blank=True)
 
     def generate_secret(self):
         self.secret = str(uuid.uuid4())

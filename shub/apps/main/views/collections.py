@@ -63,9 +63,9 @@ def get_collection(cid):
         return collection
 
 
-###############################################################################################
-# COLLECTIONS #################################################################################
-###############################################################################################
+################################################################################
+# COLLECTIONS ##################################################################
+################################################################################
 
 
 def all_collections(request):
@@ -117,7 +117,7 @@ def view_collection(request, cid):
     collection = get_collection(cid)
 
     # If private, and not the owner, no go.
-    if collection.private is True and collection.has_edit_permission(request) == False:
+    if collection.private and not collection.has_edit_permission(request):
         messages.info(request,"This collection is private.")
         return redirect('collections')
 
@@ -237,7 +237,7 @@ def collection_commands(request, cid):
 
 
 def delete_collection(request,cid):
-    '''delete a container collection, including all containers and corresponding files.
+    '''delete a container collection
 
        Parameters
        ==========
