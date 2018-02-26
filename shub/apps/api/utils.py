@@ -114,15 +114,21 @@ def has_permission(auth, instance=None, pull_permission=True):
     if user.is_superuser or user.is_staff:
         return True
 
-    # Are users allowed?
-    if USER_COLLECTIONS is False:
-        return False
-
     # An existing collection for a user with permission
+
     if instance is not None:
+
+        # Asking to pull
         if pull_permission is True:
             return instance.has_view_permission(user)
+
+        # Asking to push
         else:
+
+            # Are users allowed?
+            if USER_COLLECTIONS is False:
+                return False
+
             return instance.has_edit_permission(user)
 
     return False

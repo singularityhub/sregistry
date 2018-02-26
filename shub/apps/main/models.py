@@ -242,7 +242,7 @@ class Collection(models.Model):
                                    instance=self)
 
 
-    def has_view_permission(self,request):
+    def has_view_permission(self, request):
         '''can the user of the request view the collection
         '''
         return has_view_permission(request=request,

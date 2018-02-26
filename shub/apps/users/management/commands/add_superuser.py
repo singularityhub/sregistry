@@ -52,6 +52,5 @@ class Command(BaseCommand):
         if user.is_superuser is True:
             raise CommandError("This user is already a superuser.")        
         else:
-            user.is_superuser = True
-            user.save()
+            user = User.objects.add_superuser(user)
             bot.debug("%s is now a superuser." %(user.username))

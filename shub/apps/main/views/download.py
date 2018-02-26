@@ -80,8 +80,6 @@ def download_share(request,cid,secret):
     '''download a custom share for a container
     '''
     container = get_container(cid)
-    import pickle
-    pickle.dump({'cid':cid,'secret':secret},open('days.pkl','wb'))
 
     # Is the container secret valid?
     try:

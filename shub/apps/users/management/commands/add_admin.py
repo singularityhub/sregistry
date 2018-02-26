@@ -52,6 +52,5 @@ class Command(BaseCommand):
         if user.is_staff is True: #and user.manager is True:
             raise CommandError("This user can already manage and build.")        
         else:
-            user.is_staff = True
-            user.save()
+            user = User.objects.add_staff(user)
             bot.debug("%s can now manage and build." %(user.username))

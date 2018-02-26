@@ -25,7 +25,7 @@ from django.db.models.signals import ( post_save, pre_save )
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.urlresolvers import reverse
 from django.db import models
 from itertools import chain
@@ -50,6 +50,44 @@ TEAM_TYPES = (('invite', 'Invite only. The user must be invited by an owner'),
               ('open','Open. Anyone can join the team without asking.'))
 
 
+class CustomUserManager(BaseUserManager):
+
+    def _create_user(self, username, email, password,
+                     is_staff, is_superuser, **extra_fields):
+        '''
+        Creates and saves a User with the given username, email and password.
+        '''
+        if not username:
+            raise ValueError('The given username must be set')
+
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email,
+                          is_staff=is_staff, is_active=True, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        return self._create_user(username, email, password, False, False,
+                                 **extra_fields)
+
+    def create_superuser(self, username, email, password, **extra_fields):
+        return self._create_user(username, email, password, True, True,
+                                 **extra_fields)
+
+    def add_superuser(self, user):
+        ''' Intended for existing user'''
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+    def add_staff(self, user):
+        ''' Intended for existing user'''
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+
 class User(AbstractUser):
     active = models.BooleanField(default=True)
 
@@ -59,7 +97,9 @@ class User(AbstractUser):
                                             default=None,
                                             null=True)     
 
-    
+    # Ensure that we can add staff / superuser and retain on logout
+    objects = CustomUserManager()    
+
     class Meta:
         app_label = 'users'
     

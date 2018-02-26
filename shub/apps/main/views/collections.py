@@ -81,7 +81,7 @@ def all_collections(request):
     private_collections = [x for x in Collection.objects.filter(private=True)
                            if x.has_edit_permission(request)]
 
-    collections = list(chain(collections,private_collections))
+    collections = set(list(chain(collections, private_collections)))
 
     # Get information about if they have storage, and repo access
     context = validate_credentials(user=request.user)
@@ -94,8 +94,9 @@ def all_collections(request):
 def my_collections(request):
     '''this view will provide a list of collections for the logged in user
     '''
-    collections = Collection.objects.filter(Q(owners=request.user) | 
-                                            Q(contributors=request.user))
+    user = request.user
+    collections = Collection.objects.filter(Q(owners=user) | 
+                                            Q(contributors=user)).distinct()
 
     # Get information about if they have storage, and repo access
     context = validate_credentials(user=request.user)
@@ -226,7 +227,7 @@ def collection_commands(request, cid):
     collection = get_collection(cid)
 
     # If private, and not the owner, no go.
-    if collection.private == True and request.user != collection.owner:
+    if not collection.has_view_permission(request):
         messages.info(request,"This collection is private.")
         return redirect('collections')
 
@@ -246,7 +247,7 @@ def delete_collection(request,cid):
     collection = get_collection(cid)
 
     # Only an owner can delete
-    if request.user not in collection.owners.all() and not request.user.is_superuser:
+    if not collection.has_edit_permission(request):
         messages.info(request,"This action is not permitted.")
         return redirect('collections')
 
@@ -408,28 +409,34 @@ def edit_contributors(request, cid):
         if request.method == "POST":
 
             # Add and remove owners and contributors
+            unset = [None, "", []]
             add_contribs = request.POST.get('add_contributors')
             remove_contribs = request.POST.get('remove_contributors')
             add_owners = request.POST.get('add_owners')
             remove_owners = request.POST.get('remove_owners')
 
-            if add_contribs is not None:
+            if add_contribs not in unset:
                 collection = _edit_contributors(userids=add_contribs, 
                                                 collection=collection)
-            if add_owners is not None:
+            if add_owners not in unset:
                 collection = _edit_contributors(userids=add_owners, 
                                                 collection=collection,
                                                 level="owner")
 
-            if remove_contribs is not None:
+            if remove_contribs not in unset:
                 collection = _edit_contributors(userids=remove_contribs, 
                                                 collection=collection,
                                                 add_user=False)
 
-            if remove_owners is not None:
-                collection = _edit_contributors(userids=remove_owners, 
-                                                collection=collection,
-                                                add_user=False,
+            if remove_owners not in unset:
+
+                # Do not allow all owners to be removed
+                if len(remove_owners) < collection.owners.count():
+                    collection = _edit_contributors(userids=remove_owners, 
+                                                    collection=collection,
+                                                     add_user=False,
                                                 level="owner")
+                else:
+                    messages.info(request, "You must have at least one owner.")
 
     return redirect('collection_settings', cid=cid)

@@ -155,40 +155,51 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
     def get(self, request, collection, name, tag=None):
         container = self.get_object(collection=collection, 
                                     name=name,tag=tag)
-        if container is None:
-            return Response({})
-
-        serializer = SingleContainerSerializer(container)
-        is_private = container.collection.private
-
-        # All public images are pull-able
-
-        if not is_private:
-            return Response(serializer.data)
-
-        # Determine if user has permission to get if private
-        auth = request.META.get('HTTP_AUTHORIZATION')
-
-        if auth is None:
-            raise PermissionDenied(detail="Authentication Required")
-
-        # Validate User Permissions - must have view to pull private image
-
-        if not has_permission(auth, container.collection):
-            raise PermissionDenied(detail="Unauthorized")
-
-        timestamp = generate_timestamp()
-        payload = "pull|%s|%s|%s|%s|" %(collection,
-                                        timestamp,
-                                        name,
-                                        tag)
-
-        if validate_request(auth,payload,"pull",timestamp):
-            return Response(serializer.data)    
+        return _container_get(request, container)
 
 
-        return Response(400)
+def _container_get(request, container):
+    '''container get is the shared function for getting a container based
+       on a name or an id. It validates the request and returns a response.
+       
+       Parameters
+       ==========
+       request: the request from the view with the user
+       container: the container object to check
+    '''
+    if container is None:
+        return Response({})
 
+    serializer = SingleContainerSerializer(container)
+    is_private = container.collection.private
+
+    # All public images are pull-able
+
+    if not is_private:
+        return Response(serializer.data)
+
+    # Determine if user has permission to get if private
+    auth = request.META.get('HTTP_AUTHORIZATION')
+
+    if auth is None:
+        raise PermissionDenied(detail="Authentication Required")
+
+    # Validate User Permissions - must have view to pull private image
+
+    if not has_permission(auth, container.collection):
+        raise PermissionDenied(detail="Unauthorized")
+
+    timestamp = generate_timestamp()
+    payload = "pull|%s|%s|%s|%s|" %(collection,
+                                    timestamp,
+                                    name,
+                                    tag)
+
+    if validate_request(auth, payload, "pull", timestamp):
+        return Response(serializer.data)    
+
+
+    return Response(400)
 
 
 class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
@@ -209,31 +220,7 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         
     def get(self, request, cid):
         container = self.get_object(cid)
-        if container is None:
-            return Response({})
-
-        serializer = SingleContainerSerializer(container)
-        is_private = container.collection.private
-
-        if not is_private: 
-            return Response(serializer.data)
-    
-        # Determine if user has permission to get if private
-        auth = request.META.get('HTTP_AUTHORIZATION')
-
-        if auth is None:
-            raise PermissionDenied(detail="Authentication Required")
-
-        timestamp = generate_timestamp()
-        payload = "pull|%s|%s|%s|%s|" %(collection,
-                                        timestamp,
-                                        name,
-                                        tag)
-
-        if validate_request(auth,payload,"pull",timestamp):
-            return Response(serializer.data)    
-
-        return Response(400)
+        return _container_get(request, container)
 
 
 #########################################################################
