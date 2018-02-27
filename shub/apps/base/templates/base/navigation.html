@@ -62,7 +62,7 @@
                 <li role="separator" class="divider"></li>
                 <li><a href="{% url 'admin:index' %}">Admin</a></li>
                 {% endif %}
-                {% if request.user.is_staff %}
+                {% if request.user.is_authenticated %}
                 <li><a href="{% url 'token' %}">Token</a></li>
                 {% endif %}
               </ul>

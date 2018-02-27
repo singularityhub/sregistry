@@ -32,10 +32,4 @@ def view_token(request):
         user's are allowed to create collections, they can push to those for
         which they are an owner or contributor. 
     '''
-    if USER_COLLECTIONS is True:
-        return render(request, 'users/token.html')
-    elif request.user.is_superuser or request.user.is_staff is True:
-        return render(request, 'users/token.html')
-    else:
-        messages.info(request,"You are not allowed to perform this action.")
-        return redirect('collections')
+    return render(request, 'users/token.html')

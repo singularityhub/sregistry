@@ -159,17 +159,17 @@ def validate_request(auth,
     values = _parse_header(auth)
 
     if values['header'] != 'SREGISTRY-HMAC-SHA256':
-        bot.debug('Invalid SREGISTRY Authentication scheme, request invalid.')
+        print('Invalid SREGISTRY Authentication scheme, request invalid.')
         return False
 
     if "Credential" not in values or "Signature" not in values:
-        bot.debug('Headers missing, request is invalid.')
+        print('Headers missing, request is invalid.')
         return False
 
     kind,username,ts = values['Credential'].split('/')
     username = base64.b64decode(username)
     if kind != sender:
-        bot.debug('Mismatch: type (%s) sender (%s) invalid.' %(kind,sender))
+        print('Mismatch: type (%s) sender (%s) invalid.' %(kind,sender))
         return False
 
     if timestamp is not None:
@@ -180,12 +180,12 @@ def validate_request(auth,
     try:
         user = User.objects.get(username=username)
     except:
-        bot.debug('%s is not a valid user, request invalid.' %username)
+        print('%s is not a valid user, request invalid.' %username)
         return False
 
     request_signature = values['Signature']
     secret = user.token()
-    return validate_secret(secret,payload,request_signature)
+    return validate_secret(secret, payload, request_signature)
 
 
 def encode(item):
@@ -200,7 +200,7 @@ def encode(item):
     return item
 
 
-def validate_secret(secret,payload,request_signature):
+def validate_secret(secret, payload, request_signature):
     ''' use hmac digest to compare a request_signature to one generated
     using a server secret against a payload. Valid means matching.
 
@@ -222,6 +222,8 @@ def validate_secret(secret,payload,request_signature):
     secret = encode(secret)
     digest = hmac.new(secret,digestmod=hashlib.sha256,
                       msg=payload).hexdigest().encode('utf-8')
+    print(digest)
+    print(request_signature)
     return hmac.compare_digest(digest, request_signature)
 
 

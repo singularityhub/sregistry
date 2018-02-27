@@ -196,7 +196,7 @@ def _container_get(request, container, name=None, tag=None):
         raise PermissionDenied(detail="Unauthorized")
 
     timestamp = generate_timestamp()
-    payload = "pull|%s|%s|%s|%s|" %(container.collection,
+    payload = "pull|%s|%s|%s|%s|" %(container.collection.name,
                                     timestamp,
                                     name,
                                     tag)
