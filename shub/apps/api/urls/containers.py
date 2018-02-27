@@ -157,7 +157,7 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
         return _container_get(request, container, name, tag)
 
 
-def _container_get(request, container, name, tag):
+def _container_get(request, container, name=None, tag=None):
     '''container get is the shared function for getting a container based
        on a name or an id. It validates the request and returns a response.
        
@@ -168,6 +168,12 @@ def _container_get(request, container, name, tag):
     '''
     if container is None:
         return Response({})
+
+    if name is None:
+        name = container.name
+
+    if tag is None:
+        tag = container.tag
 
     serializer = SingleContainerSerializer(container)
     is_private = container.collection.private
@@ -219,7 +225,7 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         
     def get(self, request, cid):
         container = self.get_object(cid)
-        return _container_get(request, container, name, tag)
+        return _container_get(request, container)
 
 
 #########################################################################
