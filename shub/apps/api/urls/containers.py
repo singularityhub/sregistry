@@ -63,8 +63,9 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         return container.collection.name
 
     def get_download_url(self, container):
+        secret = container.collection.secret
         url = reverse('download_container', kwargs= {'cid':container.id,
-                                                     'secret':container.secret})
+                                                     'secret':secret})
         return "%s%s" %(DOMAIN_NAME,url)
 
     class Meta:
@@ -153,7 +154,7 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
 
     def get(self, request, collection, name, tag=None):
         container = self.get_object(collection=collection, 
-                                    name=name,tag=tag)
+                                    name=name, tag=tag)
         return _container_get(request, container, name, tag)
 
 
