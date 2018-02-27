@@ -138,7 +138,6 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
                                     name=name,
                                     tag=tag)
 
-        print(container)
         if container is None:
             raise NotFound(detail="Container Not Found")
 
@@ -155,10 +154,10 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
     def get(self, request, collection, name, tag=None):
         container = self.get_object(collection=collection, 
                                     name=name,tag=tag)
-        return _container_get(request, container)
+        return _container_get(request, container, name, tag)
 
 
-def _container_get(request, container):
+def _container_get(request, container, name, tag):
     '''container get is the shared function for getting a container based
        on a name or an id. It validates the request and returns a response.
        
@@ -220,7 +219,7 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         
     def get(self, request, cid):
         container = self.get_object(cid)
-        return _container_get(request, container)
+        return _container_get(request, container, name, tag)
 
 
 #########################################################################
