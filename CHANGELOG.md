@@ -15,6 +15,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 ## [v1.x](https://github.com/singularityhub/singularity-python/tree/master) (master)
 
+ - superusers and admins (global) can now create collections via a button in the interface
  - demos and customizated supplementary content removed - not used
  - user customization possible by superusers in the admin panel
  - adding teams and basic permissions to view and edit collections

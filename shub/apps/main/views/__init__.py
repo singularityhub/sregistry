@@ -35,6 +35,7 @@ from .collections import (
     get_collection,    
     make_collection_private,
     make_collection_public,
+    new_collection,
     my_collections,
     view_collection
 )

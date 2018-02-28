@@ -36,6 +36,14 @@ span.even { background: rgba(91, 192, 222, 0.32); }
     <div class="col-md-12">
 
             {% if request.user.is_authenticated %}
+
+                {% if request.user.has_create_permission %}                
+                <a id="new-container" 
+                   href="{% url 'new_collection' %}"
+                   title="Create an empty collection to push containers to">
+                   <button class="btn btn-primary">New Collection</button></a>
+                {% endif %}
+
             {% else %}
             <p> Want to build containers?</p>
             <p><a href="{% url 'login' %}"><button class="btn btn-default">Login</button></a></p>

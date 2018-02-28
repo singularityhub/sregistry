@@ -105,6 +105,40 @@ def my_collections(request):
     return render(request, 'collections/all_collections.html', context)
 
 
+
+@login_required
+def new_collection(request):
+    '''new_container_collection will display a form to generate a new collection
+    '''
+    if request.user.has_create_permission():
+ 
+        if request.method == "POST":
+            
+            name = request.POST.get('name')
+            if name is not None:
+
+                # No special characters allowed
+                name = re.sub('[^0-9a-zA-Z]+', '-', name)
+                name = name.strip('-').lower()
+                collection = Collection(name=name)
+                collection.save()
+                collection.owners.add(request.user)
+                collection.save()
+
+            messages.info(request, 'Collection %s created.' %name)
+            return redirect('collection_details', cid=collection.id)
+
+        # Just new collection form, not a post
+        else:
+            return render(request, "collections/new_collection.html")
+
+    # If user makes it down here, does not have permission
+    messages.info(request, "You don't have permission to perform this action.")
+    return redirect("collections")
+
+
+
+
 def view_collection(request, cid):
     '''View container build details (all container builds for a repo)
 
