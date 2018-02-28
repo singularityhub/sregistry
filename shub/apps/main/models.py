@@ -34,6 +34,7 @@ from django.db.models import Avg, Sum
 from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
+from django.http import HttpRequest
 from polymorphic.models import PolymorphicModel
 from taggit.managers import TaggableManager
 
@@ -75,25 +76,29 @@ def has_edit_permission(instance, request):
        Parameters
        ==========
        instance: the container or collection to check
-       request: the request with the user object
+       request: the request with the user object OR the user object
 
     '''
     if isinstance(instance, Container):
         instance = instance.collection
 
+    user = request
+    if isinstance(user, HttpRequest):
+        user = request.user
+
     # Visitor
-    if not request.user.is_authenticated():
+    if not user.is_authenticated():
         return False
 
     # Global Admins
-    if request.user.is_staff is True:
+    if user.is_staff is True:
         return True
 
-    if request.user.is_superuser is True:
+    if user.is_superuser is True:
         return True
 
     # Collection Owners can edit
-    if request.user in instance.owners.all():
+    if user in instance.owners.all():
         return True
     return False
 
@@ -112,21 +117,25 @@ def has_view_permission(instance, request):
     if isinstance(instance, Container):
         instance = instance.collection
 
+    user = request
+    if isinstance(user, HttpRequest):
+        user = request.user
+
     # All public collections are viewable
     if instance.private is False:
         return True
 
     # At this point we have a private collection
-    if not request.user.is_authenticated():
+    if not user.is_authenticated():
         return False
         
     # Global Admins and Superusers
-    if request.user.is_staff or request.user.is_superuser:
+    if user.is_staff or user.is_superuser:
         return True
 
     # Collection Contributors (owners and contributors)
     contributors = get_collection_users(instance)
-    if request.user in contributors:
+    if user in contributors:
         return True
 
     return False

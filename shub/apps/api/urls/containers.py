@@ -168,7 +168,7 @@ def _container_get(request, container, name=None, tag=None):
        container: the container object to check
     '''
     if container is None:
-        return Response({})
+        raise NotFound
 
     if name is None:
         name = container.name
