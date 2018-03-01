@@ -222,8 +222,6 @@ def validate_secret(secret, payload, request_signature):
     secret = encode(secret)
     digest = hmac.new(secret,digestmod=hashlib.sha256,
                       msg=payload).hexdigest().encode('utf-8')
-    print(digest)
-    print(request_signature)
     return hmac.compare_digest(digest, request_signature)
 
 

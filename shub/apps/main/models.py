@@ -134,12 +134,30 @@ def has_view_permission(instance, request):
         return True
 
     # Collection Contributors (owners and contributors)
-    contributors = get_collection_users(instance)
+    contributors = instance.members()
     if user in contributors:
         return True
 
     return False
 
+
+def get_collection_users(instance):
+    '''get_collection_users will return a list of all owners and contributors
+        for a collection. The input instance can be a collection or container.
+
+        Parameters
+        ==========
+        instance: the collection or container object to use
+
+    '''
+    collection = instance
+    if isinstance(collection, Container):
+        collection = collection.collection
+
+    contributors = collection.contributors.all()
+    owners = collection.owners.all()
+    members = list(chain(contributors, owners))
+    return list(set(members))
 
 
 def delete_imagefile(sender,instance,**kwargs):
@@ -209,8 +227,7 @@ class Collection(models.Model):
     def members(self):
         '''a compiled list of members (contributors and owners)
         '''
-        members = list(chain(self.owners.all(), self.contributors.all()))
-        return list(set(members))
+        return get_collection_users(self)
 
 
     def mean_size(self, container_name=None):
@@ -343,6 +360,8 @@ class Container(models.Model):
                 extension = "img.gz"
         return "%s.%s" %(self.get_uri().replace('/','-'), extension)
 
+    def members(self):
+        return get_collection_users(self)
 
     def get_download_url(self):
         if self.image not in [None,""]:

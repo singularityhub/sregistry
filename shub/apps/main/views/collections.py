@@ -120,7 +120,8 @@ def new_collection(request):
                 # No special characters allowed
                 name = re.sub('[^0-9a-zA-Z]+', '-', name)
                 name = name.strip('-').lower()
-                collection = Collection(name=name)
+                secret = str(uuid.uuid4())
+                collection = Collection(name=name, secret=secret)
                 collection.save()
                 collection.owners.add(request.user)
                 collection.save()
