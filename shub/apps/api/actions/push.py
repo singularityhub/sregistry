@@ -59,6 +59,7 @@ class ContainerPushViewSet(ModelViewSet):
         if auth is None:
             raise PermissionDenied(detail="Authentication Required")
 
+        owner = get_request_user(auth)
         timestamp = generate_timestamp()
         payload = "push|%s|%s|%s|%s|" %(collection_name,
                                         timestamp,
@@ -68,13 +69,18 @@ class ContainerPushViewSet(ModelViewSet):
 
         # Validate Payload
 
-        if not validate_request(auth,payload,"push",timestamp):
+        if not validate_request(auth, payload, "push", timestamp):
             raise PermissionDenied(detail="Unauthorized")
 
         create_new=False
 
         try:
             collection = Collection.objects.get(name=collection_name)
+
+            # Only owners can push
+            if not owner in collection.owners.all():
+                raise PermissionDenied(detail="Unauthorized")
+
         except Collection.DoesNotExist:
             collection = None
             create_new = True

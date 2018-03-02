@@ -63,10 +63,15 @@ def _parse_header(auth):
     return values
         
 
-def get_request_user(auth):
+def get_request_user(auth, user=None):
     '''get the user for the request from an authorization object
+     
+       Parameters
+       ==========
+       auth: the authentication object
+       user: will return as None if not able to obtain from auth
+
     '''
-    user = None
     values = _parse_header(auth)
 
     if "Credential" not in values:
@@ -83,7 +88,34 @@ def get_request_user(auth):
     return user
 
 
-def has_permission(auth, instance=None, pull_permission=True):
+
+
+def has_push_permission(user, collection=None):
+    '''determine if the user has pull permission. This coincides with being
+       an owner of a collection, or a global admin or superuser.
+     
+       Parameters
+       ==========
+       user: the user to check
+       collection: the collection to check for
+
+    '''
+
+    if user.is_superuser or user.is_staff:
+        return True
+
+    # A new collection is pushable for a regular uesr if USER_COLLECTIONS True
+    if collection is None:
+        return USER_COLLECTIONS
+            
+    # Otherwise, only owners can push to an existing
+    if user in collection.owners.all():
+        return True
+ 
+    return False
+
+
+def has_pull_permission(user, collection=None):
     '''a simple function to parse an authentication challenge for the username,
        and determine if the user has permission to perform the action.
        The instance in question is a collection
@@ -96,47 +128,38 @@ def has_permission(auth, instance=None, pull_permission=True):
        pull_permission: if True, the user is asking to pull. If False, push
 
     '''
-    values = _parse_header(auth)
-
-    if "Credential" not in values:
-        bot.debug('Headers missing, request is invalid.')
-        return False
-
-    kind,username,ts = values['Credential'].split('/')
-    username = base64.b64decode(username)
-
-    try:
-        user = User.objects.get(username=username)
-    except:
-        bot.debug('%s is not a valid user, request invalid.' %username)
-        return False
-
-    # A new collection, created by user or staff
     if user.is_superuser or user.is_staff:
         return True
 
-    # An existing collection for a user with permission
+    # The collection must exist!
 
-    if instance is not None:
+    if collection is not None:
 
-        # Asking to pull
-        if pull_permission is True:
-            return instance.has_view_permission(user)
+        return collection.has_view_permission(user)
 
-        # Asking to push
-        else:
-
-            # Only owners can push to existing collection
-            if user in instance.owners.all():
-                return True
-
-    # A new collection, and users are allowed to create
-    else:
-        if pull_permission is False and USER_COLLECTIONS is True:
-            return True
- 
     return False
 
+
+
+def has_permission(auth, collection=None, pull_permission=True):
+    '''a simple function to parse an authentication challenge for the username,
+       and determine if the user has permission to perform the action.
+       The instance in question is a collection
+     
+       Parameters
+       ==========
+       auth: the challenge from the header
+       collection: the collection instance to check for
+       pull_permission: if True, the user is asking to pull. If False, push
+
+    '''
+    user = get_request_user(auth)
+    if user is None:
+        return False
+
+    if pull_permission is True:
+        return has_pull_permission(user, collection)
+    return has_push_permission(user, collection)
 
 
 
