@@ -126,10 +126,6 @@ def has_permission(auth, instance=None, pull_permission=True):
         # Asking to push
         else:
 
-            # Are users allowed?
-            if USER_COLLECTIONS is False:
-                return False
-
             # Only owners can push to existing collection
             if user in instance.owners.all():
                 return True
