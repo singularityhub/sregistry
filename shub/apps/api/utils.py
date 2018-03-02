@@ -86,6 +86,7 @@ def get_request_user(auth):
 def has_permission(auth, instance=None, pull_permission=True):
     '''a simple function to parse an authentication challenge for the username,
        and determine if the user has permission to perform the action.
+       The instance in question is a collection
      
        Parameters
        ==========
@@ -129,8 +130,15 @@ def has_permission(auth, instance=None, pull_permission=True):
             if USER_COLLECTIONS is False:
                 return False
 
-            return instance.has_edit_permission(user)
+            # Only owners can push to existing collection
+            if user in instance.owners.all():
+                return True
 
+    # A new collection, and users are allowed to create
+    else:
+        if pull_permission is False and USER_COLLECTIONS is True:
+            return True
+ 
     return False
 
 
