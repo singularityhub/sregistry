@@ -107,7 +107,6 @@ class ContainerPushViewSet(ModelViewSet):
  
         if create_new is True:
 
-            owner = get_request_user(auth)
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
                             tag=self.request.data.get('tag','latest'),
