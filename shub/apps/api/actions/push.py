@@ -87,7 +87,7 @@ class ContainerPushViewSet(ModelViewSet):
 
         # Validate User Permissions
 
-        if not has_permission(auth, collection):
+        if not has_permission(auth, collection, pull_permission=False):
             raise PermissionDenied(detail="Unauthorized")
         
         if collection is not None:

@@ -104,7 +104,7 @@ def has_push_permission(user, collection=None):
     if user.is_superuser or user.is_staff:
         return True
 
-    # A new collection is pushable for a regular uesr if USER_COLLECTIONS True
+    # A new collection is pushable for a regular user if USER_COLLECTIONS True
     if collection is None:
         return USER_COLLECTIONS
             
