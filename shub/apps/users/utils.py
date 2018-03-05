@@ -21,6 +21,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from rest_framework.authtoken.models import Token
 
+
+def get_user(uid):
+    ''' get a user based on id
+
+       Parameters
+       ==========
+       uid: the id of the user
+
+    '''
+    from shub.apps.users.models import User
+    keyargs = {'id':uid}
+    try:
+        user = User.objects.get(**keyargs)
+    except User.DoesNotExist:
+        user = None
+    else:
+        return user
+
+
 def get_usertoken(user):
     try:
         token = Token.objects.get(user=user)

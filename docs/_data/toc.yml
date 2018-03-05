@@ -11,17 +11,20 @@
     url: "/sregistry/faq"
     slug: faq
   - title: "Installation"
-    url: "/sregistry-cli/install"
+    url: "/sregistry/install"
     slug: install
   - title: "Setup"
     url: "/sregistry/setup"
     slug: setup
-  - title: "Credentials"
+  - title: "Accounts and Credentials"
     url: "/sregistry/credentials"
     slug: credentials
   - title: "Plugins"
     url: "/sregistry/plugins"
     slug: plugins
+  - title: "Collection Interface"
+    url: "/sregistry/interface"
+    slug: interface
   - title: "Clients"
     url: "/sregistry/client"
     slug: client

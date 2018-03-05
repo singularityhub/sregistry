@@ -6,6 +6,8 @@ permalink: /plugins
 toc: false
 ---
 
+# Plugins
+
 Singularity Registry supports added functionality through plugins. Plugins allow complex features,
 such as container scanning, LDAP authentication, to be added without complicating the core code of
 sregistry.
@@ -47,5 +49,5 @@ Use the others as examples to guide you.
 
 <div>
     <a href="/sregistry/credentials"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
-    <a href="/sregistry/client"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+    <a href="/sregistry/interface"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

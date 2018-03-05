@@ -6,11 +6,11 @@ permalink: /install
 toc: false
 ---
 
-# Deployment
+# Installation
 If starting from scratch, you need the following dependencies on the host:
 
- - [Docker](http://54.71.194.30:4111/engine/installation): a container engine
- - [docker-compose](http://54.71.194.30:4111/compose/install/): an orchestration tool for Docker images.
+ - [Docker](https://docs.docker.com/install/): a container engine
+ - [docker-compose](https://docs.docker.com/compose/install/): an orchestration tool for Docker images.
  - python: docker compose requires some additional python libraries, `ipaddress` and `oauth2client`
 
 Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
@@ -69,11 +69,7 @@ ENABLE_GITLAB_AUTH=False
 
 and you will need at least one to log in. I've found that Twitter works the fastest and easiest, and then Github and Google. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
 
-Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry.
-See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these.
-
-
- - [Github Developers](https://github.com/settings/developers)
+Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these.
 
 We will walk through the setup of each in detail. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Twitter was the only one that worked reliably without an actual domain for me.
 
@@ -101,15 +97,16 @@ Google is great in letting you specify multiple acceptable callback urls, so you
 For users to connect to Github, you need to [register a new application](https://github.com/settings/applications/new), and add the key and secret to your `secrets.py` file like this: 
 
 
-      http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
-      SOCIAL_AUTH_GITHUB_KEY = ''
-      SOCIAL_AUTH_GITHUB_SECRET = ''
+```
+http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
+SOCIAL_AUTH_GITHUB_KEY = ''
+SOCIAL_AUTH_GITHUB_SECRET = ''
 
-      # You shouldn't actually need this if we aren't using repos
-      # SOCIAL_AUTH_GITHUB_SCOPE = ["repo","user"]
+# You shouldn't actually need this if we aren't using repos
+# SOCIAL_AUTH_GITHUB_SCOPE = ["repo","user"]
+```
 
-
-The callback url should be in the format `http://127.0.0.1/complete/github`, and replace the localhost address with your domain. 
+The callback url should be in the format `http://127.0.0.1/complete/github`, and replace the localhost address with your domain. See the [Github Developers](https://github.com/settings/developers) pages to browse more information on the Github APIs.
 
 
 #### Gitlab OAuth2
@@ -171,6 +168,18 @@ REGISTRY_URI = "taco"
 ```
 
 The `HELP_CONTACT_EMAIL` should be an email address that you want your users (and/or visitors to your registry site, if public) to find if they need help. The `HELP_INSTITUTION_SITE` is any online documentation that you want to be found in that same spot. Finally, `REGISTRY_NAME` is the long (human readable with spaces) name for your registry, and `REGISTRY_URI` is a string, all lowercase, 12 or fewer characters to describe your registry.
+
+
+#### User Collections
+By default, any authenticated user in your Registry can create collections, and decide to make them public or private. If you would prefer to revoke this permission (meaning that only administrators can create and manage collections) then you would want to set this variable to `False`.
+
+```
+# Allow users to create public collections
+USER_COLLECTIONS=True
+```
+
+Setting `USER_COLLECTIONS` to False also means that users cannot create [Teams](/sregistry/setup#teams), which are organized groups of users that then can be added as contributors to individual collections. With this setting as True, any authenticated user, staff, or administrator can create and manage new collections and teams, and this is done by issuing a token.
+
 
 #### Registry Private
 By default Singularity Registry will provide public images, with an option to set them to private. If you are working with sensitive data and/or images, you might want all images to be private, with no option to make public. You can control that with the variable `PRIVATE_ONLY`.

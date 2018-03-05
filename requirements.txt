@@ -13,9 +13,10 @@ django-extensions
 django-taggit
 django-form-utils
 django-crispy-forms
+django-notifications-hq
 django-taggit-templatetags
 django-dirtyfields
-psycopg2
+psycopg2-binary
 numexpr
 shapely
 Pillow

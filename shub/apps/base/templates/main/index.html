@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h1 class="intro-lead" style="font-weight:500">{% if REGISTRY_NAME %}{{ REGISTRY_NAME }}{% else %}Make containers, run, done.{% endif %}</h1>
-                <p class="">A Registry for <a href="http://singularity.lbl.gov/" target="_blank"> Singularity</a> containers.</p>
+                <p class="">Your Registry for <a href="http://singularity.lbl.gov/" target="_blank"> Singularity</a> containers.</p>
             </div>
         </div>
     </div>
@@ -28,9 +28,8 @@
     <div class="fh5co-portfolio-description">
         <h2>Package your Analysis</h2>
         <p>Whether you are working from your own computer, or a cluster environment, you can capture your analysis components and save them to <a href="https://singularityware.github.io" target="_blank">reproducible containers</a></p>
-        <p><a href="https://github.com/singularityhub/singularityhub.github.io/wiki/Build-A-Container" 
-              target="_blank" 
-              class="btn btn-primary">Build a Container</a></p>
+        <p><a href="{% url 'collections' %}" 
+              class="btn btn-primary">View Collections</a></p>
     </div>
 </div>
 

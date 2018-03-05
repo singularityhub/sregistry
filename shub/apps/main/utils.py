@@ -47,16 +47,6 @@ def get_nightly_comparisons(date=None):
     return None
 
 
-def get_collection_users(collection):
-    '''get_collection_users will return a list of all owners and contributors for
-    a collection
-    :param collection: the collection object to use
-    '''
-    contributors = collection.contributors.all()
-    owner = collection.owner
-    return list(chain(contributors,[owner]))
-
-
 def write_tmpfile(memory_file):
     '''save tmp will extract a file to a temporary location
     '''

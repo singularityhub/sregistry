@@ -1,0 +1,34 @@
+{% if edit_permission %}
+<div class="row">
+    <div class="col-md-12">
+        <h4>Make Private</h4>
+
+        <p>A private collection can only be seen and managed by you and your collaborators.</p>
+        {% if collection.private %}
+        <a href="{% url 'make_collection_public' collection.id %}"
+               style="text-transform:none"
+               title="each user is allowed unlimited public collections.">
+               <button class="btn btn-success">Make Public</button></a>
+        {% else %}
+        <a href="{% url 'make_collection_private' collection.id %}"
+               style="text-transform:none"
+              title="each user is allowed one private collections.">
+             <button class="btn btn-warning">Make Private</button></a>
+        {% endif %}
+    </div>
+</div>
+<hr>
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Delete Collection</h4>
+        <p>Deleting a collection deletes the collection, all of its containers, apps, labels, and metadata.
+           This action cannot be undone.</p>
+        <a style="text-transform:none"
+               id="delete_collection"
+               title="Delete collection and all associated containers.">
+               <button class="btn btn-danger">Delete Collection</button></a>
+    </div>
+</div>
+
+{% endif %}

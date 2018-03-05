@@ -19,16 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-
-from django.conf.urls import url
-import shub.apps.main.views as views
-
-urlpatterns = [
-
-    url(r'^collection/demos/(?P<cid>\d+)/?$', views.collection_demos,name='collection_demos'),
-    url(r'^demos/(?P<did>\d+)/?$', views.view_demo,name='view_demo'),
-    url(r'^demos/(?P<cid>\d+)/(?P<did>.+?)/edit$/?$', views.edit_demo,name='edit_demo'),
-    url(r'^demos/(?P<cid>\d+)/new/?$$', views.edit_demo,name='new_demo')
-
-]
-
+from django.contrib.auth.admin import UserAdmin
+from django.contrib import admin
+from shub.apps.users.models import User
+admin.site.register(User, UserAdmin)

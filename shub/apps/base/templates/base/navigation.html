@@ -9,17 +9,19 @@
             <!-- Containers -->
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              Containers
+              Collections
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="{% url 'collections' %}">Collections</a></li>
+                <li><a href="{% url 'collections' %}">All Collections</a></li>
+                <li><a href="{% url 'my_collections' %}">My Collections</a></li>
+                <li role="separator" class="divider"></li>
                 <li><a href="{% url 'all_labels' %}">Labels</a></li>
                 <li><a href="{% url 'collection_stars' %}">Rankings</a></li>
                 <li><a href="{% url 'all_tags' %}">Topic Tags</a></li>
               </ul>
-            </li>
 
-            <li><a href="{% url 'about' %}">About</a></li>
+            </li>
+            <li><a href="{% url 'teams' %}">Teams</a></li>
             <li><a href="https://singularityhub.github.io/sregistry" target="_blank">User Guide</a></li>
 
             <!-- Tools Dropdown -->
@@ -30,10 +32,14 @@
               <ul class="dropdown-menu">
                 <li><a href="{% url 'containers_treemap' %}">Container Size Treemap</a></li>
                 <li role="separator" class="divider"></li>
+                <li><a href="https://singularityhub.github.io/sregistry-cli" target="_blank">Install Client</a></li>
+                <li><a href="https://singularityhub.github.io/" target="_blank">Community Tools</a></li>
                 <li><a href="https://github.com/singularityhub/singularityhub.github.io/issues/new" target="_blank">Get Help</a></li>
               </ul>
             </li>
 
+
+            <li><a href="{% url 'about' %}">About</a></li>
             <li><a href="{% url 'search' %}"><i class="fa fa-search"></i></a></li>
           </ul>
 
@@ -41,17 +47,24 @@
           <ul class="nav navbar-nav navbar-right" style="margin-right:20px">
             {% if request.user.is_authenticated %}
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ request.user.username }}
- <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" 
+                          data-toggle="dropdown" 
+                          role="button" 
+                          aria-haspopup="true" 
+                          aria-expanded="false">{{ request.user.username }}
+              <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'my_collections' %}">Containers</a></li>
+                <li><a href="{% url 'logout' %}">Log Out</a></li>
                 <li role="separator" class="divider"></li>
-                <!--<li class="dropdown-header">Settings</li>-->
                 <li><a href="/api">API</a></li>
-                {% if request.user.is_staff %}
+                {% if request.user.is_superuser %}
+                <li role="separator" class="divider"></li>
+                <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                {% endif %}
+                {% if request.user.is_authenticated %}
                 <li><a href="{% url 'token' %}">Token</a></li>
                 {% endif %}
-                <li><a href="{% url 'logout' %}">Log Out</a></li>
               </ul>
             </li>
             <li>{% gravatar user.email 30 %}</li>

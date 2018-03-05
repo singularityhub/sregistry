@@ -8,7 +8,7 @@
 {% block content %}
 <div id="fh5co-portfolio">
 
-    {% if request.user.is_staff and not request.user.is_anonymous %}
+    {% if not request.user.is_anonymous %}
     <div class="row" style='padding-bottom:30px'>
         <h2>API Token</h2>
         <small>push to the Registry</small>

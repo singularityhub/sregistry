@@ -121,7 +121,7 @@
                 {% endif %} 
 
                 {% if container.image %}
-                <a href="{% url 'download_container' container.id container.secret %}" 
+                <a href="{% url 'download_container' container.id container.collection.secret %}" 
                    target="_blank">
                    <button class="btn btn-sm btn-default">Download</button>
                 </a>

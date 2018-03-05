@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+{% include "style/sliders.html" %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+.active {
+    font-weight:400;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include "messages/message.html" %}
+
+<div id="fh5co-portfolio">
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                <a href="{% url 'collection_details' collection.id %}">
+                 <h3 class="title">{{ collection.name }}:{{ collection.tag }}</a>
+                  settings   
+                  </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <ul class="nav nav-pills nav-stacked" style="padding-left:25px">
+            <li class="active"><a data-toggle="pill" id="pill-builder" href="#users">Contributors</a></li>
+            <li><a data-toggle="pill" id="pill-badges" href="#badges">Badges</a></li>
+            <li><a data-toggle="pill" id="pill-danger" href="#danger">Danger Zone</a></li>
+        </ul>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-8">
+        <div class="tab-content"> 
+            <div id="users" class="tab-pane fade in active">
+               {% include "collections/_collection_settings_users.html" %}
+            </div>
+            <div id="badges" class="tab-pane fade">
+               {% include "collections/_collection_settings_badges.html" %}
+            </div>
+            <div id="danger" class="tab-pane fade">
+               {% include "collections/_collection_settings_admin.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script src="{% static "js/ace.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/clipboard.min.js"%}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script>
+
+$(document).ready(function(){
+
+    $('#contributors').DataTable();
+
+    $('.material-pagination').hide();
+
+    // Or the entire collection
+    $("#delete_collection").click(function(){
+        var response = confirm("Are you sure you want to delete this collection of builds?");
+        if (response == true) {
+           document.location = "{% url 'delete_collection' collection.id %}";
+        }
+    })
+
+
+})
+
+</script>
+{% endblock %}

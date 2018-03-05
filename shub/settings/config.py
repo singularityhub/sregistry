@@ -19,6 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
+# AUTHENTICATION
+
 # Which social auths do you want to use?
 ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=True
@@ -33,6 +35,10 @@ ENABLE_GITLAB_AUTH=False
 # See below for additional authentication module, e.g. LDAP that are
 # available, and configured, as plugins.
 
+
+
+# DOMAIN NAMES
+
 DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
 DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://','')
@@ -45,13 +51,23 @@ HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
+
+
+# PERMISSIONS
+
+# Allow users to create public collections
+USER_COLLECTIONS = True
+
 # Should registries by default be private, with no option for public?
 PRIVATE_ONLY = False
 
 # Should the default for a new registry be private or public?
 DEFAULT_PRIVATE = False
 
-# Database
+
+
+# DATABASE
+
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
@@ -64,18 +80,12 @@ DATABASES = {
     }
 }
 
-########################################################################
+
 # Visualizations
-########################################################################
 
 # After how many single containers should we switch to showing collections
 # only? >= 1000
 VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
-
-
-########################################################################
-# Logging
-########################################################################
 
 
 # Logging
@@ -87,7 +97,10 @@ LOGGING_SAVE_RESPONSES=True
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it
 
+
+
 # Available Plugins:
+
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
 PLUGINS_ENABLED = [
 #    'ldap_auth'

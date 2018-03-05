@@ -3,7 +3,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
-<meta http-equiv="refresh" content="30000">
+<meta http-equiv="refresh" content="60">
 <style>
 .btn-control {
   margin-top:20px !important;
@@ -52,60 +52,24 @@
     <!-- Container collection meta -->
     <div class="col-md-12">
         <div class="card">
-                 
-             <!-- Supplementary -->
-            <div class="btn-group">
-                <button class="btn btn-sm btn-default dropdown-toggle"
-                        data-toggle="dropdown"
-                        role="button"
-                        aria-haspopup="true"
-                        aria-expanded="false">
-                        Supplementary
-                        <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    {% if collection.demo_set.count > 0 %}
-                    <li>
-                        <a style="text-transform:none" href="{% url 'collection_demos' collection.id %}">Demos and Tutorials</a>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <a style="text-transform:none" href="{% url 'new_demo' collection.id %}">Add Demo or Tutorial</a>
-                    </li>
-                </ul>
-            </div>
+                
+            {% if request.user in collection.owners.all %}
+            <!-- Settings -->
+            <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
+            {% endif %}
 
-
-
-             <!-- Settings -->
-             {% if edit_permission %}
-             <div class="btn-group">
-             <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    Settings
-                    <span class="caret"></span>
-            </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'edit_collection' collection.id %}"
-                               style="text-transform:none"
-                               title="Add more metadata about your collection.">Edit</a></li>
-                  </ul>
-              
-              </div>
-              {% endif %}
-
-              {% if collection.containers.count > 0 %}
-              <a href="{% url 'collection_commands' collection.id %}"><button class="btn btn-sm btn-default">Usage</button></a>
-              <a href="{% url 'collection_treemap' collection.id %}">
-                      <button class="btn btn-sm btn-default">
-                      View</button></a>
-              {% endif %}
+            {% if collection.containers.count > 0 %}
+            <a href="{% url 'collection_commands' collection.id %}"><button class="btn btn-sm btn-default">Usage</button></a>
+            <a href="{% url 'collection_treemap' collection.id %}">
+                <button class="btn btn-sm btn-default">View</button></a>
+            {% endif %}
 
                 <!--{% if collection.active %}
                 <a data-toggle="tooltip" data-placement="right" title="the builder will build the most recent Singularity file in the base of master branch" href="#"><button class="btn btn-sm btn-default">Trigger Build</button></a>
                 {% else %}
                 <a data-toggle="tooltip" data-placement="right" title="the builder will build the most recent Singularity file in the base of master branch" href="#"><button class="btn btn-sm btn-default" disabled>Trigger Build</button></a>
                 {% endif %}-->
-            </div>
+        </div>
     </div>
  </div>
 
@@ -117,7 +81,7 @@
                    <div class="table-header">
                        <span class="table-title">Builds</span>
                    </div>
-                   <table id="datatable">
+                   <table id="datatable" width="100%">
                        <thead>
                            <tr>
                                <th></th>
@@ -199,7 +163,6 @@
                     </table>
                 </div>
             </div>
-            {% include "collections/collection_admin.html" %}
             {% else %}
             
             <!-- No containers! Tell the user to add one -->
@@ -207,9 +170,8 @@
                 <p style="padding-top:20px;padding-bottom:20px">This page will refresh automatically with new pushes.</p>
             </div>
 
-            {% include "collections/collection_admin.html" %}
-            {% endif %}
             {% include "social/share_links.html" %} 
+            {% endif %}
 
         </div>
 {% endblock %}

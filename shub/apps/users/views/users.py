@@ -23,12 +23,13 @@ from shub.apps.users.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
+from shub.settings import USER_COLLECTIONS
 
 @login_required
 def view_token(request):
-    if request.user.is_superuser or request.user.is_staff is True:
-        return render(request, 'users/token.html')
-    else:
-        messages.info(request,"You are not allowed to perform this action.")
-        return redirect('collections')
+    ''' tokens are valid for pushing (creating collections) and only available
+        to superusers or staff, unless USER_COLLECTIONS is set to True. If
+        user's are allowed to create collections, they can push to those for
+        which they are an owner or contributor. 
+    '''
+    return render(request, 'users/token.html')
