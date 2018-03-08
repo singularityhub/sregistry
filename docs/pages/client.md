@@ -23,7 +23,7 @@ For the older version, you can use Singularity Python. A demo is provided below,
 To install, you can do the following:
 
 ```
-git clone https://github.com/singularityware/sregistry-cli
+git clone https://github.com/singularityhub/sregistry-cli
 cd sregistry-cli
 python setup.py install
 ```
