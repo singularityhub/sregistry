@@ -1,0 +1,177 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+{% include "style/sliders.html" %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<style>
+.btn-sm {
+  margin-top:20px !important;
+}
+.active {
+    font-weight:400;
+}
+
+.nav-pills > li.active > a:focus {
+    color: #fff;
+    background-color: #2e609b !important;
+}
+.endpoint:hover {
+   color: white !important;
+}
+.nav-pills > li > a {
+   color: #2e609b;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+  color: #fff;
+  background-color: #2e609b !important;
+}
+</style>
+{% if 'globus' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="card" style="padding:20px">
+            <div class="header">
+                <a href="{% url 'profile' %}">
+                 <h3 class="title"><span style="color:#2e609b">{{ request.user.username }}:</span> </a>
+                  {% if container %} transfer {{ container.name }}{% else %}endpoints {% endif %} 
+                  </h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <ul class="nav nav-pills nav-stacked" style="padding-left:25px">
+            <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" style="background-color:#2e609b;color:white" href="#transfer">Transfer</a></li>
+            {% for ep in endpoints %}
+            <li><a style="color:#2e609b" data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">
+{{ ep.display_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-8">
+        <div class="tab-content"> 
+
+            <div id="transfer" class="tab-pane fade in active">
+
+                {% if container %}
+                    {% if endpoints|length == 0 %}
+                    <div class="row">
+                        <div class="col-md-12">
+                           <p class="alert alert-info">
+                               You don't have any shared or personal endpoints for transfer.
+                           </p> 
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% for ep in endpoints %}
+                    <div class="row">
+                        <div class="col-md-4" style="margin-top:15px">
+                            <p class="alert alert-info">
+                                <span class="label label-info">From</span> Singularity Hub
+                            </p>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="social-button btn-lg do_transfer transfer"
+                               data-endpoint="{{ ep.name }}"
+                               style="margin:auto; height:200px;cursor:pointer; color: #2e609b">
+                               <i class="fa fa fa-long-arrow-right fa-4x"></i></a>
+                        </div>
+                        <div class="col-md-4" style="margin-top:15px">
+                            <p class="alert alert-warning transfer {{ ep.name }}"
+                                <span class="label label-info">To</span> {{ ep.display_name }}
+                            </p>
+                        </div>
+                   </div>
+                   {% endfor %}
+                   {% else  %}
+                   <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                           <p class="alert alert-info">
+                             You are connected to Globus! Browse <a href="{% url 'collections' %}">container collections</a> and look for the <i class="fa fa-exchange" style="padding:20px"></i> icon to select an endpoint to transfer the image..
+                           </p> 
+                       </div>
+                   </div>
+               {% endif %}
+            </div>
+            <hr>
+            {% for ep in endpoints %}
+            <div id="{{ ep.name }}" style="color:#2e609b" class="tab-pane fade in">
+                {% include "globus/_transfer_endpoints.html" %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include "messages/notification.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script src="{% static "js/ace.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/clipboard.min.js"%}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script src="{% static "js/cookie-token.js" %}"></script>
+<script>
+
+$(document).ready(function(){
+
+  {% if active_tab %}
+    $('#pill-{{ active_tab }}').click()    
+  {% endif %}
+
+   $('.material-pagination').hide();
+   $(".browser-default").change(function(){
+       $('.material-pagination').hide();
+   })
+
+   {% if user.is_authenticated %}
+        console.log('What to move things around, {{ user.username }}?')
+
+        $(".do_transfer").click(function(){
+            var endpoint_id = $(this).attr('data-endpoint');
+            $('.transfer').removeClass('active_transfer');
+            $("." + endpoint_id).addClass('active_transfer');
+            do_transfer(endpoint_id);
+        })
+
+        function do_transfer(endpoint_id) {
+
+            $.ajax({
+                url : "{{ DOMAIN }}/globus/transfer/"+ endpoint_id +"/container/{{ container.id }}/",
+                type : "POST",
+
+                success : function(json) {
+                  $(".messages").append('<p class="alert alert-into">' + json['message'] + '</p>')
+                  $('.active_transfer').removeClass('alert-warning');
+                  $('.active_transfer').addClass('alert-info');
+                  console.log(json);
+                  toast_message(json['message']);
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+             });
+        }
+    {% endif %}
+
+})
+
+</script>
+{% endblock %}

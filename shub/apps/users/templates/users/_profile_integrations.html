@@ -1,0 +1,17 @@
+{% if 'globus' in PLUGINS_ENABLED %}
+        <div class="row">
+            <div class="col-md-6">  
+            {% if "globus" in profile.get_providers %}
+            <a class="social-button btn-lg" 
+               style="padding-left:60px; padding-right:30px"
+               id="globus-login" 
+               href="{% url 'globus_logout' %}">Disconnect Globus</a>
+            {% else %}
+            <a class="social-button btn-lg" 
+               id="globus-login" 
+               style="padding-left:60px; padding-right:30px"
+               href="{% url 'globus_login' %}?next=http://localhost{{ request.path }}">Connect Globus</a>
+            {% endif %}
+            </div>
+        </div>
+{% endif %}

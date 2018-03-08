@@ -21,13 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string 
-from shub.settings import (
-    REGISTRY_URI, 
-    REGISTRY_NAME, 
-    DOMAIN_NAME,
-    ADMINS
-)
-
+from django.conf import settings
 from shub.logger import bot
 from random import choice
 from datetime import datetime
@@ -45,7 +39,7 @@ class Command(BaseCommand):
     def handle(self,*args, **options):
 
         template = 'tools/template-registry.md'
-        outfile = os.path.basename(template).replace('template-', "%s-" %REGISTRY_URI)
+        outfile = os.path.basename(template).replace('template-', "%s-" % settings.REGISTRY_URI)
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         try:
             admin = ADMINS[0][0]
@@ -56,9 +50,9 @@ class Command(BaseCommand):
 
         # Generate a robot number
         number = choice(list(range(1,15571)))
-        context = {"REGISTRY_URI":REGISTRY_URI,
-                   "REGISTRY_NAME":REGISTRY_NAME,
-                   "DOMAIN_NAME": DOMAIN_NAME,
+        context = {"REGISTRY_URI": settings.REGISTRY_URI,
+                   "REGISTRY_NAME": settings.REGISTRY_NAME,
+                   "DOMAIN_NAME": settings.DOMAIN_NAME,
                    "AUTHOR": admin,
                    "NUMBER": number,
                    "DATETIME_NOW": now}

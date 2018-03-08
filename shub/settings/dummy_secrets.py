@@ -9,7 +9,6 @@
 #SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'
 
 
-
 # =============================================================================
 # Social Authentication
 # Set keys and secrets for social authentication methods that you have
@@ -113,3 +112,11 @@
 #    "is_superuser": "cn=superuser,ou=django,ou=groups,dc=example,dc=com"
 
 # }
+
+# Globus Assocation (globus)
+# Only required if 'globus' is added to PLUGINS_ENABLED in config.py
+
+#SOCIAL_AUTH_GLOBUS_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#SOCIAL_AUTH_GLOBUS_USERNAME="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org"
+#SOCIAL_AUTH_GLOBUS_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#GLOBUS_ENDPOINT_ID="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

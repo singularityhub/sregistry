@@ -65,7 +65,7 @@ def finalize_request(sender, instance, **kwargs):
     '''finalize request will add a counter object for the collection,
        method, and path'''
     from shub.apps.logs.utils import get_request_collection
-    from shub.settings import LOGGING_SAVE_RESPONSES
+    from django.conf import settings
     collection = get_request_collection(instance)
 
     if collection is not None:    
@@ -76,7 +76,7 @@ def finalize_request(sender, instance, **kwargs):
         counter.save()
 
     # Clear the response, we've saved minimal detail
-    if LOGGING_SAVE_RESPONSES is False:
+    if settings.LOGGING_SAVE_RESPONSES is False:
         instance.response = {}
 
 

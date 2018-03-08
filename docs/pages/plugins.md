@@ -21,6 +21,7 @@ The following plugins are included with sregistry, and can be enabled by adding 
 your registries' local `shub/settings/secrets.py` file.
 
  - [LDAP-AUTH](/sregistry/plugin-ldap): authentication against LDAP directories
+ - [GLOBUS-AUTH](/sregistry/plugin-globus): authentication using Globus
 
 
 ## Writing a Plugin
@@ -33,6 +34,7 @@ The plugin interface is currently under development. At present, each plugin:
  - Can provide additional, models, views, templates, static files.
  - Can register an additional `AUTHENTICATION_BACKEND` by specifying `AUTHENTICATION_BACKEND` in
    its `__init.py__`
+ - Must provide a documentation file and link in this README.
 
 Plugins are loaded when the plugin name is added to `PLUGINS_ENABLED` in `shub/settings/config.py`.
 A plugin mentioned here is added to `INSTALLED_APPS` at runtime, and any `AUTHENTICATION_BACKEND`

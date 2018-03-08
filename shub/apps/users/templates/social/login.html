@@ -6,6 +6,9 @@
 {% if 'ldap_auth' in PLUGINS_ENABLED %}
     <link rel="stylesheet" href="{% static "css/ldap_auth.css"%}">
 {% endif %}
+{% if 'globus' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
+{% endif %}
 
 {% endblock %}
 
@@ -19,8 +22,9 @@
     <div>
 
        <!-- If all credentials provided, give user full access -->
-       <a href="{% url 'my_collections' %}"><button class="btn btn-default">My Container Collections</button></a>
-       <a href="{% url 'logout' %}"><button class="btn btn-default">Logout</button></a>
+       <a href="{% url 'my_collections' %}"><button class="btn btn-default btn-sm">My Container Collections</button></a>
+       <a href="{% url 'profile' %}"><button class="btn btn-default btn-sm">Profile</button></a>
+       <a href="{% url 'logout' %}"><button class="btn btn-default btn-sm">Logout</button></a>
 
     {% else %}
 

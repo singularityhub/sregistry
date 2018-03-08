@@ -21,8 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 from shub.apps.main.models import Container
-from sregistry.utils import read_json
-from shub.settings import MEDIA_ROOT
+from singularity.utils import read_json
 
 from itertools import chain
 import os
