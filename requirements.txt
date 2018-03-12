@@ -34,7 +34,7 @@ django-chosen
 opbeat
 django-hstore==1.3.5
 django-datatables-view
-sregistry==0.0.74
+sregistry[registry]==0.0.74
 django-gravatar2
 pygments
 google-api-python-client
