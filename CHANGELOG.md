@@ -13,8 +13,9 @@ represented by the pull requests that fixed them. Critical items to know are:
  - changed behaviour (recipe sections work differently)
 
 
-## [v1.x](https://github.com/singularityhub/singularity-python/tree/master) (master)
+## [master](https://github.com/singularityhub/singularity-python/tree/master) (master)
 
+ - updating sregistry-cli to version 0.0.74
  - superusers and admins (global) can now create collections via a button in the interface
  - demos and customizated supplementary content removed - not used
  - user customization possible by superusers in the admin panel
