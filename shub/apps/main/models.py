@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -31,8 +31,10 @@ from django.db import models
 from django.db.models import Q, DO_NOTHING
 from django.db.models.signals import post_delete, pre_delete
 from django.db.models import Avg, Sum
+from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
+from django.http import HttpRequest
 from polymorphic.models import PolymorphicModel
 from taggit.managers import TaggableManager
 
@@ -68,49 +70,94 @@ def get_privacy_default():
     return DEFAULT_PRIVATE
 
 
-def has_edit_permission(instance,request):
+def has_edit_permission(instance, request):
     '''can the user of the request edit the collection or container?
-    '''
-    if request.user.is_authenticated() is False:
-        return False
 
-    # Global Admins
-    if request.user.admin is True:
-        return True
+       Parameters
+       ==========
+       instance: the container or collection to check
+       request: the request with the user object OR the user object
 
-    if request.user.is_superuser is True:
-        return True
-
-    # Collection Contributors
-    contributors = get_collection_users(instance)
-    if request.user in contributors:
-        return True
-    return False
-
-
-def has_view_permission(instance,request):
-    '''can the user of the request edit the collection or container?
     '''
     if isinstance(instance, Container):
         instance = instance.collection
 
+    user = request
+    if isinstance(user, HttpRequest):
+        user = request.user
+
+    # Visitor
+    if not user.is_authenticated():
+        return False
+
+    # Global Admins
+    if user.is_staff is True:
+        return True
+
+    if user.is_superuser is True:
+        return True
+
+    # Collection Owners can edit
+    if user in instance.owners.all():
+        return True
+    return False
+
+
+def has_view_permission(instance, request):
+    '''can the user of the request view the collection or container? This
+       permission corresponds with being a contributor, and being able to
+       pull
+
+       Parameters
+       ==========
+       instance: the container or collection to check
+       request: the request with the user object
+
+    '''
+    if isinstance(instance, Container):
+        instance = instance.collection
+
+    user = request
+    if isinstance(user, HttpRequest):
+        user = request.user
+
+    # All public collections are viewable
     if instance.private is False:
         return True
 
-    if request.user.is_authenticated() is False:
+    # At this point we have a private collection
+    if not user.is_authenticated():
         return False
         
-    # Global Admins
-    if request.user.admin is True or request.user.is_superuser:
+    # Global Admins and Superusers
+    if user.is_staff or user.is_superuser:
         return True
 
-    # Collection Contributors
-    contributors = get_collection_users(instance)
-    if request.user in contributors:
+    # Collection Contributors (owners and contributors)
+    contributors = instance.members()
+    if user in contributors:
         return True
 
     return False
 
+
+def get_collection_users(instance):
+    '''get_collection_users will return a list of all owners and contributors
+        for a collection. The input instance can be a collection or container.
+
+        Parameters
+        ==========
+        instance: the collection or container object to use
+
+    '''
+    collection = instance
+    if isinstance(collection, Container):
+        collection = collection.collection
+
+    contributors = collection.contributors.all()
+    owners = collection.owners.all()
+    members = list(chain(contributors, owners))
+    return list(set(members))
 
 
 def delete_imagefile(sender,instance,**kwargs):
@@ -118,9 +165,11 @@ def delete_imagefile(sender,instance,**kwargs):
         if hasattr(instance.image,'datafile'):
             instance.image.datafile.delete()
 
+
+
 #######################################################################################################
 # Collections #########################################################################################
-#######################################################################################################
+#########################################b##############################################################
 
 class Collection(models.Model):
     '''A container collection is a build (multiple versions of the same image) created by an owner,
@@ -139,14 +188,17 @@ class Collection(models.Model):
     metadata = JSONField(default={}) # open field for metadata about a collection
 
     # Users
-    owner = models.ForeignKey('users.User', blank=True, default=None, null=True)
+    owners = models.ManyToManyField('users.User', blank=True, default=None,
+                                     related_name="container_collection_owners",
+                                     related_query_name="owners")
+
     contributors = models.ManyToManyField('users.User',
                                           related_name="container_collection_contributors",
                                           related_query_name="contributor", 
                                           blank=True,
                                           help_text="users with edit permission to the collection",
                                           verbose_name="Contributors")
-
+    
     # By default, collections are public
     private = models.BooleanField(choices=PRIVACY_CHOICES, 
                                   default=get_privacy_default,
@@ -170,6 +222,12 @@ class Collection(models.Model):
         else:
             queryset = self.containers.all()
         return [x.metadata['size_mb'] for x in queryset if 'size_mb' in x.metadata]
+
+
+    def members(self):
+        '''a compiled list of members (contributors and owners)
+        '''
+        return get_collection_users(self)
 
 
     def mean_size(self, container_name=None):
@@ -210,11 +268,12 @@ class Collection(models.Model):
                                    instance=self)
 
 
-    def has_view_permission(self,request):
+    def has_view_permission(self, request):
         '''can the user of the request view the collection
         '''
         return has_view_permission(request=request,
                                    instance=self)
+
 
 
     def has_collection_star(self,request):
@@ -235,8 +294,9 @@ class Collection(models.Model):
     class Meta:
         app_label = 'main'
         permissions = (
-            ('del_container_collection', 'Delete container collection'),
-            ('edit_container_collection', 'Edit container collection')
+            ('pull_collection', 'Pull container collection'),
+            ('change_privacy_collection', 'Change the privacy of a collection'),
+            ('push_collection', 'Push container collection')
         )
 
 
@@ -300,6 +360,8 @@ class Container(models.Model):
                 extension = "img.gz"
         return "%s.%s" %(self.get_uri().replace('/','-'), extension)
 
+    def members(self):
+        return get_collection_users(self)
 
     def get_download_url(self):
         if self.image not in [None,""]:
@@ -341,24 +403,6 @@ class Container(models.Model):
                                    instance=self.collection)
 
 
-class Demo(models.Model):
-    '''A demo is an supplementary materil (asciicast, youtube video, or other) provided by a user.
-    '''
-    description = models.CharField(max_length=250,null=False,blank=False)
-    creation_date = models.DateTimeField('date demo created', auto_now=True)
-    collection = models.ForeignKey(Collection,null=False,blank=False)
-    kind = models.CharField(max_length=250,choices=DEMO_KINDS)
-    url = models.CharField(max_length=250,null=False,blank=False,
-                           help_text="URL for an asciicast, video, or other kind of documentation.")
-    tags = TaggableManager()
-
-    class Meta:
-        app_label = 'main'
- 
-    def get_absolute_url(self):
-        return_id = self.id
-        return reverse('view_demo', args=[str(return_id)])
-
 
 #################################################################################
 # Ratings and Sharing ###########################################################
@@ -385,7 +429,7 @@ class Share(models.Model):
     '''
     container = models.ForeignKey(Container)
     expire_date = models.DateTimeField('share expiration date')
-    secret = models.CharField(max_length=250,null=True,blank=True)
+    secret = models.CharField(max_length=250, null=True, blank=True)
 
     def generate_secret(self):
         self.secret = str(uuid.uuid4())

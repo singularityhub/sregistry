@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -80,10 +80,14 @@ class ImageFile(models.Model):
     tag = models.CharField(max_length=200, null=False)
     metadata = models.TextField(default='') # will be converted to json
     name = models.CharField(max_length=200, null=False)
+    owner_id = models.CharField(max_length=200, null=True)
     datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
 
     def get_label(self):
         return "imagefile"
+
+    def get_abspath(self):
+        return os.path.join(settings.MEDIA_ROOT, self.datafile.name)
 
     class Meta:
         app_label = 'api'

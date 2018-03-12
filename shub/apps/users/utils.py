@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from rest_framework.authtoken.models import Token
+
+
+def get_user(uid):
+    ''' get a user based on id
+
+       Parameters
+       ==========
+       uid: the id of the user
+
+    '''
+    from shub.apps.users.models import User
+    keyargs = {'id':uid}
+    try:
+        user = User.objects.get(**keyargs)
+    except User.DoesNotExist:
+        user = None
+    else:
+        return user
+
 
 def get_usertoken(user):
     try:

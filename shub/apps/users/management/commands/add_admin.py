@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -49,10 +49,8 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             raise CommandError("This username does not exist.")
 
-        if user.admin is True: #and user.manager is True:
+        if user.is_staff is True: #and user.manager is True:
             raise CommandError("This user can already manage and build.")        
-
-        user.admin = True
-        #user.manager = True
-        user.save()
-        bot.debug("%s can now manage and build." %(user.username))
+        else:
+            user = User.objects.add_staff(user)
+            bot.debug("%s can now manage and build." %(user.username))

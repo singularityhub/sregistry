@@ -8,7 +8,7 @@
 {% block content %}
 <div id="fh5co-portfolio">
 
-    {% if request.user.admin and not request.user.is_anonymous %}
+    {% if not request.user.is_anonymous %}
     <div class="row" style='padding-bottom:30px'>
         <h2>API Token</h2>
         <small>push to the Registry</small>
@@ -26,12 +26,15 @@
                    <i class="fa fa-copy"></i></button>
        </div>
        <div style="padding-top:20px; overflow:scroll;" class="well col-md-11" id="token_well" role="alert">
-            {  "token": 
+            { "registry":
+               {
+                "token": 
                      "{{ request.user.token }}",
                 "username": "{{ request.user.username }}"{% if domain %},{% endif %} 
                 {% if domain %}
                 "base": "{{ domain }}"
                 {% endif %}
+               }
             }
        </div>
     </div>

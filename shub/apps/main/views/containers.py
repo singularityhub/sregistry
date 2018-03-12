@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -52,24 +52,23 @@ def get_container(cid):
 
 
 
-###############################################################################################
-# HELPERS #####################################################################################
-###############################################################################################
+################################################################################
+# HELPERS ######################################################################
+################################################################################
 
-# View container, as a graphic
-def view_container(request,cid):
+def view_container(request, cid):
     container = get_container(cid)
 
-    if container.collection.private == True and request.user != container.collection.owner:
+    if not container.has_view_permission(request):
         messages.info(request,"This container is private.")
         return redirect('collections')
 
-    messages.info(request,"We haven't decided what we want for this view yet! Do you have ideas?")
+    messages.info(request,"We don't know what to do for this view yet, ideas?")
     return redirect('collection_details',cid=container.collection.id)
 
 
-def view_named_container(request,collection,name,tag):
-    '''view a specific container based on a collection, container, and tag name'''
+def view_named_container(request, collection, name, tag):
+    '''view a specific container based on a collection, container, and tag'''
     try:
         container = Container.objects.get(collection__name=collection,
                                           name=name,
@@ -81,11 +80,10 @@ def view_named_container(request,collection,name,tag):
     return container_details(request,container.id)
 
 
-# Look at container spec,log,asciicast (details)
 def container_details(request,cid):
     container = get_container(cid)
 
-    if container.collection.private == True and request.user != container.collection.owner:
+    if not container.has_view_permission(request):
         messages.info(request,"This container is private.")
         return redirect('collections')
 
@@ -97,32 +95,29 @@ def container_details(request,cid):
     return render(request, 'containers/container_details.html', context)
 
 
-# Look only at container log
-def delete_container(request,cid):
-    '''delete a container, including it's corresponding files, from google
-    storage
+def delete_container(request, cid):
+    '''delete a container, including it's corresponding files
     '''
     container = get_container(cid)
-    collection = container.collection
 
-    if request.user != collection.owner:
+    if not container.has_edit_permission(request):
         messages.info(request,"This action is not permitted.")
         return redirect('collections')
 
-    # Delete files and running instance, and container
+    container.delete()
     messages.info(request,'Container successfully deleted.')
-    return redirect(collection.get_absolute_url())
+    return redirect(container.collection.get_absolute_url())
 
 
-# View container tags
-def container_tags(request,cid):
+def container_tags(request, cid):
+    '''view container tags'''
     container = get_container(cid)
 
-    if container.collection.private == True and request.user != container.collection.owner:
+    if not container.has_view_permission(request):
         messages.info(request,"This container is private.")
         return redirect('collections')
 
-    context = {"container":container}
+    context = {"container": container}
     return render(request, 'containers/container_tags.html', context)
 
 

@@ -1,0 +1,30 @@
+  - title: "Home"
+    url: "/sregistry/"
+    slug: sregistry
+  - title: "Introduction"
+    url: "/sregistry/intro"
+    slug: intro
+  - title: "Use Cases"
+    url: "/sregistry/use-cases"
+    slug: use-cases
+  - title: "Frequently Asked Questions"
+    url: "/sregistry/faq"
+    slug: faq
+  - title: "Installation"
+    url: "/sregistry/install"
+    slug: install
+  - title: "Setup"
+    url: "/sregistry/setup"
+    slug: setup
+  - title: "Accounts and Credentials"
+    url: "/sregistry/credentials"
+    slug: credentials
+  - title: "Plugins"
+    url: "/sregistry/plugins"
+    slug: plugins
+  - title: "Collection Interface"
+    url: "/sregistry/interface"
+    slug: interface
+  - title: "Clients"
+    url: "/sregistry/client"
+    slug: client

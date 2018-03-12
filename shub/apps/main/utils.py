@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from shub.apps.main.models import Container
-from singularity.utils import read_json
+from sregistry.utils import read_json
 from shub.settings import MEDIA_ROOT
 
 from itertools import chain
@@ -45,16 +45,6 @@ def get_nightly_comparisons(date=None):
     if os.path.exists(base_name):
         return read_json(base_name)
     return None
-
-
-def get_collection_users(collection):
-    '''get_collection_users will return a list of all owners and contributors for
-    a collection
-    :param collection: the collection object to use
-    '''
-    contributors = collection.contributors.all()
-    owner = collection.owner
-    return list(chain(contributors,[owner]))
 
 
 def write_tmpfile(memory_file):

@@ -111,6 +111,15 @@
 
 # Map LDAP group membership into Django admin flags
 #AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-#    # Anyone in this group is a superuser for the app
 #    "is_superuser": "cn=sregistry_admin,ou=groups,dc=example,dc=com"
 #}
+
+# AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+
+#    # Anyone in this group can get a token to manage images, not superuser
+#    "is_staff": "cn=staff,ou=django,ou=groups,dc=example,dc=com",
+#
+#    # Anyone in this group is a superuser for the app
+#    "is_superuser": "cn=superuser,ou=django,ou=groups,dc=example,dc=com"
+
+# }

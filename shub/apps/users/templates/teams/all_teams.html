@@ -1,0 +1,115 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<style>
+span.odd { background: #FFF; }
+span.even { background: rgba(91, 192, 222, 0.32); }
+</style>
+{% endblock %}
+
+
+{% block content %}
+{% include 'messages/message.html' %}
+
+<div class="row" style="margin-top:30px">
+
+    <div class="col-md-12">
+
+            <header>
+                <h2>Teams <i data-toggle="tooltip" style="font-size:20px" title="These are all teams on the registry" class="fa fa-2x fa-question-circle"></i></h2>
+                {% if not teams %}
+                <p>A Team is a group of users that can be assigned as collaborators to collections.<br>{% if has_create_permission %}There aren't yet any teams! Why don't you <a href="{% url 'new_team' %}">make one?{% endif %}</p>
+                {% else %}
+                <p>A Team is a group of users that can be assigned as collaborators to collection.</p>
+                {% endif %}
+            </header>
+        {% if has_create_permission %}<a href="{% url 'new_team' %}"><button class="btn btn-primary btn-sm" >Create a Team</button></a>{% endif %}
+
+    </div>
+</div>
+
+{% if teams %}
+<div class="row" style="margin-top:30px">
+
+            <div class="col-md-12" 
+                 class="table card material-table mdl-data-table--selectable">
+
+            <table id="teams_table" 
+                   class="table"
+                   cellspacing="0" 
+                   width="100%" 
+                   style="padding-top:20px"> 
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                    <th></th>
+               </tr>
+           </thead>
+           <tbody>
+           {% for team in teams %}
+               <tr>
+                   <td><a href="{% url 'team_details' team.id %}">{{ team.name }}</a></td>
+                   <td><a href="{% url 'team_details' team.id %}">
+                           <button class="btn btn-primary btn-xs" 
+                                   type="button" id="team_details">View</button></a>
+
+                       {% if request.user in team.get_members %}{% else %}
+                       {% if team.permission == "open" %}
+                       <a href="{% url 'join_team' team.id %}">
+                          <button class="btn btn-info btn-secondary" 
+                                  type="button" id="join_team">Join</button>
+                       </a>{% endif %}{% endif%}
+                   </td>
+                   <td>{% if team.team_image %}
+                       <img width="50px" src="{{ team.team_image.url }}">
+                       {% else %}
+                       <img width="50px" src="{% static 'img/robot_package.png' %}">
+                       {% endif %}
+                   </td>
+               </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script>
+$(document).ready(function(){
+
+    // Enable tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('#teams_table').DataTable( {
+       pageLength: 100, 
+       columnDefs: [
+            {
+                targets: [ 0, 1, 2 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            },
+          ],
+       columns: [
+            { "width": "20%" },
+            { "width": "30%" },
+            { "width": "50%" },
+       ]
+    } );
+
+    $(".browser-default").change(function(){
+        $('.material-pagination').hide();
+    })
+
+    $('.material-pagination').hide();
+
+})
+</script>
+{% endblock %}

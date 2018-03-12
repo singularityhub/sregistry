@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ class Command(BaseCommand):
 
         if user.is_superuser is False:
             raise CommandError("This user already is not a superuser.")        
-
-        user.is_superuser = False
-        bot.debug("%s is no longer a superuser." %(user.username))
-        user.save()
+        else:
+            user.is_superuser = False
+            bot.debug("%s is no longer a superuser." %(user.username))
+            user.save()

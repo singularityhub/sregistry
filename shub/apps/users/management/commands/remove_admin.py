@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -49,10 +49,9 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             raise CommandError("This username does not exist.")
 
-        if user.admin is False: #and user.manager is False:
+        if user.is_staff is False: #and user.manager is False:
             raise CommandError("This user already can't manage and build.")        
-
-        user.admin = False
-        #user.manager = False
-        bot.debug("%s can no longer manage and build." %(user.username))
-        user.save()
+        else:
+            user.is_staff = False
+            bot.debug("%s can no longer manage and build." %(user.username))
+            user.save()

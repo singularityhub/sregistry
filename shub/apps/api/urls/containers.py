@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,10 @@ from rest_framework.exceptions import (
     PermissionDenied,
     NotFound
 )
+
+from shub.apps.api.utils import validate_request
+from sregistry.auth import generate_timestamp
+
 from django.urls import reverse
 from django.http import Http404
 
@@ -33,6 +37,7 @@ from shub.apps.main.models import Container, Collection
 from rest_framework import generics
 from shub.apps.logs.mixins import LoggingMixin
 from shub.apps.main.query import container_lookup
+from shub.apps.api.utils import has_permission
 
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -58,8 +63,9 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         return container.collection.name
 
     def get_download_url(self, container):
+        secret = container.collection.secret
         url = reverse('download_container', kwargs= {'cid':container.id,
-                                                     'secret':container.secret})
+                                                     'secret':secret})
         return "%s%s" %(DOMAIN_NAME,url)
 
     class Meta:
@@ -133,7 +139,6 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
                                     name=name,
                                     tag=tag)
 
-        print(container)
         if container is None:
             raise NotFound(detail="Container Not Found")
 
@@ -149,17 +154,58 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
 
     def get(self, request, collection, name, tag=None):
         container = self.get_object(collection=collection, 
-                                    name=name,tag=tag)
-        if container is None:
-            return Response({})
+                                    name=name, tag=tag)
+        return _container_get(request, container, name, tag)
 
-        serializer = SingleContainerSerializer(container)
-        is_private = container.collection.private
-        if not is_private: 
-            return Response(serializer.data)
-    
-        return Response(400)
 
+def _container_get(request, container, name=None, tag=None):
+    '''container get is the shared function for getting a container based
+       on a name or an id. It validates the request and returns a response.
+       
+       Parameters
+       ==========
+       request: the request from the view with the user
+       container: the container object to check
+    '''
+    if container is None:
+        raise NotFound
+
+    if name is None:
+        name = container.name
+
+    if tag is None:
+        tag = container.tag
+
+    serializer = SingleContainerSerializer(container)
+    is_private = container.collection.private
+
+    # All public images are pull-able
+
+    if not is_private:
+        return Response(serializer.data)
+
+    # Determine if user has permission to get if private
+    auth = request.META.get('HTTP_AUTHORIZATION')
+
+    if auth is None:
+        raise PermissionDenied(detail="Authentication Required")
+
+    # Validate User Permissions - must have view to pull private image
+
+    if not has_permission(auth, container.collection):
+        raise PermissionDenied(detail="Unauthorized")
+
+    timestamp = generate_timestamp()
+    payload = "pull|%s|%s|%s|%s|" %(container.collection.name,
+                                    timestamp,
+                                    name,
+                                    tag)
+
+    if validate_request(auth, payload, "pull", timestamp):
+        return Response(serializer.data)    
+
+
+    return Response(400)
 
 
 class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
@@ -180,15 +226,7 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         
     def get(self, request, cid):
         container = self.get_object(cid)
-        if container is None:
-            return Response({})
-
-        serializer = SingleContainerSerializer(container)
-        is_private = container.collection.private
-        if not is_private: 
-            return Response(serializer.data)
-    
-        return Response(400)
+        return _container_get(request, container)
 
 
 #########################################################################

@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -19,13 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-
-from .demos import (
-    edit_demo,
-    view_demo,
-    collection_demos
-)
-
 from .download import (
     download_container,
     download_share,
@@ -35,13 +28,15 @@ from .download import (
 from .collections import (
     all_collections,
     collection_commands,
+    collection_settings,
     delete_collection,
     edit_collection,
+    edit_contributors,
     get_collection,    
     make_collection_private,
     make_collection_public,
+    new_collection,
     my_collections,
-    user_collections,
     view_collection
 )
 

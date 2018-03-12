@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -28,8 +28,9 @@ from rest_framework.permissions import (
     Http404
 )
 
-from singularity.utils import write_file
+from sregistry.utils import write_file
 from shub.apps.users.models import User
+from shub.settings import USER_COLLECTIONS
 
 from datetime import datetime, timezone
 import hashlib
@@ -40,6 +41,127 @@ import requests
 import shutil
 import tempfile
 import re
+
+
+
+def _parse_header(auth):
+    '''parse a header and check for the correct digest.
+
+       Parameters
+       ==========
+       auth: the challenge from the header      
+    '''
+
+    header,content = auth.split(' ')
+    content = content.split(',')
+    values = dict()
+    for entry in content:
+         key,val = re.split('=', entry, 1)
+         values[key] = val
+
+    values['header'] = header
+    return values
+        
+
+def get_request_user(auth, user=None):
+    '''get the user for the request from an authorization object
+     
+       Parameters
+       ==========
+       auth: the authentication object
+       user: will return as None if not able to obtain from auth
+
+    '''
+    values = _parse_header(auth)
+
+    if "Credential" not in values:
+        bot.debug('Headers missing, request is invalid.')
+        return user
+
+    kind,username,ts = values['Credential'].split('/')
+    username = base64.b64decode(username)
+
+    try:
+        user = User.objects.get(username=username)
+    except:
+        bot.debug('%s is not a valid user, request invalid.' %username)
+    return user
+
+
+
+
+def has_push_permission(user, collection=None):
+    '''determine if the user has pull permission. This coincides with being
+       an owner of a collection, or a global admin or superuser.
+     
+       Parameters
+       ==========
+       user: the user to check
+       collection: the collection to check for
+
+    '''
+
+    if user.is_superuser or user.is_staff:
+        return True
+
+    # A new collection is pushable for a regular user if USER_COLLECTIONS True
+    if collection is None:
+        return USER_COLLECTIONS
+            
+    # Otherwise, only owners can push to an existing
+    if user in collection.owners.all():
+        return True
+ 
+    return False
+
+
+def has_pull_permission(user, collection=None):
+    '''a simple function to parse an authentication challenge for the username,
+       and determine if the user has permission to perform the action.
+       The instance in question is a collection
+     
+       Parameters
+       ==========
+       auth: the challenge from the header
+       instance: the instance to check for
+       permission: the permission needed
+       pull_permission: if True, the user is asking to pull. If False, push
+
+    '''
+    if user.is_superuser or user.is_staff:
+        return True
+
+    # The collection must exist!
+
+    if collection is not None:
+
+        return collection.has_view_permission(user)
+
+    return False
+
+
+
+def has_permission(auth, collection=None, pull_permission=True):
+    '''a simple function to parse an authentication challenge for the username,
+       and determine if the user has permission to perform the action.
+       The instance in question is a collection
+     
+       Parameters
+       ==========
+       auth: the challenge from the header
+       collection: the collection instance to check for
+       pull_permission: if True, the user is asking to pull. If False, push
+
+    '''
+    user = get_request_user(auth)
+    if user is None:
+        return False
+
+    if pull_permission is True:
+        return has_pull_permission(user, collection)
+    return has_push_permission(user, collection)
+
+
 
 def validate_request(auth,
                      payload,
@@ -59,28 +181,22 @@ def validate_request(auth,
     Returns
     =======
     True if the request is valid, False if not
+
     '''
+    values = _parse_header(auth)
 
-    header,content = auth.split(' ')
-    content = content.split(',')
-    values = dict()
-    for entry in content:
-         key,val = re.split('=', entry, 1)
-         values[key] = val
-
-    if header != 'SREGISTRY-HMAC-SHA256':
-        bot.debug('Invalid SREGISTRY Authentication scheme, request invalid.')
+    if values['header'] != 'SREGISTRY-HMAC-SHA256':
+        print('Invalid SREGISTRY Authentication scheme, request invalid.')
         return False
 
     if "Credential" not in values or "Signature" not in values:
-        bot.debug('Headers missing, request is invalid.')
+        print('Headers missing, request is invalid.')
         return False
 
-    bot.debug(values['Credential'])
     kind,username,ts = values['Credential'].split('/')
     username = base64.b64decode(username)
     if kind != sender:
-        bot.debug('Mismatch between request kind (%s) and sender (%s), request invalid.' %(kind,sender))
+        print('Mismatch: type (%s) sender (%s) invalid.' %(kind,sender))
         return False
 
     if timestamp is not None:
@@ -91,17 +207,12 @@ def validate_request(auth,
     try:
         user = User.objects.get(username=username)
     except:
-        bot.debug('%s is not a valid user, request invalid.' %username)
+        print('%s is not a valid user, request invalid.' %username)
         return False
-
-    if superuser is True:
-        if user.admin is False:
-            bot.debug('User %s is not a superuser, request invalid.' %user.username)
-            return False
 
     request_signature = values['Signature']
     secret = user.token()
-    return validate_secret(secret,payload,request_signature)
+    return validate_secret(secret, payload, request_signature)
 
 
 def encode(item):
@@ -116,7 +227,7 @@ def encode(item):
     return item
 
 
-def validate_secret(secret,payload,request_signature):
+def validate_secret(secret, payload, request_signature):
     ''' use hmac digest to compare a request_signature to one generated
     using a server secret against a payload. Valid means matching.
 
@@ -141,16 +252,10 @@ def validate_secret(secret,payload,request_signature):
     return hmac.compare_digest(digest, request_signature)
 
 
-def JsonResponseMessage(status=500,message=None,status_message='error'):
-    response = {'status':status_message}
-    if message != None:
-        response['message'] = message
-    return JsonResponse(response, status=500)
 
-
-#####################################################################################
+################################################################################
 # PERMISSIONS
-#####################################################################################
+################################################################################
 
 
 class ObjectOnlyPermissions(DjangoObjectPermissions):

@@ -1,8 +1,8 @@
 '''
 
-Copyright (C) 2017 The Board of Trustees of the Leland Stanford Junior
+Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
 University.
-Copyright (C) 2017 Vanessa Sochat.
+Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -26,8 +26,12 @@ from shub.apps.main.models import Collection,Container
 from rest_framework.viewsets import ModelViewSet
 from shub.apps.api.models import ImageFile
 from rest_framework import serializers
-from shub.apps.api.utils import validate_request
-from singularity.registry.auth import generate_timestamp
+from shub.apps.api.utils import ( 
+    validate_request, 
+    has_permission, 
+    get_request_user
+)
+from sregistry.auth import generate_timestamp
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -50,41 +54,64 @@ class ContainerPushViewSet(ModelViewSet):
         auth=self.request.META.get('HTTP_AUTHORIZATION', None)
         collection_name=self.request.data.get('collection')
 
+        # Authentication always required for push
+
         if auth is None:
             raise PermissionDenied(detail="Authentication Required")
 
+        owner = get_request_user(auth)
         timestamp = generate_timestamp()
         payload = "push|%s|%s|%s|%s|" %(collection_name,
                                         timestamp,
                                         name,
                                         tag)
 
-        if not validate_request(auth,payload,"push",timestamp):
+
+        # Validate Payload
+
+        if not validate_request(auth, payload, "push", timestamp):
             raise PermissionDenied(detail="Unauthorized")
 
         create_new=False
 
         try:
-            collection = Collection.objects.get(name=collection_name) 
+            collection = Collection.objects.get(name=collection_name)
+
+            # Only owners can push
+            if not owner in collection.owners.all():
+                raise PermissionDenied(detail="Unauthorized")
+
         except Collection.DoesNotExist:
             collection = None
-            create_new=True
+            create_new = True
+
+        # Validate User Permissions
+
+        if not has_permission(auth, collection, pull_permission=False):
+            raise PermissionDenied(detail="Unauthorized")
         
         if collection is not None:
+
             try:
                 container = Container.objects.get(collection=collection,
                                                   name=name,
                                                   tag=tag)
                 if container.frozen is False:
                     create_new = True
+
             except Container.DoesNotExist:
                 create_new=True
+         
 
+        # New collection, pusher is owner
+ 
         if create_new is True:
+
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
                             tag=self.request.data.get('tag','latest'),
                             name=self.request.data.get('name'),
+                            owner_id=owner.id,
                             metadata=self.request.data.get('metadata'))
         else:
             raise PermissionDenied(detail="%s is frozen, push not allowed." %container.get_short_uri())
