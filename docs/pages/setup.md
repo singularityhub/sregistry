@@ -144,7 +144,9 @@ cd containers
 ```
 
 ### 2. Generate your Metadata
-Then use the manager to generate a markdown file for your registry:
+Then use the manager to generate a markdown file for your registry. In this example, we have 
+interactively shelled inside the `uwsgi` image for our sregistry like `docker run -it <container> bash` 
+and are sitting in the `/code` folder.
 
 ```
 # Inside the image
@@ -153,7 +155,7 @@ $ python manage.py register
 Registry template written to taco-registry.md!
 
 Your robot is at https://vsoch.github.io/robots/assets/img/robots/robot5413.png
-1. Fork and clone https://www.github.com/singularityhub/sregistry
+1. Fork and clone https://www.github.com/singularityhub/containers
 2. Add taco-registry.md to the registries folder
 3. Download your robot (or add custom institution image) under assets/img/[custom/robots]
 4. Submit a PR to validate your registry.
@@ -180,6 +182,10 @@ institution: Tacosaurus Computing Center
 Tacosaurus Computing Center is a Singularity Registry to provide institution level Singularity containers.
 
 ```
+
+At this point, you can send this file to `@vsoch` and she will be happy to add your 
+registry to the... registry! If you want to customize your robot image, or submit
+the file yourself via a pull request, continue reading!
 
 ### 3. Choose your image
 For the image and thumbnail, we have a [database of robots](https://vsoch.github.io/robots) that we have randomly selected a robot for you. If you don't like your robot, feel free to browse and choose a different one. Importantly, you will need to add the robot to the github repo:

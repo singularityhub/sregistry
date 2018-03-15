@@ -26,7 +26,7 @@ from rest_framework.exceptions import (
 )
 
 from shub.apps.api.utils import validate_request
-from sregistry.auth import generate_timestamp
+from sregistry.main.registry.auth import generate_timestamp
 
 from django.urls import reverse
 from django.http import Http404
