@@ -144,7 +144,9 @@ cd containers
 ```
 
 ### 2. Generate your Metadata
-Then use the manager to generate a markdown file for your registry:
+Then use the manager to generate a markdown file for your registry. In this example, we have 
+interactively shelled inside the `uwsgi` image for our sregistry like `docker run -it <container> bash` 
+and are sitting in the `/code` folder.
 
 ```
 # Inside the image
@@ -153,7 +155,7 @@ $ python manage.py register
 Registry template written to taco-registry.md!
 
 Your robot is at https://vsoch.github.io/robots/assets/img/robots/robot5413.png
-1. Fork and clone https://www.github.com/singularityhub/sregistry
+1. Fork and clone https://www.github.com/singularityhub/containers
 2. Add taco-registry.md to the registries folder
 3. Download your robot (or add custom institution image) under assets/img/[custom/robots]
 4. Submit a PR to validate your registry.
