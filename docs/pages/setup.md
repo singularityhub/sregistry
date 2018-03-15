@@ -183,6 +183,10 @@ Tacosaurus Computing Center is a Singularity Registry to provide institution lev
 
 ```
 
+At this point, you can send this file to `@vsoch` and she will be happy to add your 
+registry to the... registry! If you want to customize your robot image, or submit
+the file yourself via a pull request, continue reading!
+
 ### 3. Choose your image
 For the image and thumbnail, we have a [database of robots](https://vsoch.github.io/robots) that we have randomly selected a robot for you. If you don't like your robot, feel free to browse and choose a different one. Importantly, you will need to add the robot to the github repo:
 
