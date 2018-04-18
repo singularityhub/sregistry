@@ -8,11 +8,11 @@ toc: false
 
 # Plugins
 
-Singularity Registry supports added functionality through plugins. Plugins allow complex features,
+Singularity Registry Server supports added functionality through plugins. Plugins allow complex features,
 such as container scanning, LDAP authentication, to be added without complicating the core code of
 sregistry.
 
-Plugins distributed with sregistry are found in the `shub/plugins` directory. 
+Plugins distributed with `sregistry` are found in the `shub/plugins` directory. 
 
 ## Included Plugins
 

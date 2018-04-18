@@ -31,7 +31,7 @@ from shub.apps.api.utils import (
     has_permission, 
     get_request_user
 )
-from sregistry.auth import generate_timestamp
+from sregistry.main.registry.auth import generate_timestamp
 
 class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
 

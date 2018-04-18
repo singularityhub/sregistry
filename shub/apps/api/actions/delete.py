@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from shub.logger import bot
-from sregistry.auth import generate_timestamp
+from sregistry.main.registry.auth import generate_timestamp
 from shub.apps.api.utils import validate_request
 
 

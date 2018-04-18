@@ -67,7 +67,7 @@ class Command(BaseCommand):
         bot.info("Registry template written to %s!" %outfile)
         bot.newline()
         bot.info("Your robot is at https://vsoch.github.io/robots/assets/img/robots/robot%s.png" %number)
-        bot.info("1. Fork and clone https://www.github.com/singularityhub/sregistry")
+        bot.info("1. Fork and clone https://www.github.com/singularityhub/containers")
         bot.info("2. Add %s to the registries folder" %outfile)
         bot.info("3. Download your robot (or add custom institution image) under assets/img/[custom/robots]")
         bot.info("4. Submit a PR to validate your registry.")
