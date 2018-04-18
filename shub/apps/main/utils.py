@@ -23,7 +23,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from shub.apps.main.models import Container
-from singularity.utils import read_json
+from sregistry.utils import read_json
 from django.conf import settings
 
 from itertools import chain

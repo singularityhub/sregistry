@@ -1,5 +1,4 @@
 cython
-pandas
 h5py
 uwsgi
 Django==1.11.2
@@ -22,19 +21,13 @@ shapely
 Pillow
 requests
 requests-oauthlib
-python-openid
-django-sendfile
-django-polymorphic
-networkx
 celery[redis]<4
 django-celery
-scikit-learn
-django-cleanup
 django-chosen
 opbeat
 django-hstore==1.3.5
 django-datatables-view
-sregistry==0.0.5
+sregistry==0.0.76
 django-gravatar2
 pygments
 google-api-python-client

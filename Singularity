@@ -12,7 +12,7 @@ maintainer vsochat@stanford.edu
 apt-get update && apt-get install -y git
 
 # Dependncies
-/opt/conda/bin/conda install -y numpy scikit-learn cython pandas
+/opt/conda/bin/conda install -y cython
 
 # Install Singularity Python
 cd /opt
