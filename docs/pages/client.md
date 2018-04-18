@@ -19,20 +19,12 @@ For the older version, you can use Singularity Python. A demo is provided below,
 
 ## Install
 
-### Sregistry Installation
-To install, you can do the following:
+### sregistry Installation
+`sregistry` is the client for Singularity Registry server. To install, you can do the following:
 
 ```
 git clone https://github.com/singularityware/sregistry-cli
 cd sregistry-cli
-python setup.py install
-```
-
-or for the Singularity Python version:
-
-```
-git clone https://github.com/singularityware/singularity-python
-cd singularity-python
 python setup.py install
 ```
 

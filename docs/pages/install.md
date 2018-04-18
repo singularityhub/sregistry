@@ -143,7 +143,7 @@ In the [config.py](../shub/settings/config.py) you need to define the following:
 
 
 #### Domain Name
-Singularity Registry should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is change the `DOMAIN_NAME_*` variables in your settings [settings/main.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/main.py).
+A Singularity Registry Server should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is change the `DOMAIN_NAME_*` variables in your settings [settings/main.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/main.py).
 
 For local testing, you will want to change `DOMAIN_NAME` and `DOMAIN_NAME_HTTP` to be localhost. Also note that I've set the regular domain name (which should be https) to just http because I don't have https locally:
 

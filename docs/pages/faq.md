@@ -6,10 +6,15 @@ permalink: /faq
 toc: false
 ---
 
-## How is Singularity Registry different from Singularity Hub?
-**Singularity Hub** is the predecessor to Singularity Registry, and while it also serves as an image registry, in addition it provides a cloud build service for users. Singularity Hub also takes advantage of Github for version control of build recipes. The user pushes to Github, a builder is deployed, and the image available to the user. Singularity Hub would allow a user to build and run an image from a resource where he or she doesn't have sudo simply by using Github as a middleman.
+## How is Singularity Registry Server different from Singularity Hub?
 
-**Singularity Registry** is similarly an image registry that plugs in natively to the singularity software, but it places no dependencies on Github, and puts the power of deciding how to build in the hands of the user. This could mean building after tests pass with a "push" command in a Github repository, building via a SLURM job, or on a private server. While Singularity Hub is entirely public and only allows for a minimum number of private images, a Singularity Registry can be entirely private, with expiring tokens that can be shared.
+**Singularity Hub**
+
+is the predecessor to Singularity Registry, and while it also serves as an image registry, in addition it provides a cloud build service for users. Singularity Hub also takes advantage of Github for version control of build recipes. The user pushes to Github, a builder is deployed, and the image available to the user. Singularity Hub would allow a user to build and run an image from a resource where he or she doesn't have sudo simply by using Github as a middleman.
+
+**Singularity Registry Server** 
+
+is similarly an image registry that plugs in natively to the singularity software, but it places no dependencies on Github, and puts the power of deciding how to build in the hands of the user. This could mean building after tests pass with a "push" command in a Github repository, building via a SLURM job, or on a private server. While Singularity Hub is entirely public and only allows for a minimum number of private images, a Singularity Registry Server can be entirely private, with expiring tokens that can be shared.
 
 Importantly, both deliver image manifests that plug seamlessly into the Singularity command-line software, so a registry (or hub) image can be pulled easily:
 
@@ -17,10 +22,12 @@ Importantly, both deliver image manifests that plug seamlessly into the Singular
 singularity pull shub://vsoch/hello-world
 ```
 
-**Singularity Global Clients**
-A base of clients for working with a Singularity Registry, Singularity Hub, and other backends. Since you can create a local database to manage images, the executable is called [sregistry](https://singularityhub.github.io/sregistry-cli).
+**Singularity Global Client**
+
+`sregistry` is a general client for the single user to interact with containers at different endpoints. An endpoint could be a Singularity Registry Server, Singularity Hub, Google Drive/Cloud, Dropbox, or Globus.  You can think of it as a glue or fabric between all these different endpoints and APIs, as it allows you to create a local database to manage images. For this reason, the executable is called [sregistry](https://singularityhub.github.io/sregistry-cli).
 
 ## Why do we need Singularity containers?
+
 Singularity containers allow you to package your entire scientific analysis, including dependencies, libraries, and environment, and run it anywhere. Inside a Singularity container you are the same user as outside the container, so you could not escalate to root and act maliciously on a shared resource. For more information on containers, see [the Singularity site](https://singularityware.github.io).
 
 
