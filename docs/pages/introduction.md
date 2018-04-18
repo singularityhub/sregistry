@@ -7,6 +7,7 @@ toc: false
 ---
 
 ## A Need for Reproducible Science
+
 Using computational methods to answer scientific questions of interest is an important task to increase our knowledge about the world. Along with careful assembly of protocol and relevant datasets, the scientist must also write software to perform the analysis, and use the software in combination with data to answer the question of interest. When a result of interest to the larger community is found, the scientist writes it up for publication in a scientific journal. This is what we might call a single scientific result.
 
 Replication of a result would increase our confidence in the finding. The extent to which a published finding affords a second scientist to repeat the steps to achieve the result is called reproducibility. Reproducibility, in that it allows for repeated testing of an interesting question to validate knowledge about the world, is a foundation of science. While the original research can be an arduous task, often the culmination of years of work and committment, attemps to reproduce a series of methods to assess if the finding replicates is equally challenging. The researcher must minimally have enough documentation to describe the original data and detailed methods to put together an equivalent experiment. A comparable computational environment must then be used to look for evidence to assert or reject the original hypothesis.
@@ -25,7 +26,8 @@ The idea that the entire software stack, including libraries and specific versio
 
 It wasn't until the introduction of the Singularity software that these workflows could be securely deployed on local cluster resources. For the first time, scientists could package up all of the software and libraries needed for their research, and deliver a complete package for a second scientist to reproduce the work. Singularity took the high performance computing world by storm, securing several awards and press releases, and within a year being installed at over 45 super computing centers across the globe. 
 
-## Welcome to SRegistry!
+## Welcome to Singularity Registry Server!
+
 Singularity Registry is a Dockerized web application that an institution or individual can deploy to organize and manage Singularity images. After you [install](/sregistry/install) and [setup](/sregistry/setup) your registry, you are welcomed with the home screen. In this case, our institution is called "Tacosaurus Computing Center":
 
 <br>

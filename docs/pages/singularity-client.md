@@ -8,15 +8,15 @@ toc: false
 
 # Singularity Pull
 
-Support for Singularity Registry pull via the Singularity software was added to the development branch in a [recent pull request](https://github.com/singularityware/singularity/pull/889), and will be in the release of Singularity 2.4 [demo](https://asciinema.org/a/134694?speed=3).
+Support for Singularity Registry Server pull via the Singularity software was added to the development branch in a [recent pull request](https://github.com/singularityware/singularity/pull/889), and will be in the release of Singularity 2.4 [demo](https://asciinema.org/a/134694?speed=3).
 
 ## Install
 
 ### Local Installation
-You will want to install the Singularity development branch:
+You will want to install Singularity first:
 
 ```
-git clone -b development https://github.com/singularityware/singularity
+git clone https://github.com/singularityware/singularity
 cd singularity
 ./autogen.sh
 ./configure --prefix=/usr/local
