@@ -102,6 +102,11 @@ LOGGING_SAVE_RESPONSES=True
 # Available Plugins:
 
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+# - globus: allows connection from sregistry to endpoints
+
 PLUGINS_ENABLED = [
 #    'ldap_auth'
 ]
+PLUGINS_ENABLED+=["globus"]
+ROBOTNAME='crusty-malarkey-2922'
+PLUGIN_GLOBUS_ENDPOINT="502635e0-4418-11e8-8e06-0a6d4e044368"

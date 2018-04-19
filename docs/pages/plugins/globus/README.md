@@ -8,12 +8,45 @@ toc: false
 
 # Globus Connect
 
-The `globus` plugin allows a logged in user to connect their Globus account to allow for transfer of images from the registry to a Globus endpoint. In order to set up this integration, you should be familiar with setting up a Globus personal endpoint, and for this installation example we will walk through doing this on your local machine (or the same filesystem where your Registry will be installed).
+The `globus` plugin allows a logged in user to connect their Globus account to allow for transfer of images from the registry to a Globus endpoint. To use the plugin, you want to take the following steps:
+
+First uncomment the line to install Globus in the Dockerfile.
+
+```bash
+# Install Globus (uncomment if wanted)
+RUN /bin/bash /code/scripts/globus/globus-install.sh
+```
+
+Then build the container.
+
+```
+docker build -t vanessa/sregistry .
+```
+
+Once the build is done, start the container.
+
+```
+docker-compose up -d
+```
+
+and after you've started it, run the script to generate the endpoint (in the example below, the container is named `server_uwsgi_1` and we figured this out with `docker ps`).
+
+```
+docker exec -it server_1_uwsgi -it /bin/bash /code/scripts/globus/globus-setup.sh
+```
+
+The script above will ask you to open your browser to authenticate. This first step is with regard to the endpoint. You, as the admin, are
+the owner of the endpoint. The user will have to further authenticate from the application interface to interact with it.
+
+
 
 ## How does Singularity Registry work with Globus?
 The quick answer:
 
 >> Singularity Registry works with Globus by serving its filesystem with images as a Globus endpoint.
+
+
+The longer answer
 
 And the reasons for this design are the following:
 
