@@ -13,7 +13,9 @@
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'collections' %}">All Collections</a></li>
+                {% if request.user.is_authenticated %}
                 <li><a href="{% url 'my_collections' %}">My Collections</a></li>
+                {% endif %}
                 <li role="separator" class="divider"></li>
                 <li><a href="{% url 'all_labels' %}">Labels</a></li>
                 <li><a href="{% url 'collection_stars' %}">Rankings</a></li>
@@ -63,6 +65,7 @@
                 <li><a href="{% url 'admin:index' %}">Admin</a></li>
                 {% endif %}
                 {% if request.user.is_authenticated %}
+                <li><a href="{% url 'profile' %}">Profile</a></li>
                 <li><a href="{% url 'token' %}">Token</a></li>
                 {% endif %}
               </ul>

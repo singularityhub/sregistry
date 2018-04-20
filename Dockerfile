@@ -39,6 +39,7 @@ ADD requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
 
+ADD . /code/
 
 ################################################################################
 # PLUGINS
@@ -60,8 +61,6 @@ RUN apt-get remove -y gfortran
 RUN apt-get autoremove -y
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ADD . /code/
 
 # Install crontab to setup job
 RUN echo "0 0 * * * /usr/bin/python /code/manage.py generate_tree" >> /code/cronjob

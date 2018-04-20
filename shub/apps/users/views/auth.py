@@ -56,7 +56,9 @@ def validate_credentials(user,context=None):
     # the templates will know to tell users which they need to add, etc.
     credentials_missing = "aok"
     for group in credentials:
-        credential = user.get_credentials(provider=group['provider'])
+        credential = None
+        if not user.is_anonymous():
+            credential = user.get_credentials(provider=group['provider'])
         if credential != None:
             context[group['key']] = 'aok'
         else:

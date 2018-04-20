@@ -55,16 +55,16 @@ def view_profile(request, username=None):
         user = get_object_or_404(User, username=username)
 
     if user == request.user:
-        collections = Collection.objects.filter(owner=user).annotate(
+        collections = Collection.objects.filter(owners=user).annotate(
                       Count('star', distinct=True)).order_by('-star__count')
     else:
-        collections = Collection.objects.filter(owner=user, 
+        collections = Collection.objects.filter(owners=user, 
                           private=False).annotate(Count('star', 
                           distinct=True)).order_by('-star__count')
 
     # Total Starred Collections
 
-    stars = Star.objects.filter(collection__owner=user).count()
+    stars = Star.objects.filter(collection__owners=user).count()
     favorites = Star.objects.filter(user=user)
 
     # Total Downloads Across Collections
@@ -72,10 +72,10 @@ def view_profile(request, username=None):
     downloads = APIRequestCount.objects.filter(
                    Q(method='get', 
                      path__contains="ContainerDetailByName", 
-                     collection__owner=user) |
+                     collection__owners=user) |
                    Q(method='get', 
                      path__contains="ContainerBasicByName", 
-                     collection__owner=user)).aggregate(Sum('count'))
+                     collection__owners=user)).aggregate(Sum('count'))
 
     downloads = downloads['count__sum']
 

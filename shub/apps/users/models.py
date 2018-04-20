@@ -114,6 +114,19 @@ class User(AbstractUser):
             return True
         return False
 
+    def get_credentials(self, provider):
+        ''' return one or more credentials, or None'''
+        if self.is_anonymous() is False:
+            try:
+                # Case 1: one credential
+                credential = self.social_auth.get(provider=provider)
+                return credential
+            except:
+                # Case 2: more than one credential for the provider
+                credential = self.social_auth.filter(provider=provider)      
+                if len(credential) > 0:
+                    return credential.last()
+    
 
     def get_label(self):
         return "users"
