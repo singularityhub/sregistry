@@ -6,29 +6,6 @@
 {% include "style/sliders.html" %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
-<style>
-.btn-sm {
-  margin-top:20px !important;
-}
-.active {
-    font-weight:400;
-}
-
-.nav-pills > li.active > a:focus {
-    color: #fff;
-    background-color: #2e609b !important;
-}
-.endpoint:hover {
-   color: white !important;
-}
-.nav-pills > li > a {
-   color: #2e609b;
-}
-.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
-  color: #fff;
-  background-color: #2e609b !important;
-}
-</style>
 {% if 'globus' in PLUGINS_ENABLED %}
     <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
 {% endif %}
@@ -39,10 +16,10 @@
 <div class="row">
 
     <div class="col-md-12">
-        <div class="card" style="padding:20px">
+        <div style="padding:20px">
             <div class="header">
                 <a href="{% url 'profile' %}">
-                 <h3 class="title"><span style="color:#2e609b">{{ request.user.username }}:</span> </a>
+                 <h3 class="title">{{ request.user.username }}: </a>
                   {% if container %} transfer {{ container.name }}{% else %}endpoints {% endif %} 
                   </h3>
             </div>
@@ -51,10 +28,10 @@
 </div>
 <div class="row">
     <div class="col-md-3">
-        <ul class="nav nav-pills nav-stacked" style="padding-left:25px">
-            <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" style="background-color:#2e609b;color:white" href="#transfer">Transfer</a></li>
+        <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" href="#transfer">Transfer</a></li>
             {% for ep in endpoints %}
-            <li><a style="color:#2e609b" data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">
+            <li><a data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">
 {{ ep.display_name }}</a></li>
             {% endfor %}
         </ul>

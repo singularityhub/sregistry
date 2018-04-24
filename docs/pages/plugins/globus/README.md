@@ -34,7 +34,8 @@ docker-compose up -d
 and after you've started it, run the script to generate the endpoint (in the example below, the container is named `server_uwsgi_1` and we figured this out with `docker ps`).
 
 ```
-docker exec -it server_1_uwsgi -it /bin/bash /code/scripts/globus/globus-setup.sh
+docker exec -it server_uwsgi_1 /bin/bash /code/scripts/globus/globus-setup.sh
+docker-compose restart
 ```
 
 The script above will ask you to open your browser to authenticate. This first step is with regard to the endpoint. You, as the admin, are
@@ -42,8 +43,10 @@ the owner of the endpoint. The user will have to further authenticate from the a
 
 
 ## Usage
-The individual user must authenticate with Globus in order to issue a refresh token to make transfers. To add this integration, first go
-to the "Integrations" tab of the user profile and click "Connect Globus"
+The individual user must authenticate with Globus in order to issue a refresh token to make transfers. To add this integration, do the following:
+
+ 1. first go to the "Integrations" tab of the user profile and click "Connect Globus"
+ 2. 
 
 TODO: add picture here
 TODO: look at how integration added to page, make sure flexible to add others. fix styling on button (not tall enough)

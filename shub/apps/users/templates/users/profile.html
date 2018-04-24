@@ -27,7 +27,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card" style="padding:20px">
+        <div style="padding: 50px 0px 30px;">
             <div class="header">
                  <h3 class="title">{{ profile.username }}
                      <a href="https://www.github.com/{{ profile.username }}" target="_blank"><i style="padding-left:25px; float:right; font-size:30px" class="fa fa-github"></i></a>
@@ -39,11 +39,14 @@
 
 <div class="row">
     <div class="col-md-3">
-        <ul class="nav nav-pills nav-stacked" style="padding-left:25px">
+        <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <li class="active"><a data-toggle="pill" id="pill-profile" href="#profile">User Profile</a></li>
             <li><a data-toggle="pill" id="pill-collections" href="#collections">Collections</a></li>
             <li><a data-toggle="pill" id="pill-favorites" href="#favorites">Favorites</a></li>
             <li><a data-toggle="pill" id="pill-danger" href="#integrations">Integrations</a></li>
+            {% if request.user.is_superuser %}
+            <li><a id="pill-admin" target="_blank" href="{% url 'admin:index' %}">Admin</a></li>
+            {% endif %}
         </ul>
     </div>
     <div class="col-md-1"></div>

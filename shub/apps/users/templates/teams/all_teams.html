@@ -18,7 +18,7 @@ span.even { background: rgba(91, 192, 222, 0.32); }
     <div class="col-md-12">
 
             <header>
-                <h2>Teams <i data-toggle="tooltip" style="font-size:20px" title="These are all teams on the registry" class="fa fa-2x fa-question-circle"></i></h2>
+                <h2>Teams</h2>
                 {% if not teams %}
                 <p>A Team is a group of users that can be assigned as collaborators to collections.<br>{% if has_create_permission %}There aren't yet any teams! Why don't you <a href="{% url 'new_team' %}">make one?{% endif %}</p>
                 {% else %}

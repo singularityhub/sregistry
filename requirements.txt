@@ -21,6 +21,7 @@ shapely
 Pillow
 requests
 requests-oauthlib
+requests-toolbelt
 celery[redis]<4
 django-celery
 django-chosen

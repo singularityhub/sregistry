@@ -128,6 +128,12 @@ class User(AbstractUser):
                     return credential.last()
     
 
+    def get_providers(self):
+        '''return a list of providers that the user has credentials for.
+        '''
+        return [x.provider for x in self.social_auth.all()]
+
+
     def get_label(self):
         return "users"
 

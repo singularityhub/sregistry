@@ -21,7 +21,7 @@
         <tbody>
         {% for collection in collections %}
             <tr>
-               <td><a href="{% url 'collection_details' collection.id %}">{{ collection.repo.owner.login }}/{{ collection.repo.name }}</a></td>
+               <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
                <td>{{ collection.containers.count }}</td>
                <td>{% if collection.repo.description %}{{ collection.repo.description }}{% endif %}</td>
                    <td>{% if collection.star__count %}{{ collection.star__count }}{% else %}0{% endif %}</td>

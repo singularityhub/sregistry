@@ -24,14 +24,14 @@ from django.shortcuts import render
 
 
 def index_view(request):
-    context = {}
-    return render(request, 'main/index.html', context)
+    return render(request, 'main/index.html')
 
 def about_view(request):
-    context = {'active':'home'}
-    return render(request, 'main/about.html', context)
+    return render(request, 'main/about.html')
+
+def tools_view(request):
+    return render(request, 'main/tools.html')
 
 def terms_view(request):
-    context = {'active':'home'}
-    return render(request, 'terms/usage_agreement.html', context)
+    return render(request, 'terms/usage_agreement.html')
 

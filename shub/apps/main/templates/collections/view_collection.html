@@ -27,6 +27,7 @@
 <!-- Error messages for builds will be added here-->
 {% include 'messages/message.html' %}
 
+<div class="container-fluid">
 <div class="row" style="margin-top:30px">
 
     <!-- Container collection meta -->
@@ -51,7 +52,7 @@
 
     <!-- Container collection meta -->
     <div class="col-md-12">
-        <div class="card">
+        <div >
                 
             {% if request.user in collection.owners.all %}
             <!-- Settings -->
@@ -174,6 +175,7 @@
             {% endif %}
 
         </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

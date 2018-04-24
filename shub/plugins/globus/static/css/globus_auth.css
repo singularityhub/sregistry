@@ -2,14 +2,13 @@
 
 #globus-login {
     color: #2e609b;
-    background: rgb(255, 255, 255) url('/static/img/social-buttons/globus.png') no-repeat scroll 13px 10px / 36px 28px padding-box border-box;
-    border: 1px solid #2e609b;
+    background: rgb(255, 255, 255) url('/static/img/social-buttons/globus.png') no-repeat scroll 13px 10px / 32px 24px padding-box border-box;
 }
 
 #globus-login:hover {
     color: white;
     border-color: rgb(0, 119, 181);
-    background: #2e609b url('/static/img/social-buttons/globus-white.png') no-repeat scroll 13px 10px / 36px 28px padding-box border-box;
+    background: #2e609b url('/static/img/social-buttons/globus-white.png') no-repeat scroll 13px 10px / 32px 24px padding-box border-box;
     -webkit-transition: all .8s ease-out;
     -moz-transition: all .3s ease;
     -ms-transition: all .3s ease;

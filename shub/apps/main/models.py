@@ -31,7 +31,6 @@ from itertools import chain
 
 from django.contrib.postgres.fields import JSONField
 from django.http import HttpRequest
-from polymorphic.models import PolymorphicModel
 from taggit.managers import TaggableManager
 
 import collections

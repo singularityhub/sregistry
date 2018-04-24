@@ -1,82 +1,23 @@
 {% load staticfiles %}
 {% load gravatar %}
 
-        <nav class="navbar navbar-default" role="navigation">
-        <a class="navbar-brand" href="{% url 'index' %}"><span style="color:#e32929">S</span>Registry</a>
-        
-          <ul class="nav navbar-nav">
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+   <h5 href="{% url 'index' %}" class="my-0 mr-md-auto font-weight-normal" style="text-transform:uppercase;">
+         <a href="{% url 'index' %}" style="font-size: 1.8rem; color:#e32929; text-decoration:none">S<span style="font-size:1.8rem;color:black">Registry</span></a>
+   </h5>
+   <nav class="my-2 my-md-0 mr-md-3">
+      <a class="p-2 text-dark" href="{% url 'collections' %}">Containers</a>
+      <a class="p-2 text-dark" href="{% url 'teams' %}">Teams</a>
+      <a class="p-2 text-dark" href="https://singularityhub.github.io/sregistry" target="_blank">User Guide</a>
+      <a class="p-2 text-dark" href="{% url 'tools' %}">Tools</a>
+      {% if request.user.is_authenticated %}
+      <a class="p-2 text-dark" href="{% url 'profile' %}">Settings</a>
+      {% endif %}
+   </nav>
+   {% if request.user.is_authenticated %}
+   <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+   {% else %}
+   <a class="btn btn-primary" href="{% url 'login' %}">Login</a>
+   {% endif %}
 
-            <!-- Containers -->
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              Collections
-              <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'collections' %}">All Collections</a></li>
-                {% if request.user.is_authenticated %}
-                <li><a href="{% url 'my_collections' %}">My Collections</a></li>
-                {% endif %}
-                <li role="separator" class="divider"></li>
-                <li><a href="{% url 'all_labels' %}">Labels</a></li>
-                <li><a href="{% url 'collection_stars' %}">Rankings</a></li>
-                <li><a href="{% url 'all_tags' %}">Topic Tags</a></li>
-              </ul>
-
-            </li>
-            <li><a href="{% url 'teams' %}">Teams</a></li>
-            <li><a href="https://singularityhub.github.io/sregistry" target="_blank">User Guide</a></li>
-
-            <!-- Tools Dropdown -->
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              Tools
-              <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'containers_treemap' %}">Container Size Treemap</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="https://singularityhub.github.io/sregistry-cli" target="_blank">Install Client</a></li>
-                <li><a href="https://singularityhub.github.io/" target="_blank">Community Tools</a></li>
-                <li><a href="https://github.com/singularityhub/singularityhub.github.io/issues/new" target="_blank">Get Help</a></li>
-              </ul>
-            </li>
-
-
-            <li><a href="{% url 'about' %}">About</a></li>
-            <li><a href="{% url 'search' %}"><i class="fa fa-search"></i></a></li>
-          </ul>
-
-          <!-- User Options -->
-          <ul class="nav navbar-nav navbar-right" style="margin-right:20px">
-            {% if request.user.is_authenticated %}
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" 
-                          data-toggle="dropdown" 
-                          role="button" 
-                          aria-haspopup="true" 
-                          aria-expanded="false">{{ request.user.username }}
-              <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'my_collections' %}">Containers</a></li>
-                <li><a href="{% url 'logout' %}">Log Out</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="/api">API</a></li>
-                {% if request.user.is_superuser %}
-                <li role="separator" class="divider"></li>
-                <li><a href="{% url 'admin:index' %}">Admin</a></li>
-                {% endif %}
-                {% if request.user.is_authenticated %}
-                <li><a href="{% url 'profile' %}">Profile</a></li>
-                <li><a href="{% url 'token' %}">Token</a></li>
-                {% endif %}
-              </ul>
-            </li>
-            <li>{% gravatar user.email 30 %}</li>
-            {% else %}
-            <li><a href="{% url 'login' %}">Login</a></li>
-            {% endif %}
-
-            <!-- Search Icon -->
-            <!--<li><a href=""><i class="fa fa-search"></i></a></li>-->
-          </ul>
-
-    </nav>
+</div>

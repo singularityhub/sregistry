@@ -4,53 +4,48 @@
 {% endblock %}
 {% block content %}
 
-        <div id="fh5co-team">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-10 col-md-offset-1">
-                        <div class="row">
-                            <h2 class="section-lead text-center">Need Help?</h2>
-                            <p class="text-center">Just getting started? See our <a href="https://singularityhub.github.io/sregistry">user guide</a>, or <a href="{% url 'search' %}">search</a> for a container.</p>
-                            <div class="col-md-4 col-sm-6 col-xs-6 col-xxs-12 fh5co-staff to-animate">
-                                <figure>
-                                <img src="{% static "img/robot_package.png" %}" alt="" class="img-responsive">
-                                </figure>
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center">
+    <div class="col-md-12 p-lg-5 mx-auto my-12">
+        <h2 class="display-4 section-lead text-center">Need Help?</h2>
+            <p class="text-center">Just getting started? See our <a href="https://singularityhub.github.io/sregistry">user guide</a>, or <a href="{% url 'search' %}">search</a> for a container.</p>
+            <p class="text-center">
+            <img width="300px" src="{% static "img/robot_package.png" %}" alt="robot"></p>
+    </div>
+</div>
 
-                            </div>
-                            <div class="col-md-4 col-sm-6 col-xs-6 col-xxs-12 fh5co-staff to-animate">
-                                <figure>
-                                <img src="" alt="" class="img-responsive">
-                                </figure>
-
-                                <h3>Registry Software</h3>
-                                <p><br>If you have an issue with the registry software, please
-                                   <a href="https://github.com/singularityhub/sregistry/issues" target="_blank">tell us here</a></p>
-                                <ul class="fh5co-social">
-                                    <li><a href="http://www.twitter.com/containertools"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="https://github.com/singularityhub/sregistry"><i class="fa fa-github"></i></a></li>
-                                </ul>     
-                            </div>
-                            <div class="clearfix visible-sm-block visible-xs-block"></div>
-                            <div class="col-md-4 col-sm-6 col-xs-6 col-xxs-12 fh5co-staff to-animate">
-                                <figure>
-                                <img src="" alt="" class="img-responsive">
-                                </figure>
-
+<div class="container">
+<div class="row">
+    <div class="col-md-6">
+    <div class="card">
+       <div class="card-body">
+           <h5 class="card-title">Registry Software</h5>
+           <p class="card-text">
+             <p>If you have an issue with the registry software, please <a href="https://github.com/singularityhub/sregistry/issues" target="_blank">tell us here</a></p>
+           <p class="card-text">
+            <a href="http://www.twitter.com/containertools">
+              <button type="button" class="btn btn-lg btn-primary"><i class="fa fa-twitter"></i></button></a>
+            <a href="https://github.com/singularityhub/sregistry">
+              <button type="button" class="btn btn-lg btn-primary"><i class="fa fa-github"></i></button></a>
+           </p>
+       </div>
+    </div>
+ </div>    
+<div class="col-md-6">
+    <div class="card">
+       <div class="card-body">
+           <h5 class="card-title">Local Contact</h5>
+           <p class="card-text">
                                 {% if HELP_CONTACT_EMAIL %}
-                                <h3>Local Contact</h3>
                                 <p>For your local registry support, contact <a href="mailto:{{ HELP_CONTACT_EMAIL }}">{{ HELP_CONTACT_EMAIL }}</a></p>
-                                <ul class="fh5co-social">
-                                    {% if HELP_INSTITUTION_SITE %}
-                                    <li><a href="{{ HELP_INSTITUTION_SITE }}"><i class="fa fa-home"></i></a></li>
+           <p class="card-text">
+{% if HELP_INSTITUTION_SITE %}
+            <a href="{{ HELP_INSTITUTION_SITE }}">
+              <button type="button" class="btn btn-lg btn-primary"><i class="fa fa-home"></i></button></a>
                                     {% endif %}
-                                </ul>     
                                 {% endif %}
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+           </p>
+       </div>
+    </div>
+</div>
+</div>
 {% endblock %}

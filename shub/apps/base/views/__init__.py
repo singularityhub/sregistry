@@ -6,7 +6,8 @@ from .errors import (
 from .main import (
     index_view,
     about_view,
-    terms_view
+    terms_view,
+    tools_view
 )
 
 from .search import (

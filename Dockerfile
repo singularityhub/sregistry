@@ -52,7 +52,7 @@ ADD . /code/
 # Install Globus (uncomment if wanted)
 RUN /bin/bash /code/scripts/globus/globus-install.sh
 
-RUN mkdir /code
+RUN mkdir -p /code
 RUN mkdir -p /var/www/images
 
 WORKDIR /code
