@@ -147,6 +147,13 @@
                    <i class="fa fa-share"></i>
                 </a>
                 {% endif %}
+                <a id="transfer_container" 
+                   href="{% url 'globus_transfer' container.id %}"
+                   class="btn btn-default btn-sm"
+                   title="transfer your container to a globus endpoint" 
+                   class="btn btn-sm btn-default">
+                   <i class="fa fa-exchange"></i>
+                </a>
                 {% endif %}
             </div>
         </div>

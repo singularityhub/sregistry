@@ -28,7 +28,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import messages
 from django.http import JsonResponse
-from .actions import get_endpoints, do_transfer
+from .actions import ( 
+    get_endpoints, 
+    do_transfer, 
+    search_endpoints
+)
 from .decorators import has_globus_association
 from shub.plugins.globus.utils import (
     get_client, 
@@ -90,18 +94,34 @@ def globus_login(request):
 
 @login_required
 @has_globus_association
-def globus_transfer(request, cid=None):
+def globus_transfer(request, cid=None, endpoints=None):
     ''' a main portal for working with globus. If the user has navigated
         here with a container id, it is presented with option to do a 
-        transfer
+        transfer. If the method is a POST, we also do a custom search
+        for a set of containers.
     '''
     container = None
     if cid is not None:
         container = get_container(cid)
-    endpoints = get_endpoints(request.user)
+
     context = {'user': request.user,
-               'endpoints': endpoints,
-               'container': container }
+               'container': container,
+               'endpoint_search_term': "Owned and Shared Endpoints" }
+
+    # Does the user want to search endpoints?
+
+    if request.method == "POST":
+        term = request.POST.get('term')
+        if term is not None:
+            endpoints = search_endpoints(term=term, user=request.user)
+            context['endpoint_search_term'] = term.capitalize()
+
+    # If we don't have any endpoints still
+
+    if endpoints is None:
+        endpoints = get_endpoints(request.user)
+
+    context['endpoints'] = endpoints
 
     return render(request, 'globus/transfer.html', context)
 

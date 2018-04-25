@@ -15,7 +15,7 @@
 <div id="fh5co-portfolio">
 <div class="row">
 
-    <div class="col-md-12">
+    <div class="col-md-4">
         <div style="padding:20px">
             <div class="header">
                 <a href="{% url 'profile' %}">
@@ -25,22 +25,37 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+
+        <small>{{ endpoint_search_term }}</small>
+
+        {% if container %}
+        <form action="{% url 'globus_transfer' container.id %}" method="POST" name='form'>
+        {% else %}
+        <form action="{% url 'globus_transfer' %}" method="POST" name='form'>
+        {% endif %}
+        <div class="input-group">
+            <input type="text" class="form-control" name='term' placeholder="Search for...">
+            {% csrf_token %}
+            <span class="input-group-btn">
+            <button class="btn btn-info" type="submit">Go!</button>
+           </span>
+        </div>
+        </form>
+    </div>
 </div>
-<div class="row">
+
+<div class="row" style='margin-top:20px'>
     <div class="col-md-3">
         <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" href="#transfer">Transfer</a></li>
-            {% for ep in endpoints %}
-            <li><a data-toggle="pill" id="pill-builder" href="#{{ ep.name }}">
-{{ ep.display_name }}</a></li>
-            {% endfor %}
+            <li><a data-toggle="pill" id="pill-builder" href="#endpoints">Endpoints</a></li> 
         </ul>
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-8">
         <div class="tab-content"> 
-
-            <div id="transfer" class="tab-pane fade in active">
+           <div id="transfer" class="tab-pane fade in active">
 
                 {% if container %}
                     {% if endpoints|length == 0 %}
@@ -84,11 +99,29 @@
                {% endif %}
             </div>
             <hr>
+            <div id="endpoints" style="color:#2e609b" class="tab-pane fade in">
+            <hr>
+            <div id="accordion">
             {% for ep in endpoints %}
-            <div id="{{ ep.name }}" style="color:#2e609b" class="tab-pane fade in">
-                {% include "globus/_transfer_endpoints.html" %}
+            <div class="card">
+                <div class="card-header" id="heading{{ ep.id }}">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" 
+                                data-toggle="collapse" 
+                                data-target="#collapse{{ ep.id }}" 
+                                aria-expanded="false" aria-controls="collapse{{ ep.id }}">
+                                {{ ep.display_name }}
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapse{{ ep.id }}" class="collapse" aria-labelledby="heading{{ ep.id }}" data-parent="#accordion">
+                    <div class="card-body">
+                    {% include "globus/_transfer_endpoints.html" %}
+                    </div>
+                </div>
             </div>
             {% endfor %}
+            </div>
         </div>
     </div>
 </div>

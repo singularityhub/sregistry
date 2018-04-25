@@ -47,6 +47,22 @@ def get_endpoints(user, client=None):
     return endpoints
 
 
+def search_endpoints(term, user, client=None):
+    '''use a transfer client to search endpoints based on a terms
+    ''' 
+    endpoints = []
+    if client is None:
+        client = get_transfer_client(user)
+
+    if client is not None:
+        for ep in client.endpoint_search(term, filter_scope="all"):
+            if ep.__dict__['_data']['name'] != settings.GLOBUS_ENDPOINT_ID:
+                endpoints.append(ep.__dict__['_data'])
+
+    return endpoints
+
+
+
 def do_transfer(user, endpoint, container):
 
     # Use relative paths, we are in container and endpoint is mapped
