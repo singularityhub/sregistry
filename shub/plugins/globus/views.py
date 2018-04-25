@@ -106,7 +106,7 @@ def globus_transfer(request, cid=None, endpoints=None):
 
     context = {'user': request.user,
                'container': container,
-               'endpoint_search_term': "Owned and Shared Endpoints" }
+               'endpoint_search_term': "Search for..." }
 
     # Does the user want to search endpoints?
 

@@ -27,7 +27,7 @@
     </div>
     <div class="col-md-6">
 
-        <small>{{ endpoint_search_term }}</small>
+        <small>Search Endpoints</small>
 
         {% if container %}
         <form action="{% url 'globus_transfer' container.id %}" method="POST" name='form'>
@@ -35,7 +35,7 @@
         <form action="{% url 'globus_transfer' %}" method="POST" name='form'>
         {% endif %}
         <div class="input-group">
-            <input type="text" class="form-control" name='term' placeholder="Search for...">
+            <input type="text" class="form-control" name='term' placeholder="{{ endpoint_search_term }}">
             {% csrf_token %}
             <span class="input-group-btn">
             <button class="btn btn-info" type="submit">Go!</button>
