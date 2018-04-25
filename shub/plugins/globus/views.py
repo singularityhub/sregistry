@@ -47,14 +47,24 @@ from globus_sdk.exc import TransferAPIError
 @login_required
 @has_globus_association
 def globus_logout(request):
-    '''log the user out of globus, meaning deleting the association,
-    and then revoking all tokens'''
-    credentials = request.user.disconnect('globus')
+    '''log the user out of globus - this is a complete disconnect meaning
+       that we revoke tokens and delete the social auth object.
+    '''
     client = get_client()
-    for resource, token_info in credentials.extra_data.items(): 
-        for token, token_type in token_info.items():
-            client.oauth2_revoke_token(
-                token, additional_params={'token_type_hint': token_type})
+
+    try:
+
+        # Properly revoke and log out
+        social = request.user.social_auth.get(provider="globus")
+        for resource, token_info in social.extra_data.items(): 
+            for token, token_type in token_info.items():
+                client.oauth2_revoke_token(
+                    token, additional_params={'token_type_hint': token_type})
+
+        social.delete()
+
+    except UserSocialAuth.DoesNotExist:
+        pass
 
     # Redirect to globus logout page?
     redirect_name = "Singularity Registry"

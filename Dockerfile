@@ -53,7 +53,7 @@ ADD . /code/
 RUN /bin/bash /code/scripts/globus/globus-install.sh
 
 RUN mkdir -p /code
-RUN mkdir -p /var/www/images
+RUN mkdir -p /var/www/images && chmod -R 0755 /code/images/
 
 WORKDIR /code
 RUN apt-get remove -y gfortran
