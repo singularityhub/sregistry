@@ -77,10 +77,10 @@
 <!-- Containers! -->
 <div class="row">
         {% if containers %}
-            <div class="col-md-12">
+            <div class="col-md-12" style="margin-top:20px">
                 <div class="card material-table mdl-data-table--selectable">
                    <div class="table-header">
-                       <span class="table-title">Builds</span>
+                       <span class="table-title">Containers</span>
                    </div>
                    <table id="datatable" width="100%">
                        <thead>
@@ -105,7 +105,7 @@
 
                                {% if edit_permission %}
                                <a title="delete container" 
-                                  class="delete_container btn-sm btn btn-control btn-secondary" 
+                                  class="delete_container btn-sm btn btn-control btn-light" 
                                   id="delete{{ container.id }}">
                                    <i class="fa fa-trash"></i></a>
                                    <a id="confirm_delete{{ container.id }}" 

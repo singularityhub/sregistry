@@ -20,11 +20,11 @@
 
     <!-- Container collection meta -->
     <div class="col-md-12">
-        <div class="card" style="padding-top:20px">
+        <div style="padding-top:20px">
             <div class="header">
                 <h2 class="title" style="margin-bottom:0px">Usage: <a href="{% url 'collection_details' collection.id %}">
                       {{ collection.name }}</a>
-                </h2>
+                </h2><hr>
                 <p> The following shows example usage for the container {{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}
                 <hr>
             </div>

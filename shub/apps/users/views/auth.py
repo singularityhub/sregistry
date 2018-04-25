@@ -103,10 +103,6 @@ def logout(request):
     '''log the user out, first trying to remove the user_id in the request session
     skip if it doesn't exist
     '''
-
-    # If the user is logged into globus
-    request.user.disconnect('globus')
-
     try:
         del request.session['user_id']
     except KeyError:
