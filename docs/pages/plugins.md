@@ -20,8 +20,8 @@ The following plugins are included with sregistry, and can be enabled by adding 
 `PLUGINS_ENABLED` entry in `shub/settings/config.py`. Plugins may require further configuration in
 your registries' local `shub/settings/secrets.py` file.
 
- - [LDAP-AUTH](/sregistry/plugin-ldap): authentication against LDAP directories
- - [GLOBUS-AUTH](/sregistry/plugin-globus): authentication using Globus
+ - [LDAP-Auth](/sregistry/plugin-ldap): authentication against LDAP directories
+ - [Globus](/sregistry/plugin-globus): connect and transfer using Globus
 
 
 ## Writing a Plugin

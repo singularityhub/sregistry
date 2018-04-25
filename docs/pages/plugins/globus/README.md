@@ -23,7 +23,7 @@ In your `shub/settings/secrets.py` file you need to add a client id and secret g
 
  - Click on the first option, "Register your app with Globus"
  - In the top right click "Add --> New App"
- - Don't check any of the boxes at the bottom. (This is NOT a native app, and it doesn't have a required identify or pre-selected identiy provider)
+ - Don't check any of the boxes at the bottom.
  - Choose the following scopes:
 
 ```
@@ -66,10 +66,10 @@ Once the build is done, start the container.
 docker-compose up -d
 ```
 
-and after you've started it, run the script to generate the endpoint (in the example below, the container is named `server_uwsgi_1` and we figured this out with `docker ps`).
+and after you've started it, run the script to generate the endpoint (in the example below, the container is named `sregistry_uwsgi_1` and we figured this out with `docker ps`).
 
 ```
-docker exec -it server_uwsgi_1 /bin/bash /code/scripts/globus/globus-setup.sh
+docker exec -it sregistry_uwsgi_1 /bin/bash /code/scripts/globus/globus-setup.sh
 docker-compose restart
 ```
 
@@ -98,10 +98,6 @@ Once your server is setup with an endpoint, any logged in user The individual us
 
 ![pages/plugins/globus/img/transfer.png](pages/plugins/globus/img/transfer.png)
 
-Finally, when the time is needed (and if you want to, you don't have to) you can return to
-the user profile "Integrations" tab and click "Disconnect Globus" to log out.
-
-![pages/plugins/globus/img/logout.png](pages/plugins/globus/img/logout.png)
 
 ### Search
 The Globus Transfer portal shows endpoints with scope `shared-with-me` and 
@@ -139,6 +135,20 @@ transfer to. This time when you see a green label that indicates an endpoint is 
 to transfer:
 
 ![pages/plugins/globus/img/transfer-option.png](pages/plugins/globus/img/transfer-option.png).
+
+A notification will pop up that the task is underway!
+
+![pages/plugins/globus/img/verify.png](pages/plugins/globus/img/verify.png).
+
+If you click "view task" in the notification you will be taken again to Globus to view the task status. It will hopefully
+succeed.
+
+![pages/plugins/globus/img/complete-transfer.png](pages/plugins/globus/img/complete-transfer.png).
+
+Finally, when the time is needed (and if you want to, you don't have to) you can return to
+the user profile "Integrations" tab and click "Disconnect Globus" to log out.
+
+![pages/plugins/globus/img/logout.png](pages/plugins/globus/img/logout.png)
 
 
 ## Background
