@@ -19,4 +19,4 @@ git clone https://github.com/sirosen/globusconnectpersonal-py3-patched && \
 
 # Create globus user
 useradd -ms /bin/bash tunel-user
-echo "gtunel-user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+echo "tunel-user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers

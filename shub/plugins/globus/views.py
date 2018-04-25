@@ -36,8 +36,13 @@ from .actions import (
 from .decorators import has_globus_association
 from shub.plugins.globus.utils import (
     get_client, 
+    get_transfer_client,
     associate_user
 )
+
+from globus_sdk.exc import TransferAPIError
+
+
 
 @login_required
 @has_globus_association
@@ -128,6 +133,31 @@ def globus_transfer(request, cid=None, endpoints=None):
 
 @login_required
 @has_globus_association
+def globus_endpoint(request, endpoint_id=None, cid=None):
+    ''' Show information for a single endpoint only.
+    '''
+    container = None
+    if cid is not None:
+        container = get_container(cid)
+
+    context = {'user': request.user,
+               'container': container,
+               'endpoint_search_term': "Search for..." }
+
+    # Get the endpoint
+    try:
+        client = get_transfer_client(request.user)
+        endpoints =  [client.get_endpoint(endpoint_id).data]
+    except TransferAPIError:
+        endpoints = get_endpoints(request.user)
+
+    context['endpoints'] = endpoints
+
+    return render(request, 'globus/transfer.html', context)
+
+
+@login_required
+@has_globus_association
 def submit_transfer(request, endpoint, cid):
     '''submit a transfer request for a container id to an endpoint, also
        based on id
@@ -141,7 +171,11 @@ def submit_transfer(request, endpoint, cid):
         result = do_transfer(user=request.user,
                              endpoint=endpoint,
                              container=container)
-        message = result['message']
 
-    status = {'message': message }
+
+        link = "https://globus.org/app/activity/%s" %result['task_id']
+        m = result['message']
+        m = "%s: <a target='_blank' href='%s'>view task</a>" %(m, link)
+
+    status = {'message': m }
     return JsonResponse(status)

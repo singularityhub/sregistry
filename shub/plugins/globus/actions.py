@@ -42,7 +42,7 @@ def get_endpoints(user, client=None):
     if client is not None:
         for scope in ['my-endpoints', 'shared-with-me']:
             for ep in client.endpoint_search(filter_scope=scope):
-                if ep.__dict__['_data']['name'] != settings.GLOBUS_ENDPOINT_ID:
+                if ep.__dict__['_data']['name'] != settings.PLUGIN_GLOBUS_ENDPOINT:
                     endpoints.append(ep.__dict__['_data'])
     return endpoints
 
@@ -56,7 +56,7 @@ def search_endpoints(term, user, client=None):
 
     if client is not None:
         for ep in client.endpoint_search(term, filter_scope="all"):
-            if ep.__dict__['_data']['name'] != settings.GLOBUS_ENDPOINT_ID:
+            if ep.__dict__['_data']['name'] != settings.PLUGIN_GLOBUS_ENDPOINT:
                 endpoints.append(ep.__dict__['_data'])
 
     return endpoints
@@ -66,13 +66,14 @@ def search_endpoints(term, user, client=None):
 def do_transfer(user, endpoint, container):
 
     # Use relative paths, we are in container and endpoint is mapped
-    source = container.get_image_path().replace(settings.MEDIA_ROOT,'').strip('/')    
+    source = container.get_image_path()    
     client = get_transfer_client(user)
-    source_endpoint = settings.GLOBUS_ENDPOINT_ID
+    source_endpoint = settings.PLUGIN_GLOBUS_ENDPOINT
     tdata = globus_sdk.TransferData(client, source_endpoint,
                                     endpoint,
                                     label="Singularity Registry Transfer",
                                     sync_level="checksum")
-    tdata.add_item(source, source)
+    tdata.add_item(source.replace(settings.MEDIA_ROOT,'/code/images'), 
+                   source.replace(settings.MEDIA_ROOT,'').strip('/'))
     transfer_result = client.submit_transfer(tdata)
     return transfer_result

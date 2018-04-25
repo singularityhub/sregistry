@@ -25,8 +25,9 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
 
+    {% if endpoints %}
+    <div class="col-md-8">
         <small>Search Endpoints</small>
 
         {% if container %}
@@ -40,9 +41,11 @@
             <span class="input-group-btn">
             <button class="btn btn-info" type="submit">Go!</button>
            </span>
-        </div>
         </form>
     </div>
+    {% endif %}
+
+</div>
 </div>
 
 <div class="row" style='margin-top:20px'>
@@ -53,11 +56,10 @@
         </ul>
     </div>
     <div class="col-md-1"></div>
-    <div class="col-md-8">
+    <div class="col-md-8" style="padding-left:0px">
         <div class="tab-content"> 
            <div id="transfer" class="tab-pane fade in active">
 
-                {% if container %}
                     {% if endpoints|length == 0 %}
                     <div class="row">
                         <div class="col-md-12">
@@ -67,36 +69,68 @@
                         </div>
                     </div>
                     {% endif %}
-                    {% for ep in endpoints %}
-                    <div class="row">
-                        <div class="col-md-4" style="margin-top:15px">
-                            <p class="alert alert-info">
-                                <span class="label label-info">From</span> Singularity Hub
-                            </p>
-                        </div>
-                        <div class="col-md-2">
-                            <a class="social-button btn-lg do_transfer transfer"
-                               data-endpoint="{{ ep.name }}"
-                               style="margin:auto; height:200px;cursor:pointer; color: #2e609b">
-                               <i class="fa fa fa-long-arrow-right fa-4x"></i></a>
-                        </div>
-                        <div class="col-md-4" style="margin-top:15px">
-                            <p class="alert alert-warning transfer {{ ep.name }}"
-                                <span class="label label-info">To</span> {{ ep.display_name }}
-                            </p>
-                        </div>
-                   </div>
-                   {% endfor %}
-                   {% else  %}
-                   <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                           <p class="alert alert-info">
-                             You are connected to Globus! Browse <a href="{% url 'collections' %}">container collections</a> and look for the <i class="fa fa-exchange" style="padding:20px"></i> icon to select an endpoint to transfer the image..
-                           </p> 
-                       </div>
-                   </div>
-               {% endif %}
+
+{% if endpoints %}
+<div class="row">
+    <input type="text" id="searchInput" onkeyup="tableSearch()" style="margin-bottom:10px" placeholder="Search names...">
+        <p class="alert alert-info" id="message-activate" style="display:none;padding: 8px; margin-left: 10px"></p>
+        <table id="label_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>endpoint ID</th>
+            <th></th>
+            <th>name</th>
+            <th>email</th>
+            <th>organization</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>endpoint ID</th>
+            <th></th>
+            <th>name</th>
+            <th>email</th>
+            <th>organization</th>
+            <th></th>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for endpoint in endpoints %}
+            <tr class="tableRow">
+                <td data-search="{{ endpoint.id }}">
+                    {% if endpoint.activated %}{{ endpoint.id }}{% else %}
+                    <a class="makeactive" data-uid="{{ endpoint.id }}" 
+                                          target="_blank" 
+                                          href="https://www.globus.org/app/endpoints/{{ endpoint.id }}/activate">ACTIVATE {{ endpoint.id }}</a>{% endif %}
+                </td>
+                <td data-search="{{ endpoint.activated }} {{ endpoint.is_globus_connect }}">
+                      {% if endpoint.activated %}<span class="label label-success">activated</span>{% endif %}
+                      {% if endpoint.is_globus_connect %}<span class="label label-primary">globus connect</span>{% endif %}                  
+                      {% if endpoint.public %}<span class="label label-primary">public</span>{% endif %}            
+                </td>
+                <td data-search="{{ endpoint.display_name }}">{{ endpoint.display_name }}</td>
+                <td {% if endpoint.contact_email %}data-search="{{ endpoint.contact_email }}"{% endif %}>{% if endpoint.contact_email %}{{ endpoint.contact_email }}{% endif %}</td>
+                <td {% if endpoint.organization %}data-search="{{ endpoint.organization }}"{% endif %}>{% if endpoint.organization %}{{ endpoint.organization }}{% endif %}</td>
+                <td>{% if endpoint.activated %}{% if container.id %}
+                         <button class="btn btn-sm btn-info do_transfer transfer"
+                                  data-endpoint="{{ endpoint.id }}">Transfer</button>{% endif %}{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% else %}
+<hr>
+<div class="row">
+    <div class="col-md-12">
+    <p class="alert alert-info">
+    You are connected to Globus! Browse <a href="{% url 'collections' %}">container collections</a> and look for the <i class="fa fa-exchange" style="padding:20px"></i> icon to select an endpoint to transfer the image..
+    </p> 
+    </div>
+</div>
+{% endif %}
+
             </div>
             <hr>
             <div id="endpoints" style="color:#2e609b" class="tab-pane fade in">
@@ -179,6 +213,45 @@ $(document).ready(function(){
                 }
              });
         }
+
+        {% if needs_update %}
+        {% else %}
+
+        $('.makeactive').click(function(){
+            uid = $(this).attr('data-uid');
+            message='Once you have authenticated for the endpoint in the Globus portal,';
+            {% if container %}
+            message+='view <a href="/globus/endpoint/' + uid + '{{ container.id }}"> the endpoint details.</a>';
+            {% else %}
+            message+='view <a href="/globus/endpoint/' + uid + '"> the endpoint details.</a>'; 
+            {% endif %}
+            $('#message-activate').append(message);
+            $('#message-activate').show();
+        });
+
+        function tableSearch() {
+
+            // https://www.w3schools.com/howto/howto_js_filter_table.asp
+
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("label_table");
+            tr = table.getElementsByClassName("tableRow");
+
+            for (i = 0; i < tr.length; i++) {
+                $.each(tr[i].children, function(e, child){
+                    text = $(child).attr('data-search');
+                    if (text.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                   } else {
+                        tr[i].style.display = "none";
+                   }
+                })                
+            }
+         }
+        {% endif %}
+
     {% endif %}
 
 })
