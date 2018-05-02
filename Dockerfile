@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     anacron \
     autoconf \
     automake \
+    libarchive-dev \
     libtool \
     libopenblas-dev \
     libglib2.0-dev \
