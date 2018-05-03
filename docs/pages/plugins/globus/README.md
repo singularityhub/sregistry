@@ -80,7 +80,7 @@ the owner of the endpoint. The user will have to further authenticate from the a
 ## Usage
 
 ### Authentication
-Once your server is setup with an endpoint, any logged in user The individual user must authenticate with Globus in order to issue a refresh token to make transfers. To add this integration, do the following:
+Once your server is setup with an endpoint, any logged in user must authenticate with Globus in order to issue a refresh token to make transfers. To add this integration, do the following:
 
  1. When you are logged in, you can access your Integrations under Settings in your user menu:
 
