@@ -219,3 +219,51 @@ html * {
     transition: all .3s ease;
 }
 
+/* Fiware */
+
+/*
+.blue{color:#0093C6;} rgb(0, 147, 198) 
+.blue-ligth{color:#009FD6;} rgb(0, 159, 214)
+.blue-dark{color:#3E80AD;} rgb(62, 128, 173)
+*/
+
+#fiware-connect {
+    background: rgb(255, 255, 255) url('/static/img/social-buttons/fiware.png') no-repeat scroll 5px 1px / 45px 45px padding-box border-box;
+    border: 1px solid rgb(62, 128, 173);
+    color: rgb(62, 128, 173);
+}
+
+#fiware-connect:hover {
+    color: rgb(255, 255, 255);
+    border-color: rgb(62, 128, 173);
+    background: rgb(62, 128, 173) url('/static/img/social-buttons/fiware_hover.png') no-repeat scroll 5px 1px / 45px 45px padding-box border-box;
+    -webkit-transition: all .8s ease-out;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease-out;
+}
+
+#fiware-connect span {
+    box-sizing: border-box;
+    color: rgb(62, 128, 173);
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    border: 0px none rgb(62, 128, 173);
+    outline: rgb(62, 128, 173) none 0px;
+        -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+#fiware-connect:hover span {
+    color: rgb(0, 159, 214);
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+
