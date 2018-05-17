@@ -1,0 +1,260 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block css %}
+{% include "style/sliders.html" %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+{% if 'globus' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="fh5co-portfolio">
+<div class="row">
+
+    <div class="col-md-4" style="padding-right: 0px;">
+        <div style="padding:20px">
+            <div class="header">
+                <a href="{% url 'profile' %}">
+                 <h3 class="title">{{ request.user.username }}: </a>
+                  {% if container %} transfer {{ container.name }}{% else %}endpoints {% endif %} 
+                  </h3>
+            </div>
+        </div>
+    </div>
+
+    {% if endpoints %}
+    <div class="col-md-8" style="padding-left: 0px;">
+        <small>Search Endpoints</small>
+
+        {% if container %}
+        <form action="{% url 'globus_transfer' container.id %}" method="POST" name='form'>
+        {% else %}
+        <form action="{% url 'globus_transfer' %}" method="POST" name='form'>
+        {% endif %}
+        <div class="input-group">
+            <input type="text" class="form-control" name='term' placeholder="{{ endpoint_search_term }}">
+            {% csrf_token %}
+            <span class="input-group-btn">
+            <button class="btn btn-info" type="submit">Go!</button>
+           </span>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+</div>
+
+<div class="row" style='margin-top:20px'>
+    <div class="col-md-3">
+        <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" href="#transfer">Transfer</a></li>
+            <li><a data-toggle="pill" id="pill-builder" href="#endpoints">Endpoints</a></li> 
+        </ul>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-8" style="padding-left:0px">
+        <div class="tab-content"> 
+           <div id="transfer" class="tab-pane fade in active">
+
+                    {% if endpoints|length == 0 %}
+                    <div class="row">
+                        <div class="col-md-12">
+                           <p class="alert alert-info">
+                               You don't have any shared or personal endpoints for transfer.
+                           </p> 
+                        </div>
+                    </div>
+                    {% endif %}
+
+{% if endpoints %}
+<div class="row">
+    <input type="text" id="searchInput" onkeyup="tableSearch()" style="margin-bottom:10px" placeholder="Search names...">
+        <p class="alert alert-info" id="message-activate" style="display:none;padding: 8px; margin-left: 10px"></p>
+        <table id="label_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>endpoint ID</th>
+            <th></th>
+            <th>name</th>
+            <th>email</th>
+            <th>organization</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>endpoint ID</th>
+            <th></th>
+            <th>name</th>
+            <th>email</th>
+            <th>organization</th>
+            <th></th>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for endpoint in endpoints %}
+            <tr class="tableRow">
+                <td data-search="{{ endpoint.id }}">
+                    {% if endpoint.activated %}{{ endpoint.id }}{% else %}
+                    <a class="makeactive" data-uid="{{ endpoint.id }}" 
+                                          target="_blank" 
+                                          href="https://www.globus.org/app/endpoints/{{ endpoint.id }}/activate">ACTIVATE {{ endpoint.id }}</a>{% endif %}
+                </td>
+                <td data-search="{{ endpoint.activated }} {{ endpoint.is_globus_connect }}">
+                      {% if endpoint.activated %}<span class="label label-success">activated</span>{% endif %}
+                      {% if endpoint.is_globus_connect %}<span class="label label-primary">globus connect</span>{% endif %}                  
+                      {% if endpoint.public %}<span class="label label-primary">public</span>{% endif %}            
+                </td>
+                <td data-search="{{ endpoint.display_name }}">{{ endpoint.display_name }}</td>
+                <td {% if endpoint.contact_email %}data-search="{{ endpoint.contact_email }}"{% endif %}>{% if endpoint.contact_email %}{{ endpoint.contact_email }}{% endif %}</td>
+                <td {% if endpoint.organization %}data-search="{{ endpoint.organization }}"{% endif %}>{% if endpoint.organization %}{{ endpoint.organization }}{% endif %}</td>
+                <td>{% if endpoint.activated %}{% if container.id %}
+                         <button class="btn btn-sm btn-info do_transfer transfer"
+                                  data-endpoint="{{ endpoint.id }}">Transfer</button>{% endif %}{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% else %}
+<hr>
+<div class="row">
+    <div class="col-md-12">
+    <p class="alert alert-info">
+    You are connected to Globus! Browse <a href="{% url 'collections' %}">container collections</a> and look for the <i class="fa fa-exchange" style="padding:20px"></i> icon to select an endpoint to transfer the image..
+    </p> 
+    </div>
+</div>
+{% endif %}
+
+            </div>
+            <hr>
+            <div id="endpoints" style="color:#2e609b" class="tab-pane fade in">
+            <hr>
+            <div id="accordion">
+            {% for ep in endpoints %}
+            <div class="card">
+                <div class="card-header" id="heading{{ ep.id }}">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" 
+                                data-toggle="collapse" 
+                                data-target="#collapse{{ ep.id }}" 
+                                aria-expanded="false" aria-controls="collapse{{ ep.id }}">
+                                {{ ep.display_name }}
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapse{{ ep.id }}" class="collapse" aria-labelledby="heading{{ ep.id }}" data-parent="#accordion">
+                    <div class="card-body">
+                    {% include "globus/_transfer_endpoints.html" %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "messages/notification.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script src="{% static "js/ace.js"%}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "js/clipboard.min.js"%}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script src="{% static "js/cookie-token.js" %}"></script>
+<script>
+
+$(document).ready(function(){
+
+  {% if active_tab %}
+    $('#pill-{{ active_tab }}').click()    
+  {% endif %}
+
+   $('.material-pagination').hide();
+   $(".browser-default").change(function(){
+       $('.material-pagination').hide();
+   })
+
+   {% if user.is_authenticated %}
+        console.log('What to move things around, {{ user.username }}?')
+
+        $(".do_transfer").click(function(){
+            var endpoint_id = $(this).attr('data-endpoint');
+            $('.transfer').removeClass('active_transfer');
+            $("." + endpoint_id).addClass('active_transfer');
+            do_transfer(endpoint_id);
+        })
+
+        function do_transfer(endpoint_id) {
+
+            $.ajax({
+                url : "{{ DOMAIN }}/globus/transfer/"+ endpoint_id +"/container/{{ container.id }}/",
+                type : "POST",
+
+                success : function(json) {
+                  $(".messages").append('<p class="alert alert-into">' + json['message'] + '</p>')
+                  $('.active_transfer').removeClass('alert-warning');
+                  $('.active_transfer').addClass('alert-info');
+                  console.log(json);
+                  toast_message(json['message']);
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+             });
+        }
+
+        {% if needs_update %}
+        {% else %}
+
+        $('.makeactive').click(function(){
+            uid = $(this).attr('data-uid');
+            message='Once you have authenticated for the endpoint in the Globus portal,';
+            {% if container %}
+            message+='view <a href="/globus/endpoint/' + uid + '{{ container.id }}"> the endpoint details.</a>';
+            {% else %}
+            message+='view <a href="/globus/endpoint/' + uid + '"> the endpoint details.</a>'; 
+            {% endif %}
+            $('#message-activate').append(message);
+            $('#message-activate').show();
+        });
+
+        function tableSearch() {
+
+            // https://www.w3schools.com/howto/howto_js_filter_table.asp
+
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("label_table");
+            tr = table.getElementsByClassName("tableRow");
+
+            for (i = 0; i < tr.length; i++) {
+                $.each(tr[i].children, function(e, child){
+                    text = $(child).attr('data-search');
+                    if (text.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                   } else {
+                        tr[i].style.display = "none";
+                   }
+                })                
+            }
+         }
+        {% endif %}
+
+    {% endif %}
+
+})
+
+</script>
+{% endblock %}

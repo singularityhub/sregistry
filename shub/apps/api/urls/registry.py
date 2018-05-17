@@ -20,12 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from django.conf.urls import url
-from shub.settings import (
-    DOMAIN_NAME,
-    REGISTRY_URI,
-    REGISTRY_NAME
-)
-
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -40,9 +35,9 @@ import os
 
 class Registry(object):
     def __init__(self, **kwargs):
-       self.name = REGISTRY_NAME
-       self.id = REGISTRY_URI
-       self.url = DOMAIN_NAME
+       self.name = settings.REGISTRY_NAME
+       self.id = settings.REGISTRY_URI
+       self.url = settings.DOMAIN_NAME
 
 
 class RegistrySerializer(serializers.Serializer):

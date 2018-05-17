@@ -1,0 +1,10 @@
+{% load staticfiles %}
+{% if 'globus' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
+{% endif %}
+
+<a style="text-transform:none"
+        title="Transfer with Globus"
+        href="{% url 'globus_transfer' container.id %}">
+        <i class="fa fa-exchange"></i>
+        </a>

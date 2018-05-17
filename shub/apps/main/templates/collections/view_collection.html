@@ -27,6 +27,7 @@
 <!-- Error messages for builds will be added here-->
 {% include 'messages/message.html' %}
 
+<div class="container-fluid">
 <div class="row" style="margin-top:30px">
 
     <!-- Container collection meta -->
@@ -51,7 +52,7 @@
 
     <!-- Container collection meta -->
     <div class="col-md-12">
-        <div class="card">
+        <div >
                 
             {% if request.user in collection.owners.all %}
             <!-- Settings -->
@@ -76,10 +77,10 @@
 <!-- Containers! -->
 <div class="row">
         {% if containers %}
-            <div class="col-md-12">
+            <div class="col-md-12" style="margin-top:20px">
                 <div class="card material-table mdl-data-table--selectable">
                    <div class="table-header">
-                       <span class="table-title">Builds</span>
+                       <span class="table-title">Containers</span>
                    </div>
                    <table id="datatable" width="100%">
                        <thead>
@@ -104,7 +105,7 @@
 
                                {% if edit_permission %}
                                <a title="delete container" 
-                                  class="delete_container btn-sm btn btn-control btn-secondary" 
+                                  class="delete_container btn-sm btn btn-control btn-light" 
                                   id="delete{{ container.id }}">
                                    <i class="fa fa-trash"></i></a>
                                    <a id="confirm_delete{{ container.id }}" 
@@ -152,6 +153,7 @@
                                      data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}"  
                                              class="fa fa-plus"></i>
                                 </a>
+                               {% include "globus/_container_details.html" %}
                                {% endif %}
                            </td>                                
 
@@ -174,6 +176,7 @@
             {% endif %}
 
         </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

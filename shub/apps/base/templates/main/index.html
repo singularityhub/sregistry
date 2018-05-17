@@ -1,26 +1,18 @@
 {% extends "base/base.html" %}
 {% load staticfiles %}
-{% block head %}
-{% endblock %}
-
-{% block hero %}
-<div class="fh5co-intro text-center">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="intro-lead" style="font-weight:500">{% if REGISTRY_NAME %}{{ REGISTRY_NAME }}{% else %}Make containers, run, done.{% endif %}</h1>
-                <p class="">Your Registry for <a href="http://singularity.lbl.gov/" target="_blank"> Singularity</a> containers.</p>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 
 {% block content %}
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center"
+         style='padding-bottom:100px'>
+      <div class="col-md-12 p-lg-5 mx-auto my-12" style="margin-bottom: 80px">
+<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+      <h1 class="display-4">{% if REGISTRY_NAME %}{{ REGISTRY_NAME }}{% else %}Make containers, run, done.{% endif %}</h1>
+      <p class="lead">Your Open Source Registry for <a href="http://singularity.lbl.gov/" target="_blank"> Singularity</a> containers.</p>
+</div>
+      </div>
+    </div>
 
 <div id="fh5co-portfolio">
-
-<!--<p class="alert alert-info">Hi friends! Builders are added for 2.3, which will be the default for new collections. Existing collections will need to <a href="https://github.com/singularityhub/singularityhub.github.io/wiki/Generate-Images#customizing-and-updating-your-builder" target="_blank">be updated by you</a>. Please <a href="https://github.com/singularityhub/singularityhub.github.io/issues" target="_blank">let us know</a> if you run into any issues.</p>-->
 
 <!-- Package your analysis -->
 <div class="fh5co-portfolio-item ">
