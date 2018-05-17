@@ -1,0 +1,52 @@
+{% if collections %}
+<div class="row">
+    <div class="col-md-12">
+            <h3 class="title">Collections</h3>
+            <p>These are {{ profile.username }}'s collections on Singularity Hub.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12" class="table card material-table mdl-data-table--selectable">
+        <table id="datatable" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Builds</th>
+                <th>Description</th>
+                <th>Stars <i class="fa fa-star"style="color:gold"></i></th>
+                <th>Downloads</th>
+                <th>Last Modified</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for collection in collections %}
+            <tr>
+               <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
+               <td>{{ collection.containers.count }}</td>
+               <td>{% if collection.repo.description %}{{ collection.repo.description }}{% endif %}</td>
+                   <td>{% if collection.star__count %}{{ collection.star__count }}{% else %}0{% endif %}</td>
+                   <td>{% if collection.number_downloads %}{{ collection.number_downloads }}{% else %}0{% endif %}</td>
+                   <td>{{ collection.modify_date|date:"Y-m-d"}}
+                        {% if collection.repo.url %}
+                        <a style="margin-right:20px;float:right" 
+                           href="https://www.github.com/{{ collection.repo.full_name }}" target="_blank">
+                     <i class="fa fa-github"></i></a>{% endif %}
+                   </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+            <h4 class="title">Collections</h4>
+            {% if user == profile %}
+            <p>{{ profile.username }} doesn't have any collections in this Singularity Registry.</p>
+            {% else %}
+            <p>{{ profile.username }} doesn't have any collections in this Singularity Registry.</p>
+            {% endif %}
+    </div>
+</div>
+{% endif %}

@@ -44,11 +44,7 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from shub.settings import (
-    MEDIA_URL,
-    DOMAIN_NAME
-)
-
+from django.conf import settings
 
 ##############################################################################
 # Single Object Serializers
@@ -72,7 +68,6 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         model = Container
         fields = ('id','name','image','tag','add_date', 'metrics',
                   'version','tag','frozen', 'metadata', 'collection')
-
 
 ##############################################################################
 # Multiple Object Serializers

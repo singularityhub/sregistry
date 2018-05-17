@@ -26,11 +26,7 @@ from shub.apps.main.models import (
 
 from django.template import loader, Context
 from django.http import HttpResponse
-from shub.settings import (
-    BASE_DIR,
-    VISUALIZATION_TREEMAP_COLLECTION_SWITCH
-)
-
+from django.conf import settings
 from django.shortcuts import (
     render, 
     redirect
@@ -122,7 +118,7 @@ def containers_treemap(request):
        for all containers across collections.
     '''
     context = generate_treemap_context(request)   
-    if context['containers_count'] >= VISUALIZATION_TREEMAP_COLLECTION_SWITCH:
+    if context['containers_count'] >= settings.VISUALIZATION_TREEMAP_COLLECTION_SWITCH:
         return collections_treemap(request,context)
     return render(request, "singularity/containers_treemap.html", context)
 

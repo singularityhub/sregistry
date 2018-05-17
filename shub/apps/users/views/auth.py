@@ -49,13 +49,16 @@ def validate_credentials(user,context=None):
     # Right now we have github for repos and google for storage
     credentials = [{'provider':'google-oauth2','key':'google_credentials'},
                    {'provider':'github','key':'github_credentials'},
+                   {'provider':'globus','key':'globus_credentials'},
                    {'provider':'twitter','key':'twitter_credentials'}] 
 
     # Iterate through credentials, and set each available to aok. This is how
     # the templates will know to tell users which they need to add, etc.
     credentials_missing = "aok"
     for group in credentials:
-        credential = get_credentials(user,provider=group['provider'])
+        credential = None
+        if not user.is_anonymous():
+            credential = user.get_credentials(provider=group['provider'])
         if credential != None:
             context[group['key']] = 'aok'
         else:
@@ -64,13 +67,6 @@ def validate_credentials(user,context=None):
     # This is a global variable to indicate all credentials good
     context['credentials'] = credentials_missing
     return context
-
-
-def get_credentials(user,provider):
-    try:
-        return user.social_auth.get(provider=provider)
-    except:
-        return None
 
 
 def agree_terms(request):
@@ -102,6 +98,7 @@ def login(request,message=None):
     return render(request,'social/login.html', context)
 
 
+@login_required
 def logout(request):
     '''log the user out, first trying to remove the user_id in the request session
     skip if it doesn't exist
@@ -111,6 +108,7 @@ def logout(request):
     except KeyError:
         pass
     auth_logout(request)
+
     return redirect('/')
 
 

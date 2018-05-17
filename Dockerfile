@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     anacron \
     autoconf \
     automake \
+    libarchive-dev \
     libtool \
     libopenblas-dev \
     libglib2.0-dev \
@@ -36,8 +37,10 @@ RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 
 # Install Python requirements out of /tmp so not triggered if other contents of /code change
 ADD requirements.txt /tmp/requirements.txt
+RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
 
+ADD . /code/
 
 ################################################################################
 # PLUGINS
@@ -47,9 +50,11 @@ RUN pip install -r /tmp/requirements.txt
 # RUN pip install python3-ldap
 # RUN pip install django-auth-ldap
 
+# Install Globus (uncomment if wanted)
+RUN /bin/bash /code/scripts/globus/globus-install.sh
 
-RUN mkdir /code
-RUN mkdir -p /var/www/images
+RUN mkdir -p /code
+RUN mkdir -p /var/www/images && chmod -R 0755 /code/images/
 
 WORKDIR /code
 RUN apt-get remove -y gfortran
@@ -57,8 +62,6 @@ RUN apt-get remove -y gfortran
 RUN apt-get autoremove -y
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ADD . /code/
 
 # Install crontab to setup job
 RUN echo "0 0 * * * /usr/bin/python /code/manage.py generate_tree" >> /code/cronjob
