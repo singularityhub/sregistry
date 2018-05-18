@@ -3,6 +3,7 @@ layout: default
 title: {{ site.name }}
 pdf: true
 permalink: /
+excluded_in_search: true
 ---
 
 <div style="float:right; margin-bottom:50px; color:#666">
