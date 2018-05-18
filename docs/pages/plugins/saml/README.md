@@ -50,17 +50,6 @@ mv saml.key /etc/ssl/private
 and then generate the `metadata.xml` by going to `http://localhost/saml.xml`. Usually institutions have different portals for submitting metadata / getting information about SAML, for Stanford the information is via the [SAML SP Service Provider Database](https://spdb.stanford.edu/).
 
 
-### Pubmed ID Cache
-To make the searches more in sync with your particular datastore, it makes sense to cache the ids in your database, and only present articles to uses that are present. Toward this aim, you should run [this script](scripts/generate_pubmed_cache.py) inside your instance to generate the first cache. It's not required, but helpful.
-
-
-### Google Storage CORS
-If you are creating your own bucket, you will need to use gsutil to set up CORS, with an example (for doc.fish domain) provided in [scripts/google_cloud_storage_cors.json](scripts/google_cloud_storage_cors.json). You would run as follows:
-
-```
-gsutil cors set scripts/google_cloud_storage_cors.json gs://pmc-stanford
-```
-
 <div>
     <a href="/sregistry/plugins/plugin-ldap"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
     <a href="/sregistry/plugin-globus"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
