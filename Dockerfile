@@ -55,8 +55,12 @@ ADD . /code/
 
 # Install SAML (uncomment if wanted)
 # RUN pip install python3-saml
+# RUN pip install social-auth-core[saml]
 
-RUN mkdir -p /code
+################################################################################
+# BASE
+
+RUN mkdir -p /code && mkdir -p /code/images
 RUN mkdir -p /var/www/images && chmod -R 0755 /code/images/
 
 WORKDIR /code
