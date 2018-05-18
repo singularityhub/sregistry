@@ -23,5 +23,5 @@ for plugin in PLUGINS_ENABLED:
 
     # Add custom context processors, if defines for plugin
     if hasattr(plugin, 'CONTEXT_PROCESSORS'):
-        for context_processor in plugin['CONTEXT_PROCESSORS']:
-            TEMPLATE['OPTIONS']['context_processors'].append(context_processor)
+        for context_processor in plugin.CONTEXT_PROCESSORS:
+            TEMPLATES[0]['OPTIONS']['context_processors'].append(context_processor)
