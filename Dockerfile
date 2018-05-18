@@ -51,7 +51,10 @@ ADD . /code/
 # RUN pip install django-auth-ldap
 
 # Install Globus (uncomment if wanted)
-RUN /bin/bash /code/scripts/globus/globus-install.sh
+# RUN /bin/bash /code/scripts/globus/globus-install.sh
+
+# PLUGINS
+################################################################################
 
 RUN mkdir -p /code && mkdir -p /code/images
 RUN mkdir -p /var/www/images && chmod -R 0755 /code/images/
