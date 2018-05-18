@@ -22,7 +22,7 @@ your registries' local `shub/settings/secrets.py` file.
 
  - [LDAP-Auth](/sregistry/plugin-ldap): authentication against LDAP directories
  - [Globus](/sregistry/plugin-globus): connect and transfer using Globus
-
+ - [SAML](/sregistry/plugin-saml): Authentication with SAML
 
 ## Writing a Plugin
 
