@@ -6,14 +6,14 @@ permalink: /plugin-ldap
 toc: false
 ---
 
-The `ldap-auth` plugin allows users to login to sregistry using account information stored in an
+The `ldap_auth` plugin allows users to login to sregistry using account information stored in an
 LDAP directory. This supports logins against [Microsoft Active Directory](https://msdn.microsoft.com/en-us/library/bb742424.aspx), as well open-source
 [OpenLDAP](https://www.openldap.org/) etc.
 
 To enable LDAP authentication you must:
 
   * Uncomment the Dockerfile section to install LDAP dependencies *before* building the image
-  * Add `ldap-auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
+  * Add `ldap_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
   * Configure the details of your LDAP directory in `shub/settings/secrets.py`. See
     `shub/settings/dummy_secrets.py` for an example OpenLDAP configuration. A good start is to do the following:
 
@@ -299,7 +299,7 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 }
 ```
 
-Also ensure 'ldap-auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/config.py`.
+Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/config.py`.
 
 It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
 

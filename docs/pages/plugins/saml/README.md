@@ -6,14 +6,15 @@ permalink: /plugin-saml
 toc: false
 ---
 
-The `saml-auth` plugin allows users to authentication with your [SAML provider](https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language) of choice.
+# SAML Authentication
+
+The `saml_auth` plugin allows users to authentication with your [SAML provider](https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language) of choice.
 
 To enable SAML authentication you must:
 
-  * Add `saml-auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Add some configuratoin detials to `shub/settings/config.py`
-  * Configure the details of your SAML provider in in `shub/settings/secrets.py`. See
-    `shub/settings/dummy_secrets.py` for an example configuration. 
+  * Add `saml_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
+  * Add some configuration detials to `shub/settings/config.py`
+  * Configure the details of your SAML provider in in `shub/settings/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
 
 If you haven't yet created a secrets.py, a good start is to do the following:
 
@@ -35,6 +36,13 @@ along with the idp (the unique identifier for your SAML server request). That me
 # AUTH_SAML_INSTITUTION = "Stanford University"
 ```
 
+so they appear like:
+
+
+```bash
+AUTH_SAML_IDP = "stanford"
+AUTH_SAML_INSTITUTION = "Stanford University"
+```
 
 #### Setting up SAML Auth
 

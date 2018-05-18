@@ -34,11 +34,12 @@ The plugin interface is currently under development. At present, each plugin:
  - Can provide additional, models, views, templates, static files.
  - Can register an additional `AUTHENTICATION_BACKEND` by specifying `AUTHENTICATION_BACKEND` in
    its `__init.py__`
+ - Can register additional context processors by defining a tuple of complete paths to the relevant processors by specifying `CONTEXT_PROCESSORS` in its `__init.py__`
  - Must provide a documentation file and link in this README.
 
 Plugins are loaded when the plugin name is added to `PLUGINS_ENABLED` in `shub/settings/config.py`.
 A plugin mentioned here is added to `INSTALLED_APPS` at runtime, and any `AUTHENTICATION_BACKEND`
-listed in the plugin `__init.py__` is merged into the project settings.
+and `CONTEXT_PROCESSORS` listed in the plugin `__init.py__` is merged into the project settings.
 
 More documentation will be added as the plugin interface is developed. For now, see plugins
 distrubuted with sregisty under `shub/plugins` for example code.
