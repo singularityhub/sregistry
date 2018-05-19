@@ -53,8 +53,12 @@ ADD . /code/
 # Install Globus (uncomment if wanted)
 # RUN /bin/bash /code/scripts/globus/globus-install.sh
 
-# PLUGINS
+# Install SAML (uncomment if wanted)
+# RUN pip install python3-saml
+# RUN pip install social-auth-core[saml]
+
 ################################################################################
+# BASE
 
 RUN mkdir -p /code && mkdir -p /code/images
 RUN mkdir -p /var/www/images && chmod -R 0755 /code/images/

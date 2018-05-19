@@ -120,3 +120,10 @@
 #SOCIAL_AUTH_GLOBUS_USERNAME="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org"
 #SOCIAL_AUTH_GLOBUS_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 #GLOBUS_ENDPOINT_ID="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+
+# SAML Authentication (saml)
+# Only required if 'saml_auth' is added to PLUGINS_ENABLED in config.py
+
+# AUTH_SAML_IDP = "stanford"
+# AUTH_SAML_INSTITUTION = "Stanford University"

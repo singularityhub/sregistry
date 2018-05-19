@@ -20,3 +20,8 @@ for plugin in PLUGINS_ENABLED:
     # Add AUTHENTICATION_BACKENDS if defined, for authentication plugins
     if hasattr(plugin, 'AUTHENTICATION_BACKENDS'):
         AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + plugin.AUTHENTICATION_BACKENDS
+
+    # Add custom context processors, if defines for plugin
+    if hasattr(plugin, 'CONTEXT_PROCESSORS'):
+        for context_processor in plugin.CONTEXT_PROCESSORS:
+            TEMPLATES[0]['OPTIONS']['context_processors'].append(context_processor)

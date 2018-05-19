@@ -103,7 +103,9 @@ LOGGING_SAVE_RESPONSES=True
 
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
 # - globus: allows connection from sregistry to endpoints
+# - saml: authentication with SAML
 
 PLUGINS_ENABLED = [
-#    'ldap_auth'
+#    'ldap_auth',
+#    'saml_auth'
 ]

@@ -9,6 +9,9 @@
 {% if 'globus' in PLUGINS_ENABLED %}
     <link rel="stylesheet" href="{% static "css/globus_auth.css"%}">
 {% endif %}
+{% if 'saml_auth' in PLUGINS_ENABLED %}
+    <link rel="stylesheet" href="{% static "css/saml_auth.css"%}">
+{% endif %}
 
 {% endblock %}
 
@@ -46,6 +49,10 @@
 
         {% if ENABLE_GOOGLE_AUTH %}
         <a class="social-button" id="google-connect" href="{% url 'social:begin' 'google-oauth2' %}?next={{ domain }}{{ request.path }}">Login with Google</a>
+        {% endif %}
+
+        {% if 'saml_auth' in PLUGINS_ENABLED %}
+        <a class="social-button" id="saml-connect" href="{% url 'social:begin' 'saml' %}?next={{ request.path }};idp={{ AUTH_SAML_IDP }}">{{ AUTH_SAML_INSTITUTION }} Login</a>
         {% endif %}
 
         {% if 'ldap_auth' in PLUGINS_ENABLED %}
