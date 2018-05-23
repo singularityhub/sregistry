@@ -62,7 +62,7 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         secret = container.collection.secret
         url = reverse('download_container', kwargs= {'cid':container.id,
                                                      'secret':secret})
-        return "%s%s" %(DOMAIN_NAME,url)
+        return "%s%s" %(settings.DOMAIN_NAME,url)
 
     class Meta:
         model = Container
