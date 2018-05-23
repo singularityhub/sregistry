@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 from shub.apps.main.models import Container
-from registry.utils import read_json
+from sregistry.utils import read_json
 
 from itertools import chain
 import os
