@@ -153,7 +153,7 @@
                                      data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}"  
                                              class="fa fa-plus"></i>
                                 </a>
-                               {% include "globus/_container_details.html" %}
+                               {% if 'globus' in PLUGINS_ENABLED %}{% include "globus/_container_details.html" %}{% endif %}
                                {% endif %}
                            </td>                                
 
