@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
 THIRD_PARTY_APPS = [
     'social_django',
+    'chunked_upload',
     'crispy_forms',
     'django_gravatar',
     'django_extensions',

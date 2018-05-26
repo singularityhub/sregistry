@@ -47,6 +47,10 @@ class ContainerPushViewSet(ModelViewSet):
     serializer_class = ContainerPushSerializer
     parser_classes = (MultiPartParser, FormParser,)
 
+    def pre_save(self, obj):
+        print(self)
+        #obj.samplesheet = self.request.FILES.get('file')
+
     def perform_create(self, serializer):
  
         tag=self.request.data.get('tag','latest')                                   
@@ -107,6 +111,7 @@ class ContainerPushViewSet(ModelViewSet):
  
         if create_new is True:
 
+            print(self.request.data.get('datafile'))
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
                             tag=self.request.data.get('tag','latest'),

@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-
+from chunked_upload.models import ChunkedUpload
 from django.core.files.storage import FileSystemStorage
 from shub.apps.api.actions import create_container
 from django.db.models.signals import post_save
@@ -29,12 +29,12 @@ import uuid
 import os
 
 
-#####################################################################################
+################################################################################
 # HELPERS
-#####################################################################################
+################################################################################
 
 
-def get_upload_folder(instance,filename):
+def get_upload_folder(instance, filename):
     '''a helper function to upload to storage
     '''
     from shub.apps.main.models import Container, Collection
@@ -60,9 +60,9 @@ def get_upload_folder(instance,filename):
 
 
 
-#####################################################################################
+################################################################################
 # MODELS & STORAGE
-#####################################################################################
+################################################################################
 
 
 class OverwriteStorage(FileSystemStorage):
@@ -74,14 +74,15 @@ class OverwriteStorage(FileSystemStorage):
         return name
 
 
-class ImageFile(models.Model):
+
+class ImageFile(ChunkedUpload):
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)
     tag = models.CharField(max_length=200, null=False)
     metadata = models.TextField(default='') # will be converted to json
     name = models.CharField(max_length=200, null=False)
     owner_id = models.CharField(max_length=200, null=True)
-    datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
+    datafile = models.FileField(upload_to=get_upload_folder, storage=OverwriteStorage())
 
     def get_label(self):
         return "imagefile"
@@ -93,4 +94,5 @@ class ImageFile(models.Model):
         app_label = 'api'
 
 
+ImageFile._meta.get_field('user').null = True
 post_save.connect(create_container, sender=ImageFile)
