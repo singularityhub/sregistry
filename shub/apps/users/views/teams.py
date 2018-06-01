@@ -22,7 +22,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import (
+    HttpResponseRedirect,
+    JsonResponse
+)
 
 from shub.settings import USER_COLLECTIONS
 from shub.apps.users.forms import TeamForm
