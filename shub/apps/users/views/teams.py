@@ -259,7 +259,7 @@ def remove_member(request, tid, uid):
     member = get_user(uid)
 
     if request.user in team.owners.all():
-        team = _remove_member(team, user)
+        team = _remove_member(team, member)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
@@ -279,7 +279,7 @@ def remove_owner(request, tid, uid):
     member = get_user(uid)
 
     if request.user in team.owners.all():
-        team = _remove_owner(team, user)
+        team = _remove_owner(team, member)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
