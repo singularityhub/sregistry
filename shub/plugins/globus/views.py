@@ -84,8 +84,8 @@ def globus_login(request):
        page.
     '''
 
-    # redirect_uri = reverse('globus_login')
-    redirect_uri = "http://localhost/globus/login/"
+    redirect_uri = reverse('globus_login')
+    # http://localhost/globus/login/"
 
     client = get_client()
     client.oauth2_start_flow(redirect_uri,

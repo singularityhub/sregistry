@@ -15,7 +15,7 @@
             <a class="social-button btn-lg" 
                id="globus-login" 
                style="padding-left:60px; padding-right:30px"
-               href="{% url 'globus_login' %}?next=http://localhost{{ request.path }}">Connect Globus</a><hr>
+               href="{% url 'globus_login' %}?next=http://{{ domain }}{{ request.path }}">Connect Globus</a><hr>
             {% endif %}
             </div>
             <div class="col-md-12"><a href="{% url 'token' %}">
