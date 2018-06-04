@@ -22,7 +22,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import (
+    HttpResponseRedirect,
+    JsonResponse
+)
 
 from shub.settings import USER_COLLECTIONS
 from shub.apps.users.forms import TeamForm
@@ -256,7 +259,7 @@ def remove_member(request, tid, uid):
     member = get_user(uid)
 
     if request.user in team.owners.all():
-        team = _remove_member(team, user)
+        team = _remove_member(team, member)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
@@ -276,7 +279,7 @@ def remove_owner(request, tid, uid):
     member = get_user(uid)
 
     if request.user in team.owners.all():
-        team = _remove_owner(team, user)
+        team = _remove_owner(team, member)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
