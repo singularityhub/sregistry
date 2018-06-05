@@ -221,7 +221,6 @@ def _remove_member(team, user):
     '''
     if user in team.members.all():
         team.members.remove(user)
-        messages.info(request, '%s is removed from %s' %(user.username, team.name))
         team.save()
     return team
 
@@ -237,10 +236,7 @@ def _remove_owner(team, user):
     '''
     if team.owners.count() > 1 and user in team.owners.all():
         team.owners.remove(user)
-        messages.info(request, '%s is no longer owner of %s' %(user.username, team.name))
         team.save()
-    else:
-        messages.info(request, 'At least one owner must be present for a team.')
 
     return team
 
