@@ -221,7 +221,6 @@ def _remove_member(team, user):
     '''
     if user in team.members.all():
         team.members.remove(user)
-        messages.info('%s is removed from %s' %(user.username, team.name))
         team.save()
     return team
 
@@ -237,10 +236,7 @@ def _remove_owner(team, user):
     '''
     if team.owners.count() > 1 and user in team.owners.all():
         team.owners.remove(user)
-        messages.info('%s is no longer owner of %s' %(user.username, team.name))
         team.save()
-    else:
-        messages.info('At least one owner must be present for a team.')
 
     return team
 
@@ -260,6 +256,7 @@ def remove_member(request, tid, uid):
 
     if request.user in team.owners.all():
         team = _remove_member(team, member)
+        message = "%s has been removed from %s" %(member, team)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
@@ -280,6 +277,7 @@ def remove_owner(request, tid, uid):
 
     if request.user in team.owners.all():
         team = _remove_owner(team, member)
+        message = "%s is no longer an owner of %s" %(member, team)
     else:
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
@@ -301,6 +299,7 @@ def add_owner(request, tid, uid):
     if request.user in team.owners.all():
         team.owners.add(member)
         team.save()
+        message = "%s is now an owner of %s" %(member, team)
     else: 
         message = "You are not allowed to perform this action."
     return JsonResponse({"message":message})
