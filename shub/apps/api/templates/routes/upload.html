@@ -132,7 +132,7 @@
           },
           dataType: "json",
           success: function(data) {
-             $("#messages").append($('<p>').text(JSON.stringify(data).message));
+             $("#messages").append($('<p>').text(JSON.stringify(data)['message']));
           }
         });
       },

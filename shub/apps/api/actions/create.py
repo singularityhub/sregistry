@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from shub.settings import MEDIA_ROOT
 from sregistry.utils import parse_image_name
 from shub.logger import bot
+import shutil
 import json
 import os
 
@@ -44,7 +45,8 @@ def move_upload_to_storage(collection, upload_id):
     # Rename the file, moving from ChunkedUpload to Storage
     filename = os.path.basename(instance.file.path)
     new_path = os.path.join(image_home, filename.replace('.part', '.simg'))
-    os.rename(instance.file.path, new_path)
+    shutil.move(instance.file.path, new_path)
+    print('%s --> %s' %(instance.file.path, new_path))
     instance.file.name = new_path
     instance.save()
 
@@ -114,6 +116,8 @@ def upload_container(cid, request, upload_id, name, version):
         container.save()
 
         # Once the container is saved, delete the intermediate file object
+        instance.file = None
+        instance.save()
         instance.delete()
 
 
