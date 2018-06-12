@@ -30,9 +30,11 @@ from shub.apps.api.urls.containers import ContainerViewSet
 from shub.apps.api.urls.collections import CollectionViewSet
 from shub.apps.api.actions.push import ContainerPushViewSet
 from shub.apps.api.actions.upload import (
-    ShubChunkedUploadCompleteView,
-    ShubChunkedUploadView
+    ChunkedUploadUI,
+    ImageChunkedUpload,
+    ImageChunkedUploadComplete
 )
+
 router = routers.DefaultRouter()
 router.register(r'^containers', ContainerViewSet, base_name="container")
 router.register(r'^collections', CollectionViewSet, base_name="collection")
@@ -41,10 +43,8 @@ router.register(r'^push', ContainerPushViewSet, base_name="push")  # push
 urlpatterns = [
 
     url(r'^', include(router.urls)),
-    url(r'^containers/upload/?$',
-        ShubChunkedUploadView.as_view(), name='api_chunked_upload'),
-    url(r'^containers/upload-complete/?$',
-        ShubChunkedUploadCompleteView.as_view(),
-        name='api_chunked_upload_complete')
+    url(r'^upload/(?P<cid>.+?)/?$', ChunkedUploadUI.as_view(), name='chunked_upload'),
+    url(r'^upload/(?P<cid>.+?)/chunked_upload/?$', ImageChunkedUpload.as_view(), name='api_chunked_upload'),
+    url(r'^upload/(?P<cid>.+?)/complete/?$', ImageChunkedUploadComplete.as_view(), name='api_chunked_upload_complete')
 
 ]

@@ -128,6 +128,9 @@ STATIC_URL = '/static/'
 GRAVATAR_DEFAULT_IMAGE = "retro"
 # An image url or one of the following: 'mm', 'identicon', 'monsterid', 'wavatar', 'retro'. Defaults to 'mm'
 
+# Chunked Upload
+CHUNKED_UPLOAD_PATH = 'chunked_uploads/%Y/%m/%d'
+CHUNKED_UPLOAD_TO = CHUNKED_UPLOAD_PATH + '/{{ instance.upload_id }}.simg'
 
 try:
     from .secrets import *

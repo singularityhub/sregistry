@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from chunked_upload.models import ChunkedUpload
 from django.core.files.storage import FileSystemStorage
-from shub.apps.api.actions import create_container
+from shub.apps.api.actions import ( create_container, upload_container )
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
@@ -74,8 +74,7 @@ class OverwriteStorage(FileSystemStorage):
         return name
 
 
-
-class ImageFile(ChunkedUpload):
+class ImageFile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)
     tag = models.CharField(max_length=200, null=False)
@@ -94,5 +93,8 @@ class ImageFile(ChunkedUpload):
         app_label = 'api'
 
 
-ImageFile._meta.get_field('user').null = True
+class ChunkedImage(ChunkedUpload):
+    pass
+
+ChunkedImage._meta.get_field('user').null = True
 post_save.connect(create_container, sender=ImageFile)

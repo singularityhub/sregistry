@@ -57,6 +57,7 @@
             {% if request.user in collection.owners.all %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
+            <a href="{% url 'chunked_upload' collection.id %}"><button class="btn btn-sm btn-default"><i class="fa fa-upload"></i></button></a>
             {% endif %}
 
             {% if collection.containers.count > 0 %}
