@@ -43,8 +43,8 @@ router.register(r'^push', ContainerPushViewSet, base_name="push")  # push
 urlpatterns = [
 
     url(r'^', include(router.urls)),
+    url(r'^upload/chunked_upload/(?P<cid>.+?)/?$', ImageChunkedUpload.as_view(), name='api_chunked_upload'),
+    url(r'^upload/complete/(?P<cid>.+?)/?$', ImageChunkedUploadComplete.as_view(), name='api_chunked_upload_complete'),
     url(r'^upload/(?P<cid>.+?)/?$', ChunkedUploadUI.as_view(), name='chunked_upload'),
-    url(r'^upload/(?P<cid>.+?)/chunked_upload/?$', ImageChunkedUpload.as_view(), name='api_chunked_upload'),
-    url(r'^upload/(?P<cid>.+?)/complete/?$', ImageChunkedUploadComplete.as_view(), name='api_chunked_upload_complete')
 
 ]

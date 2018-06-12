@@ -25,11 +25,12 @@
 
 {% block content %}
 <!-- Error messages for builds will be added here-->
-{% include 'messages/message.html' %}
 
 <div class="container-fluid">
-<div class="row" style="margin-top:30px">
+{% include 'messages/message.html' %}
 
+<div class="row" style="margin-top:30px">
+    
     <!-- Container collection meta -->
     <div class="col-md-10">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
@@ -57,7 +58,7 @@
             {% if request.user in collection.owners.all %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
-            <a href="{% url 'chunked_upload' collection.id %}"><button class="btn btn-sm btn-default"><i class="fa fa-upload"></i></button></a>
+            <a href="{% url 'chunked_upload' collection.id %}"><button class="btn btn-sm btn-default"><i class="fa fa-plus"></i></button></a>
             {% endif %}
 
             {% if collection.containers.count > 0 %}

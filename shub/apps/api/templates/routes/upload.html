@@ -12,19 +12,43 @@
 {% block content %}
 
   <h1 class="title">
-    collection upload
+    Upload to Collection
   </h1>
   <p>
-    See the code on github: <a href="https://github.com/juliomalegria/django-chunked-upload" target="_blank">django-chunked-upload</a>.
+    Return to: <a href="{% url 'collection_details' cid %}">collection</a>.
   </p>
   {% csrf_token %}
+  <div id="div_id_name" class="form-group" style='width:400px'>
+      <label for="id_name" 
+             class="control-label  requiredField">Container Name<span class="asteriskField">*</span></label>
+           <div class="controls">
+               <input type="text" 
+                      name="name" 
+                      value=""
+                      placeholder="container:tag" 
+                      required=""
+                      maxlength="50" class="textinput textInput form-control"  
+                      id="id_name"> 
+                </div>
+           </div>
   <input id="chunked_upload" type="file" name="the_file">
 
-  <p id="progress"></p>
+  <!--progress bar, hidden to start-->
+  <div style="display:none; margin-top:30px; width:400px;" class="progress" id="progressbar_holder">
+      <div id="progressbar"
+           class="progress-bar progress-bar-striped" 
+           role="progressbar" 
+           style="width: 0%" 
+           aria-valuenow="0" 
+           aria-valuemin="0" 
+           aria-valuemax="100"></div>
+  </div>
+
   <div id="messages"></div>
 
   <script type="text/javascript">
     var md5 = "",
+        container_name="",
         csrf = $("input[name='csrfmiddlewaretoken']")[0].value,
         form_data = [{"name": "csrfmiddlewaretoken", "value": csrf}];
     function calculate_md5(file, chunk_size) {
@@ -50,41 +74,65 @@
       };
       read_next_chunk();
     }
+
     $("#chunked_upload").fileupload({
-      url: "{% url 'api_chunked_upload' cid %}",
-      dataType: "json",
-      maxChunkSize: 100000, // Chunks of 100 kB
-      formData: form_data,
-      add: function(e, data) { // Called before starting upload
-        $("#messages").empty();
-        // If this is the second file you're uploading we need to remove the
-        // old upload_id and just keep the csrftoken (which is always first).
-        form_data.splice(1);
-        calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
-        data.submit();
-      },
-      chunkdone: function (e, data) { // Called after uploading each chunk
+
+        url: "{% url 'api_chunked_upload' cid %}",
+        dataType: "json",
+        maxChunkSize: 100000, // Chunks of 100 kB
+        formData: form_data,
+        add: function(e, data) { // Called before starting upload
+            $("#messages").empty();
+            $('#progressbar').attr('style', "width: 0%")
+            $('#progressbar').attr('aria-valuenow', 0)
+           
+            // If the container_name is not defined, don't  continue
+            container_name = $("input[name='name']")[0].value
+            if (container_name == "") {
+                $("#messages").append("<p style='width:400px' class='alert alert-info'>Please specify the container name before upload!</span>");
+                return false
+            }
+
+            // Show the progress bar
+            $('#progressbar_holder').show();
+
+            // If this is the second file you're uploading we need to remove the
+            // old upload_id and just keep the csrftoken (which is always first).
+            form_data.splice(1);
+            calculate_md5(data.files[0], 100000);  // Again, chunks of 100 kB
+            data.submit();
+        },
+
+        chunkdone: function (e, data) { // Called after uploading each chunk
         if (form_data.length < 2) {
-          form_data.push(
-            {"name": "upload_id", "value": data.result.upload_id}
-          );
+            form_data.push(
+                {"name": "upload_id", "value": data.result.upload_id}
+            );
         }
-        $("#messages").append($('<p>').text(JSON.stringify(data.result)));
+        //$("#messages").append($('<p>').text(JSON.stringify(data.result)));
         var progress = parseInt(data.loaded / data.total * 100.0, 10);
-        $("#progress").text(Array(progress).join("=") + "> " + progress + "%");
+        //$("#progress").text(Array(progress).join("=") + "> " + progress + "%");
+
+        // Update the progress bar
+        $('#progressbar').attr('style', "width: " + progress+ "%");
+        $('#progressbar').attr('aria-valuenow', progress);
+
       },
+
       done: function (e, data) { // Called when the file has completely uploaded
-        $.ajax({
-          type: "POST",
-          url: "{% url 'api_chunked_upload_complete' cid %}",
-          data: {
-            csrfmiddlewaretoken: csrf,
-            upload_id: data.result.upload_id,
-            md5: md5
+          $.ajax({
+              type: "POST",
+              url: "{% url 'api_chunked_upload_complete' cid %}",
+              data: {
+                  csrfmiddlewaretoken: csrf,
+                  name: container_name,
+                  cid: {{ cid }},
+                  upload_id: data.result.upload_id,
+                  md5: md5
           },
           dataType: "json",
           success: function(data) {
-            $("#messages").append($('<p>').text(JSON.stringify(data)));
+             $("#messages").append($('<p>').text(JSON.stringify(data).message));
           }
         });
       },

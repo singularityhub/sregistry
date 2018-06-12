@@ -130,7 +130,6 @@ GRAVATAR_DEFAULT_IMAGE = "retro"
 
 # Chunked Upload
 CHUNKED_UPLOAD_PATH = 'chunked_uploads/%Y/%m/%d'
-CHUNKED_UPLOAD_TO = CHUNKED_UPLOAD_PATH + '/{{ instance.upload_id }}.simg'
 
 try:
     from .secrets import *

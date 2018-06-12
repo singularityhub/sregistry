@@ -97,4 +97,4 @@ class ChunkedImage(ChunkedUpload):
     pass
 
 ChunkedImage._meta.get_field('user').null = True
-post_save.connect(create_container, sender=ImageFile)
+#post_save.connect(create_container, sender=ImageFile)
