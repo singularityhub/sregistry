@@ -19,10 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
-
 
 ##############################################################################
 # Hyperlink Serializers
