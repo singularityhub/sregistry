@@ -20,14 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from chunked_upload.models import ChunkedUpload
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
-from shub.apps.api.actions import ( create_container, upload_container )
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
 import uuid
 import os
-
 
 ################################################################################
 # HELPERS
@@ -93,8 +93,12 @@ class ImageFile(models.Model):
         app_label = 'api'
 
 
-class ChunkedImage(ChunkedUpload):
+################################################################################
+# UPLOADS
+################################################################################
+
+# Chunked Upload from Web UI
+class ImageUpload(ChunkedUpload):
     pass
 
-ChunkedImage._meta.get_field('user').null = True
-#post_save.connect(create_container, sender=ImageFile)
+ImageUpload._meta.get_field('user').null = True

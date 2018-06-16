@@ -2,7 +2,6 @@ cython
 h5py
 uwsgi
 Django==1.11.2
-django-chunked-upload
 social-auth-app-django
 social-auth-core[saml]
 python-social-auth

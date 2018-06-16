@@ -23,9 +23,8 @@ from shub.apps.main.utils import calculate_expiration_date
 from shub.apps.api.tasks import expire_share
 from django.shortcuts import (
     render, 
-    reverse,
-    redirect
-)
+    reverse
+) 
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse

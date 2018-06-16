@@ -20,5 +20,5 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 #from django.conf.urls import url, include
-from .create import ( create_container, upload_container )
+from .create import upload_container
 from .delete import delete_container

@@ -58,6 +58,12 @@ def write_tmpfile(memory_file):
     return file_name
 
 
+def format_collection_name(collection_name):
+    '''remove illegal characters and ensure all lowercase'''
+    collection_name = re.sub('[^0-9a-zA-Z]+', '-', collection_name)
+    return collection_name.strip('-').lower()
+
+
 def format_container_name(name,special_characters=None):
     '''format_container_name will take a name supplied by the user,
     remove all special characters (except for those defined by "special-characters"

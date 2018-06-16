@@ -19,32 +19,32 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-from django.conf.urls import (
-    url, 
-    include
-)
+from django.conf.urls import ( url, include )
+import rest_framework.authtoken.views as authviews
 
 from rest_framework import routers
 
 from shub.apps.api.urls.containers import ContainerViewSet
 from shub.apps.api.urls.collections import CollectionViewSet
-from shub.apps.api.actions.push import ContainerPushViewSet
+from shub.apps.api.actions.push import collection_auth_check
 from shub.apps.api.actions.upload import (
-    ChunkedUploadUI,
-    ImageChunkedUpload,
-    ImageChunkedUploadComplete
+    UploadUI,
+    upload_complete
 )
 
 router = routers.DefaultRouter()
 router.register(r'^containers', ContainerViewSet, base_name="container")
 router.register(r'^collections', CollectionViewSet, base_name="collection")
-router.register(r'^push', ContainerPushViewSet, base_name="push")  # push
 
 urlpatterns = [
 
     url(r'^', include(router.urls)),
-    url(r'^upload/chunked_upload/(?P<cid>.+?)/?$', ImageChunkedUpload.as_view(), name='api_chunked_upload'),
-    url(r'^upload/complete/(?P<cid>.+?)/?$', ImageChunkedUploadComplete.as_view(), name='api_chunked_upload_complete'),
-    url(r'^upload/(?P<cid>.+?)/?$', ChunkedUploadUI.as_view(), name='chunked_upload'),
+
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-token-auth/', authviews.obtain_auth_token ),
+
+    url(r'^upload/chunked_upload/?$', collection_auth_check, name='collection_auth_check'),
+    url(r'^upload/(?P<cid>.+?)/?$', UploadUI.as_view(), name='chunked_upload'),
+    url(r'^uploads/complete/?$', upload_complete, name='terminal_upload_complete'),
 
 ]

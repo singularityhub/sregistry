@@ -21,79 +21,106 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from shub.logger import bot
 from urllib.parse import unquote
+from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
-#from rest_framework.exceptions import PermissionDenied
-#from rest_framework.parsers import FormParser, MultiPartParser
-#from shub.apps.main.models import Collection,Container
-#from rest_framework.viewsets import ModelViewSet
-#from shub.apps.api.models import ImageFile  # MyChunkedUpload equivalent
-#from rest_framework import serializers
-#from shub.apps.api.utils import ( 
-#    validate_request, 
-#    has_permission, 
-#    get_request_user
-#)
-#from sregistry.main.registry.auth import generate_timestamp
+import json
+from django.shortcuts import redirect
 
-from django.views.generic.base import TemplateView
-from chunked_upload.views import (
-    ChunkedUploadView,
-    ChunkedUploadCompleteView
+from shub.apps.main.models import Collection
+from sregistry.main.registry.auth import generate_timestamp
+from shub.apps.api.utils import ( 
+    get_request_user,
+    has_permission,
+    validate_request
 )
 
-from shub.apps.api.models import ChunkedImage
+from rest_framework.exceptions import PermissionDenied
+from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import CsrfViewMiddleware
+from shub.apps.api.urls.serializers import UploadCreateSerializer
+from django.views.generic.base import TemplateView
 
-# TODO: this should link to the command line upload
-#class ChunkedUploadTerm():
+import os
 
-class ChunkedUploadUI(LoginRequiredMixin, TemplateView):
+# Terminal Upload
+
+
+@csrf_exempt
+def upload_complete(request):
+    '''view called on /api/upload/complete after nginx upload module finishes.
+    '''
+    from shub.apps.api.actions.create import upload_container
+
+    if request.method == "POST":
+
+        path = request.POST.get('file1.path')
+        size = request.POST.get('file1.size')
+        cid = request.POST.get('collection')
+        filename = request.POST.get('file1.name')
+        name = request.POST.get('name')
+        version = request.POST.get('file1.md5')
+        auth = request.META.get('HTTP_AUTHORIZATION', None)
+        tag = request.POST.get('tag')
+        csrftoken = request.META.get('CSRF_COOKIE')
+
+        if auth is None and csrftoken is None:
+
+            # Clean up the file
+            if os.path.exists(filename):
+                os.remove(path)
+
+            raise PermissionDenied(detail="Authentication Required")
+
+        # at this point, the collection MUST exist
+        try:
+            collection = Collection.objects.get(id=cid)
+        except Collection.DoesNotExist:
+            raise PermissionDenied(detail="Authentication Required")
+    
+        # If not defined, coming from terminal
+        web_interface = True
+        if csrftoken is None:
+            web_interface = False
+            owner = get_request_user(auth)
+            timestamp = generate_timestamp()
+            payload = "upload|%s|%s|%s|%s|" %(collection.name,
+                                              timestamp,
+                                              name,
+                                              tag)
+
+            # Validate Payload
+            if not validate_request(auth, payload, "upload", timestamp):
+                raise PermissionDenied(detail="Unauthorized")
+
+            if not has_permission(auth, collection, pull_permission=False):
+                raise PermissionDenied(detail="Unauthorized")
+
+        else:
+            owner = request.user
+
+        # If tag is provided, add to name
+        if tag is not None:
+            name = "%s:%s" %(name, tag)
+        
+        # Expected params are upload_id, name, md5, and cid
+        upload_container(cid = collection.id,
+                         user = owner,
+                         version = version,
+                         upload_id = path,
+                         name = name,
+                         size = size)
+
+        if web_interface is True:
+            return redirect(collection.get_absolute_url())
+        return JsonResponse({"message":"Upload Complete"})
+
+    return redirect('collections')
+
+
+class UploadUI(LoginRequiredMixin, TemplateView):
     template_name = 'routes/upload.html'
 
-
-class ImageChunkedUpload(LoginRequiredMixin, ChunkedUploadView):
-
-    model = ChunkedImage
-    field_name = 'the_file'
-
-    def check_permissions(self, request):
-        # Allow non authenticated users to make uploads
-        pass
-
-    def get_extra_attrs(self, request):
-        '''
-        Extra attribute values to be passed to the new ChunkedUpload instance.
-        Should return a dictionary-like object.
-        '''
-        return {}
-
-
-class ImageChunkedUploadComplete(LoginRequiredMixin, ChunkedUploadCompleteView):
-
-    model = ChunkedImage
-
-    def check_permissions(self, request):
-        # Allow non authenticated users to make uploads
-        pass
-
-    def on_completion(self, uploaded_file, request):
-        from shub.apps.api.actions.create import upload_container
-
-        body = unquote(request.body.decode('utf-8'))
-        params = { a[0]:a[1] for a in [x.split('=') for x in body.split('&')]}
-
-        # Expected params are upload_id, name, md5, and cid
-        upload_container(cid = params['cid'],
-                         request = request,
-                         version = params['md5'],
-                         upload_id = params['upload_id'],
-                         name = params['name'])
-
-        # Do something with the uploaded file. E.g.:
-        # * Store the uploaded file on another model:
-        # SomeModel.objects.create(user=request.user, file=uploaded_file)
-        # * Pass it as an argument to a function:
-        # function_that_process_file(uploaded_file)
-
-    def get_response_data(self, chunked_upload, request):
-        return {'message': ("You successfully uploaded '%s' (%s bytes)!" %
-                            (chunked_upload.filename, chunked_upload.offset))}
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['collection'] = Collection.objects.get(id=context['cid'])
+        return context

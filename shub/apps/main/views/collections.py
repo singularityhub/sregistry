@@ -27,6 +27,7 @@ from shub.apps.main.models import (
 
 from sregistry.utils import read_file
 from shub.apps.users.views import validate_credentials
+from shub.apps.main.utils import format_collection_name
 from django.shortcuts import (
     render, 
     redirect
@@ -118,10 +119,8 @@ def new_collection(request):
             if name is not None:
 
                 # No special characters allowed
-                name = re.sub('[^0-9a-zA-Z]+', '-', name)
-                name = name.strip('-').lower()
-                secret = str(uuid.uuid4())
-                collection = Collection(name=name, secret=secret)
+                name = format_collection_name(name)
+                collection = Collection(name=name, secret=str(uuid.uuid4()))
                 collection.save()
                 collection.owners.add(request.user)
                 collection.save()
