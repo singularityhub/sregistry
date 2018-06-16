@@ -123,13 +123,11 @@ MEDIA_ROOT = '/var/www/images'
 MEDIA_URL = '/images/'
 STATIC_ROOT = '/var/www/static'
 STATIC_URL = '/static/'
+UPLOAD_PATH = '%s/_upload' % MEDIA_ROOT
 
 # Gravatar
 GRAVATAR_DEFAULT_IMAGE = "retro"
 # An image url or one of the following: 'mm', 'identicon', 'monsterid', 'wavatar', 'retro'. Defaults to 'mm'
-
-# Chunked Upload
-CHUNKED_UPLOAD_PATH = 'chunked_uploads/%Y/%m/%d'
 
 try:
     from .secrets import *

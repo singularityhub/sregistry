@@ -114,7 +114,7 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
         # Get a container, if it exists (and the user is re-using a name)
         containers = collection.containers.filter(tag=names['tag'],
-                                                  name=names['uri'])
+                                                  name=names['image'])
 
         # If one exists, we check if it's frozen
         create_new = True
@@ -125,8 +125,8 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
             # If it's frozen, create a new one
             if container.frozen is False:
+                container.delete()
                 create_new = False
-
          
         if create_new is True:
             container = Container.objects.create(collection=collection,

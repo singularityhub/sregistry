@@ -36,8 +36,6 @@ from shub.apps.api.utils import (
 
 from rest_framework.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
-from django.middleware.csrf import CsrfViewMiddleware
-from shub.apps.api.urls.serializers import UploadCreateSerializer
 from django.views.generic.base import TemplateView
 
 import os

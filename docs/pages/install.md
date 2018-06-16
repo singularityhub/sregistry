@@ -31,6 +31,7 @@ cd sregistry
 For the files linked below, you should find the correspoinding file in the Github repository that you cloned. If you are setting this up for the first time, it's recommended to try locally and then move onto your production resource.
 
 ## Settings
+
 See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
 
 
@@ -241,6 +242,16 @@ LOGGING_SAVE_RESPONSES=True
 
 ## Setup
 Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
+
+### Nginx
+This section is mostly for your FYI. The nginx container that we use is a custom compiled
+nginx that includes the [nginx uploads module](https://www.nginx.com/resources/wiki/modules/upload/).
+This allows us to define a server block that will accept multipart form data directly, and 
+allow uploads directly to the server without needing to stress the uwsgi application. The uploads
+are a ton faster! You shouldn't need to do anything special when you bring up the container, but
+keep in mind that if you are deploying this without docker containers (e.g., using your own
+web server) you will need to equivalently compile nginx with the module enabled. A standard
+server without this module will no longer work.
 
 ### Under Maintenance Page
 If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.

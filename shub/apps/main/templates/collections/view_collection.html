@@ -144,17 +144,6 @@
                                <td>
 
                                {% if container.image %} 
-                               <a data-toggle="tooltip" 
-                                  data-placement="right" 
-                                  title="add a container to your cart." 
-                                  data-id="container_{{ container.id }}" 
-                                  data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
-                                  class="save_container" 
-                                  style="margin:15px">
-                                  <i data-id="container_{{ container.id }}" 
-                                     data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}"  
-                                             class="fa fa-plus"></i>
-                                </a>
                                {% if 'globus' in PLUGINS_ENABLED %}{% include "globus/_container_details.html" %}{% endif %}
                                {% endif %}
                            </td>                                
