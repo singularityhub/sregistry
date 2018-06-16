@@ -5,7 +5,6 @@ Django==1.11.2
 social-auth-app-django
 social-auth-core[saml]
 python-social-auth
-django-chunked-upload
 djangorestframework
 markdown
 django-filter
