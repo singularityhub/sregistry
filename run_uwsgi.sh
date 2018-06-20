@@ -18,4 +18,7 @@ then
     /opt/globus/globusconnectpersonal -start &
 fi
 
+# Make sure directories that are shared are created
+mkdir -p /var/www/images/_upload/{0..9} && chmod 777 -R /var/www/images/_upload
+
 uwsgi uwsgi.ini
