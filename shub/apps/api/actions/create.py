@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from shub.settings import MEDIA_ROOT
 from sregistry.utils import parse_image_name
 from shub.logger import bot
+from django.db import IntegrityError
 import shutil
 import uuid
 import json
@@ -86,7 +87,14 @@ def upload_container(cid, user, name, version, upload_id, size=None):
        name: the requested name for the container
        version: the md5 sum of the file
 
+       Returns
+       =======
+       message: None on successful upload, specific error message. This is 
+                a decision because it's purely intended to show to the user,
+                if the function is used otherwise we would want these to be
+                error / success codes.
     '''
+
     from shub.apps.main.models import ( Container, Collection )
     from shub.apps.api.models import ( ImageUpload, ImageFile )
     from shub.apps.main.views import update_container_labels
@@ -113,30 +121,46 @@ def upload_container(cid, user, name, version, upload_id, size=None):
                                          datafile=instance.file)
 
         # Get a container, if it exists (and the user is re-using a name)
-        containers = collection.containers.filter(tag=names['tag'],
-                                                  name=names['image'])
+        # Filter by negative id so we get the more recent container first.
+        collection_set = collection.containers
+        containers = collection_set.filter(tag=names['tag'],
+                                           name=names['image']).order_by('-id')
 
         # If one exists, we check if it's frozen
         create_new = True
+
         if len(containers) > 0:
 
             # If we already have a container, it might be frozen
             container = containers[0]
 
-            # If it's frozen, create a new one
+            # If it's not frozen, overwrite the same file
             if container.frozen is False:
                 container.delete()
                 create_new = False
          
+        # Container doesn't already exist / or old version isn't frozen
         if create_new is True:
-            container = Container.objects.create(collection=collection,
-                                                 name=names['image'],
-                                                 tag=names['tag'],
-                                                 image=image,
-                                                 version=names['version'])
+            try:
+                container = Container.objects.create(collection=collection,
+                                                     name=names['image'],
+                                                     tag=names['tag'],
+                                                     image=image,
+                                                     version=names['version'])
+
+            # Catches when container is frozen, and version already exists
+            except IntegrityError:
+                message = '%s/%s:%s@%s already exists.' %(collection.name,
+                                                          names['image'],
+                                                          names['tag'],
+                                                          names['version'])
+                bot.error(message)
+                delete_file_instance(instance)
+                return message
 
         # Otherwise, use the same container object, but update version
         else:
+            container.image = image
             container.version = names['version']
        
         container.save()
@@ -147,7 +171,13 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         container.metadata['size_mb'] = size
 
         # Once the container is saved, delete the intermediate file object
-        instance.file = None # remove the association
-        instance.save()
-        instance.delete()
+        delete_file_instance(instance)
 
+
+def delete_file_instance(instance):
+    '''a helper function to remove the file assocation, and delete the instance
+       if needed outside of this module can be added to models
+    '''
+    instance.file = None # remove the association
+    instance.save()
+    instance.delete()

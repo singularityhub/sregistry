@@ -37,6 +37,7 @@ from shub.apps.api.utils import (
 from rest_framework.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+from django.contrib import messages
 
 import os
 
@@ -101,16 +102,21 @@ def upload_complete(request):
             name = "%s:%s" %(name, tag)
         
         # Expected params are upload_id, name, md5, and cid
-        upload_container(cid = collection.id,
-                         user = owner,
-                         version = version,
-                         upload_id = path,
-                         name = name,
-                         size = size)
+        message = upload_container(cid = collection.id,
+                                   user = owner,
+                                   version = version,
+                                   upload_id = path,
+                                   name = name,
+                                   size = size)
+
+        # If the function doesn't return a message (None), indicates success
+        if message is None:
+            message = "Upload Complete"
 
         if web_interface is True:
+            messages.info(request, message)
             return redirect(collection.get_absolute_url())
-        return JsonResponse({"message":"Upload Complete"})
+        return JsonResponse({"message": message})
 
     return redirect('collections')
 
