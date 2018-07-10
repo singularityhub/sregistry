@@ -46,6 +46,8 @@ This section is going to cover installation, which means configuration of a Dock
 
 Do you want a new feature? Is something not working as it should? @vsoch wants [your input!](https://www.github.com/singularityhub/sregistry/issues) This registry is driven by desire and need for clusters small and large, so if you don't tell me what you want, how will I know that you want it?
 
+The robots thank you for giving them spirit and energy to provide this for you!
+
 <div>
     <a href="/sregistry/intro"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

@@ -75,6 +75,9 @@ RUN echo "0 0 * * * /usr/bin/python /code/manage.py generate_tree" >> /code/cron
 RUN crontab /code/cronjob
 RUN rm /code/cronjob
 
+# Create hashed temporary upload locations
+RUN mkdir -p /var/www/images/_upload/{0..9} && chmod 777 -R /var/www/images/_upload
+
 CMD /code/run_uwsgi.sh
 
 EXPOSE 3031

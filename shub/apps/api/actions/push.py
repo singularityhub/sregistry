@@ -20,98 +20,75 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 from shub.logger import bot
+from django.http import JsonResponse
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.parsers import FormParser, MultiPartParser
-from shub.apps.main.models import Collection,Container
-from rest_framework.viewsets import ModelViewSet
-from shub.apps.api.models import ImageFile
-from rest_framework import serializers
+
+from shub.apps.main.models import Collection
+from django.views.decorators.csrf import csrf_exempt
+from shub.apps.main.utils import format_collection_name
 from shub.apps.api.utils import ( 
-    validate_request, 
+    validate_request,
     has_permission, 
     get_request_user
 )
+
+import json
+import uuid
 from sregistry.main.registry.auth import generate_timestamp
 
-class ContainerPushSerializer(serializers.HyperlinkedModelSerializer):
+@csrf_exempt
+def collection_auth_check(request):
+    ''' check permissions and 
+        return a collection id (cid) if a collection exists and the user
+        has permission to upload. If not, a permission denied is returned.
+    '''
+    auth=request.META.get('HTTP_AUTHORIZATION', None)
+  
+    # Load the body, which is json with variables
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
 
-    class Meta:
-        model = ImageFile
-        read_only_fields = ('created', 'datafile','collection','tag','name', 'metadata',)
-        fields = ('created', 'datafile','collection','tag','name', 'metadata')
+    # Get variables
+    tag=body.get('tag','latest')                                   
+    name=body.get('name')
+    collection_name = format_collection_name(body.get('collection'))
+    
+    # Authentication always required for push
+    if auth is None:
+        raise PermissionDenied(detail="Authentication Required")
 
+    owner = get_request_user(auth)
+    timestamp = generate_timestamp()
+    payload = "push|%s|%s|%s|%s|" %(collection_name,
+                                    timestamp,
+                                    name,
+                                    tag)
 
-class ContainerPushViewSet(ModelViewSet):
+    # Validate Payload
+    if not validate_request(auth, payload, "push", timestamp):
+        raise PermissionDenied(detail="Unauthorized")
 
-    queryset = ImageFile.objects.all()
-    serializer_class = ContainerPushSerializer
-    parser_classes = (MultiPartParser, FormParser,)
+    try:
+        collection = Collection.objects.get(name=collection_name)
 
-    def perform_create(self, serializer):
- 
-        tag=self.request.data.get('tag','latest')                                   
-        name=self.request.data.get('name')
-        auth=self.request.META.get('HTTP_AUTHORIZATION', None)
-        collection_name=self.request.data.get('collection')
+    except Collection.DoesNotExist:
+        collection = None
 
-        # Authentication always required for push
-
-        if auth is None:
-            raise PermissionDenied(detail="Authentication Required")
-
-        owner = get_request_user(auth)
-        timestamp = generate_timestamp()
-        payload = "push|%s|%s|%s|%s|" %(collection_name,
-                                        timestamp,
-                                        name,
-                                        tag)
-
-
-        # Validate Payload
-
-        if not validate_request(auth, payload, "push", timestamp):
-            raise PermissionDenied(detail="Unauthorized")
-
-        create_new=False
-
-        try:
-            collection = Collection.objects.get(name=collection_name)
-
-            # Only owners can push
-            if not owner in collection.owners.all():
-                raise PermissionDenied(detail="Unauthorized")
-
-        except Collection.DoesNotExist:
-            collection = None
-            create_new = True
-
-        # Validate User Permissions
-
-        if not has_permission(auth, collection, pull_permission=False):
-            raise PermissionDenied(detail="Unauthorized")
+    # Validate User Permissions, either for creating collection or adding
+    # Here we have permission if:
+    # 1- user collections are enabled with USER_COLLECTIONS
+    # 2- the user is a superuser or staff
+    # 3- the user is owner of a collection
+    if not has_permission(auth, collection, pull_permission=False):
+         raise PermissionDenied(detail="Unauthorized")
         
-        if collection is not None:
+    # If we get here user has create permission, does collection exist?
+    if collection is None:
+        collection = Collection.objects.create(name=collection_name,
+                                               secret=str(uuid.uuid4()))
+        collection.save()
+        collection.owners.add(owner)
+        collection.save()
 
-            try:
-                container = Container.objects.get(collection=collection,
-                                                  name=name,
-                                                  tag=tag)
-                if container.frozen is False:
-                    create_new = True
-
-            except Container.DoesNotExist:
-                create_new=True
-         
-
-        # New collection, pusher is owner
- 
-        if create_new is True:
-
-            serializer.save(datafile=self.request.data.get('datafile'),
-                            collection=self.request.data.get('collection'),
-                            tag=self.request.data.get('tag','latest'),
-                            name=self.request.data.get('name'),
-                            owner_id=owner.id,
-                            metadata=self.request.data.get('metadata'))
-        else:
-            raise PermissionDenied(detail="%s is frozen, push not allowed." %container.get_short_uri())
+    # Return json response with collection id
+    return JsonResponse({'cid': collection.id })

@@ -125,20 +125,6 @@
                    target="_blank">
                    <button class="btn btn-sm btn-default">Download</button>
                 </a>
-                <a class="save_container" 
-                   data-id="container_{{ container.id }}" 
-                   data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
-                   class="btn btn-default btn-sm save_container">
-                   <button data-toggle="tooltip" 
-                           data-placement="right" 
-                           title="add container to your box to save for later." 
-                           class="btn btn-sm btn-default">
-                           <i data-id="container_{{ container.id }}" 
-                              data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
-                              class="fa fa-plus">
-                           </i>
-                   </button>
-                </a>
                 {% if edit_permission %}
                 <a id="share_container" 
                    class="btn btn-default btn-sm"
@@ -147,13 +133,15 @@
                    <i class="fa fa-share"></i>
                 </a>
                 {% endif %}
+                {% if 'globus' in PLUGINS_ENABLED %}
                 <a id="transfer_container" 
-                   href="{% url 'globus_transfer' container.id %}"
+                   href="{{ DOMAIN }}transfer/{{ container.id }}/"
                    class="btn btn-default btn-sm"
                    title="transfer your container to a globus endpoint" 
                    class="btn btn-sm btn-default">
                    <i class="fa fa-exchange"></i>
                 </a>
+                {% endif %}
                 {% endif %}
             </div>
         </div>

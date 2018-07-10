@@ -8,7 +8,7 @@ toc: false
 
 # Interfaces
 
-### Teams
+## Teams
 Singularity Registry Server allows registry staff (and if the administrators allow it) authenticated users to create teams, or groups of users that want to colleaborate on container collections together.
 
 ![teams.png](assets/img/teams.png)
@@ -24,16 +24,35 @@ The interface will give you a link to send to your colleague to join him or her 
 Membership in teams is important because when you add another user as a collaborator to one of your collections (either an owner ot member) they must be part of one of your teams.
 
 
-### Collections 
-The most important control panel for your collections is the Settings page. You can access it via the "Settings" button at the top of the collection view. The most likely action you will want to do is add other users from your teams (as described above). You do this on each Collection settings page:
+## Collections 
+A collection is a set of containers under the same namespace. For example, `dinosaur/avocado` and `dinosaur/banana` could be two containers in the `dinosaur` collection. You can browse all collections
+in the main collection view:
+
+![collections.png](assets/img/collections.png)
+
+and browse the containers within a collection by clicking on it:
+
+![collection.png](assets/img/collection.png)
+
+### Add a Container
+A view has been added for users with permission to directly upload a container to a collection! You
+can do this by clicking the "+" in the menu above the container table. here is what the upload page looks like:
+
+![upload.png](assets/img/upload.png)
+
+This uploads directly to nginx via the [nginx upload module](https://www.nginx.com/resources/wiki/modules/upload/), so it should be pretty speedy.
+
+
+## Collection Settings
+
+The most important control panel for your collections is the Settings page, which we
+see as the first link in the menu at the top of the table. The most likely action you will want to do is add other users from your teams (as described above). You do this on each Collection settings page:
 
 ![team-settings.png](assets/img/team-settings.png)
 
 For example, if my lab has a set of users on sregistry and we intend to build images together, we would make a team for our lab, and then easily find one another to manage access to images.
 
-
-
-## Badges
+### Badges
 Recently added, you can get a badge to link to your collection
 
 ![assets/img/badges.png](assets/img/badges.png)

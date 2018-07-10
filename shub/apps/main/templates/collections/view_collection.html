@@ -25,11 +25,12 @@
 
 {% block content %}
 <!-- Error messages for builds will be added here-->
-{% include 'messages/message.html' %}
 
 <div class="container-fluid">
-<div class="row" style="margin-top:30px">
+{% include 'messages/message.html' %}
 
+<div class="row" style="margin-top:30px">
+    
     <!-- Container collection meta -->
     <div class="col-md-10">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
@@ -57,6 +58,7 @@
             {% if request.user in collection.owners.all %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
+            <a href="{% url 'chunked_upload' collection.id %}"><button class="btn btn-sm btn-default"><i class="fa fa-plus"></i></button></a>
             {% endif %}
 
             {% if collection.containers.count > 0 %}
@@ -142,17 +144,6 @@
                                <td>
 
                                {% if container.image %} 
-                               <a data-toggle="tooltip" 
-                                  data-placement="right" 
-                                  title="add a container to your cart." 
-                                  data-id="container_{{ container.id }}" 
-                                  data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}" 
-                                  class="save_container" 
-                                  style="margin:15px">
-                                  <i data-id="container_{{ container.id }}" 
-                                     data-name="{{ container.collection.name }}/{{ container.name }}:{{ container.tag }}"  
-                                             class="fa fa-plus"></i>
-                                </a>
                                {% if 'globus' in PLUGINS_ENABLED %}{% include "globus/_container_details.html" %}{% endif %}
                                {% endif %}
                            </td>                                
@@ -169,7 +160,7 @@
             
             <!-- No containers! Tell the user to add one -->
             <div class="col-lg-8 col-sm-6">
-                <p style="padding-top:20px;padding-bottom:20px">This page will refresh automatically with new pushes.</p>
+                <p style="padding-top:20px;padding-bottom:20px">This page will refresh automatically with new pushes, or use <i style='margin-left:10px;margin-right:10px' class="fa fa-plus"></i> above to add a container here.</p>
             </div>
 
             {% include "social/share_links.html" %} 

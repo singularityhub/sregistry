@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+
+  <h2 class="title">
+    Upload to <span style="color:#d61c1c">{{ collection.name }}
+  </h2>
+
+    <form name="upload" method="POST" enctype="multipart/form-data" action="/upload">
+      {% csrf_token %}
+      <input type="file" name="file1"><br>
+  <div id="div_id_name" class="form-group" style='width:400px'>
+      <label for="id_name" 
+             class="control-label  requiredField">Container Name<span class="asteriskField">*</span></label>
+           <div class="controls">
+           <input type="text" 
+             name="name" 
+             value=""
+             placeholder="ubuntu" 
+             required=""
+             maxlength="50" class="textinput textInput form-control"  
+             id="id_name">      
+             </div>
+      </div>
+  <div id="div_id_tag" class="form-group" style='width:400px'>
+      <label for="id_name" 
+             class="control-label  requiredField">Container Tag<span class="asteriskField">*</span></label>
+      <div class="controls">
+      <input type="text" 
+             name="tag" 
+             value=""
+             placeholder="latest" 
+             required=""
+             maxlength="50" class="textinput textInput form-control"  
+             id="id_tag">      
+      </div>
+  </div>
+      <input type="submit" class="btn btn-primary" name="submit" value="Upload">
+      <input type="hidden" name="collection" value="{{ cid }}">
+    </form>
+
+  <div id="messages"></div>
+
+{% endblock %}

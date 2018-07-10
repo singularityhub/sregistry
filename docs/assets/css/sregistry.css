@@ -1,5 +1,8 @@
 body {font-family:"Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;font-size:18px;font-weight:300;line-height:1.6}
 
+img { padding-top:20px;
+     padding-bottom:20px}
+
 .highlight table td { padding: 5px; }
 .highlight table pre { margin: 0; }
 .highlight .cm { color: #999988; font-style: italic; }
@@ -1451,7 +1454,7 @@ button.cursorNorm {
 }
 
 h2  {
-    font-size:24px;
+    font-size:140%;
     line-height:29px;
 }
 span.otherProgrammingLanguages {

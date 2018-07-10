@@ -25,6 +25,7 @@ from rest_framework.exceptions import (
     NotFound
 )
 
+
 from shub.apps.api.utils import validate_request
 from sregistry.main.registry.auth import generate_timestamp
 
@@ -46,9 +47,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 
-##############################################################################
+################################################################################
 # Single Object Serializers
-##############################################################################
+################################################################################
 
 class SingleContainerSerializer(serializers.ModelSerializer):
 
@@ -69,9 +70,9 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         fields = ('id','name','image','tag','add_date', 'metrics',
                   'version','tag','frozen', 'metadata', 'collection')
 
-##############################################################################
+################################################################################
 # Multiple Object Serializers
-##############################################################################
+################################################################################
 
 
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
@@ -90,9 +91,9 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
 
 
-#########################################################################
+################################################################################
 # ViewSets: requests for (paginated) information about containers
-#########################################################################
+################################################################################
 
 
 class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
@@ -105,9 +106,9 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ContainerSerializer
 
 
-#########################################################################
+################################################################################
 # Container Views: custom views for specific containers
-#########################################################################
+################################################################################
 
 
 class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
@@ -224,9 +225,9 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
         return _container_get(request, container)
 
 
-#########################################################################
+################################################################################
 # Search
-#########################################################################
+################################################################################
 
 
 class ContainerSearch(APIView):
@@ -244,9 +245,9 @@ class ContainerSearch(APIView):
         return Response(data)
     
 
-#########################################################################
+################################################################################
 # urlpatterns
-#########################################################################
+################################################################################
 
 urlpatterns = [
 
@@ -257,5 +258,4 @@ urlpatterns = [
     url(r'^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)/?$', ContainerDetailByName.as_view()),
     url(r'^container/(?P<collection>.+?)/(?P<name>.+?)/?$', ContainerDetailByName.as_view()),
     url(r'^containers/(?P<cid>.+?)/?$', ContainerDetailById.as_view())
-
 ]

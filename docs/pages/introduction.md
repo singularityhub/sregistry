@@ -114,10 +114,6 @@ Within a collection you might have different tags or versions for images. For ex
  - `milkshake/chocolate:pudding`
  - `milkshake/vanilla:pudding`
 
-<br>
-![assets/img/containers.png](assets/img/containers.png)
-<br>
-
 All of these images are derivations of `milkshake`, and so we find them in the same collection. I chose above to change the name of the container and maintain the same tag, you could of course have more granular detail, different versions of the same container:
 
  - `milkshake/banana:v1.0`
@@ -180,7 +176,7 @@ Singularity Registry needs a web accessible server that can install and run Dock
 As was stated in the base [README.md](/sregistry/) The components of the application include databases, a web server, worker, and application:
 
  - **vanessa/sregistry**: is the main uwsgi application, which serves a Django (python-based) application.
- - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly.
+ - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly. Note that we build a custom nginx image that takes advantage of the [nginx upload module](https://www.nginx.com/resources/wiki/modules/upload/).
  - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [celery](http://www.celeryproject.org/), a distributed job queue that fits nicely into Django. The celery worker uses a
  - **redis**: database to organize the jobs themselves.
 

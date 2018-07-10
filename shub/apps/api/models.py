@@ -19,22 +19,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
-
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
-from shub.apps.api.actions import create_container
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
 import uuid
+import time
+import hashlib
 import os
 
-
-#####################################################################################
+################################################################################
 # HELPERS
-#####################################################################################
+################################################################################
 
+def get_upload_to(instance, filename):
+    filename = os.path.join(settings.UPLOAD_PATH, instance.upload_id + '.simg')
+    return time.strftime(filename)
 
-def get_upload_folder(instance,filename):
+def get_upload_folder(instance, filename):
     '''a helper function to upload to storage
     '''
     from shub.apps.main.models import Container, Collection
@@ -60,9 +64,9 @@ def get_upload_folder(instance,filename):
 
 
 
-#####################################################################################
+################################################################################
 # MODELS & STORAGE
-#####################################################################################
+################################################################################
 
 
 class OverwriteStorage(FileSystemStorage):
@@ -81,7 +85,7 @@ class ImageFile(models.Model):
     metadata = models.TextField(default='') # will be converted to json
     name = models.CharField(max_length=200, null=False)
     owner_id = models.CharField(max_length=200, null=True)
-    datafile = models.FileField(upload_to=get_upload_folder,storage=OverwriteStorage())
+    datafile = models.FileField(upload_to=get_upload_folder, storage=OverwriteStorage())
 
     def get_label(self):
         return "imagefile"
@@ -93,4 +97,38 @@ class ImageFile(models.Model):
         app_label = 'api'
 
 
-post_save.connect(create_container, sender=ImageFile)
+################################################################################
+# UPLOADS
+################################################################################
+
+class ImageUpload(models.Model):
+    ''' a base image upload to hold a file temporarily during upload
+        based off of django-chunked-uploads BaseChunkedUpload model
+    '''
+
+    upload_id = models.CharField(max_length=32, unique=True, editable=False,
+                                 default=uuid.uuid4().hex)
+    file = models.FileField(max_length=255, upload_to=get_upload_to)
+    filename = models.CharField(max_length=255)
+    offset = models.BigIntegerField(default=0)
+    created_on = models.DateTimeField(auto_now_add=True)
+    completed_on = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def md5(self):
+        if getattr(self, '_md5', None) is None:
+            md5 = hashlib.md5()
+            for chunk in self.file.chunks():
+                md5.update(chunk)
+            self._md5 = md5.hexdigest()
+        return self._md5
+
+    def delete(self, delete_file=True, *args, **kwargs):
+        if self.file:
+            storage, path = self.file.storage, self.file.path
+        super(ImageUpload, self).delete(*args, **kwargs)
+        if self.file and delete_file:
+            storage.delete(path)
+
+    class Meta:
+        app_label = 'api'

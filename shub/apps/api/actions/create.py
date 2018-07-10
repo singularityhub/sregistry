@@ -19,76 +19,165 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 '''
 
+from shub.settings import MEDIA_ROOT
+from sregistry.utils import parse_image_name
+from shub.logger import bot
+from django.db import IntegrityError
+import shutil
+import uuid
 import json
+import os
+
+def move_upload_to_storage(collection, upload_id):
+    '''moving an uploaded *UploadImage* to storage means:
+         1. create a folder for the collection, if doesn't exist
+         2. an image in storage. It will be moved here from
+       the temporary upload and renamed
+    '''
+    from shub.apps.api.models import ImageUpload
+
+    # Get ImageFile instance, rename the file
+    instance = ImageUpload.objects.get(upload_id=upload_id)
+
+    # Create collection root, if it doesn't exist
+    image_home = "%s/%s" %(MEDIA_ROOT, collection.name)
+    if not os.path.exists(image_home):
+        os.mkdir(image_home)
+    
+    # Rename the file, moving from ImageUpload to Storage
+    filename = os.path.basename(instance.file.path)
+    new_path = os.path.join(image_home, filename.replace('.part', '.simg'))
+    shutil.move(instance.file.path, new_path)
+    print('%s --> %s' %(instance.file.path, new_path))
+    instance.file.name = new_path
+    instance.save()
+    return instance
 
 
-def create_container(sender, instance, **kwargs):
-    '''create container is the function called by the ImageFile (in models.py)
-       after a push to the registry, triggered by ContainerPushSerializer.
+def move_nginx_upload_to_storage(collection, source, dest):
+    '''moving an uploaded file (from nginx module) to storage means.
+         1. create a folder for the collection, if doesn't exist
+         2. an image in storage pointing to the moved file
+
+         Parameters
+         ==========
+         collection: the collection the image will belong to
+         source: the source file (under /var/www/images/_upload/{0-9}
+         dest: the destination filename
+    '''
+    # Create collection root, if it doesn't exist
+    image_home = "%s/%s" %(MEDIA_ROOT, collection.name)
+    if not os.path.exists(image_home):
+        os.mkdir(image_home)
+    
+    new_path = os.path.join(image_home, os.path.basename(dest))
+    shutil.move(source, new_path)
+    return new_path
+
+
+def upload_container(cid, user, name, version, upload_id, size=None):
+    '''save an uploaded container, usually coming from an ImageUpload
 
        Parameters
        ==========
-       sender: should be the sending model, which is an ImageFile instance
-       instance: is the instance of the ImageFile
+       cid: the collection id to add the container to
+       user: the user that has requested the upload
+       upload_id: the upload_id to find the container (for web UI upload)
+                  if it exists as a file, an ImageUpload is created instead.
+       name: the requested name for the container
+       version: the md5 sum of the file
 
+       Returns
+       =======
+       message: None on successful upload, specific error message. This is 
+                a decision because it's purely intended to show to the user,
+                if the function is used otherwise we would want these to be
+                error / success codes.
     '''
-    from shub.apps.users.models import User
-    from shub.apps.main.models import Container, Collection
+
+    from shub.apps.main.models import ( Container, Collection )
+    from shub.apps.api.models import ( ImageUpload, ImageFile )
     from shub.apps.main.views import update_container_labels
+    collection = Collection.objects.get(id=cid)
 
-    collection = Collection.objects.get(name=instance.collection)
-    metadata = instance.metadata
+    # Only continue if user is an owner
+    if user in collection.owners.all():
 
-    # Add the owner
-    try:
-        owner = User.objects.get(id=instance.owner_id)
-        collection.owners.add(owner)
-        collection.save()
-    except:
-        pass   
+        # parse the image name, get the datafile
+        names = parse_image_name(name, version=version)
 
-    # Get a container, if it exists, we've already written file here
-    containers = collection.containers.filter(tag=instance.tag,
-                                              name=instance.name)
-    if len(containers) > 0:
-        container = containers[0]
-    else:
-        container = Container.objects.create(collection=collection,
-                                             tag=instance.tag,
-                                             name=instance.name,
-                                             image=instance)
-        
-    def add_metadata(container,metadata,field):
-        if field in metadata:
-            if field not in ['', None]:
-                container.metadata[field] = metadata[field]
-                container.save()
+        # If the path exists, it's a file from nginx module, move to storage
+        if os.path.exists(upload_id):
+            storage = os.path.basename(names['storage'])
+            new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
+            instance = ImageUpload.objects.create(file=new_path)
+        else:
+            instance = move_upload_to_storage(collection, upload_id)
 
-    # Load container metadata
-    metadata = json.loads(metadata)['data']['attributes']
-    add_metadata(container, metadata, 'deffile')
-    add_metadata(container, metadata, 'runscript')
-    add_metadata(container, metadata, 'test')
-    add_metadata(container, metadata, 'environment')
+        image = ImageFile.objects.create(collection=collection,
+                                         tag=names['tag'],
+                                         name=names['uri'],
+                                         owner_id=user.id,
+                                         datafile=instance.file)
 
-    # If exists, add size
-    try:
-        container_size = metadata['labels']['SREGISTRY_SIZE_MB']
-        container.metadata['size_mb'] = container_size
+        # Get a container, if it exists (and the user is re-using a name)
+        # Filter by negative id so we get the more recent container first.
+        collection_set = collection.containers
+        containers = collection_set.filter(tag=names['tag'],
+                                           name=names['image']).order_by('-id')
+
+        # If one exists, we check if it's frozen
+        create_new = True
+
+        if len(containers) > 0:
+
+            # If we already have a container, it might be frozen
+            container = containers[0]
+
+            # If it's not frozen, overwrite the same file
+            if container.frozen is False:
+                container.delete()
+                create_new = False
+         
+        # Container doesn't already exist / or old version isn't frozen
+        if create_new is True:
+            try:
+                container = Container.objects.create(collection=collection,
+                                                     name=names['image'],
+                                                     tag=names['tag'],
+                                                     image=image,
+                                                     version=names['version'])
+
+            # Catches when container is frozen, and version already exists
+            except IntegrityError:
+                message = '%s/%s:%s@%s already exists.' %(collection.name,
+                                                          names['image'],
+                                                          names['tag'],
+                                                          names['version'])
+                bot.error(message)
+                delete_file_instance(instance)
+                return message
+
+        # Otherwise, use the same container object, but update version
+        else:
+            container.image = image
+            container.version = names['version']
+       
         container.save()
-    except:
-        pass
 
-    # If exists, add From line as tag
-    try:
-        container_from = metadata['labels']['SREGISTRY_FROM']
-        container.tags.add(container_from)
-        container.save()
-    except:
-        pass
+        # Save the size
+        if size is None:
+            size = os.path.getsize(instance.file.path) >> 20
+        container.metadata['size_mb'] = size
 
-    # Add labels
-    if metadata['labels'] not in [None, '']:
-        container = update_container_labels(container,metadata['labels'])
+        # Once the container is saved, delete the intermediate file object
+        delete_file_instance(instance)
 
-    container.save()
+
+def delete_file_instance(instance):
+    '''a helper function to remove the file assocation, and delete the instance
+       if needed outside of this module can be added to models
+    '''
+    instance.file = None # remove the association
+    instance.save()
+    instance.delete()

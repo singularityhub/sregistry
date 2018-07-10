@@ -14,7 +14,7 @@ uwsgi:
 
 nginx:
   restart: always
-  image: nginx
+  build: nginx
   ports:
     - "80:80"
   volumes:
