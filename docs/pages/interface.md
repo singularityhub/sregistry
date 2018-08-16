@@ -9,7 +9,7 @@ toc: false
 # Interfaces
 
 ## Teams
-Singularity Registry Server allows registry staff (and if the administrators allow it) authenticated users to create teams, or groups of users that want to colleaborate on container collections together.
+Singularity Registry Server allows registry staff (and if the administrators allow it) authenticated users to create teams, or groups of users that want to collaborate on container collections together.
 
 ![teams.png](assets/img/teams.png)
 
