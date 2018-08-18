@@ -51,18 +51,9 @@ dockerenv: &dockerenv
             DOCKERFILE=Dockerfile
         fi
         echo "Container name is ${CONTAINER_NAME}"
-        # If not set, define REPO_NAME
-        if [ ! -n "${REPO_NAME:-}" ]; then
-            LOCAL_REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-            REPO_NAME=/tmp/src
-            echo "Repository name (REPO_NAME) is not defined, will build ${LOCAL_REPO} in ${REPO_NAME}"
-        else
-            echo "Repository name found defined for build: ${REPO_NAME}"
-        fi
         # export to bash environment
         echo "export CONTAINER_NAME=${CONTAINER_NAME}" >> ${BASH_ENV}
         echo "export DOCKER_TAG=${DOCKER_TAG}" >> ${BASH_ENV}
-        echo "export REPO_NAME=${REPO_NAME}" >> ${BASH_ENV}
         echo "export DOCKERFILE=${DOCKERFILE}" >> ${BASH_ENV}
         cat ${BASH_ENV}
 
@@ -155,6 +146,11 @@ jobs:
       - attach_workspace:
           at: /tmp
       - setup_remote_docker
+      - restore_cache:
+          keys:
+            - docker-v1-{{ .Branch }}
+          paths:
+            - /tmp/cache/container.tar.gz
       - run: *dockerenv
       - run: *dockerload
       - run: *dockerdeploy
