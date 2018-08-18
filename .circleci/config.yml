@@ -131,6 +131,11 @@ jobs:
       - run: *dockerload
       - run: *dockerbuild
       - run: *dockersave
+      - persist_to_workspace:
+            root: /tmp
+            paths:
+                - src
+                - cache
 
   update_cache:
     <<: *defaults
