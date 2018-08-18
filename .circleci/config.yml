@@ -64,6 +64,7 @@ dockerload: &dockerload
     command: | 
       echo "Working directory is ${PWD}"
       docker info
+      ls /tmp
       set +o pipefail
       if [ -f /tmp/cache/container.tar.gz ]; then
           apk update && apk add --no-cache pigz curl curl-dev
@@ -89,6 +90,7 @@ dockerdeploy: &dockerdeploy
     command: |
       source ${BASH_ENV}
       docker images
+      ls /tmp
       echo "Container name set to ${CONTAINER_NAME}:${DOCKER_TAG}"
       if [[ -n "$DOCKER_PASS" ]]; then
             docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -143,13 +145,15 @@ jobs:
   deploy:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: /tmp
       - setup_remote_docker
+      - run: *dockerenv
       - restore_cache:
           keys:
             - docker-v1-{{ .Branch }}
           paths:
             - /tmp/cache/container.tar.gz
-      - run: *dockerenv
       - run: *dockerload
       - run: *dockerdeploy
 
