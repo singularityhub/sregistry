@@ -38,12 +38,19 @@ sourceenv: &sourceenv
 dockerenv: &dockerenv
     name: Define container and Docker names
     command: |
+        # If not set, define DOCKER_TAG
         # Primary Container
-        DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
+        if [ ! -n "${DOCKER_TAG:-}" ]; then
+            DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
+        fi
+        # If not set, define CONTAINER_NAME
         if [ ! -n "${CONTAINER_NAME:-}" ]; then
             CONTAINER_NAME="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
         fi
-        DOCKERFILE=Dockerfile
+        # If not set, define Dockerfile to be in $PWD
+        if [ ! -n "${DOCKERFILE:-}" ]; then
+            DOCKERFILE=Dockerfile
+        fi
         REPO_NAME=/tmp/src
         echo "Container name is ${CONTAINER_NAME}"
         # export to bash environment
@@ -112,9 +119,10 @@ dockerbuild: &dockerbuild
       source ${BASH_ENV}
       echo "Building "${CONTAINER_NAME}:${DOCKER_TAG}"
       docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}:${DOCKER_TAG} .
-      cd nginx
+      cd ${REPO_NAME}/nginx
       echo "Building "${CONTAINER_NAME}_nginx:${DOCKER_TAG}"
       docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}_nginx:${DOCKER_TAG} .
+      cd ${REPO_NAME}
 
 ################################################################################
 # Jobs
