@@ -144,8 +144,7 @@ jobs:
           keys:
             - docker-v1-{{ .Branch }}
           paths:
-            - /tmp/cache/container.tar.gz
-            - /tmp/cache/nginx.tar.gz
+            - /tmp/cache
       - setup_remote_docker
       - run: *dockerenv
       - run: *install
@@ -162,8 +161,7 @@ jobs:
       - save_cache:
          key: docker-v1-{{ .Branch }}
          paths:
-            - /tmp/cache/container.tar.gz
-            - /tmp/cache/nginx.tar.gz
+            - /tmp/cache
 
   deploy:
     <<: *defaults
@@ -174,8 +172,7 @@ jobs:
           keys:
             - docker-v1-{{ .Branch }}
           paths:
-            - /tmp/cache/container.tar.gz
-            - /tmp/cache/nginx.tar.gz
+            - /tmp/cache
       - setup_remote_docker
       - run: *dockerenv
       - run: *dockerload
@@ -215,7 +212,6 @@ workflows:
       - deploy:
           requires:
             - build
-            - update_cache
           filters:
             branches:
               only: master
