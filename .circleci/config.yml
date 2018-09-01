@@ -38,22 +38,18 @@ sourceenv: &sourceenv
 dockerenv: &dockerenv
     name: Define container and Docker names
     command: |
-        # If not set, define DOCKER_TAG
-        if [ ! -n "${DOCKER_TAG:-}" ]; then
-            DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
-        fi
-        # If not set, define CONTAINER_NAME
+        # Primary Container
+        DOCKER_TAG=$(echo "${CIRCLE_SHA1}" | cut -c1-10)
         if [ ! -n "${CONTAINER_NAME:-}" ]; then
             CONTAINER_NAME="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
         fi
-        # If not set, define Dockerfile to be in $PWD
-        if [ ! -n "${DOCKERFILE:-}" ]; then
-            DOCKERFILE=Dockerfile
-        fi
+        DOCKERFILE=Dockerfile
+        REPO_NAME=/tmp/src
         echo "Container name is ${CONTAINER_NAME}"
         # export to bash environment
         echo "export CONTAINER_NAME=${CONTAINER_NAME}" >> ${BASH_ENV}
         echo "export DOCKER_TAG=${DOCKER_TAG}" >> ${BASH_ENV}
+        echo "export REPO_NAME=${REPO_NAME}" >> ${BASH_ENV}
         echo "export DOCKERFILE=${DOCKERFILE}" >> ${BASH_ENV}
         cat ${BASH_ENV}
 
@@ -64,13 +60,17 @@ dockerload: &dockerload
     command: | 
       echo "Working directory is ${PWD}"
       docker info
-      ls /tmp
       set +o pipefail
       if [ -f /tmp/cache/container.tar.gz ]; then
           apk update && apk add --no-cache pigz curl curl-dev
           pigz -d --stdout /tmp/cache/container.tar.gz | docker load
+      fi
+      if [ -f /tmp/cache/nginx.tar.gz ]; then
+          apk update && apk add --no-cache pigz curl curl-dev
+          pigz -d --stdout /tmp/cache/nginx.tar.gz | docker load
           docker images
       fi
+      docker images
 
 
 dockersave: &dockersave
@@ -82,7 +82,9 @@ dockersave: &dockersave
         mkdir -p /tmp/cache
         docker save ${CONTAINER_NAME}:${DOCKER_TAG} \
           | pigz -2 -p 3 > /tmp/cache/container.tar.gz
-
+        echo "Saving ${CONTAINER_NAME}_nginx:${DOCKER_TAG} to nginx.tar.gz"
+        docker save ${CONTAINER_NAME}_nginx:${DOCKER_TAG} \
+          | pigz -2 -p 3 > /tmp/cache/nginx.tar.gz
 
 dockerdeploy: &dockerdeploy
     name: Deploy to Docker Hub
@@ -90,22 +92,29 @@ dockerdeploy: &dockerdeploy
     command: |
       source ${BASH_ENV}
       docker images
-      ls /tmp
       echo "Container name set to ${CONTAINER_NAME}:${DOCKER_TAG}"
       if [[ -n "$DOCKER_PASS" ]]; then
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push "${CONTAINER_NAME}:${DOCKER_TAG}"
+            # Primary Container
+            docker push ${CONTAINER_NAME}:${DOCKER_TAG}
             echo "Tagging latest image..."
             docker tag ${CONTAINER_NAME}:${DOCKER_TAG} ${CONTAINER_NAME}:latest
             docker push ${CONTAINER_NAME}:latest
+            # Nginx Container
+            docker push ${CONTAINER_NAME}_nginx:${DOCKER_TAG}
+            docker tag ${CONTAINER_NAME}_nginx:${DOCKER_TAG} ${CONTAINER_NAME}_nginx:latest
+            docker push ${CONTAINER_NAME}_nginx:latest
       fi
 
 dockerbuild: &dockerbuild
     name: Build development Docker container
     command: |
       source ${BASH_ENV}
+      echo "Building "${CONTAINER_NAME}:${DOCKER_TAG}"
       docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}:${DOCKER_TAG} .
-
+      cd nginx
+      echo "Building "${CONTAINER_NAME}_nginx:${DOCKER_TAG}"
+      docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}_nginx:${DOCKER_TAG} .
 
 ################################################################################
 # Jobs
@@ -123,6 +132,7 @@ jobs:
             - docker-v1-{{ .Branch }}
           paths:
             - /tmp/cache/container.tar.gz
+            - /tmp/cache/nginx.tar.gz
       - restore_cache:
           key: dependency-cache
       - setup_remote_docker
@@ -131,11 +141,6 @@ jobs:
       - run: *dockerload
       - run: *dockerbuild
       - run: *dockersave
-      - persist_to_workspace:
-            root: /tmp
-            paths:
-                - src
-                - cache
 
   update_cache:
     <<: *defaults
@@ -146,6 +151,7 @@ jobs:
          key: docker-v1-{{ .Branch }}
          paths:
             - /tmp/cache/container.tar.gz
+            - /tmp/cache/nginx.tar.gz
 
   deploy:
     <<: *defaults
@@ -154,11 +160,6 @@ jobs:
           at: /tmp
       - setup_remote_docker
       - run: *dockerenv
-      - restore_cache:
-          keys:
-            - docker-v1-{{ .Branch }}
-          paths:
-            - /tmp/cache/container.tar.gz
       - run: *dockerload
       - run: *dockerdeploy
 
