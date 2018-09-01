@@ -146,8 +146,6 @@ jobs:
           paths:
             - /tmp/cache/container.tar.gz
             - /tmp/cache/nginx.tar.gz
-      - restore_cache:
-          key: dependency-cache
       - setup_remote_docker
       - run: *dockerenv
       - run: *install
@@ -172,6 +170,12 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp
+      - restore_cache:
+          keys:
+            - docker-v1-{{ .Branch }}
+          paths:
+            - /tmp/cache/container.tar.gz
+            - /tmp/cache/nginx.tar.gz
       - setup_remote_docker
       - run: *dockerenv
       - run: *dockerload
