@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
     libgeos-dev \
     libsasl2-dev \
     libldap2-dev \
+    squashfs-tools \
     build-essential
 
 # Install Singularity
