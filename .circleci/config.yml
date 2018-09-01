@@ -151,6 +151,12 @@ jobs:
       - run: *dockerload
       - run: *dockerbuild
       - run: *dockernginx
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - cache/container.tar.gz
+            - cache/nginx.tar.gz
+            - src
       - run: *dockersave
 
   update_cache:
