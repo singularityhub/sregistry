@@ -6,6 +6,8 @@ permalink: /faq
 toc: false
 ---
 
+# Frequently Asked Questions
+
 ## How is Singularity Registry Server different from Singularity Hub?
 
 **Singularity Hub**
@@ -21,6 +23,10 @@ Importantly, both deliver image manifests that plug seamlessly into the Singular
 ```
 singularity pull shub://vsoch/hello-world
 ```
+
+We are hoping to add builder plugins to Singularity Registry Server so that it can (eventually) replace Singularity Hub
+as a truly community maintained, open source resource. Please contribute!
+
 
 **Singularity Global Client**
 

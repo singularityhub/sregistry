@@ -14,7 +14,7 @@ uwsgi:
 
 nginx:
   restart: always
-  build: nginx
+  image: vanessa/sregistry_nginx
   ports:
     - "80:80"
   volumes:
