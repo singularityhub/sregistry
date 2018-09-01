@@ -14,7 +14,7 @@ uwsgi:
 
 nginx:
   restart: always
-  image: nginx
+  image: vanessa/sregistry_nginx
   ports:
     - "80:80"
     - "443:443"

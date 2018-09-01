@@ -1,41 +1,17 @@
 ---
 layout: default
-title: Installation
+title: "Installation: Settings"
 pdf: true
-permalink: /install
+permalink: /install-settings
 toc: false
 ---
 
-# Installation
-If starting from scratch, you need the following dependencies on the host:
-
- - [Docker](https://docs.docker.com/install/): a container engine
- - [docker-compose](https://docs.docker.com/compose/install/): an orchestration tool for Docker images.
- - python: docker compose requires some additional python libraries, `ipaddress` and `oauth2client`
-
-Very importantly, if you are just installing Docker *you will need to log in and out after adding your user to the Docker group*. 
-
-For a record of the installation procedure that I used for a Google Cloud host, I've provided the [basic commands](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh). This script was run manually for an instance. This was done on a fairly large fresh ubuntu:16.04 instance on Google Cloud. This setup is done only once, and requires logging in and out of the instance after installing Docker, but before bringing the instance up with `docker-compose`. A few important points:
-
-- The `$INSTALL_BASE` is set by default to `/opt`. It is recommended to choose somewhere like `/opt` or `/share` that is accessible by all those who will maintain the installation. If you choose your home directory, you can expect that only you would see it. If it's for personal use, `$HOME` is fine.
-- Anaconda3 is installed for python libraries needed for `docker-compose`. You can use whatever python you with (system installed or virtual environment)
-- Make sure to add all users to the docker group that need to maintain the application, and log in and out before use.
-
-For the rest of the install procedure, you should (if you haven't already) clone the repository:
-
-```
-git clone https://github.com/singularityhub/sregistry
-cd sregistry
-```
-
-For the files linked below, you should find the correspoinding file in the Github repository that you cloned. If you are setting this up for the first time, it's recommended to try locally and then move onto your production resource.
-
-## Settings
+# Settings
 
 See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
 
 
-### Secrets
+## Secrets
 There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
 
 An template to work from is provided in the settings folder called `dummy_secrets.py`. You can copy this template:
@@ -240,139 +216,4 @@ By default, Singularity Registry keeps track of all requests to pull containers,
 LOGGING_SAVE_RESPONSES=True
 ```
 
-## Setup
-Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
-
-### Nginx
-This section is mostly for your FYI. The nginx container that we use is a custom compiled
-nginx that includes the [nginx uploads module](https://www.nginx.com/resources/wiki/modules/upload/).
-This allows us to define a server block that will accept multipart form data directly, and 
-allow uploads directly to the server without needing to stress the uwsgi application. The uploads
-are a ton faster! You shouldn't need to do anything special when you bring up the container, but
-keep in mind that if you are deploying this without docker containers (e.g., using your own
-web server) you will need to equivalently compile nginx with the module enabled. A standard
-server without this module will no longer work.
-
-### Under Maintenance Page
-If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.
-
-```bash
-cp $INSTALL_ROOT/sregistry/scripts/nginx-index.html /var/www/html/index.html
-rm /var/www/html/index.nginx-debian.html
-```
-
-If you don't care about user experience during updates and server downtime, you can just ignore this.
-
-### Storage
-The containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. By default, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
-
-
-```
-    - ./static:/var/www/static
-    - ./images:/var/www/images
-```
-
-The line reads specifically "map `./images` (the folder "images" in the base directory sregistry on the host) to (`:`) the folder `/var/www/images` (inside the container). This means a few important things:
-
- - if you container goes away and dies, your image files do not. If the folder wasn't mapped, this wouldn't be the case.
- - when the container is running, since Docker is run as sudo, you won't be able to interact with the files without sudo either.
-
-Thus, you are free to test different configurations of mounting this folder. If you find a more reasonable default than is set, please [let us know!](https://www.github.com/singularityhub/sregistry/issues).
-
-
-### SSL
-Getting https certificates is really annoying, and getting `dhparams.pem` takes forever. But after the domain is obtained, it's important to do. Again, remember that we are working on the host, and we have an nginx server running. You should follow the instructions (and I do this manually) in [generate_cert.sh](../scripts/generate_cert.sh). It basically comes down to:
-
- - starting nginx
- - installing tiny acme
- - generating certificates
- - using tinyacme to get them certified
- - moving them to where they need to be.
- - add a reminder or some other method to renew within 89 days
-
-Once you have done this, you should use the `docker-compose.yml` and the `nginx.conf` provided in the folder [https](https). So do something like this:
-
-```bash
-mkdir http
-mv nginx.conf http
-mv docker-compose.yml http
-
-mv https/docker-compose.yml $PWD
-mv https/nginx.conf $PWD
-```
-
-Most importantly, we use a text file to make sure that we generate a single certificate that covers both www* and without. This part of the [generate_cert.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/generate_cert.sh) you will need to update the location (town, city, etc) along with your email and the domain you are using:
-
-```bash
-cat > csr_details.txt <<-EOF
-[req]
-default_bits = 2048
-prompt = no
-default_md = sha256
-req_extensions = req_ext
-distinguished_name = dn
- 
-[ dn ]
-C=US
-ST=California
-L=San Mateo County
-O=End Point
-OU=SingularityRegistry
-emailAddress=youremail@university.edu
-CN = www.domain.edu
- 
-[ req_ext ]
-subjectAltName = @alt_names
- 
-[ alt_names ]
-DNS.1 = domain.edu
-DNS.2 = www.domain.edu
-EOF
-```
-
-Specifically, pay close attention to the fields in the last two sections that need to be customized for the domain and region.
-
-If you run into strange errors regarding any kind of authentication / server / nginx when you start the images, likely it has to do with not having moved these files, or a setting about https in the [settings](https://github.com/singularityhub/sregistry/tree/master/shub/settings). If you have trouble, please post an issue on the [issues board](https://www.github.com/singularityhub/sregistry/issues) and I'd be glad to help.
-
-
-## Build the Image (Optional)
-If you want to try it, you can build the image. Note that this step isn't necessary as the image is provided on [Docker Hub](https://hub.docker.com/r/vanessa/sregistry/). This step is optional - if you want to try building locally, you would do:
-
-
-```bash
-cd sregistry
-docker build -t vanessa/sregistry .
-```
-
-## Compose the Images
-Whether you build or not, the compose command will bring up the application (and download `vanessa/sregistry` image if not found in your cache).
-
-```
-docker-compose up -d
-```
-
-The `-d` means detached, and that you won't see any output (or errors) to the console. You can easily restart and stop containers, either specifying the container name(s) or leaving blank to apply to all containers. Note that these commands must be run in the folder with the `docker-compose.yml`:
-
-```
-docker-compose restart uwsgi worker nginx
-docker-compose stop
-```
-
-When you do `docker-compose up -d` the application should be available at `http://127.0.0.1/`, and if you've configured https, `https://127.0.0.1/`. If you need to shell into the application, for example to debug with `python manage.py shell` you can get the container id with `docker ps` and then do:
-
-```
-NAME=$(docker ps -aqf "name=sregistry_uwsgi_1")
-docker exec -it ${NAME} bash
-```
-
-If you make changes to the image itself, you will need to build again. However, if you just make changes to some static code, since it's mounted at `/code`, you can generally just restart:
-
-```
-docker-compose restart
-```
-Good job! Now it's time to read the [setup](/sregistry/setup) guide to better understand how to configure and interact with your Singularity Registry.
-
-<div>
-    <a href="/sregistry/faq"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
-    <a href="/sregistry/setup"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
-</div><br>
+Great job! Let's now [configure your web server and storage](/sregistry/install-server).

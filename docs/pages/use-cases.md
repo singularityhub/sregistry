@@ -6,6 +6,7 @@ permalink: /use-cases
 toc: false
 ---
 
+# Use Cases 
 
 Why would you need a Singularity Registry Server? The answer is when you would want to be able to manage, organize, and share images, and you don't want to be limited in the number of builds, or how you build the images.
 
