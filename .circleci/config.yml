@@ -140,6 +140,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - run: *install
       - restore_cache:
           keys:
             - docker-v1-{{ .Branch }}
@@ -147,17 +148,15 @@ jobs:
             - /tmp/cache
       - setup_remote_docker
       - run: *dockerenv
-      - run: *install
-      - run: *dockerload
       - run: *dockerbuild
       - run: *dockernginx
+      - run: *dockersave
       - persist_to_workspace:
           root: /tmp
           paths:
             - cache/container.tar.gz
             - cache/nginx.tar.gz
             - src
-      - run: *dockersave
 
   update_cache:
     <<: *defaults
@@ -167,18 +166,24 @@ jobs:
       - save_cache:
          key: docker-v1-{{ .Branch }}
          paths:
-            - /tmp/cache
+            - /tmp/cache/container.tar.gz
+
+  update_cache:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - save_cache:
+         key: docker-v1-{{ .Branch }}
+         paths:
+            - /tmp/cache/container.tar.gz
+            - /tmp/cache/nginx.tar.gz
 
   deploy:
     <<: *defaults
     steps:
       - attach_workspace:
           at: /tmp
-      - restore_cache:
-          keys:
-            - docker-v1-{{ .Branch }}
-          paths:
-            - /tmp/cache
       - setup_remote_docker
       - run: *dockerenv
       - run: *dockerload
