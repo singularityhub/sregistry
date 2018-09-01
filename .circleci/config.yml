@@ -117,14 +117,14 @@ dockerbuild: &dockerbuild
     name: Build development Docker container
     command: |
       source ${BASH_ENV}
-      echo "Building "${CONTAINER_NAME}:${DOCKER_TAG}"
+      echo "Building ${CONTAINER_NAME}:${DOCKER_TAG}"
       docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}:${DOCKER_TAG} .
 
 dockernginx: &dockernginx
     name: Build nginx custom container
     command: |
       source ${BASH_ENV}
-      echo "Building "${CONTAINER_NAME}_nginx:${DOCKER_TAG}"      
+      echo "Building ${CONTAINER_NAME}_nginx:${DOCKER_TAG}"      
       cd ${REPO_NAME}/nginx && \
       ls && \
       docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}_nginx:${DOCKER_TAG} .
