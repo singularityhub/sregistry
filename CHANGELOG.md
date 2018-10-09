@@ -14,6 +14,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/singularity-python/tree/master) (master)
+ - increasing length of name limit to 500, and catching error (with message and cleanup)
  - adding Globus integration
  - updating sregistry-cli to version 0.0.74
  - superusers and admins (global) can now create collections via a button in the interface
