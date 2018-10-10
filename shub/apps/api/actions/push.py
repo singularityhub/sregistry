@@ -50,6 +50,8 @@ def collection_auth_check(request):
     tag=body.get('tag','latest')                                   
     name=body.get('name')
     collection_name = format_collection_name(body.get('collection'))
+
+    print(tag, name, collection_name, auth, body)
     
     # Authentication always required for push
     if auth is None:
@@ -63,6 +65,7 @@ def collection_auth_check(request):
                                     tag)
 
     # Validate Payload
+    print(payload)
     if not validate_request(auth, payload, "push", timestamp):
         raise PermissionDenied(detail="Unauthorized")
 
