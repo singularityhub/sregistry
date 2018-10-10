@@ -38,17 +38,17 @@ One thing I (@vsoch) can't do for you in advance is produce application keys and
 ```
 # Which social auths do you want to use?
 ENABLE_GOOGLE_AUTH=False
-ENABLE_TWITTER_AUTH=True
-ENABLE_GITHUB_AUTH=False
+ENABLE_TWITTER_AUTH=False
+ENABLE_GITHUB_AUTH=True
 ENABLE_GITLAB_AUTH=False
 
 ```
 
-and you will need at least one to log in. I've found that Twitter works the fastest and easiest, and then Github and Google. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
+and you will need at least one to log in. I've found that Github works the fastest and easiest, and then Google. Twitter now requires an actual server name and won't work with localost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
 
 Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these.
 
-We will walk through the setup of each in detail. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Twitter was the only one that worked reliably without an actual domain for me.
+We will walk through the setup of each in detail. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Github is now the only one that worked reliably without an actual domain for me.
 
 
 #### Google OAuth2
@@ -106,13 +106,15 @@ SOCIAL_AUTH_GITLAB_API_URL = 'https://example.com'
 
 
 #### Setting up Twitter OAuth2
-Twitter is the easiest of the three to setup, you can go to the [Twitter Apps](https://apps.twitter.com/) dashboard, register an app, and add secrets, etc. to your `secrets.py`:
+You can go to the [Twitter Apps](https://apps.twitter.com/) dashboard, register an app, and add secrets, etc. to your `secrets.py`:
 
       SOCIAL_AUTH_TWITTER_KEY = ''
       SOCIAL_AUTH_TWITTER_SECRET = ''
 
 
-The callback url here should be `http://127.0.0.1/complete/twitter`.
+Note that Twitter now does not accept localhost urls. Thus, 
+the callback url here should be `http://[your-domain]/complete/twitter`.
+
 
 
 ### Config

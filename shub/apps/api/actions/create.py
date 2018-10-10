@@ -1,7 +1,5 @@
 '''
 
-Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
-University.
 Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
@@ -23,6 +21,7 @@ from shub.settings import MEDIA_ROOT
 from sregistry.utils import parse_image_name
 from shub.logger import bot
 from django.db import IntegrityError
+from django.db.utils import DataError
 import shutil
 import uuid
 import json
@@ -114,11 +113,20 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         else:
             instance = move_upload_to_storage(collection, upload_id)
 
-        image = ImageFile.objects.create(collection=collection,
-                                         tag=names['tag'],
-                                         name=names['uri'],
-                                         owner_id=user.id,
-                                         datafile=instance.file)
+        # Return an error to the user if the file is too big
+        try:
+            image = ImageFile.objects.create(collection=collection,
+                                             tag=names['tag'],
+                                             name=names['uri'],
+                                             owner_id=user.id,
+                                             datafile=instance.file)
+        # Filename upper limit is 255
+        except DataError as err:
+            message = '%s\n%s must be less than 255 characters' %(err, 
+                                                                  instance.file)
+            bot.error(message)
+            delete_file_instance(instance)
+            return message
 
         # Get a container, if it exists (and the user is re-using a name)
         # Filter by negative id so we get the more recent container first.
