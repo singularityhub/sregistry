@@ -1,7 +1,5 @@
 '''
 
-Copyright (C) 2017-2018 The Board of Trustees of the Leland Stanford Junior
-University.
 Copyright (C) 2017-2018 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
@@ -23,8 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Which social auths do you want to use?
 ENABLE_GOOGLE_AUTH=False
-ENABLE_TWITTER_AUTH=True
-ENABLE_GITHUB_AUTH=False
+ENABLE_TWITTER_AUTH=False
+ENABLE_GITHUB_AUTH=True
 ENABLE_GITLAB_AUTH=False
 
 # NOTE you will need to set autehtication methods up.
