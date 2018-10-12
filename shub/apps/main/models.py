@@ -38,9 +38,9 @@ import os
 import re
 from urllib import parse
 
-#######################################################################################################
-# Supporting Variables and Functions ##################################################################
-#######################################################################################################
+################################################################################
+# Supporting Variables and Functions ###########################################
+################################################################################
 
 
 PRIVACY_CHOICES = ((False, 'Public (The collection will be accessible by anyone)'),
@@ -84,11 +84,15 @@ def has_edit_permission(instance, request):
         return False
 
     # Global Admins
-    if user.is_staff is True:
+    if user.is_staff:
         return True
 
-    if user.is_superuser is True:
+    if user.is_superuser:
         return True
+
+    # Team owners can edit
+    if user.is_team_owner(collection):
+        return True        
 
     # Collection Owners can edit
     if user in instance.owners.all():
@@ -130,6 +134,10 @@ def has_view_permission(instance, request):
     contributors = instance.members()
     if user in contributors:
         return True
+
+    # Team contributors can view
+    if user.is_team_member(collection):
+        return True        
 
     return False
 
