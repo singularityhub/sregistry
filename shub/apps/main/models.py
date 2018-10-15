@@ -136,7 +136,7 @@ def has_view_permission(instance, request):
         return True
 
     # Team contributors can view
-    if user.is_team_member(collection):
+    if user.is_team_member(instance):
         return True        
 
     return False
