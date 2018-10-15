@@ -105,25 +105,29 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         # parse the image name, get the datafile
         names = parse_image_name(name, version=version)
 
-        # If the path exists, it's a file from nginx module, move to storage
-        if os.path.exists(upload_id):
-            storage = os.path.basename(names['storage'])
-            new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
-            instance = ImageUpload.objects.create(file=new_path)
-        else:
-            instance = move_upload_to_storage(collection, upload_id)
-
         # Return an error to the user if the file is too big
         try:
-            image = ImageFile.objects.create(collection=collection,
-                                             tag=names['tag'],
-                                             name=names['uri'],
-                                             owner_id=user.id,
-                                             datafile=instance.file)
+
+            # If the path exists, it's a file from nginx module, move to storage
+            if os.path.exists(upload_id):
+                storage = os.path.basename(names['storage'])
+
+                # If name is too long, will return OSError on move to storage
+                new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
+                instance = ImageUpload.objects.create(file=new_path)
+            else:
+                instance = move_upload_to_storage(collection, upload_id)
+
+                # If filename too long for instance, DataError here
+                image = ImageFile.objects.create(collection=collection,
+                                                 tag=names['tag'],
+                                                 name=names['uri'],
+                                                 owner_id=user.id,
+                                                 datafile=instance.file)
         # Filename upper limit is 255
-        except DataError as err:
-            message = '%s\n%s must be less than 255 characters' %(err, 
-                                                                  instance.file)
+        except (DataError, OSError) as err:
+            filename = os.path.basename(instance.file)
+            message = '%s\n%s must be less than 255 characters' %(err,filename)
             bot.error(message)
             delete_file_instance(instance)
             return message
