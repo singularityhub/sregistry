@@ -14,6 +14,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/singularity-python/tree/master) (master)
+ - updating sregistry-cli to 0.0.97, catching OSError earlier
  - updating sregistry-cli to 0.0.96, and Singularity download url to use sylabs organization
  - increasing length of name limit to 500, and catching error (with message and cleanup)
  - adding Globus integration
