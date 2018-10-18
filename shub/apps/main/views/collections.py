@@ -76,9 +76,9 @@ def all_collections(request):
     # public collections
     collections = Collection.objects.filter(private=False)
 
-    # private that the user can see
+    # private that the user can view
     private_collections = [x for x in Collection.objects.filter(private=True)
-                           if x.has_edit_permission(request)]
+                           if x.has_view_permission(request)]
 
     collections = set(list(chain(collections, private_collections)))
 
@@ -147,9 +147,11 @@ def view_collection(request, cid):
     '''
 
     collection = get_collection(cid)
+    edit_permission = collection.has_edit_permission(request)
+    view_permission = collection.has_view_permission(request)
 
     # If private, and not the owner, no go.
-    if collection.private and not collection.has_edit_permission(request):
+    if collection.private and not view_permission:
         messages.info(request,"This collection is private.")
         return redirect('collections')
 
@@ -157,10 +159,9 @@ def view_collection(request, cid):
     has_star = collection.has_collection_star(request)
     
     containers = collection.containers.all()
-    edit_permission = collection.has_edit_permission(request)
     context = {"collection":collection,
                "containers":containers,
-               "edit_permission":edit_permission,
+               "edit_permission": edit_permission,
                "star":has_star}
     return render(request, 'collections/view_collection.html', context)
 

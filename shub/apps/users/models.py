@@ -112,6 +112,26 @@ class User(AbstractUser):
             return True
         return False
 
+    def is_team_member(self, collection):
+        '''given a collection, determine if the user is member of any teams 
+           associated with the collection
+        '''
+        for owner in collection.owners.all():
+            for team in owner.team_owners.all():
+                if self in team.members.all():
+                    return True
+        return False
+
+    def is_team_owner(self, collection):
+        '''given a collection, determine if the user is owner of any teams 
+           associated with the collection
+        '''
+        for owner in collection.owners.all():
+            for team in owner.team_owners.all():
+                if self in team.owners.all():
+                    return True
+        return False
+
     def get_credentials(self, provider):
         ''' return one or more credentials, or None'''
         if self.is_anonymous() is False:

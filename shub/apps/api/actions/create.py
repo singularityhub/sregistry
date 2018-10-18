@@ -52,6 +52,18 @@ def move_upload_to_storage(collection, upload_id):
     instance.save()
     return instance
 
+def generate_nginx_storage_path(collection, source, dest):
+    '''generate the path to move a source to its destination 
+       so that we can check length limits, etc., before trying to do the move.
+         Parameters
+         ==========
+         collection: the collection the image will belong to
+         source: the source file (under /var/www/images/_upload/{0-9}
+         dest: the destination filename
+    '''
+    image_home = "%s/%s" %(MEDIA_ROOT, collection.name)
+    return os.path.join(image_home, os.path.basename(dest))
+
 
 def move_nginx_upload_to_storage(collection, source, dest):
     '''moving an uploaded file (from nginx module) to storage means.
@@ -104,33 +116,31 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
         # parse the image name, get the datafile
         names = parse_image_name(name, version=version)
+        storage = os.path.basename(names['storage'])
+
+        # Catch the data error before trying to create it
+        new_path = generate_nginx_storage_path(collection, upload_id, storage)
 
         # Return an error to the user if the file is too big
-        try:
-
-            # If the path exists, it's a file from nginx module, move to storage
-            if os.path.exists(upload_id):
-                storage = os.path.basename(names['storage'])
-
-                # If name is too long, will return OSError on move to storage
-                new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
-                instance = ImageUpload.objects.create(file=new_path)
-            else:
-                instance = move_upload_to_storage(collection, upload_id)
-
-                # If filename too long for instance, DataError here
-                image = ImageFile.objects.create(collection=collection,
-                                                 tag=names['tag'],
-                                                 name=names['uri'],
-                                                 owner_id=user.id,
-                                                 datafile=instance.file)
-        # Filename upper limit is 255
-        except (DataError, OSError) as err:
-            filename = os.path.basename(instance.file)
-            message = '%s\n%s must be less than 255 characters' %(err,filename)
+        if len(new_path) > 255:
+            message = 'Filename too long!\nMust be less than 255 characters'
             bot.error(message)
-            delete_file_instance(instance)
             return message
+
+        # If the path exists, it's a file from nginx module, move to storage
+        if os.path.exists(upload_id):
+
+            # If name is too long, will return OSError on move to storage
+            new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
+            instance = ImageUpload.objects.create(file=new_path)
+        else:
+            instance = move_upload_to_storage(collection, upload_id)
+
+        image = ImageFile.objects.create(collection=collection,
+                                         tag=names['tag'],
+                                         name=names['uri'],
+                                         owner_id=user.id,
+                                         datafile=instance.file)
 
         # Get a container, if it exists (and the user is re-using a name)
         # Filter by negative id so we get the more recent container first.
