@@ -40,7 +40,7 @@ Singularity containers allow you to package your entire scientific analysis, inc
 ## Why isn't the storage backed up?
 At the initial release of the software, because there are many different options for storage, enforcing a particular backup strategy would possibly make the registry less flexible to fit into many different use cases. In the same way that the institution is able to decide how to build, it is also under their decision for how to backup. For the database, django has different options for backup (for example [django-backup](https://github.com/django-backup/django-backup)), along with a proper mirror (called a [hot standby](https://cloud.google.com/community/tutorials/setting-up-postgres-hot-standby)) of the database itself. An institution might simply want to mirror the filesystem, or to create freezes at consistent timepoints. The [InterPlanetary File System](https://en.wikipedia.org/wiki/InterPlanetary_File_System) has also been suggested, and we hope to have discussion and testing with the larger community to either provide a default or suggest top choices.
 
-## How is a Singularity Registry different from a Docker Registry
+## How is a Singularity Registry different from a Docker Registry?
 Both are similar, and in fact might be friends! We can easily talk about things they have in common:
 
  - both serve image manifests that link to relevant image files
@@ -55,7 +55,7 @@ And things that are different:
 
 There are really great use cases for both, and the decision of which to use is up to the goals of the user. 
 
-## Are there features of singularity that are particularly supported by singularityhub?
+## Are there features of Singularity that are particularly supported by Singularity Hub?
 
 Singularity aims to support scientific containers, so Singularity Hub and Registry take an extra step to serve metadata about the containers via the API. It's important to know about usage (downloads and stars) but also software, environment variables, labels, and runscripts. This supports being able to do more research analytics across containers to better understand how containers (and more broadly software) help answer scientific questions. Given the issues we have with reproducibility, this is essential.
 
