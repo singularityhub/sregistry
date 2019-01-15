@@ -1,6 +1,6 @@
 '''
 
-Copyright (C) 2017-2018 Vanessa Sochat.
+Copyright (C) 2017-2019 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -40,9 +40,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
     
 
-##############################################################################
+################################################################################
 # Single Object Serializers
-##############################################################################
+################################################################################
 
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -64,12 +64,10 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
                   'metadata', 'containers')
 
 
-
-#########################################################################
+################################################################################
 # ViewSets
 # requests for (paginated) information about containers and collections
-#########################################################################
-
+################################################################################
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -81,9 +79,9 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 
-#########################################################################
+################################################################################
 # Container Details: custom views for specific collections
-#########################################################################
+################################################################################
 
 
 class CollectionDetailByName(APIView):
@@ -108,9 +106,9 @@ class CollectionDetailByName(APIView):
     
 
 
-#########################################################################
+################################################################################
 # Search
-#########################################################################
+################################################################################
 
 
 class CollectionSearch(APIView):
@@ -128,9 +126,9 @@ class CollectionSearch(APIView):
         return Response(serializer.data)    
 
 
-#########################################################################
+################################################################################
 # urlpatterns
-#########################################################################
+################################################################################
 
 
 urlpatterns = [

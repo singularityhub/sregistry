@@ -1,6 +1,6 @@
 '''
 
-Copyright (C) 2017-2018 Vanessa Sochat.
+Copyright (C) 2017-2019 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -42,9 +42,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-##############################################################################
+################################################################################
 # Single Object Serializers
-##############################################################################
+################################################################################
 
 class LabelSerializer(serializers.ModelSerializer):
     #containers = serializers.PrimaryKeyRelatedField(many=True, 
@@ -64,10 +64,9 @@ class LabelSerializer(serializers.ModelSerializer):
 
 
 
-#########################################################################
+################################################################################
 # ViewSets: requests for (paginated) information about containers
-#########################################################################
-
+################################################################################
 
 class LabelViewSet(viewsets.ReadOnlyModelViewSet):
     '''View all labels
@@ -78,9 +77,9 @@ class LabelViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LabelSerializer
 
 
-#########################################################################
+################################################################################
 # Label Details: custom views for specific containers
-#########################################################################
+################################################################################
 
 class LabelDetail(APIView):
     '''Retrieve a container instance based on it's name
@@ -105,9 +104,9 @@ class LabelDetail(APIView):
         return Response(data)
    
 
-#########################################################################
+################################################################################
 # urlpatterns
-#########################################################################
+################################################################################
 
 urlpatterns = [
 

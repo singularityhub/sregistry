@@ -1,6 +1,6 @@
 '''
 
-Copyright (C) 2017-2018 Vanessa Sochat.
+Copyright (C) 2017-2019 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from rest_framework import serializers
 
-##############################################################################
+################################################################################
 # Hyperlink Serializers
-##############################################################################
+################################################################################
 
 class HyperlinkedImageURL(serializers.CharField):
     def to_representation(self, value):
