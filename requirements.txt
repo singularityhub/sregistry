@@ -1,7 +1,7 @@
 cython
 h5py
 uwsgi
-Django==1.11.15
+django>=1.11.18
 social-auth-app-django
 social-auth-core[saml]
 python-social-auth
@@ -28,7 +28,7 @@ django-chosen
 opbeat
 django-hstore==1.3.5
 django-datatables-view
-sregistry==0.0.97
+sregistry[all-basic]==0.1.32
 django-gravatar2
 pygments
 google-api-python-client

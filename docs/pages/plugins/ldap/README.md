@@ -32,7 +32,7 @@ with unencrypted, StartTLS, and SSL access to an OpenLDAP directory.
 
 ## Quick Start
 This quick start is intended to demonstrate basic functionality of the LDAP server, and you should
-review the links referenced above for more detail. After you've completed basic setup in
+review the links referenced above for more detail.
 
 ### What is LDAP?
 

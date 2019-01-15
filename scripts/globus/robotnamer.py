@@ -2,9 +2,7 @@
 
 '''
 
-Copyright (C) 2018 The Board of Trustees of the Leland Stanford Junior
-University.
-Copyright (C) 2018 Vanessa Sochat.
+Copyright (C) 2018-2019 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -59,15 +57,14 @@ class RobotNamer:
 
 
     def generate(self, delim='-', length=4, chars='0123456789'):
-        '''
-        Generate a robot name. Inspiration from Haikunator, but much more
+        '''Generate a robot name. Inspiration from Haikunator, but much more
                  poorly implemented ;)
 
-        Parameters
-        ==========
-        delim: Delimiter
-        length: TokenLength
-        chars: TokenChars
+            Parameters
+            ==========
+            delim: Delimiter
+            length: TokenLength
+            chars: TokenChars
         '''
 
         descriptor = self._select(self._descriptors)

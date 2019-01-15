@@ -1,6 +1,6 @@
 '''
 
-Copyright (C) 2017-2018 Vanessa Sochat.
+Copyright (C) 2017-2019 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -102,8 +102,11 @@ LOGGING_SAVE_RESPONSES=True
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
 # - globus: allows connection from sregistry to endpoints
 # - saml: authentication with SAML
+# - storage: custom storage with one of the sregistry client endpoints
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
-#    'saml_auth'
+#    'saml_auth',
+#    'globus',
+#    'storage'
 ]

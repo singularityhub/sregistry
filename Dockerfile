@@ -45,7 +45,7 @@ ADD . /code/
 
 ################################################################################
 # PLUGINS
-# You are free to comment out those plugins that you don't want to use
+# You are free to uncomment the plugins that you want to use
 
 # Install LDAP (uncomment if wanted)
 # RUN pip install python3-ldap

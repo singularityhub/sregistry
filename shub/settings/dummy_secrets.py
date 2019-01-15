@@ -55,7 +55,15 @@
 #SOCIAL_AUTH_GITLAB_KEY = ''
 #SOCIAL_AUTH_GITLAB_SECRET = ''
 
+# =============================================================================
+# Custom Storage
+# Configure a custom storage endpoint instead of using the local filesystem
+# =============================================================================
 
+SREGISTRY_CUSTOM_STORAGE=False
+
+# google-storage, s3, google-drive, dropbox
+SREGISTRY_CLIENT="google-storage"
 
 # =============================================================================
 # Plugin Authentication

@@ -7,9 +7,11 @@ toc: true
 ---
 
 # Installation: Web Server and Storage
+
 Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
 
 ## Nginx
+
 This section is mostly for your FYI. The nginx container that we use is a custom compiled
 nginx that includes the [nginx uploads module](https://www.nginx.com/resources/wiki/modules/upload/).
 This allows us to define a server block that will accept multipart form data directly, and 
@@ -70,10 +72,15 @@ rm /var/www/html/index.nginx-debian.html
 If you don't care about user experience during updates and server downtime, you can just ignore this.
 
 ## Storage
-The containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. By default, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
+
+By default, the containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. If you are interested in
+using one of the storage endpoints provided by the Singularity Registry client,
+see the documentation for [custom storage]({{ site.url }}/install-storage). 
+
+If you choose the file system default storage, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
 
 
-```
+```yaml
     - ./static:/var/www/static
     - ./images:/var/www/images
 ```
