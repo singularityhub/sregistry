@@ -39,6 +39,7 @@ def auth_processor(request):
             "ENABLE_TWITTER_AUTH": settings.ENABLE_TWITTER_AUTH,
             "ENABLE_GITHUB_AUTH": settings.ENABLE_GITHUB_AUTH,
             "ENABLE_GITLAB_AUTH": settings.ENABLE_GITLAB_AUTH,
+            "ENABLE_BITBUCKET_AUTH": settings.ENABLE_BITBUCKET_AUTH,
             "PLUGINS_ENABLED": settings.PLUGINS_ENABLED}
 
 

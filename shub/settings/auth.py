@@ -29,6 +29,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.gitlab.GitLabOAuth2',
+    'social_core.backends.bitbucket.BitbucketOAuth2',
 )
 
 

@@ -35,13 +35,13 @@ SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 ### Authentication Secrets
 One thing I (@vsoch) can't do for you in advance is produce application keys and secrets to give your Registry for each social provider that you want to allow users (and yourself) to login with. We are going to use a framework called [python social auth](https://python-social-auth-docs.readthedocs.io/en/latest/configuration/django.html) to achieve this, and in fact you can add a [number of providers](http://python-social-auth-docs.readthedocs.io/en/latest/backends/index.html) (I have set up a lot of them, including SAML, so please <a href="https://www.github.com/singularityhub/sregistry/isses" target="_blank">submit an issue</a> if you want one added to the base proper.). Singularity Registry uses OAuth2 with a token--> refresh flow because it gives the user power to revoke permission at any point, and is a more modern strategy than storing a database of usernames and passwords. You can enable or disable as many of these that you want, and this is done in the [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py):
 
-```
+```python
 # Which social auths do you want to use?
 ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=False
 ENABLE_GITHUB_AUTH=True
 ENABLE_GITLAB_AUTH=False
-
+ENABLE_BITBUCKET_AUTH=False
 ```
 
 and you will need at least one to log in. I've found that Github works the fastest and easiest, and then Google. Twitter now requires an actual server name and won't work with localost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
@@ -72,7 +72,6 @@ Google is great in letting you specify multiple acceptable callback urls, so you
 
 #### Setting up Github OAuth
 For users to connect to Github, you need to [register a new application](https://github.com/settings/applications/new), and add the key and secret to your `secrets.py` file like this: 
-
 
 ```
 http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
@@ -105,12 +104,31 @@ SOCIAL_AUTH_GITLAB_API_URL = 'https://example.com'
 ```
 
 
+#### Bitbucket OAuth2
+
+We will be using the [bitbucket](https://python-social-auth.readthedocs.io/en/latest/backends/bitbucket.html) backend for Python Social Auth.
+
+ 1. First, register a new OAuth Consumer by following the instructions in the [Bitbucket documentation](https://confluence.atlassian.com/display/BITBUCKET/OAuth+on+Bitbucket). Make sure to add the "account" scope to your consumer, otherwise the user profile information (e.g., name and username) will not be accessible.
+ 2. Add the following variables to your `secrets.py` file under settings:
+
+```python
+SOCIAL_AUTH_BITBUCKET_OAUTH2_KEY = '<your-consumer-key>'
+SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET = '<your-consumer-secret>'
+```
+
+ 3. Optionally, if you want to limit access to only users with verified e-mail addresses, add the following:
+
+```python
+SOCIAL_AUTH_BITBUCKET_OAUTH2_VERIFIED_EMAILS_ONLY = True
+```
+
 #### Setting up Twitter OAuth2
 You can go to the [Twitter Apps](https://apps.twitter.com/) dashboard, register an app, and add secrets, etc. to your `secrets.py`:
 
-      SOCIAL_AUTH_TWITTER_KEY = ''
-      SOCIAL_AUTH_TWITTER_SECRET = ''
-
+```bash
+SOCIAL_AUTH_TWITTER_KEY = ''
+SOCIAL_AUTH_TWITTER_SECRET = ''
+```
 
 Note that Twitter now does not accept localhost urls. Thus, 
 the callback url here should be `http://[your-domain]/complete/twitter`.
