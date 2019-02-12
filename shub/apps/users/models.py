@@ -1,6 +1,6 @@
 '''
 
-Copyright (C) 2017-2018 Vanessa Sochat.
+Copyright (C) 2017-2019 Vanessa Sochat.
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from itertools import chain
 import datetime
@@ -292,7 +292,7 @@ class MembershipInvite(models.Model):
     '''
 
     code = models.CharField(max_length=200, null=False, blank=False) 
-    team = models.ForeignKey(Team)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     def __str__(self):
         return "<%s:%s>" %(self.id, self.team.name)
