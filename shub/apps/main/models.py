@@ -80,7 +80,7 @@ def has_edit_permission(instance, request):
         user = request.user
 
     # Visitor
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return False
 
     # Global Admins

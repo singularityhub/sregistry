@@ -89,7 +89,7 @@ def login(request,message=None):
         messages.info(message)    
 
     context=None
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         if not request.user.agree_terms:
             return render(request,'terms/usage_agreement_login.html', context)
         context = validate_credentials(user=request.user)
