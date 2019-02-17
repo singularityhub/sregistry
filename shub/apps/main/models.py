@@ -1,26 +1,17 @@
 '''
 
-Copyright (C) 2017-2018 Vanessa Sochat.
+Copyright (C) 2017-2019 Vanessa Sochat.
 
-This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
-License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
 from django.conf import settings
 from shub.apps.api.models import ImageFile
 from shub.apps.users.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models import Q, DO_NOTHING
 from django.db.models.signals import post_delete, pre_delete
@@ -80,7 +71,7 @@ def has_edit_permission(instance, request):
         user = request.user
 
     # Visitor
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return False
 
     # Global Admins
@@ -178,7 +169,7 @@ class Collection(models.Model):
     add_date = models.DateTimeField('date published', auto_now_add=True)
     modify_date = models.DateTimeField('date modified', auto_now=True)
     secret = models.CharField(max_length=200, null=False, verbose_name="Collection secret for webhook")
-    metadata = JSONField(default={}) # open field for metadata about a collection
+    metadata = JSONField(default=dict) # open field for metadata about a collection
 
     # Users
     owners = models.ManyToManyField('users.User', blank=True, default=None,
@@ -302,10 +293,16 @@ class Container(models.Model):
     '''A container is a base (singularity) container, stored as a file (image) with a unique id and name
     '''
     add_date = models.DateTimeField('date container added', auto_now=True)
-    collection = models.ForeignKey('main.Collection',null=False,blank=False, related_name="containers")
-    image = models.ForeignKey(ImageFile, null=True, blank=False) # an image upload, or maybe change it?
-    metadata = JSONField(default={},blank=True)
-    metrics = JSONField(default={},blank=True)
+
+    # When the collection is deleted, DO delete the Container object
+    collection = models.ForeignKey('main.Collection', null=False,blank=False, 
+                                                      related_name="containers", 
+                                                      on_delete=models.CASCADE)
+
+    # When the Image File is deleted, don't delete the Container object (can be updated)
+    image = models.ForeignKey(ImageFile, null=True, blank=False, on_delete=models.SET_NULL)
+    metadata = JSONField(default=dict, blank=True)
+    metrics = JSONField(default=dict,blank=True)
     name = models.CharField(max_length=250, null=False, blank=False)
     tag = models.CharField(max_length=250,null=False,blank=False,default="latest")
     secret = models.CharField(max_length=250,null=True,blank=True)
@@ -405,8 +402,9 @@ class Container(models.Model):
 class Star(models.Model):
     '''a user can star a particular collection
     '''
-    user = models.ForeignKey('users.User')
-    collection = models.ForeignKey(Collection)
+    # When the user or Collection is deleted, also delete the Stars
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
 
     def get_label(self):
         return "collection"
@@ -420,7 +418,8 @@ class Star(models.Model):
 class Share(models.Model):
     '''a temporary share / link for a container
     '''
-    container = models.ForeignKey(Container)
+    # When the Container is deleted, also delete the share
+    container = models.ForeignKey(Container, on_delete=models.CASCADE)
     expire_date = models.DateTimeField('share expiration date')
     secret = models.CharField(max_length=250, null=True, blank=True)
 

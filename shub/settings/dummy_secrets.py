@@ -56,6 +56,12 @@
 #SOCIAL_AUTH_GITLAB_SECRET = ''
 
 
+# -----------------------------------------------------------------------------
+# Bitbucket OAuth2
+
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_KEY = '<your-consumer-key>'
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET = '<your-consumer-secret>'
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_VERIFIED_EMAILS_ONLY = True
 
 # =============================================================================
 # Plugin Authentication
