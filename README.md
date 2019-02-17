@@ -26,4 +26,4 @@ please [let me know](https://github.com/singularityhub/sregistry/issues)!
 
 ## License
 
-This code is licensed under the Affero GPL, version 3.0 or later [LICENSE](LICENSE).
+This code is licensed under the MPL 2.0 [LICENSE](LICENSE).
