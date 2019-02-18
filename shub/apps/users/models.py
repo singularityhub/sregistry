@@ -125,7 +125,7 @@ class User(AbstractUser):
 
     def get_credentials(self, provider):
         ''' return one or more credentials, or None'''
-        if self.is_anonymous() is False:
+        if self.is_anonymous is False:
             try:
                 # Case 1: one credential
                 credential = self.social_auth.get(provider=provider)

@@ -46,7 +46,7 @@ def validate_credentials(user,context=None):
     credentials_missing = "aok"
     for group in credentials:
         credential = None
-        if not user.is_anonymous():
+        if not user.is_anonymous:
             credential = user.get_credentials(provider=group['provider'])
         if credential != None:
             context[group['key']] = 'aok'
