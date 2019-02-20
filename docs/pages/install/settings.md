@@ -108,8 +108,19 @@ SOCIAL_AUTH_GITLAB_API_URL = 'https://example.com'
 
 We will be using the [bitbucket](https://python-social-auth.readthedocs.io/en/latest/backends/bitbucket.html) backend for Python Social Auth.
 
- 1. First, register a new OAuth Consumer by following the instructions in the [Bitbucket documentation](https://confluence.atlassian.com/display/BITBUCKET/OAuth+on+Bitbucket). Make sure to add the "account" scope to your consumer, otherwise the user profile information (e.g., name and username) will not be accessible.
- 2. Add the following variables to your `secrets.py` file under settings:
+First, register a new OAuth Consumer by following the instructions in the [Bitbucket documentation](https://confluence.atlassian.com/bitbucket/oauth-on-bitbucket-cloud-238027431.html). Overall, this means registering a new consumer, and making sure to add the "account" scope to it. You can find the button to add a consumer in your BitBucket profile (click your profile image from the bottom left of [the dashboard](https://bitbucket.org/dashboard/overview).
+
+![assets/img/bitbucket-consumer.png](assets/img/bitbucket-consumer.png)
+
+After clicking the button, fill in the following values:
+
+ - Name: choose a name that will be easy to link and remember like "Singularity Registry Server"
+ - Callback URL: should be `http://[your-domain]/complete/bitbucket` For localhost, this is usually `http://127.0.0.1/complete/bitbucket`
+ - Keep the button "This is a private consumer" checked.
+ - Under Permissions (the scope) click on Account (email, read, write).
+
+
+Then, when you click to add the consumer, it will take you back to the original pacge. To get the key and secret, you should click on the name of the consumer. Then add the following variables to your `secrets.py` file under settings:
 
 ```python
 SOCIAL_AUTH_BITBUCKET_OAUTH2_KEY = '<your-consumer-key>'
@@ -120,6 +131,12 @@ SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET = '<your-consumer-secret>'
 
 ```python
 SOCIAL_AUTH_BITBUCKET_OAUTH2_VERIFIED_EMAILS_ONLY = True
+```
+
+Finally, don't forget to enable the bitbucket login in settings/config.py:
+
+```python
+ENABLE_BITBUCKET_AUTH=True
 ```
 
 #### Setting up Twitter OAuth2

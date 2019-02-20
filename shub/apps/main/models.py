@@ -110,7 +110,7 @@ def has_view_permission(instance, request):
         return True
 
     # At this point we have a private collection
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return False
         
     # Global Admins and Superusers
@@ -264,7 +264,7 @@ class Collection(models.Model):
         '''returns true or false to indicate
         if a user has starred a collection'''
         has_star = False
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             try:
                 star = Star.objects.get(user=request.user,
                                         collection=self)
