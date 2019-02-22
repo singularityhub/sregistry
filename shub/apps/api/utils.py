@@ -68,12 +68,12 @@ def get_request_user(auth, user=None):
         return user
 
     kind,username,ts = values['Credential'].split('/')
-    username = base64.b64decode(username)
+    username = base64.b64decode(username).decode('utf-8')
 
     try:
         user = User.objects.get(username=username)
     except:
-        bot.debug('%s is not a valid user, request invalid.' %username)
+        bot.debug('%s is not a valid user, request invalid.' % username)
     return user
 
 
@@ -183,7 +183,7 @@ def validate_request(auth,
         return False
 
     kind,username,ts = values['Credential'].split('/')
-    username = base64.b64decode(username)
+    username = base64.b64decode(username).decode('utf-8')
     if kind != sender:
         print('Mismatch: type (%s) sender (%s) invalid.' %(kind,sender))
         return False
