@@ -96,6 +96,6 @@ LOGGING_SAVE_RESPONSES=True
 # - saml: authentication with SAML
 
 PLUGINS_ENABLED = [
-#    'ldap_auth',
+    'ldap_auth',
 #    'saml_auth'
 ]
