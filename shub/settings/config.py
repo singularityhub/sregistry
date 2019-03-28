@@ -97,7 +97,7 @@ LOGGING_SAVE_RESPONSES=True
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
-    'pam_auth',
+#    'pam_auth',
 #    'globus',
 #    'saml_auth'
 ]

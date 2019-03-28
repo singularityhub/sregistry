@@ -24,9 +24,7 @@ must uncomment (step 1) in order for the plugin to be enabled:
 
 ```bash
 # Install PAM Authentication (uncomment if wanted)
-RUN pip install django-pam && \
-    USER=$(whoami) && \
-    usermod -a -G shadow "${USER}"
+RUN pip install django-pam
 ```
 
 Finally, if you decide to mount the shadow and users file from your host,
@@ -40,12 +38,19 @@ uwsgi:
     - .:/code
     - ./static:/var/www/static
     - ./images:/var/www/images
-    # uncomment for PAM auth if you want the host users
+    # uncomment for PAM auth
     #- /etc/passwd:/etc/passwd 
     #- /etc/shadow:/etc/shadow
   links:
     - redis
     - db
+```
+
+If you do this, you also need to add the nginx user to your host:
+
+```bash
+$ sudo addgroup --system nginx
+$ sudo adduser --disabled-login --system --home /var/cache/nginx --ingroup nginx nginx
 ```
 
 Note that this solution [would require restarting the container](https://github.com/jupyterhub/jupyterhub/issues/535) for changes on the host to take effect. If you find

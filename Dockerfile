@@ -53,9 +53,7 @@ ADD . /code/
 # RUN pip install django-auth-ldap
 
 # Install PAM Authentication (uncomment if wanted)
-RUN pip install django-pam && \
-    USER=$(whoami) && \
-    usermod -a -G shadow $USER
+# RUN pip install django-pam
 
 # Install Globus (uncomment if wanted)
 # RUN /bin/bash /code/scripts/globus/globus-install.sh
