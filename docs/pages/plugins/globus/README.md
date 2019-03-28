@@ -158,6 +158,6 @@ Singularity Registry works with Globus by serving its filesystem with images as 
 
 
 <div>
-    <a href="/sregistry/plugin-ldap"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
-    <a href="/sregistry/plugins"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
+    <a href="/sregistry/plugin-pam"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
+    <a href="/sregistry/plugin-saml"><button class="next-button btn btn-primary"><i class="fa fa-chevron-right"></i> </button></a>
 </div><br>

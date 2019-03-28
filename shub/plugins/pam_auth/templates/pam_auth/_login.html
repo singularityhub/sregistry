@@ -1,0 +1,25 @@
+      <div class="login">
+{% if form.non_field_errors %}
+        <div class="alert-error">
+          <button type="button" class="close-message">&times;</button>
+          <span>Error:</span>
+          {{ form.non_field_errors }}
+        </div>
+{% endif %}
+        <div class="login-body">
+          <form role="form" method="post" action="">
+            {% csrf_token %}
+            <div class="form-fields">
+              {{ form.username.errors }}
+              {{ form.username.label_tag }}
+              {{ form.username.as_widget }}
+            </div>
+            <div class="form-fields">
+              {{ form.password.errors }}
+              {{ form.password.label_tag }}
+              {{ form.password.as_widget }}
+            </div>
+            <button type="submit" class="form-submit">Login</button>
+          </form>
+        </div>
+      </div>

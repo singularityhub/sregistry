@@ -1,5 +1,6 @@
-FROM python:3.5.1
+FROM python:3.5.7
 ENV PYTHONUNBUFFERED 1
+ENV DEBIAN_FRONTEND noninteractive
 
 ################################################################################
 # CORE
@@ -50,6 +51,11 @@ ADD . /code/
 # Install LDAP (uncomment if wanted)
 # RUN pip install python3-ldap
 # RUN pip install django-auth-ldap
+
+# Install PAM Authentication (uncomment if wanted)
+RUN pip install django-pam && \
+    USER=$(whoami) && \
+    usermod -a -G shadow $USER
 
 # Install Globus (uncomment if wanted)
 # RUN /bin/bash /code/scripts/globus/globus-install.sh

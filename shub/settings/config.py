@@ -55,7 +55,6 @@ PRIVATE_ONLY = False
 DEFAULT_PRIVATE = False
 
 
-
 # DATABASE
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -92,10 +91,13 @@ LOGGING_SAVE_RESPONSES=True
 # Available Plugins:
 
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+# - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
 # - saml: authentication with SAML
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
+    'pam_auth',
+#    'globus',
 #    'saml_auth'
 ]
