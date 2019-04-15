@@ -9,8 +9,8 @@ RUN sh -x /usr/src/install.sh
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
-# Create hashed temporary upload locations
-RUN mkdir -p /tmp/0 /tmp/1 /tmp/2 /tmp/3 /tmp/4 /tmp/5 /tmp/6 /tmp/7 /tmp/8 /tmp/9
+# Create hashed temporary upload locations /tmp/0 through /tmp/9
+RUN mkdir -p /tmp/{0..9}
 
 EXPOSE 80 443
 

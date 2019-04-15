@@ -21,6 +21,7 @@ The following plugins are included with sregistry, and can be enabled by adding 
 your registries' local `shub/settings/secrets.py` file.
 
  - [LDAP-Auth](/sregistry/plugin-ldap): authentication against LDAP directories
+ - [PAM-Auth](/sregistry/plugin-pam): authentication using PAM (unix host users)
  - [Globus](/sregistry/plugin-globus): connect and transfer using Globus
  - [SAML](/sregistry/plugin-saml): Authentication with SAML
 

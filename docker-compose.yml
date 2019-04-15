@@ -8,6 +8,9 @@ uwsgi:
     - .:/code
     - ./static:/var/www/static
     - ./images:/var/www/images
+    # uncomment for PAM auth
+    #- /etc/passwd:/etc/passwd 
+    #- /etc/shadow:/etc/shadow
   links:
     - redis
     - db

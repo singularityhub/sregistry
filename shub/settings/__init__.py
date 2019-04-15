@@ -8,6 +8,10 @@ from .auth import *
 from .api import *
 from .tasks import *
 
+# If PAM_AUTH in plugins enbled, add django_pam
+if "pam_auth" in INSTALLED_APPS:
+    INSTALLED_APPS += ['django_pam']
+
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:
 

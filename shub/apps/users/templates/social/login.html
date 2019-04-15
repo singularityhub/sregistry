@@ -63,6 +63,10 @@
         <a class="social-button" id="ldap-login" href="{% url 'ldap_auth-login' %}?next={{ domain }}{{ request.path }}">Login with LDAP</a>
         {% endif %}
 
+        {% if 'pam_auth' in PLUGINS_ENABLED %}
+        <a class="social-button" id="saml-connect" href="{% url 'pam_auth-login' %}?next={{ domain }}{{ request.path }}">Login with Username (PAM)</a>
+        {% endif %}
+
     {% endif %}
     </div>
 
