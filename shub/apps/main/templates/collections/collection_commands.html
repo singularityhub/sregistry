@@ -42,7 +42,7 @@
                 <p class="well" id="pull_well">
                      sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
                      sregistry pull {{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }} --name customname.img<br>
-                     singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}:{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
+                     singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
                      singularity pull --name customname.img shub://{{ DOMAIN_NAKED }}/{{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
                 </p>
             </div>

@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.template.context import RequestContext
 
 
-def handler404(request):
+def handler404(request, exception):
     response = render(request,'base/404.html', {})
     response.status_code = 404
     return response
