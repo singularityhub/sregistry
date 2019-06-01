@@ -1,4 +1,5 @@
 from importlib import import_module
+import os
 
 from .applications import *
 from .config import *
@@ -25,3 +26,13 @@ for plugin in PLUGINS_ENABLED:
     if hasattr(plugin, 'CONTEXT_PROCESSORS'):
         for context_processor in plugin.CONTEXT_PROCESSORS:
             TEMPLATES[0]['OPTIONS']['context_processors'].append(context_processor)
+
+
+# If storage plugin is enabled, check for environment variables
+
+if "storage" in PLUGINS_ENABLED:
+    if "SREGISTRY_CLIENT_ENVARS" in locals():
+        for key, value in SREGISTRY_CLIENT_ENVARS.items():
+            if os.environ.get(key) in [None, ""]:
+                os.putenv(key, value)
+                os.environ[key] = value

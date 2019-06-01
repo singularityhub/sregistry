@@ -37,7 +37,7 @@ CELERY_QUEUES = (
 )
 CELERY_IMPORTS = ('shub.apps.api.tasks',)
 
-CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' %(REDIS_HOST,REDIS_PORT,REDIS_DB)
+CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' %(REDIS_HOST,REDIS_PORT, REDIS_DB)
 
 #BROKER_URL = os.environ.get('BROKER_URL',None)
 if BROKER_URL == None:
