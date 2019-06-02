@@ -73,9 +73,9 @@ If you don't care about user experience during updates and server downtime, you 
 
 ## Storage
 
-By default, the containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. If you are interested in
-using one of the storage endpoints provided by the Singularity Registry client,
-see the documentation for [custom storage]({{ site.url }}/install-storage). 
+By default, the containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. While it would not be reasonable to upload to Singularity Registry and then to a custom Storage, we have recently added
+[custom builders]({{ site.url }}/install-builders) that can be used to push a recipe to Singularity Registry Server, and then
+trigger a cloud build that will be saved in some matching cloud storage.
 
 If you choose the file system default storage, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
 

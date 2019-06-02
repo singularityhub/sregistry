@@ -44,6 +44,6 @@ if "google_build" in PLUGINS_ENABLED:
 
     if "SREGISTRY_CLIENT_ENVARS" in locals():
         for key, value in SREGISTRY_CLIENT_ENVARS.items():
-            if os.environ.get(key) in [None, ""]:
+            if os.environ.get(key) not in [None, ""]:
                 os.putenv(key, value)
                 os.environ[key] = value

@@ -56,14 +56,27 @@
 #SOCIAL_AUTH_GITLAB_SECRET = ''
 
 # =============================================================================
-# Custom Storage
-# Configure a custom storage endpoint instead of using the local filesystem
+# Google Cloud Build + Storage
+# Configure a custom builder and storage endpoint
 # =============================================================================
 
-SREGISTRY_CUSTOM_STORAGE=False
+# GOOGLE_APPLICATION_CREDENTIALS="/path/to/credentials.json"
+# SREGISTRY_GOOGLE_PROJECT="myproject-ftw"
 
-# google-storage, s3, google-drive, dropbox
-SREGISTRY_CLIENT="google-storage"
+# SREGISTRY_GOOGLE_BUILD_CACHE="true"
+# After build, do not delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed). 
+# Defaults to being unset, meaning that files are cleaned up. If you define this as anything, the build files will be cached.
+
+# SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="3.2.0-slim" 
+# if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
+
+# SREGISTRY_GOOGLE_STORAGE_BUCKET=SREGISTRY_URI + "-singularity-registry"
+# is the name for the bucket you want to create. If not provided, we use your registry unique identifier appended with “sregistry-" 
+# Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact.
+
+# SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
+# by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
+
 
 # -----------------------------------------------------------------------------
 # Bitbucket OAuth2
