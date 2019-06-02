@@ -6,7 +6,7 @@ permalink: /plugin-google-build
 toc: true
 ---
 
-# Plugin: Custom Storage
+# Plugin: Google Cloud Build and Storage
 
 The Singularity Registry client allows for [a large set](https://singularityhub.github.io/sregistry-cli/clients) of options for external storage endpoints. Specifically, this plugin uses storage and build provided by Google, meaning:
 
@@ -63,9 +63,55 @@ Keep in mind that the path to the Google credentials file must be
 within the container (/code is the root folder that is bound to the filesystem).
 If you are missing some variable, there will be an error message
 on interaction with the Google Cloud Build API since you won't be able to 
-authenticate.
+authenticate. Once your settings are ready to go, you will want to continue
+with the [install docs](https://singularityhub.github.io/sregistry/install-server#storage) where you left off,
+and you can continue here after you've done:
 
-*being written*
+```
+$ docker-compose up -d
+```
+
+and confirmed the registry running at localhost, and also have logged in
+(so you have an account with permission to push containers and recipes.)
+
+
+### Sregistry Client
+
+If you haven't yet, you will need the [sregistry client](https://singularityhub.github.io/sregistry-cli/)
+in order to push recipes to build with Google Cloud Build. The minimum version that supports this
+is `0.2.16`. An easy way to install is any of the following:
+
+```bash
+$ pip install sregistry
+$ pip install sregistry[basic] # without local sqlite database
+```
+
+Next, export the client to be your registry.
+
+```
+$ export SREGISTRY_CLIENT=registry
+```
+
+### Push a Recipe
+
+When the server is started and the client is ready, it's time to push a recipe
+to build! By default, you will need to specify the name of the collection and
+container, and to include the fact that you want to use Google Cloud Build:
+
+```bash
+$ sregistry build --name google_build://collection/container:tag Singularity
+```
+
+Alternatively, if you only aim to use one builder and want to set it as default,
+you can export this once for your session, or more permanently in your bash
+profile.
+
+```
+export SREGISTRY_BUILD_TYPE=google_build
+```
+
+Notice that the command simply requires a name for your collection (it doesn't
+need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine. 
 
 <div>
     <a href="/sregistry/plugins"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>

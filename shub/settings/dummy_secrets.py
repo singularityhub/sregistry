@@ -67,7 +67,7 @@
 # After build, do not delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed). 
 # Defaults to being unset, meaning that files are cleaned up. If you define this as anything, the build files will be cached.
 
-# SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="3.2.0-slim" 
+# SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
 # if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
 
 # SREGISTRY_GOOGLE_STORAGE_BUCKET=SREGISTRY_URI + "-singularity-registry"

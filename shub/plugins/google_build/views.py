@@ -9,13 +9,21 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import (
+    FormParser, 
+    MultiPartParser
+)
 from shub.apps.main.models import (
     Collection, 
     Container
 )
 from rest_framework.viewsets import ModelViewSet
-from shub.apps.google_build.models import RecipeFile
+from .models import RecipeFile
+from shub.apps.api.utils import (
+    get_request_user,
+    validate_request,
+    has_permission
+)
 from rest_framework import serializers
 from sregistry.main.registry.auth import generate_timestamp
 
@@ -90,9 +98,7 @@ class RecipePushViewSet(ModelViewSet):
 
             except Container.DoesNotExist:
                 create_new=True
-         
-
-
+        
         # Create the recipe to trigger a build
  
         if create_new is True:

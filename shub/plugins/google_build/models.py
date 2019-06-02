@@ -9,14 +9,40 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.files.storage import FileSystemStorage
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
+from shub.apps.api.models.storage import OverwriteStorage
+from .actions import trigger_build
 import uuid
-import time
-import hashlib
 import os
+
+
+def get_upload_folder(instance, filename):
+    '''a helper function to upload a recipe file to storage.
+    '''
+    from shub.apps.main.models import Container, Collection
+    tag = instance.tag.lower()
+    collection_name = instance.collection.lower()
+    instance.collection = collection_name
+    
+    # First get a collection
+    try:
+        collection = Collection.objects.get(name=collection_name)
+    except Collection.DoesNotExist:
+        collection = Collection.objects.create(name=collection_name)
+        collection.secret = str(uuid.uuid4())
+        collection.save()
+
+    # Create collection root, if it doesn't exist
+    image_home = os.path.join(settings.MEDIA_ROOT, collection_name)
+    recipe_home = os.path.join(image_home, 'recipes')
+ 
+    for dirname in [image_home, recipe_home]:
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+
+    return os.path.join(recipe_home, filename)
 
 
 class RecipeFile(models.Model):

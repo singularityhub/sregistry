@@ -41,19 +41,13 @@ def get_privacy_default():
     return settings.DEFAULT_PRIVATE
 
 
-def delete_imagefile(sender,instance,**kwargs):
-    if instance.image not in ['',None]:
-        if hasattr(instance.image,'datafile'):
-            instance.image.datafile.delete()
-
-
 ################################################################################
 # Collections ##################################################################
 #########################################b######################################
 
 class Collection(models.Model):
-    '''A container collection is a build (multiple versions of the same image) 
-       created by an owner, with other possible contributors
+    '''A container collection is a build (multiple versions of the same image) created by an owner,
+    with other possible contributors
     '''
 
     # Container Collection Descriptors
@@ -200,11 +194,12 @@ class Star(models.Model):
         app_label = 'main'
 
 
+
 class Share(models.Model):
     '''a temporary share / link for a container
     '''
     # When the Container is deleted, also delete the share
-    container = models.ForeignKey(Container, on_delete=models.CASCADE)
+    container = models.ForeignKey("main.Container", on_delete=models.CASCADE)
     expire_date = models.DateTimeField('share expiration date')
     secret = models.CharField(max_length=250, null=True, blank=True)
 
@@ -238,7 +233,9 @@ class Label(models.Model):
     '''
     key = models.CharField(max_length=250, null=False, blank=False)
     value = models.CharField(max_length=250, null=False, blank=False)
-    containers = models.ManyToManyField('main.Container',blank=False, related_name='containers')
+    containers = models.ManyToManyField('main.Container',
+                                         blank=False,
+                                         related_name='containers')
 
     def __str__(self):
         return "%s:%s" %(self.key,self.value)

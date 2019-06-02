@@ -8,7 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.conf.urls import include
+from django.conf.urls import include, url
 from shub.plugins.google_build import views
 from rest_framework import routers
 

@@ -29,7 +29,7 @@ def has_edit_permission(instance, request):
         user = request.user
 
     # Visitor
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return False
 
     # Global Admins
@@ -68,7 +68,7 @@ def has_view_permission(instance, request):
         return True
 
     # At this point we have a private collection
-    if not user.is_authenticated():
+    if not user.is_authenticated:
         return False
         
     # Global Admins and Superusers
@@ -100,3 +100,5 @@ def get_collection_users(instance):
     owners = collection.owners.all()
     members = list(chain(contributors, owners))
     return list(set(members))
+
+
