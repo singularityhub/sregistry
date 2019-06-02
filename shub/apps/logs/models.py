@@ -15,7 +15,10 @@ from shub.apps.logs.managers import PrefetchUserManager
 @python_2_unicode_compatible
 class BaseAPIRequestLog(models.Model):
     '''Log an API request based on user, view, etc.'''
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, 
+                             null=True, blank=True, 
+                             on_delete=models.CASCADE)
+
     requested_at = models.DateTimeField(db_index=True)
     response = models.TextField()
     response_ms = models.PositiveIntegerField(default=0)
@@ -47,7 +50,10 @@ class APIRequestCount(models.Model):
     ''' Keep track of a count of requests based on path and
     view type, for quick querying later'''
     from shub.apps.main.models import Collection
-    collection = models.ForeignKey(Collection, default=None, blank=False, null=True)
+    # When the collection is deleted, the count is deleted too
+    collection = models.ForeignKey(Collection, default=None, 
+                                   blank=False, null=True, 
+                                   on_delete=models.CASCADE)
     count = models.PositiveIntegerField(default=0)
     path = models.CharField(max_length=200, db_index=True)
     method = models.CharField(max_length=200, db_index=True)

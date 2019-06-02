@@ -157,4 +157,4 @@ cd sregistry
 docker build -t vanessa/sregistry .
 ```
 
-Next, why don't you [configure settings](/sregistry/install-settings) to customize your installation.
+Next, why don't you [start Docker containers](/sregistry/install-containers) to get your own registry going.

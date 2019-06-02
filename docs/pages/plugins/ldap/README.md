@@ -6,6 +6,8 @@ permalink: /plugin-ldap
 toc: false
 ---
 
+# LDAP Authentication
+
 The `ldap_auth` plugin allows users to login to sregistry using account information stored in an
 LDAP directory. This supports logins against [Microsoft Active Directory](https://msdn.microsoft.com/en-us/library/bb742424.aspx), as well open-source
 [OpenLDAP](https://www.openldap.org/) etc.

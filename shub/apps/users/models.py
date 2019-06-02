@@ -2,18 +2,9 @@
 
 Copyright (C) 2017-2019 Vanessa Sochat.
 
-This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
-License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
@@ -24,7 +15,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from itertools import chain
 import datetime
@@ -134,7 +125,7 @@ class User(AbstractUser):
 
     def get_credentials(self, provider):
         ''' return one or more credentials, or None'''
-        if self.is_anonymous() is False:
+        if self.is_anonymous is False:
             try:
                 # Case 1: one credential
                 credential = self.social_auth.get(provider=provider)
@@ -292,7 +283,7 @@ class MembershipInvite(models.Model):
     '''
 
     code = models.CharField(max_length=200, null=False, blank=False) 
-    team = models.ForeignKey(Team)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     def __str__(self):
         return "<%s:%s>" %(self.id, self.team.name)

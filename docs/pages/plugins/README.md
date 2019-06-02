@@ -21,15 +21,15 @@ The following plugins are included with sregistry, and can be enabled by adding 
 your registries' local `shub/settings/secrets.py` file.
 
  - [LDAP-Auth](/sregistry/plugin-ldap): authentication against LDAP directories
+ - [PAM-Auth](/sregistry/plugin-pam): authentication using PAM (unix host users)
  - [Globus](/sregistry/plugin-globus): connect and transfer using Globus
  - [SAML](/sregistry/plugin-saml): Authentication with SAML
- - [Custom Storage](/sregistry/plugin-storage) via a sregistry client endpoint, if local storage doesn't work for you.
+ - [Google Build](/sregistry/plugin-google-build) provides build and storage on Google Cloud.
 
 ## Writing a Plugin
 
 An sregistry plugin is a Django App, that lives inside `shub/plugins/<plugin-name>`.
-
-The plugin interface is currently under development. At present, each plugin:
+Each plugin:
 
  - Must provide a `urls.py` listing any URLs that will be exposed under `/plugin-name`
  - Can provide additional, models, views, templates, static files.

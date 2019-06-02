@@ -2,25 +2,14 @@
 
 Copyright (C) 2017-2019 Vanessa Sochat.
 
-This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
-License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
-from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
 import uuid
@@ -77,6 +66,8 @@ class OverwriteStorage(FileSystemStorage):
 
 
 class ImageFile(models.Model):
+    '''an ImageFile is a Singularity container pushed directly.
+    '''
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)
     tag = models.CharField(max_length=200, null=False)

@@ -65,6 +65,13 @@ SREGISTRY_CUSTOM_STORAGE=False
 # google-storage, s3, google-drive, dropbox
 SREGISTRY_CLIENT="google-storage"
 
+# -----------------------------------------------------------------------------
+# Bitbucket OAuth2
+
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_KEY = '<your-consumer-key>'
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET = '<your-consumer-secret>'
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_VERIFIED_EMAILS_ONLY = True
+
 # =============================================================================
 # Plugin Authentication
 # Set options for authentication plugins that you have enabled in config.py

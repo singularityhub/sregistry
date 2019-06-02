@@ -1,5 +1,7 @@
-FROM python:3.5.1
+FROM python:3.5.7
 ENV PYTHONUNBUFFERED 1
+ENV DEBIAN_FRONTEND noninteractive
+ENV MESSAGELEVEL QUIET
 
 ################################################################################
 # CORE
@@ -32,7 +34,7 @@ RUN apt-get update && apt-get install -y \
     build-essential
 
 # Install Singularity
-RUN git clone -b vault/release-2.5 https://www.github.com/sylabs/singularity.git
+RUN git clone -b vault/release-2.6 https://www.github.com/sylabs/singularity.git
 WORKDIR singularity
 RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 
@@ -50,6 +52,9 @@ ADD . /code/
 # Install LDAP (uncomment if wanted)
 # RUN pip install python3-ldap
 # RUN pip install django-auth-ldap
+
+# Install PAM Authentication (uncomment if wanted)
+# RUN pip install django-pam
 
 # Install Globus (uncomment if wanted)
 # RUN /bin/bash /code/scripts/globus/globus-install.sh

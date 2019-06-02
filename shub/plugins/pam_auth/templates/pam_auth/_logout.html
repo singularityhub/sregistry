@@ -1,0 +1,16 @@
+      <div class="logout">
+{% if form.non_field_errors %}
+        <div class="alert-error">
+          <button type="button" class="close-message">&times;</button>
+          <strong>Error:</strong>
+          {{ form.non_field_errors }}
+        </div>
+{% endif %}
+        <div class="logout-body">
+          <form role="form" method="post" action="">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ next }}" />
+            <button type="submit" class="form-submit">Logout</button>
+          </form>
+        </div>
+      </div>

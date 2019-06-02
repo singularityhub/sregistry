@@ -9,13 +9,8 @@ toc: false
 <script src="assets/js/asciinema-player.js"></script>
 <link rel="stylesheet" href="assets/css/asciinema-player.css"/>
 
-The original Singularity Registry Client was provided by [Singularity Python](https://github.com/singularityware/singularity-python), however we have moved the client to have its own module under [sregistry-cli](https://github.com/singularityhub/sregistry-cli). We recommend that you use the latter, and ask for features or updates when necessary. For the new version, see the [getting started guide here](https://singularityhub.github.io/sregistry-cli/client-registry).
-
-For the older version, you can use Singularity Python. A demo is provided below, along with the same documentation here [as a script](https://github.com/singularityware/singularity-python/blob/master/examples/registry/run_client.sh).
-
-<asciinema-player src="assets/asciicast/registry.json" poster="data:text/plain,Intro to sregistry client" title="Introduction to the Singularity Registry client" author="vsochat@stanford.edu" cols="80" rows="40" speed="2.0" theme="asciinema"></asciinema-player>
-
-
+The original Singularity Registry Client was provided by [Singularity Python](https://github.com/singularityware/singularity-python), however we have moved the client to have its own module under [sregistry-cli](https://github.com/singularityhub/sregistry-cli). We recommend that you use the latter, and ask for features or updates when necessary. For the new version, see the [getting started guide here](https://singularityhub.github.io/sregistry-cli/client-registry). Note that you will need to [export your credentials](https://singularityhub.github.io/sregistry/credentials) in order to have authenticated
+interaction with sregistry.
 
 ## Install
 
@@ -81,7 +76,9 @@ sregistry push vsoch-hello-world-master.img --name meowmeow/avocado --tag nomnom
 sregistry push vsoch-hello-world-master.img --name dinosaur/avocado --tag whatinthe
 ```
 
-If you don't specify a tag, `latest` is used.
+If you don't specify a tag, `latest` is used. If you have authentication issues,
+remember that you need to [export a token](https://singularityhub.github.io/sregistry/credentials) for your user, and ensure that the user is either an admin/manager, or
+that you have set the `USER_COLLECTIONS` variable to true. You can read [more about roles here](https://singularityhub.github.io/sregistry/setup-roles), and [more about teams](https://singularityhub.github.io/sregistry/setup-teams) to manage groups of people.
 
 ### List
 

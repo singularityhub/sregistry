@@ -2,18 +2,9 @@
 
 Copyright (C) 2017-2019 Vanessa Sochat.
 
-This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
-License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
@@ -24,6 +15,7 @@ ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=False
 ENABLE_GITHUB_AUTH=True
 ENABLE_GITLAB_AUTH=False
+ENABLE_BITBUCKET_AUTH=False
 
 # NOTE you will need to set autehtication methods up.
 # Configuration goes into secrets.py
@@ -63,7 +55,6 @@ PRIVATE_ONLY = False
 DEFAULT_PRIVATE = False
 
 
-
 # DATABASE
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -100,13 +91,16 @@ LOGGING_SAVE_RESPONSES=True
 # Available Plugins:
 
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+# - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
 # - saml: authentication with SAML
 # - storage: custom storage with one of the sregistry client endpoints
+             # **IMPORTANT** Github login is currently required to support this
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
-#    'saml_auth',
+#    'google_build'  
+#    'pam_auth',
 #    'globus',
-#    'storage'
+#    'saml_auth'
 ]

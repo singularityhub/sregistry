@@ -2,18 +2,9 @@
 
 Copyright (C) 2017-2019 Vanessa Sochat.
 
-This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at your
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
-License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
+with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
@@ -77,12 +68,12 @@ def get_request_user(auth, user=None):
         return user
 
     kind,username,ts = values['Credential'].split('/')
-    username = base64.b64decode(username)
+    username = base64.b64decode(username).decode('utf-8')
 
     try:
         user = User.objects.get(username=username)
     except:
-        bot.debug('%s is not a valid user, request invalid.' %username)
+        bot.debug('%s is not a valid user, request invalid.' % username)
     return user
 
 
@@ -192,7 +183,7 @@ def validate_request(auth,
         return False
 
     kind,username,ts = values['Credential'].split('/')
-    username = base64.b64decode(username)
+    username = base64.b64decode(username).decode('utf-8')
     if kind != sender:
         print('Mismatch: type (%s) sender (%s) invalid.' %(kind,sender))
         return False
@@ -262,6 +253,6 @@ class ObjectOnlyPermissions(DjangoObjectPermissions):
         return (
             request.method in SAFE_METHODS or
             request.user and
-            request.user.is_authenticated()
+            request.user.is_authenticated
         )
 

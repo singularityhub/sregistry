@@ -47,6 +47,10 @@
         <a class="social-button" id="gitlab-connect" href="{% url 'social:begin' 'gitlab' %}?next={{ domain }}{{ request.path }}">Login with Gitlab</a>
         {% endif %}
 
+        {% if ENABLE_BITBUCKET_AUTH %}
+        <a class="social-button" id="bitbucket-connect" href="{% url 'social:begin' 'bitbucket' %}?next={{ domain }}{{ request.path }}">Login with Bitbucket</a>
+        {% endif %}
+
         {% if ENABLE_GOOGLE_AUTH %}
         <a class="social-button" id="google-connect" href="{% url 'social:begin' 'google-oauth2' %}?next={{ domain }}{{ request.path }}">Login with Google</a>
         {% endif %}
@@ -57,6 +61,10 @@
 
         {% if 'ldap_auth' in PLUGINS_ENABLED %}
         <a class="social-button" id="ldap-login" href="{% url 'ldap_auth-login' %}?next={{ domain }}{{ request.path }}">Login with LDAP</a>
+        {% endif %}
+
+        {% if 'pam_auth' in PLUGINS_ENABLED %}
+        <a class="social-button" id="saml-connect" href="{% url 'pam_auth-login' %}?next={{ domain }}{{ request.path }}">Login with Username (PAM)</a>
         {% endif %}
 
     {% endif %}

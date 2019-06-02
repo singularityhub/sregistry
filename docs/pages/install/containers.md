@@ -8,7 +8,7 @@ toc: true
 
 # Installation: Start Containers
 
-Whether you build or not, the compose command will bring up the application (and download containers provided on Docker Hub, if they aren't in your cache.
+Whether you build or not, the compose command will bring up the application (and download containers provided on Docker Hub, if they aren't in your cache).
 
 ## What containers are provided?
 
