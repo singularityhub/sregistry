@@ -59,18 +59,6 @@ SREGISTRY_GOOGLE_PROJECT=myproject-ftw
 Optional and required variables are written in detail in the dummy_secrets.py file.
 If you need more information, you can read 
 [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
-
-If you don't want to write these variables into your secrets.py file, you
-can also have them available in the environment. In this case, you should put
-them into a dictionary called `SREGISTRY_CLIENT_ENVARS` that will be parsed
-when the application starts.
-
-```python
-SREGISTRY_CLIENT_ENVARS = {
-    "SREGISTRY_GOOGLE_PROJECT": "myproject-ftw",
-    "GOOGLE_APPLICATION_CREDENTIALS":"/code/credentials.json"}
-```
-
 Keep in mind that the path to the Google credentials file must be
 within the container (/code is the root folder that is bound to the filesystem).
 If you are missing some variable, there will be an error message

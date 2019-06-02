@@ -31,19 +31,3 @@ for plugin in PLUGINS_ENABLED:
     if hasattr(plugin, 'CONTEXT_PROCESSORS'):
         for context_processor in plugin.CONTEXT_PROCESSORS:
             TEMPLATES[0]['OPTIONS']['context_processors'].append(context_processor)
-
-
-# If storage plugin is enabled, check for environment variables
-
-if "google_build" in PLUGINS_ENABLED:
-
-    # TODO: Add integration with GitHub here for complete reproducibility of recipes
-    #if ENABLE_GITHUB_AUTH is False:
-    #    print('Google Build and Storage currently requires integration with GitHub for build recipes.')
-    #    sys.exit(1)
-
-    if "SREGISTRY_CLIENT_ENVARS" in locals():
-        for key, value in SREGISTRY_CLIENT_ENVARS.items():
-            if os.environ.get(key) not in [None, ""]:
-                os.putenv(key, value)
-                os.environ[key] = value

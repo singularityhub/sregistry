@@ -10,6 +10,7 @@ _site
 
 # Other #
 #########
+srcc*
 migrations/
 make_video.sh
 celerybeat-schedule.db
