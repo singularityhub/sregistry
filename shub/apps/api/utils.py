@@ -32,7 +32,6 @@ import tempfile
 import re
 
 
-
 def _parse_header(auth):
     '''parse a header and check for the correct digest.
 

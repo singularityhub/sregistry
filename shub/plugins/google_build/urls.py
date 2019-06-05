@@ -16,5 +16,8 @@ router = routers.DefaultRouter()
 router.register(r'^build', views.RecipePushViewSet, base_name="build")  # build
 
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^', include(router.urls)),
+    url(r'^github/receive$', views.receive_hook, name="receive_hook"),
+    url(r'^build/receive/(?P<cid>\d+)?$', views.receive_build, name="receive_build"),
+    url(r'^github/connect$', views.connect_github, name="google_build_connect")
 ]

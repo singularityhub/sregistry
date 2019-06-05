@@ -9,7 +9,7 @@
 </span>
 <div class="row" style="margin-top:30px; margin-left:-10px">
     <div class="col-md-6">
-        <h3 class="title">New Collection</h3>
+        <h3 class="title">New Collection</h3>            
             <main>
                 <form method="POST" enctype="multipart/form-data" action="{% url 'new_collection' %}"> 
                     {% csrf_token %}
@@ -27,7 +27,11 @@
                    <button class="btn btn-primary" id="submit-id-submit">Submit</button>
                </form>
            </main>
-       </div>
+    </div>
+    <div class="col-md-6">
+        {% if "google_build" in PLUGINS_ENABLED %}<a href="{% url 'google_build_connect' %}">
+          <button class="btn btn-primary">Connect GitHub for Google Build</button></a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

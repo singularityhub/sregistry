@@ -70,13 +70,17 @@
 # SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
 # if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
 
-# SREGISTRY_GOOGLE_STORAGE_BUCKET=SREGISTRY_URI + "-singularity-registry"
-# is the name for the bucket you want to create. If not provided, we use your registry unique identifier appended with “sregistry-" 
-# Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact.
+# SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
+# is the name for the bucket you want to create. The example here is using the unique identifier appended with “sregistry-" 
+# If you don't define it, it will default to a string that includes the hostname.
+# Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
+# and we recommend creating both <name> and <name>_cloudbuild in the console and then setting the name here.
 
 # SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
 # by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
 
+# GOOGLE_PROJECT_NUMBER=1234455555555
+# required to receive notifications for cloud build.
 
 # -----------------------------------------------------------------------------
 # Bitbucket OAuth2

@@ -60,6 +60,11 @@ class RecipeFile(models.Model):
     def get_label(self):
         return "recipefile"
 
+    def __str__(self):
+        if hasattr(self.datafile, 'name'):
+            return self.datafile.name
+        return self.get_label()
+
     def get_abspath(self):
         return os.path.join(settings.MEDIA_ROOT, self.datafile.name)
 

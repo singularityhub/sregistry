@@ -10,7 +10,7 @@ _site
 
 # Other #
 #########
-srcc*
+*.json
 migrations/
 make_video.sh
 celerybeat-schedule.db

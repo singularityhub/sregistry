@@ -1,0 +1,119 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* color for disabled */
+input[type="checkbox"]:disabled + label { color: #999; }
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'messages/message.html' %}
+
+<div class="row">
+
+    <!-- Form start -->
+    <form method="POST" action="{% url 'save_collection' %}" enctype="multipart/form-data">
+    <div class="col-md-6">
+        <div class="card" style="padding:50px">
+            <div class="header">
+                <h3 class="title">New Container Build</h3>
+            </div>
+            <div class="content">
+                    {% csrf_token %}
+                    {% for repo in repos %}
+                    <label class="switch">
+                        <input class="repo-checkbox" type="checkbox" name="REPO_{{ repo.owner.login }}/{{ repo.name }}">
+                        <div class="slider"></div>
+                    </label> <span style="padding-left:5px">{{ repo.owner.login }}/{{ repo.name }}</span><br>
+                    {% endfor %}
+           </div>
+       </div>
+    </div>
+    <div class="col-md-2">
+        <input id='submit-button' style="width:100%" type='submit' name='submit' class="btn btn-primary"/>
+    </div>
+    </form>
+    <!-- Form end -->
+   
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.sticky.js" %}"></script>
+<script>
+// User can only select one checkbox. If they mess with code,
+// server will only take first
+$(document).ready(function(){
+
+    // Make the submit button sticky to top
+    $("#submit-button").sticky({topSpacing:50,
+                                zIndex:100});
+
+    // Only allow one checked at once
+    $('.repo-checkbox').change(function(event){
+           $('.repo-checkbox').removeAttr('checked');
+           this.checked = true;
+    });
+})
+</script>
+{% endblock %}

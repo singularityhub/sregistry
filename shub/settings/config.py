@@ -42,7 +42,6 @@ REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
 
-
 # PERMISSIONS
 
 # Allow users to create public collections
@@ -94,8 +93,7 @@ LOGGING_SAVE_RESPONSES=True
 # - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
 # - saml: authentication with SAML
-# - storage: custom storage with one of the sregistry client endpoints
-             # **IMPORTANT** Github login is currently required to support this
+# - google_build: a custom storage with that uses Google Cloud Build + Storage
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',

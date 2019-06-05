@@ -21,6 +21,8 @@ def has_edit_permission(instance, request):
        request: the request with the user object OR the user object
 
     '''
+    from .containers import Container
+
     if isinstance(instance, Container):
         instance = instance.collection
 
@@ -56,6 +58,8 @@ def has_view_permission(instance, request):
        request: the request with the user object
 
     '''
+    from .containers import Container
+
     if isinstance(instance, Container):
         instance = instance.collection
 
@@ -92,6 +96,7 @@ def get_collection_users(instance):
         instance: the collection or container object to use
 
     '''
+    from .containers import Container
     collection = instance
     if isinstance(collection, Container):
         collection = collection.collection
@@ -100,5 +105,3 @@ def get_collection_users(instance):
     owners = collection.owners.all()
     members = list(chain(contributors, owners))
     return list(set(members))
-
-

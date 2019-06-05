@@ -75,14 +75,22 @@ class Container(models.Model):
 
     # A container only gets a version when it's frozen, otherwise known by tag
     def get_short_uri(self):
+
+        # An automated build means a collection has a common namespace
+        if "/" in self.name:
+            return "%s:%s" %(self.name, self.tag)
         return "%s/%s:%s" %(self.collection.name,
                             self.name,
                             self.tag)
 
     def get_uri(self): # shub://username/reponame:branch@tag
-        if self.frozen is False:
+        if not self.frozen:
             return self.get_short_uri()
-        version = "%s@%s" %(self.tag,self.version)
+
+        # An automated build means a collection has a common namespace
+        version = "%s@%s" %(self.tag, self.version)
+        if "/" in self.name:
+            return "%s:%s" %(self.name, version)
         return "%s/%s:%s" %(self.collection.name,
                             self.name,
                             version)
@@ -103,12 +111,8 @@ class Container(models.Model):
             return self.image.datafile.path
         return None
 
-    def get_download_name(self):
-        extension = "img"
+    def get_download_name(self, extension="sif"):
         image_path = self.get_image_path()
-        if image_path is not None:
-            if image_path.endswith('gz'):
-                extension = "img.gz"
         return "%s.%s" %(self.get_uri().replace('/','-'), extension)
 
     def members(self):
@@ -129,7 +133,6 @@ class Container(models.Model):
 
     def __unicode__(self):
         return self.get_uri()
-
 
     class Meta:
         ordering = ['name']

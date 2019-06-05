@@ -104,7 +104,6 @@
                            {% for container in containers %}
                            <tr>
                                <td style="width:80px">
-
                                {% if edit_permission %}
                                <a title="delete container" 
                                   class="delete_container btn-sm btn btn-control btn-light" 
@@ -112,8 +111,7 @@
                                    <i class="fa fa-trash"></i></a>
                                    <a id="confirm_delete{{ container.id }}" 
                                       href="{% url 'delete_container' container.id %}"></a>
-                               {% endif %}
-                               
+                               {% endif %}                               
                                </td>
 
                                <td><a href="{% url 'container_details' container.id %}">
@@ -123,22 +121,30 @@
                                 
                                <td><a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a></td>
                                <td>
-                                   {% if edit_permission %}
-                                   <a href="{% url 'change_freeze_status' container.id %}">
-                                   {% endif %}
-                                   
-                                   {% if container.frozen %}
-                                   <button title="a frozen tag is locked from being overwritten with a push."
-                                           style="width:115px" 
-                                           class="btn btn-info btn-sm"
-                                           {% if edit_permission %}{% else %}disabled{% endif %}>FROZEN <i style='color:white' class="fa fa-lock"></i></button>
-                                   {% else %}
-                                   <button title="freezing a container prevents pushing for the specified tag."
-                                           style="width:115px" 
-                                           class="btn btn-success btn-sm"
-                                           {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
+                                   {% if container.image %} <!--Container was pushed directly-->
+                                       {% if edit_permission %}<a href="{% url 'change_freeze_status' container.id %}">{% endif %}
+                                       {% if container.frozen %}
+                                       <button title="a frozen tag is locked from being overwritten with a push."
+                                               style="width:115px" 
+                                               class="btn btn-info btn-sm"
+                                               {% if edit_permission %}{% else %}disabled{% endif %}>FROZEN <i style='color:white' class="fa fa-lock"></i></button>
+                                       {% else %}
+                                       <button title="freezing a container prevents pushing for the specified tag."
+                                               style="width:115px" 
+                                               class="btn btn-success btn-sm"
+                                               {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
+                                       {% endif %}
+                                       {% if edit_permission %}</a>{% endif %}
+
+                                   {% else %} <!--Container building remotely -->
+                                       {% if container.metadata.builder == "google_build" %}
+                                       <button title="a google build is done remotely with Google Cloud Build"
+                                               style="width:115px" 
+                                               class="btn btn-warning btn-sm"
+                                               >{{ container.metadata.build_metadata.build.status }}</button>
+                                       {% endif %} 
                                    {% endif %}</td>
-                                   {% if edit_permission %}</a>{% endif %}
+
                                <td>{{ container.tag }}</td>
                                <td>{{ container.add_date }}</td>
                                <td>
