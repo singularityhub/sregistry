@@ -15,6 +15,12 @@ from rest_framework.parsers import (
     FormParser, 
     MultiPartParser
 )
+
+from django.shortcuts import (
+    render, 
+    redirect
+)
+
 from shub.apps.main.models import (
     Collection, 
     Container
