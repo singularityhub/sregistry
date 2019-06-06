@@ -17,7 +17,7 @@ Other cloud vendors have been included with sregistry client (AWS, S3, Minio) an
 build and storage pairs can be added here. If you would like to discuss adding a builder
 and storage pair, please [open an issue](https://www.github.com/singularityhub/sregistry).
 
-Don't forget to go back to the [install docs](https://singularityhub.github.io/sregistry/install-server#storage) where you left off.
+Don't forget to go back to the [install docs](https://singularityhub.github.io/sregistry/install-settings) where you left off.
 
 ## Quick Start
 
@@ -56,9 +56,14 @@ SREGISTRY_GOOGLE_PROJECT=myproject-ftw
 ...
 ```
 
-Optional and required variables are written in detail in the dummy_secrets.py file.
-If you need more information, you can read 
-[the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
+You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and then if you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
+
+```bash
+$ gcloud compute scp [credentials].json $USER@[INSTANCE]:/tmp --project [PROJECT]
+```
+
+Optional and required variables are written in detail in the dummy_secrets.py file. If you need more information, you can read [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
+
 Keep in mind that the path to the Google credentials file must be
 within the container (/code is the root folder that is bound to the filesystem).
 If you are missing some variable, there will be an error message
@@ -77,9 +82,8 @@ and confirmed the registry running at localhost, and also have logged in
 
 ### Sregistry Client
 
-If you haven't yet, you will need the [sregistry client](https://singularityhub.github.io/sregistry-cli/)
-in order to push recipes to build with Google Cloud Build. The minimum version that supports this
-is `0.2.16`. An easy way to install is any of the following:
+If you haven't yet, you will need the [sregistry client](https://singularityhub.github.io/sregistry-cli/) in order to push recipes to build with Google Cloud Build. The minimum version that supports this
+is `0.2.19`. An easy way to install is any of the following:
 
 ```bash
 $ pip install sregistry
@@ -91,6 +95,9 @@ Next, export the client to be your registry.
 ```
 $ export SREGISTRY_CLIENT=registry
 ```
+
+If you are reading here from the installation docs, you likely haven't
+brought up your registry and should [return there](https://singularityhub.github.io/sregistry/install-settings) where you left off.
 
 ### Push a Recipe
 

@@ -45,6 +45,13 @@ RUN pip install -r /tmp/requirements.txt
 
 ADD . /code/
 
+# For development only, install development of sregistry-cli
+RUN pip uninstall sregistry && \
+    cd /tmp && \
+    git clone -b add/registry-builders https://www.github.com/singularityhub/sregistry-cli && \
+    cd sregistry-cli && \
+    pip install .[google-build]
+
 ################################################################################
 # PLUGINS
 # You are free to uncomment the plugins that you want to use

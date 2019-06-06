@@ -4,102 +4,60 @@
 #
 #
 
-INSTALL_ROOT=${1}
-EMAIL=${2}
+EMAIL=${1}
 DOMAIN=${2}
-STATE=${3:-California}
-COUNTY=${4:-San Mateo County}
+INSTALL_ROOT=$HOME
 
-sudo mkdir /opt/acme_tiny
-cd /tmp && git clone https://github.com/diafygi/acme-tiny
-sudo mv acme-tiny /opt/acme-tiny/
-sudo chown $USER -R /opt/acme-tiny
+# Install certbot (if not already done)
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt-get update
+sudo apt-get install python-certbot-nginx
 
-# Create a directory for the keys and cert
-cd $INSTALL_ROOT/sregistry
+# Get certificates (might need sudo)
+certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --email "${EMAIL}" --agree-tos --redirect
 
-# If you started the images, stop nginx
-docker-compose stop nginx
-sudo service nginx start
+# The prompt is interactive, and will show the locations of certificates
 
-# backup old key and cert
-if [ -f "/etc/ssl/private/domain.key" ]
-   then
-   sudo cp /etc/ssl/private/domain.key{,.bak.$(date +%s)}
-fi
+# Obtaining a new certificate
+# Performing the following challenges:
+# http-01 challenge for containers.page
+# http-01 challenge for www.containers.page
+# Waiting for verification...
+# Cleaning up challenges
 
-if [ -f "/etc/ssl/certs/chained.pem" ]
-   then
-   sudo cp /etc/ssl/certs/chained.pem{,.bak.$(date +%s)}
-fi
+# IMPORTANT NOTES:
+# - Congratulations! Your certificate and chain have been saved at:
+#   /etc/letsencrypt/live/containers.page/fullchain.pem
+#   Your key file has been saved at:
+#   /etc/letsencrypt/live/containers.page/privkey.pem
+#   Your cert will expire on 2019-09-04. To obtain a new or tweaked
+#   version of this certificate in the future, simply run certbot
+#   again. To non-interactively renew *all* of your certificates, run
+#   "certbot renew"
+# - Your account credentials have been saved in your Certbot
+#   configuration directory at /etc/letsencrypt. You should make a
+#   secure backup of this folder now. This configuration directory will
+#   also contain certificates and private keys obtained by Certbot so
+#   making regular backups of this folder is ideal.
+# - If you like Certbot, please consider supporting our work by:
 
-if [ -f "/etc/ssl/certs/domain.csr" ]
-   then
-   sudo cp /etc/ssl/certs/domain.csr{,.bak.$(date +%s)}
-fi
+#   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+#   Donating to EFF:                    https://eff.org/donate-le
 
-# Generate a private account key, if doesn't exist
-if [ ! -f "/etc/ssl/certs/account.key" ]
-   then
-   openssl genrsa 4096 > account.key && sudo mv account.key /etc/ssl/certs
-fi
+# Since the containers expect these files to be in /etc/ssl, copy there
+# This CANNOT be a link.
+sudo cp /etc/letsencrypt/live/containers.page/fullchain.pem /etc/ssl/certs/chained.pem
+sudo cp /etc/letsencrypt/live/containers.page/privkey.pem /etc/ssl/private/domain.key
+
+# Create recursive backup
+backup=$(echo /etc/letsencrypt{,.bak.$(date +%s)} | cut -d ' ' -f 2)
+sudo cp -R /etc/letsencrypt $backup
 
 # Add extra security
 if [ ! -f "/etc/ssl/certs/dhparam.pem" ]
    then
    openssl dhparam -out dhparam.pem 4096 && sudo mv dhparam.pem /etc/ssl/certs
 fi
-
-if [ ! -f "csr_details.txt" ]
-then
-
-cat > csr_details.txt <<-EOF
-[req]
-default_bits = 2048
-prompt = no
-default_md = sha256
-req_extensions = req_ext
-distinguished_name = dn
- 
-[ dn ]
-C=US
-ST=$STATE
-L=$COUNTY
-O=End Point
-OU=$DOMAIN
-emailAddress=$EMAIL
-CN = www.$DOMAIN
- 
-[ req_ext ]
-subjectAltName = @alt_names
- 
-[ alt_names ]
-DNS.1 = $DOMAIN
-DNS.2 = www.$DOMAIN
-EOF
-
-fi
- 
-# Call openssl
-openssl req -new -sha256 -nodes -out domain.csr -newkey rsa:2048 -keyout domain.key -config <( cat csr_details.txt )
-
-# Create a CSR for $DOMAIN
-#sudo openssl req -new -sha256 -key /etc/ssl/private/domain.key -subj "/CN=$DOMAIN" > domain.csr
-sudo mv domain.csr /etc/ssl/certs/domain.csr
-sudo mv domain.key /etc/ssl/private/domain.key
-
-# Create the challenge folder in the webroot
-sudo mkdir -p /var/www/html/.well-known/acme-challenge/
-sudo chown $USER -R /var/www/html/
-
-# Get a signed certificate with acme-tiny
-#docker-compose stop nginx
-python /opt/acme-tiny/acme_tiny.py --account-key /etc/ssl/certs/account.key --csr /etc/ssl/certs/domain.csr --acme-dir /var/www/html/.well-known/acme-challenge/ > ./signed.crt
-
-wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem > intermediate.pem
-cat signed.crt intermediate.pem > chained.pem
-sudo mv chained.pem /etc/ssl/certs/
-rm signed.crt intermediate.pem
 
 # Stop nginx
 sudo service nginx stop

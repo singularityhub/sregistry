@@ -33,6 +33,7 @@ SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Authentication Secrets
+
 One thing I (@vsoch) can't do for you in advance is produce application keys and secrets to give your Registry for each social provider that you want to allow users (and yourself) to login with. We are going to use a framework called [python social auth](https://python-social-auth-docs.readthedocs.io/en/latest/configuration/django.html) to achieve this, and in fact you can add a [number of providers](http://python-social-auth-docs.readthedocs.io/en/latest/backends/index.html) (I have set up a lot of them, including SAML, so please <a href="https://www.github.com/singularityhub/sregistry/isses" target="_blank">submit an issue</a> if you want one added to the base proper.). Singularity Registry uses OAuth2 with a token--> refresh flow because it gives the user power to revoke permission at any point, and is a more modern strategy than storing a database of usernames and passwords. You can enable or disable as many of these that you want, and this is done in the [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py):
 
 ```python
@@ -44,14 +45,19 @@ ENABLE_GITLAB_AUTH=False
 ENABLE_BITBUCKET_AUTH=False
 ```
 
-and you will need at least one to log in. I've found that Github works the fastest and easiest, and then Google. Twitter now requires an actual server name and won't work with localost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. 
+and you will need at least one to log in. I've found that Github works the fastest and easiest, and then Google. Twitter now requires an actual server name and won't work with localost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. If you want automated builds from a repository
+integration with Google Cloud Build, then you must use GitHub.
 
-Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these.
+#### Plugins
+Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these. You should also now look here to see which plugins you will
+want to set up (and then build into your container).
 
-We will walk through the setup of each in detail. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Github is now the only one that worked reliably without an actual domain for me.
+For authentication plugins, we will walk through the setup of each in detail here. 
+For other plugins, you should look at the [plugins](https://singularityhub.github.io/sregistry/plugins/) documentation now before proceeding. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Github is now the only one that worked reliably without an actual domain for me.
 
 
 #### Google OAuth2
+
 You first need to [follow the instructions](https://developers.google.com/identity/protocols/OpenIDConnect) and setup an OAuth2 API credential. The redirect URL should be every variation of having http/https, and www. and not. (Eg, change around http-->https and with and without www.) of `https://www.sregistry.org/complete/google-oauth2/`. Google has good enough debugging that if you get this wrong, it will give you an error message with what is going wrong. You should store the credential in `secrets.py`, along with the complete path to the file for your application:
 
 
@@ -153,7 +159,7 @@ the callback url here should be `http://[your-domain]/complete/twitter`.
 
 
 ### Config
-In the [config.py](../shub/settings/config.py) you need to define the following:
+In the [config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) you need to define the following:
 
 
 #### Domain Name
