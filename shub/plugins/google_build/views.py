@@ -32,7 +32,6 @@ from .github import (
     receive_github_hook,
     create_webhook,
     get_repo,
-    get_collection_branches,
     list_repos
 )
 
