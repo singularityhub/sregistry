@@ -43,6 +43,7 @@ from .github import (
 
 from .actions import complete_build
 import re
+import uuid
 
 @login_required
 def connect_github(request):
