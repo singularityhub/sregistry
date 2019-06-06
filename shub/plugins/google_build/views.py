@@ -42,6 +42,7 @@ from .github import (
 )
 
 from .actions import complete_build
+import re
 
 @login_required
 def connect_github(request):
