@@ -22,7 +22,7 @@ Pillow
 requests
 requests-oauthlib
 requests-toolbelt
-celery[redis]<3
+celery[redis]<4
 django-celery
 django-chosen
 opbeat
