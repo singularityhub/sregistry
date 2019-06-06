@@ -51,6 +51,7 @@ def connect_github(request):
     collections = [x['name'] for x in Collection.objects.filter(owners=request.user)]
 
     # Only requirement is that URI (name) isn't already taken, add to repos
+    repos = []
     for repo in contenders:
         if repo['full_name'] not in collections:
             repos.append(repo)
