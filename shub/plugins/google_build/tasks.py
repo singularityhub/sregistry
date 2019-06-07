@@ -8,7 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from celery import shared_task
+from celery import shared_task, Celery
 from django.conf import settings
 #from shub.apps.api.build.google import delete_storage_files
 from django.contrib.auth.decorators import login_required
@@ -16,6 +16,14 @@ from django.contrib.auth.decorators import login_required
 from dateutil.parser import parse
 import os
 import re
+
+from django.conf import settings
+from django.apps import apps
+
+app = Celery('shub')
+app.config_from_object('django.conf:settings', namespace="CELERY")
+app.conf.imports = settings.CELERY_IMPORTS
+app.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
 
 @shared_task
 def prepare_build_task(cid, recipes, branch):
