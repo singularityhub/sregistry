@@ -82,8 +82,8 @@ class Container(models.Model):
                 if container.metadata['image'] is not None:   
                     return container.metadata['image']
 
-    # Otherwise return None (no image) or the file
-    return self.image
+        # Otherwise return None (no image) or the file
+        return self.image
 
     # A container only gets a version when it's frozen, otherwise known by tag
     def get_short_uri(self):
