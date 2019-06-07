@@ -31,7 +31,6 @@ THIRD_PARTY_APPS = [
     'crispy_forms',
     'django_gravatar',
     'django_extensions',
-    'djcelery',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
