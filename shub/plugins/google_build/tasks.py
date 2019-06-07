@@ -127,7 +127,11 @@ def parse_hook(cid,
     # If we have records after parsing
     if modified:
 
+        kwargs = kwargs={"cid": collection.id,
+                         "recipes": modified,
+                         "branch": branch}
+
+        print(kwargs)
+
         # This function submits the google build
-        prepare_build_task.apply_async(kwargs={"cid": collection.id,
-                                               "recipes": modified,
-                                               "branch": branch})
+        prepare_build_task.apply_async(kwargs=kwargs)
