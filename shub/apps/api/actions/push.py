@@ -73,7 +73,11 @@ def collection_auth_check(request):
     # 3- the user is owner of a collection
     if not has_permission(auth, collection, pull_permission=False):
          raise PermissionDenied(detail="Unauthorized")
-        
+       
+    # If the user cannot create a new collection
+    if not owner.has_create_permission():
+         raise PermissionDenied(detail="Unauthorized")    
+
     # If we get here user has create permission, does collection exist?
     if collection is None:
         collection = Collection.objects.create(name=collection_name,
@@ -83,4 +87,4 @@ def collection_auth_check(request):
         collection.save()
 
     # Return json response with collection id
-    return JsonResponse({'cid': collection.id })
+    return JsonResponse({'cid': collection.id})

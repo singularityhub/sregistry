@@ -46,15 +46,14 @@ import uuid
 from .containers import get_container
 
 
-
-#######################################################################################
+################################################################################
 # CONTAINER DOWNLOAD
-#######################################################################################
+################################################################################
 
-def download_recipe(request,cid):
+def download_recipe(request, cid):
     '''download a container recipe
     '''
-    container = get_container(cid)
+    container = get_container(id=cid)
     if "deffile" in container.metadata:
         recipe = container.metadata['deffile']
         filename = "Singularity.%s" %container.tag
@@ -64,11 +63,13 @@ def download_recipe(request,cid):
         response['Content-Disposition'] = 'attachment; filename="%s"' %filename
         return response
 
+    messages.info(request, "Container does not have recipe locally.")
 
-def download_share(request,cid,secret):
+
+def download_share(request, cid, secret):
     '''download a custom share for a container
     '''
-    container = get_container(cid)
+    container = get_container(id=cid)
 
     # Is the container secret valid?
     try:
@@ -86,7 +87,7 @@ def download_share(request,cid,secret):
     if secret != share.secret:
         raise Response(status.HTTP_401_UNAUTHORIZED)
 
-    return _download_container(container)
+    return _download_container(container, request)
 
 
 
@@ -99,10 +100,10 @@ def download_container(request, cid, secret):
     if container.collection.secret != secret:
         raise Http404
 
-    return _download_container(container)
+    return _download_container(container, request)
 
 
-def _download_container(container):
+def _download_container(container, request):
     '''
        download_container is the shared function between downloading a share
        or a direct container download. For each, we create a FileResponse
@@ -114,13 +115,15 @@ def _download_container(container):
        container: the container to download
 
     '''
+    if container.image != None:
+        filename = container.get_download_name()
+        filepath = container.image.get_abspath()
 
-    filename = container.get_download_name()
-    filepath = container.image.get_abspath()
+        f = open(filepath, 'rb')
+        response = FileResponse(f, content_type='application/img')
+        response['Content-Disposition'] = 'attachment; filename="%s"' %filename
+        response['Content-Length'] = os.path.getsize(filepath)
 
-    f = open(filepath, 'rb')
-    response = FileResponse(f, content_type='application/img')
-    response['Content-Disposition'] = 'attachment; filename="%s"' %filename
-    response['Content-Length'] = os.path.getsize(filepath)
+        return response
 
-    return response
+    messages.info(request, "Container does not have image served locally.")

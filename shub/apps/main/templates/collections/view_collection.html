@@ -138,18 +138,19 @@
 
                                    {% else %} <!--Container building remotely -->
                                        {% if container.metadata.builder == "google_build" %}
+                                       {% if container.metadata.build_metadata.build.logUrl %}{% if edit_permission %}<a href="{{ container.metadata.build_metadata.build.logUrl }}">{% else %}<a href="{{ container.metadata.builder.deffile }}">{% endif %}{% endif %}
                                        <button title="a google build is done remotely with Google Cloud Build"
                                                style="width:115px" 
                                                class="btn btn-warning btn-sm"
                                                >{{ container.metadata.build_metadata.build.status }}</button>
-                                       {% endif %} 
+                                       {% if container.metadata.build_metadata.build.logUrl %}</a>{% endif %}{% endif %} 
                                    {% endif %}</td>
 
                                <td>{{ container.tag }}</td>
                                <td>{{ container.add_date }}</td>
                                <td>
 
-                               {% if container.image %} 
+                               {% if container.image %}<!-- Globus only works for local images -->
                                {% if 'globus' in PLUGINS_ENABLED %}{% include "globus/_container_details.html" %}{% endif %}
                                {% endif %}
                            </td>                                

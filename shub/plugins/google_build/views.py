@@ -42,6 +42,7 @@ from .github import (
 )
 
 from .actions import complete_build
+from .utils import JsonResponseMessage
 import re
 import uuid
 
@@ -227,20 +228,21 @@ class RecipePushViewSet(ModelViewSet):
 
 @csrf_exempt
 def receive_build(request, cid):
-    '''receive_build will receive the post from Google Cloud Build. TODO:
-       we need to somehow authenticate this.
+    '''receive_build will receive the post from Google Cloud Build.
+       TODO: how else can we authenticate this?
     '''
-    try: 
-        container = Container.objects.get(cid)
-    except:
-        pass
-
     if request.method == "POST":
-        print(request.META)
-        print(request.body)
-    print(request.META)
-    print(request.body)
-    complete_build(container)
+        try:
+            container = Container.objects.get(id=cid)
+            params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
+            return complete_build(container, params)
+
+            # TODO: can we limit to receiving from Google Build servers?
+
+            # Should the content length be consistent?
+            print('Content Length is %s' % request.META['CONTENT_LENGTH'])
+        except:
+            pass
     
 
 @csrf_exempt

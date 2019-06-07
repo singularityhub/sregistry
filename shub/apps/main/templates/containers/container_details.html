@@ -133,7 +133,7 @@
                    <i class="fa fa-share"></i>
                 </a>
                 {% endif %}
-                {% if 'globus' in PLUGINS_ENABLED %}
+                {% if 'globus' in PLUGINS_ENABLED %}{% if container.image %}
                 <a id="transfer_container" 
                    href="{{ DOMAIN }}transfer/{{ container.id }}/"
                    class="btn btn-default btn-sm"
@@ -141,8 +141,7 @@
                    class="btn btn-sm btn-default">
                    <i class="fa fa-exchange"></i>
                 </a>
-                {% endif %}
-                {% endif %}
+                {% endif %}{% endif %}{% endif %}
             </div>
         </div>
     </div>
@@ -171,7 +170,7 @@
     </div>
     <div class="tab-content col-md-9">
 
-        <!-- Singularity Recipe -->
+        <!-- Singularity Recipe, actual file -->
         {% if container.metadata.deffile %}
         <div id="recipe" class="tab-pane fade in active">
 
@@ -183,7 +182,6 @@
                 <div id="recipetext">{{ container.metadata.deffile }}</div>
             </div>
             {% if container.metrics  %}
-
             <div class="col-md-6" style="padding:10px;background-color:white;border-radius:5px">
 
                 <h4>Metrics</h4>
@@ -196,6 +194,29 @@
         </div>
         {% endif %}
 
+        {% if container.metadata.builder.deffile %}
+        <div id="recipe" class="tab-pane fade in active">
+
+            {% if container.metrics %}
+            <div class="col-md-6">
+            {% else %}
+            <div class="col-md-12">
+            {% endif %}
+                <a href="{{ container.metadata.builder.deffile }}" target="_blank">Singularity Recipe</a>
+            </div>
+            {% if container.metrics  %}
+            <div class="col-md-6" style="padding:10px;background-color:white;border-radius:5px">
+
+                <h4>Metrics</h4>
+                {% for key, value in container.metrics.items %} 
+                    <p class="metric">{{ key }}: {{ value }}</p>
+                {% endfor %}
+
+            </div>
+            {% endif %}
+
+        </div>
+        {% endif %}
 
         <!-- Singularity Runscript -->
         {% if container.metadata.runscript %}

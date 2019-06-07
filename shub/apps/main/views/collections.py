@@ -173,7 +173,7 @@ def collection_settings(request, cid):
     from shub.apps.users.permissions import has_create_permission
     from shub.apps.users.models import Team
 
-    collection = get_collection(cid)
+    collection = get_collection(id=cid)
     edit_permission = collection.has_edit_permission(request)
     has_create_permission = has_create_permission(request)
 
@@ -209,8 +209,7 @@ def edit_collection(request, cid):
        cid: the id of the collection
 
     '''
-
-    collection = get_collection(cid)
+    collection = get_collection(id=cid)
 
     edit_permission = collection.has_edit_permission(request)
     if not edit_permission:
@@ -248,7 +247,7 @@ def collection_commands(request, cid):
 
     '''
 
-    collection = get_collection(cid)
+    collection = get_collection(id=cid)
 
     # If private, and not the owner, no go.
     if not collection.has_view_permission(request):
@@ -268,7 +267,7 @@ def delete_collection(request,cid):
        cid: the collection id to delete
 
     '''
-    collection = get_collection(cid)
+    collection = get_collection(id=cid)
 
     # Only an owner can delete
     if not collection.has_edit_permission(request):
@@ -314,7 +313,6 @@ def _change_collection_privacy(request, collection, make_private=True):
 
     # If the user has edit permission, make the repo private
     if edit_permission is True:
-
         collection.private = make_private 
         messages.info(request,"Collection set to %s." %(status))
         collection.save()
@@ -334,7 +332,7 @@ def change_collection_privacy(request,cid,make_private=True):
        make_private: make the collection private (or not)
 
     '''
-    collection = get_collection(cid)
+    collection = get_collection(id=cid)
     collection = _change_collection_privacy(request=request,
                                             collection=collection,
                                             make_private=make_private)
@@ -420,7 +418,7 @@ def edit_contributors(request, cid):
        see individuals in their teams.
     '''
     
-    collection = get_collection(cid)
+    collection = get_collection(id=cid)
 
     # Who are current contributors?
     contributors = collection.contributors.all()

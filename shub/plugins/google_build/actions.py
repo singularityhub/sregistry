@@ -9,13 +9,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from shub.logger import bot
+from dateutil.parser import parse
 from django.conf import settings                                                  
 from django.core.exceptions import ObjectDoesNotExist
 from shub.apps.users.models import User
 from shub.apps.main.models import Container, Collection
 from shub.apps.main.views import update_container_labels
 from sregistry.main.google_build.client import get_client 
+from datetime import datetime
 from pathlib import Path
+import ast
 import os
 
 
@@ -61,7 +64,7 @@ def trigger_build(sender, instance, **kwargs):
 
     # Add the metadata
     container.metadata['build_metadata'] = response['metadata']
-    container.metadata['builder'] = "google_build"
+    container.metadata['builder'] = {"name": "google_build"}
     container.save()
 
 
@@ -95,6 +98,18 @@ def receive_build(collection, recipes, branch):
                                                  tag=tag,
                                                  name=collection.name)
 
+        # Recipe path on Github
+        reponame = container.collection.metadata['github']['repo_name']
+
+        # If we don't have a commit, just send to recipe
+        if metadata['commit'] is None:
+            deffile = "https://www.github.com/%s/tree/%s/%s" %(reponame,
+                                                               branch,
+                                                               recipe)
+        else:
+            deffile = "https://www.github.com/%s/blob/%s/%s" %(reponame,
+                                                               metadata['commit'],
+                                                               recipe)
         # Webhook response
         webhook = "%s%s" % (settings.DOMAIN_NAME,
             reverse('receive_build', kwargs={"cid": container.id}))
@@ -137,21 +152,70 @@ def get_build_context():
     return context
 
 
-def complete_build(container):
+def complete_build(container, params):
     '''finish a build, meaning obtaining the original build_id for the container
        and checking for completion.
 
        Parameters
        ==========
        container: the container to finish the build for, expected to have an id
+       params: the parameters from the build. They must have matching build it.
     '''
+    # Case 1: No id provided
+    if "id" not in params:
+        return JsonResponseMessage(message="Invalid request.")
+
+    # Case 2: the container is already finished or not a google build
+    if "build_metadata" not in container.metadata or "builder" not in container.metadata:
+        return JsonResponseMessage(message="Invalid request.")
+
+    # Case 3: It's not a Google Build
+    if container.metadata['builder'].get('name') != "google_build":
+        return JsonResponseMessage(message="Invalid request.")
+
+    # Google build will have an id here
+    build_id = container.metadata['build_metadata']['build']['id']
+
+    # Case 4: Build is already finished
+    active = ["QUEUED", "RUNNING"]
+    if build_id not in active:
+        return JsonResponseMessage(message="Invalid request.")
+
+    # Case 5: Build id doesn't match
+    if build_id != params['id']:
+        return JsonResponseMessage(message="Invalid request.")
+
     context = get_build_context()
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
+    
+    # Get an updated status
+    response = client._finish_build(build_id)
 
-    build_id = container.metadata['build_metadata']['id']
-    response = client.finish_build(build_id)
-    import pickle
-    pickle.dump(response, open('build-response.pkl', 'wb'))
-    print(response)
+    if "public_url" in response:
+        container.metadata['image'] = response['public_url']
+    else:
+        container.metadata['image'] = response['media_link']
+
+    # Save the build finish
+    container.metadata['build_finish'] =  response
+
+    # Add response metrics
+    for metric in ['size', 'file_hash']:
+        container.metrics[metric] = response[metric]
+
+    # Calculate total time
+    if "startTime" in response and "finishTime" in response:
+        total_time = parse(response['finishTime']) - parse(response['startTime'])
+        container.metrics['build_seconds'] = total_time.total_seconds()
+
+    # Created date
+    if "createTime" in response:
+        created_at = datetime.strftime(parse(response['createTime']), '%h %d, %Y')
+        container.metrics['created_at'] = created_at
+
+    container.save()
+    return JsonResponseMessage(message="Notification Received",
+                               status=200,
+                               status_message="Received")

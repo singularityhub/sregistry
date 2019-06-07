@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from celery import shared_task, Celery
 from django.conf import settings
-from django.http import JsonResponse
 #from shub.apps.api.build.google import delete_storage_files
 from django.contrib.auth.decorators import login_required
 

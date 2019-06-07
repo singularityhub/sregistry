@@ -73,6 +73,18 @@ class Container(models.Model):
                                  default=False,
                                  verbose_name=verbose_frozen_name)
 
+    # A helper function to get an image.
+    def get_image(self):
+
+        # A remote build will have an image path stored as metadata
+        if self.image is None:
+            if "image" in container.metadata:
+                if container.metadata['image'] is not None:   
+                    return container.metadata['image']
+
+    # Otherwise return None (no image) or the file
+    return self.image
+
     # A container only gets a version when it's frozen, otherwise known by tag
     def get_short_uri(self):
 

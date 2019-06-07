@@ -46,14 +46,14 @@ def get_container(cid):
 ################################################################################
 
 def view_container(request, cid):
-    container = get_container(cid)
+    container = get_container(id=cid)
 
     if not container.has_view_permission(request):
         messages.info(request,"This container is private.")
         return redirect('collections')
 
     messages.info(request,"We don't know what to do for this view yet, ideas?")
-    return redirect('collection_details',cid=container.collection.id)
+    return redirect('collection_details', cid=container.collection.id)
 
 
 def view_named_container(request, collection, name, tag):

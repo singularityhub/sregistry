@@ -97,8 +97,8 @@ def upload_container(cid, user, name, version, upload_id, size=None):
                 error / success codes.
     '''
 
-    from shub.apps.main.models import ( Container, Collection )
-    from shub.apps.api.models import ( ImageUpload, ImageFile )
+    from shub.apps.main.models import (Container, Collection)
+    from shub.apps.api.models import (ImageUpload, ImageFile)
     from shub.apps.main.views import update_container_labels
     collection = Collection.objects.get(id=cid)
 
