@@ -15,7 +15,10 @@ if "pam_auth" in PLUGINS_ENABLED:
     INSTALLED_APPS += ['django_pam']
 
 # If google_build in use, we are required to include GitHub
-if "shub.plugins.google_build" in INSTALLED_APPS:
+if "google_build" in PLUGINS_ENABLED:
+
+    # For task discovery by celery
+    INSTALLED_APPS += ['shub.plugins.google_build']
     SOCIAL_AUTH_GITHUB_SCOPE = ["admin:repo_hook",
                                 "repo:status",
                                 "user:email",
