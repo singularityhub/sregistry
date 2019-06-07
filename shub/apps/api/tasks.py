@@ -8,15 +8,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from celery import shared_task, Celery
+from celery import shared_task
 from django.conf import settings
 import os
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shub.settings')
-app = Celery('shub')
-app.config_from_object('django.conf:settings','shub.settings')
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-
 
 @shared_task
 def expire_share(sid):

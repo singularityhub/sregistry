@@ -416,7 +416,7 @@ def receive_github_hook(request):
 def verify_payload(request, collection):
     '''verify payload will verify a payload'''
 
-    from .tasks import parse_hook
+    from shub.plugins.google_build.tasks import parse_hook
 
     payload = load_body(request)
     repo = payload.get('repository')
