@@ -8,6 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
+from .config import PLUGINS_ENABLED
 from kombu import Exchange, Queue
 import os
 
@@ -28,7 +29,7 @@ CELERY_QUEUES = (
 )
 
 # If google_build in use, we are required to include GitHub
-if "shub.plugins.google_build" in INSTALLED_APPS:
+if "google_build" in PLUGINS_ENABLED:
     CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
 else:
     CELERY_IMPORTS = ('shub.apps.api.tasks',)

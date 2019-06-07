@@ -11,7 +11,7 @@ from .api import *
 from .tasks import *
 
 # If PAM_AUTH in plugins enbled, add django_pam
-if "pam_auth" in INSTALLED_APPS:
+if "pam_auth" in PLUGINS_ENABLED:
     INSTALLED_APPS += ['django_pam']
 
 # If google_build in use, we are required to include GitHub
