@@ -71,6 +71,7 @@ def parse_hook(cid,
         commits = get_commit_details(collection, limit=25)
 
     modified = dict()
+    renamed = []
 
     # Find changed files!
     for commit in commits:
@@ -86,17 +87,23 @@ def parse_hook(cid,
                 remove_record = True
 
             # Only going to build updated recipes
-            elif record['status'] in ['added', 'modified']:
-            
+            elif record['status'] in ['added', 'modified', 'renamed']:
+
                 # Supports building from Singularity recipes
                 if re.search("Singularity", record['filename']):
                     add_record = True
                     remove_record = False
 
+                    # If the record is renamed after in modified, don't add
+                    if record['status'] == 'renamed':
+                        renamed.append({"to": record['filename'],
+                                        "from": record['previous_filename'],
+                                        "date": commit_date})
+
                     if record['filename'] in modified:
 
                         # Don't add if we have more recent
-                        if parse(commit_date) < parse(modified[record]['date']): 
+                        if parse(commit_date) < parse(modified[record['filename']]['date']): 
                             add_record = False
 
             # Do we add or remove?
@@ -109,6 +116,14 @@ def parse_hook(cid,
 
             elif remove_record and record in modified:
                 del modified[record]
+
+    # If the previous filename date is later than the record
+    for entry in renamed:
+
+        # If the entry was modified before it was renamed, remove it
+        if entry['from'] in modified: 
+            if parse(modified[entry['from']]['date']) < parse(entry['date']):
+                del modified[entry['from']]
 
     # If we have records after parsing
     if modified:

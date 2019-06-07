@@ -82,6 +82,11 @@ def save_collection(request):
 
         if len(repos) > 0:
 
+            # If the user doesn't have permission to create a collection
+            if not request.user.has_create_permission():
+                messages.error("You do not have permission to create a collection.")
+                return redirect('collections')
+
             # Always just take the first one
             username, reponame = repos[0].split('/')
 
@@ -98,7 +103,7 @@ def save_collection(request):
 
                 # If there is an error, we should tell user about it
                 message = ','.join([x['message'] for x in webhook['errors']])
-                messages.info(request,"Errors: %s" %message)
+                messages.info(request,"Errors: %s" % message)
 
             # If the webhook was successful, it will have a ping_url
             elif "ping_url" in webhook:
@@ -169,6 +174,10 @@ class RecipePushViewSet(ModelViewSet):
 
         if not validate_request(auth, payload, "build", timestamp):
             raise PermissionDenied(detail="Unauthorized")
+
+        # Does the user have create permission?
+        if not owner.has_create_permission():
+            raise PermissionDenied(detail="Unauthorized Create Permission")
 
         create_new = False
 

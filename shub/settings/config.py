@@ -47,6 +47,9 @@ REGISTRY_URI = "taco"
 # Allow users to create public collections
 USER_COLLECTIONS = True
 
+# Limit users to N collections (None is unlimited)
+USER_COLLECTION_LIMIT = None
+
 # Should registries by default be private, with no option for public?
 PRIVATE_ONLY = False
 

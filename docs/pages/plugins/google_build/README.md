@@ -56,13 +56,15 @@ SREGISTRY_GOOGLE_PROJECT=myproject-ftw
 ...
 ```
 
-You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and then if you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
+You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and it will be enough to make the service account
+a project owner. If you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
 
 ```bash
 $ gcloud compute scp [credentials].json $USER@[INSTANCE]:/tmp --project [PROJECT]
 ```
 
-Optional and required variables are written in detail in the dummy_secrets.py file. If you need more information, you can read [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
+Optional and required variables are written in detail in the dummy_secrets.py file. 
+If you need more information, you can read [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
 
 Keep in mind that the path to the Google credentials file must be
 within the container (/code is the root folder that is bound to the filesystem).

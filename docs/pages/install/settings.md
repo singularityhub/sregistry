@@ -200,6 +200,17 @@ USER_COLLECTIONS=True
 
 Setting `USER_COLLECTIONS` to False also means that users cannot create [Teams](/sregistry/setup#teams), which are organized groups of users that then can be added as contributors to individual collections. With this setting as True, any authenticated user, staff, or administrator can create and manage new collections and teams, and this is done by issuing a token.
 
+Finally, you can also allow users to create collections, but limit the number created.
+
+```
+# Limit users to N collections (None is unlimited)
+USER_COLLECTION_LIMIT = None
+```
+
+The default is None, meaning that users can create unlimited collections, given that `USER_COLLECTIONS`
+is True. If you set this to a non-zero positive integer, user collections will be limited to
+this number. If a user is staff or an administrator, they are not subject to this limit.
+
 
 #### Registry Private
 By default Singularity Registry will provide public images, with an option to set them to private. If you are working with sensitive data and/or images, you might want all images to be private, with no option to make public. You can control that with the variable `PRIVATE_ONLY`.

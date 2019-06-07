@@ -15,6 +15,7 @@ from shub.apps.users.models import User
 from shub.apps.main.models import Container, Collection
 from shub.apps.main.views import update_container_labels
 from sregistry.main.google_build.client import get_client 
+from pathlib import Path
 import os
 
 
@@ -83,7 +84,7 @@ def receive_build(collection, recipes, branch):
     for recipe, metadata in recipes.items():
 
         # First preference to command line, then recipe tag
-        _, tag = os.path.splitext(recipe)
+        tag = "".join(Path(recipe).suffixes).strip('.')
         tag = (tag or "latest").strip('.')
 
         # Get a container, if it exists, we've already written file here
@@ -94,12 +95,16 @@ def receive_build(collection, recipes, branch):
                                                  tag=tag,
                                                  name=collection.name)
 
+        # Webhook response
+        webhook = "%s%s" % (settings.DOMAIN_NAME,
+            reverse('receive_build', kwargs={"cid": container.id}))
+
         # Submit the build with the GitHub repo and commit
         response = client.build_repo("github.com/%s" % metadata['name'], 
                                       recipe=recipe,
                                       headless=True,
                                       commit=metadata['commit'],
-                                      webhook=reverse('receive_build', {"cid": container.id}))
+                                      webhook=webhook)
 
         # Add the metadata
         container.metadata['build_metadata'] = response['metadata']
