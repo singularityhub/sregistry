@@ -22,6 +22,7 @@ Pillow
 requests
 requests-oauthlib
 requests-toolbelt
+anyjson
 celery[redis]
 django-celery
 django-chosen

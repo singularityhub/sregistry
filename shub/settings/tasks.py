@@ -29,10 +29,10 @@ CELERY_QUEUES = (
 )
 
 # If google_build in use, we are required to include GitHub
-if "google_build" in PLUGINS_ENABLED:
-    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
-else:
-    CELERY_IMPORTS = ('shub.apps.api.tasks',)
+#if "google_build" in PLUGINS_ENABLED:
+#    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
+#else:
+#    CELERY_IMPORTS = ('shub.apps.api.tasks',)
 
 CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' %(REDIS_HOST,REDIS_PORT, REDIS_DB)
 
