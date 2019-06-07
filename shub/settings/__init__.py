@@ -18,7 +18,6 @@ if "pam_auth" in PLUGINS_ENABLED:
 if "google_build" in PLUGINS_ENABLED:
 
     # For task discovery by celery
-    INSTALLED_APPS += ['shub.plugins.google_build']
     SOCIAL_AUTH_GITHUB_SCOPE = ["admin:repo_hook",
                                 "repo:status",
                                 "user:email",
