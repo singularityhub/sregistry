@@ -122,7 +122,7 @@
                                <td>{% if container.builder.deffile %}<a href="{{ container.builder.deffile }}" target="_blank">Singularity.{{ container.tag }}</a>{% else %}
                                <a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a>{% endif %}</td>
                                <td>
-                                   {% if container.image %} <!--Container was pushed directly-->
+                                   {% if container.image %}<!--Container was pushed directly-->
                                        {% if edit_permission %}<a href="{% url 'change_freeze_status' container.id %}">{% endif %}
                                        {% if container.frozen %}
                                        <button title="a frozen tag is locked from being overwritten with a push."
@@ -138,7 +138,7 @@
                                        {% if edit_permission %}</a>{% endif %}
 
                                    {% else %} <!--Container building remotely -->
-                                       {% if container.metadata.builder == "google_build" %}
+                                       {% if container.metadata.builder.name == "google_build" %}
                                        {% if container.metadata.build_metadata.build.logUrl %}{% if edit_permission %}<a href="{{ container.metadata.build_metadata.build.logUrl }}">{% else %}<a href="{{ container.metadata.builder.deffile }}">{% endif %}{% endif %}
                                        <button title="a google build is done remotely with Google Cloud Build"
                                                style="width:115px" 

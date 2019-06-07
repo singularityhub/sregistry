@@ -64,6 +64,7 @@ def download_recipe(request, cid):
         return response
 
     messages.info(request, "Container does not have recipe locally.")
+    return redirect(container.get_absolute_url())
 
 
 def download_share(request, cid, secret):
