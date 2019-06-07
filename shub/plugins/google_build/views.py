@@ -254,6 +254,6 @@ def receive_hook(request):
 
         # Has to have Github-Hookshot
         if re.search('GitHub-Hookshot', request.META["HTTP_USER_AGENT"]) is not None:
-            return receive_github_hook(request)       
+            return receive_github_hook(request)
 
     return JsonResponseMessage(message="Invalid request.")

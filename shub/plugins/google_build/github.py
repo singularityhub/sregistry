@@ -406,6 +406,7 @@ def receive_github_hook(request):
         else:
             do_build = True
 
+        print("IN RECEIVE HOOK, DO BUILD IS %s" % do_build)
         if do_build:
             return verify_payload(request, collection)
 
@@ -441,12 +442,13 @@ def verify_payload(request, collection):
     # Some newer webhooks have commits
     if "commits" in payload:
         commits = payload['commits']
-        parse_hook.apply_async(kwargs={'cid': collection.id,
+        res=parse_hook.apply_async(kwargs={'cid': collection.id,
                                        "branch": branch,
                                        "commits": commits})
     else:
-        parse_hook.apply_async(kwargs={'cid':collection.id, "branch":branch})
+        res=parse_hook.apply_async(kwargs={'cid':collection.id, "branch":branch})
 
+    print(res)
     return JsonResponseMessage(message="Hook received and parsing.",
                                status=200,
                                status_message="Received") 

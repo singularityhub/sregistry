@@ -90,6 +90,8 @@ def receive_build(collection, recipes, branch):
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
 
+    print("RECIPES: %s" % recipes)
+
     # Derive tag from the recipe, or default to latest
     for recipe, metadata in recipes.items():
 

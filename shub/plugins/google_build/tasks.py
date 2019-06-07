@@ -35,6 +35,7 @@ def prepare_build_task(cid, recipes, branch):
        recipes: a dictionary of modified recipe files to build
        branch: the repository branch (kept as metadata)
     '''
+    print('RUNNING PREPARE BUILD TASK WITH RECIPES %s' %recipes)
     from .actions import receive_build
     from shub.apps.main.views import get_collection
     collection = get_collection(cid)
@@ -65,6 +66,7 @@ def parse_hook(cid,
     from .github import get_commit_details, get_commit_date
     from shub.apps.main.views import get_collection
 
+    print("RUNNING PARSE HOOK")
     collection = get_collection(cid)
 
     # Determine changed Singularity file(s)
@@ -118,6 +120,8 @@ def parse_hook(cid,
             elif remove_record and record in modified:
                 del modified[record]
 
+    print("MODIFIED RECIPES BEFORE RENAME %s" % modified)
+
     # If the previous filename date is later than the record
     for entry in renamed:
 
@@ -125,6 +129,8 @@ def parse_hook(cid,
         if entry['from'] in modified: 
             if parse(modified[entry['from']]['date']) < parse(entry['date']):
                 del modified[entry['from']]
+
+    print("MODIFIED RECIPES AFTER RENAME %s" % modified)
 
     # If we have records after parsing
     if modified:
