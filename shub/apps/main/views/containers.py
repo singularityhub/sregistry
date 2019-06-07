@@ -46,7 +46,7 @@ def get_container(cid):
 ################################################################################
 
 def view_container(request, cid):
-    container = get_container(id=cid)
+    container = get_container(cid)
 
     if not container.has_view_permission(request):
         messages.info(request,"This container is private.")

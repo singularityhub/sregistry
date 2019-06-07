@@ -53,7 +53,7 @@ from .containers import get_container
 def download_recipe(request, cid):
     '''download a container recipe
     '''
-    container = get_container(id=cid)
+    container = get_container(cid)
     if "deffile" in container.metadata:
         recipe = container.metadata['deffile']
         filename = "Singularity.%s" %container.tag
@@ -69,7 +69,7 @@ def download_recipe(request, cid):
 def download_share(request, cid, secret):
     '''download a custom share for a container
     '''
-    container = get_container(id=cid)
+    container = get_container(cid)
 
     # Is the container secret valid?
     try:
