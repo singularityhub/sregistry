@@ -23,7 +23,6 @@ if "shub.plugins.google_build" in INSTALLED_APPS:
                                 "admin:org_hook",
                                 "deployment_status"]
     ENABLE_GITHUB_AUTH=True
-    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
 
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:

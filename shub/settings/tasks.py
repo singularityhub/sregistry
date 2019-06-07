@@ -27,7 +27,11 @@ CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
 
-CELERY_IMPORTS = ('shub.apps.api.tasks',)
+# If google_build in use, we are required to include GitHub
+if "shub.plugins.google_build" in INSTALLED_APPS:
+    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
+else:
+    CELERY_IMPORTS = ('shub.apps.api.tasks',)
 
 CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' %(REDIS_HOST,REDIS_PORT, REDIS_DB)
 
