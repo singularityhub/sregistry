@@ -18,6 +18,7 @@ from rest_framework.permissions import (
 
 import hashlib
 import hmac
+import math
 import json
 import requests
 import re
@@ -157,6 +158,20 @@ def JsonResponseMessage(status=500, message=None, status_message='error'):
 ################################################################################
 # FORMATTING
 ################################################################################
+
+
+def convert_size(size_bytes):
+   '''A function to convert bytes to a human friendly string. Thanks and 
+      credit goes to: https://stackoverflow.com/a/14822210
+   '''
+   if size_bytes == 0:
+       return "0B"
+   size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+   i = int(math.floor(math.log(size_bytes, 1024)))
+   p = math.pow(1024, i)
+   s = round(size_bytes / p, 2)
+   return "%s %s" % (s, size_name[i])
+
 
 def load_body(request):
     '''load the body of a request.

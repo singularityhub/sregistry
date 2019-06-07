@@ -18,6 +18,7 @@ from shub.apps.main.views import update_container_labels
 from sregistry.main.google_build.client import get_client 
 from datetime import datetime
 from pathlib import Path
+from .utils import convert_size
 import ast
 import os
 
@@ -54,7 +55,7 @@ def trigger_build(sender, instance, **kwargs):
 
     # Create a container (with status google-build) for the user to watch
     try:
-        container= collection.containers.get(tag=instance.tag, 
+        container = collection.containers.get(tag=instance.tag, 
                                              name=instance.name)
 
     except ObjectDoesNotExist:
@@ -62,10 +63,16 @@ def trigger_build(sender, instance, **kwargs):
                                              tag=instance.tag,
                                              name=instance.name)
 
-    # Add the metadata
-    container.metadata['build_metadata'] = response['metadata']
-    container.metadata['builder'] = {"name": "google_build"}
-    container.save()
+    # If the container is frozen, no good.
+    if not container.frozen:
+        
+        # Add the metadata
+        container.metadata['build_metadata'] = response['metadata']
+        container.metadata['builder'] = {"name": "google_build"}
+        container.save()
+    
+    else:
+        bot.warning('%s is frozen, will not trigger build.' % container)
 
 
 def receive_build(collection, recipes, branch):
@@ -97,6 +104,11 @@ def receive_build(collection, recipes, branch):
             container = Container.objects.create(collection=collection,
                                                  tag=tag,
                                                  name=collection.name)
+
+        # If the container is frozen, no go
+        if container.frozen:
+            bot.debug('%s is frozen, will not trigger build.' % container)
+            continue
 
         # Recipe path on Github
         reponame = container.collection.metadata['github']['repo_name']
@@ -201,10 +213,15 @@ def complete_build(container, params):
     # Save the build finish
     container.metadata['build_finish'] =  response
 
-    # Add response metrics
-    for metric in ['size', 'file_hash']:
-        container.metrics[metric] = response[metric]
+    # Add response metrics (size and file_hash)
+    if "size" in response:
+        container.metrics["size_mb"] = convert_size(response["size"])
 
+    # If a file hash is included, we use this as the version (not commit)
+    if "file_hash" in response:
+        container.metrics["file_hash"] = response["file_hash"]
+        container.version = response['file_hash'] 
+ 
     # Calculate total time
     if "startTime" in response and "finishTime" in response:
         total_time = parse(response['finishTime']) - parse(response['startTime'])

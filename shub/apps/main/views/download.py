@@ -125,5 +125,11 @@ def _download_container(container, request):
         response['Content-Length'] = os.path.getsize(filepath)
 
         return response
+ 
+    # A remove build will store a metadata image url
+    elif 'image' in container.metadata:
+        return redirect(container.metadata['image'])
 
-    messages.info(request, "Container does not have image served locally.")
+    else:
+        messages.info(request, "Container does not have image served locally.")
+        raise Http404

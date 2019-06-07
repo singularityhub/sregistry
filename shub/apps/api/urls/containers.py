@@ -52,7 +52,7 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         secret = container.collection.secret
         url = reverse('download_container', kwargs= {'cid':container.id,
                                                      'secret':secret})
-        return "%s%s" %(settings.DOMAIN_NAME,url)
+        return "%s%s" %(settings.DOMAIN_NAME, url)
 
     class Meta:
         model = Container
@@ -204,7 +204,7 @@ class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
     def delete(self, request, cid):
         from shub.apps.api.actions import delete_container
         container = self.get_object(cid)
-        if delete_container(request,container) is True:
+        if delete_container(request, container) is True:
             container.delete()       
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(400)
