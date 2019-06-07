@@ -15,7 +15,7 @@ if "pam_auth" in INSTALLED_APPS:
     INSTALLED_APPS += ['django_pam']
 
 # If google_build in use, we are required to include GitHub
-if "google_build" in INSTALLED_APPS:
+if "shub.plugins.google_build" in INSTALLED_APPS:
     SOCIAL_AUTH_GITHUB_SCOPE = ["admin:repo_hook",
                                 "repo:status",
                                 "user:email",
@@ -23,7 +23,7 @@ if "google_build" in INSTALLED_APPS:
                                 "admin:org_hook",
                                 "deployment_status"]
     ENABLE_GITHUB_AUTH=True
-
+    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
 
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:

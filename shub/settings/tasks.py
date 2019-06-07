@@ -26,6 +26,7 @@ CELERY_DEFAULT_QUEUE = 'default'
 CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
+
 CELERY_IMPORTS = ('shub.apps.api.tasks',)
 
 CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' %(REDIS_HOST,REDIS_PORT, REDIS_DB)
