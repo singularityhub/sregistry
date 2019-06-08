@@ -15,13 +15,13 @@ from django.apps import apps
 from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shub.settings')
-shubcelery = Celery('shub')
+app = Celery('shub')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-shubcelery.config_from_object('django.conf:settings')
-shubcelery.conf.imports = settings.CELERY_IMPORTS
+app.config_from_object('django.conf:settings', namespace="CELERY")
+app.conf.imports = settings.CELERY_IMPORTS
 
 # This is important! autodiscover_tasks() is supposed to work without
 # providing names, but it doesn't.
-shubcelery.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
+app.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])

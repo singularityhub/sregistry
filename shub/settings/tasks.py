@@ -13,25 +13,38 @@ from kombu import Exchange, Queue
 import os
 
 # CELERY SETTINGS
-REDIS_DB = 0  
-REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
+#REDIS_DB = 0  
+#REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
 
 #BROKER_URL = 'django://'
 #CELERY_BROKER_URL = 'django://'
 
+CELERY = {
+#    'BROKER_URL': os.environ['CELERY_BROKER'],
+    'BROKER_URL': 'amqp://guest@rabbit:5672"
+    'CELERY_IMPORTS': ('shub.apps.api.tasks',),
+    'CELERY_TASK_SERIALIZER': 'json',
+    'CELERY_RESULT_SERIALIZER': 'json',
+    'CELERY_ACCEPT_CONTENT': ['json'],
+    'CELERY_DEFAULT_QUEUE': 'default',
+    'CELERY_QUEUES':(
+        Queue('default', Exchange('default'), routing_key='default'),
+     )
+}
+
 # CELERY SETTINGS
-CELERY_BROKER_URL = "redis://redis:6379/0"
-CELERY_RESULT_BACKEND = "redis://%s:6379/0" % REDIS_HOST
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_DEFAULT_QUEUE = 'default'
-CELERY_QUEUES = (
-    Queue('default', Exchange('default'), routing_key='default'),
-)
+#CELERY_BROKER_URL = "redis://redis:6379/0"
+#CELERY_RESULT_BACKEND = "redis://%s:6379/0" % REDIS_HOST
+#CELERY_ACCEPT_CONTENT = ['application/json']
+#CELERY_TASK_SERIALIZER = 'json'
+#CELERY_RESULT_SERIALIZER = 'json'
+#CELERY_DEFAULT_QUEUE = 'default'
+#CELERY_QUEUES = (
+#    Queue('default', Exchange('default'), routing_key='default'),
+#)
 
 # If google_build in use, we are required to include GitHub
-if "google_build" in PLUGINS_ENABLED:
-    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
-else:
-    CELERY_IMPORTS = ('shub.apps.api.tasks',)
+#if "google_build" in PLUGINS_ENABLED:
+#    CELERY_IMPORTS = ('shub.apps.api.tasks', 'shub.plugins.google_build.tasks')
+#else:
+#    CELERY_IMPORTS = ('shub.apps.api.tasks',)
