@@ -69,10 +69,86 @@ def parse_hook(cid,
 
     print("RUNNING PARSE HOOK")
     collection = get_collection(cid)
-
+    
     # Determine changed Singularity file(s)
     if commits is None:
-        commits = get_commit_details(collection, limit=25)
+        return build_previous_commits(collection)
+    return build_commits(collection, commits)
+
+
+def build_commits(collection, commits)
+    '''build commits that come directly from a ping. For this version, we get
+       a data structure with a list of added, removed, and modified files.
+    '''
+    modified = dict()
+    removed = []
+
+    # Find changed files!
+    for commit in commits:
+
+        print(commit)
+        commit_id = commit.get('id')
+        commit_date = commit.get('timestamp')
+        files = commit['modified'] + commit['added']
+
+        # Add Removed files to compare with after
+        for filename in commit['removed']:
+            removed.append({"name": filename, 
+                            "id": commit_id, 
+                            "date": commit_date})
+
+        for filename in files:
+
+            # Supports building from Singularity recipes
+            if re.search("Singularity", filename):
+                add_record = True
+                remove_record = False
+
+            if filename in modified:
+
+                # Don't add if we have more recent
+                if parse(commit_date) < parse(modified[filename]['date']): 
+                    add_record = False
+
+            # Do we add or remove?
+            if add_record:
+                modified[filename] = {
+                                'url': commit['url'],
+                                'commit': commit_id,
+                                'date': commit_date,
+                                'name': collection.metadata['github']['repo_name']}
+
+
+    print("MODIFIED RECIPES BEFORE RENAME %s" % modified)
+
+    # If the previous filename date is later than the record
+    for entry in removed:
+
+        # If the entry was modified before it was removed, remove it
+        if entry['name'] in modified: 
+            if parse(modified[entry['name']]['date']) < parse(entry['date']):
+                del modified[entry['name']]
+
+    print("MODIFIED RECIPES AFTER RENAME %s" % modified)
+
+    # If we have records after parsing
+    if modified:
+
+        # This function submits the google build
+        django_rq.enqueue(prepare_build_task, cid=collection.id,
+                                              recipes=modified,
+                                              branch=branch)
+
+def build_previous_commits(collection):   
+    '''the result we get when we get commit details (from the API)
+       versus an actual commit object is different. This function parses
+       the results from "get_commit_details"
+
+       Parameters
+       ==========
+       collection: The collection to get details for.
+    '''
+    commits = get_commit_details(collection, limit=25)
 
     modified = dict()
     renamed = []
@@ -80,8 +156,8 @@ def parse_hook(cid,
     # Find changed files!
     for commit in commits:
 
-        commit_id = commit.get('sha') or commit.get('id')
         print(commit)
+        commit_id = commit.get('sha') or commit.get('id')
         commit_date = commit['commit']['committer']['date']
 
         for record in commit['files']:
