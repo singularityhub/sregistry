@@ -441,7 +441,7 @@ def verify_payload(request, collection):
 
     # Some newer webhooks have commits
     commits = payload.get('commits')
-    res = parse_hook(cid=collection.id
+    res = parse_hook(cid=collection.id,
                      branch=branch,
                      commits=commits)
 
