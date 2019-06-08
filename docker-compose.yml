@@ -40,7 +40,7 @@ rabbit:
 
 worker:
   image: vanessa/sregistry
-  command: python /code/manage.py process_tasks 
+  command: python /code/manage.py rqworker default
 #  command: celery worker -A shub.celery -Q default -n default@%h -B
   volumes:
     - .:/code
