@@ -8,9 +8,19 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from celery import shared_task
+from celery import shared_task, task
 from django.conf import settings
 import os
+
+@shared_task
+def mul(x, y):
+    print('RUNNING')
+    return x * y
+
+@task
+def multask(x, y):
+    print('RUNNING')
+    return x * y
 
 @shared_task
 def expire_share(sid):

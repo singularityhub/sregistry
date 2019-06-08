@@ -12,6 +12,7 @@ from shub.logger import bot
 from dateutil.parser import parse
 from django.conf import settings                                                  
 from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse
 from shub.apps.users.models import User
 from shub.apps.main.models import Container, Collection
 from shub.apps.main.views import update_container_labels
