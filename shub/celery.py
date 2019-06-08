@@ -15,7 +15,7 @@ from django.apps import apps
 from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shub.settings')
-shubcelery = Celery('shub')
+shubcelery = Celery('shub', backend='redis')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
@@ -25,3 +25,7 @@ shubcelery.conf.imports = settings.CELERY_IMPORTS
 # This is important! autodiscover_tasks() is supposed to work without
 # providing names, but it doesn't.
 shubcelery.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
+
+@shubcelery.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))
