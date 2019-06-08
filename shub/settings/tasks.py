@@ -21,7 +21,7 @@ import os
 
 CELERY = {
 #    'BROKER_URL': os.environ['CELERY_BROKER'],
-    'BROKER_URL': 'amqp://guest@rabbit:5672"
+    'BROKER_URL': "amqp://guest@rabbit:5672",
     'CELERY_IMPORTS': ('shub.apps.api.tasks',),
     'CELERY_TASK_SERIALIZER': 'json',
     'CELERY_RESULT_SERIALIZER': 'json',
