@@ -61,7 +61,7 @@ CELERY_TASK_RESULT_EXPIRES = 600
 
 # Set redis as celery result backend
 CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
-CELERY_REDIS_MAX_CONNECTIONS = 1
+#CELERY_REDIS_MAX_CONNECTIONS = 1
 
 # Don't use pickle as serializer, json is much safer
 CELERY_TASK_SERIALIZER = "json"
