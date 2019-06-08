@@ -12,6 +12,9 @@ from .config import PLUGINS_ENABLED
 from kombu import Exchange, Queue
 import os
 
+# background tasks
+BACKGROUND_TASK_RUN_ASYNC=True
+
 REDIS_PORT = 6379
 REDIS_DB = 0
 REDIS_HOST = 'redis'
