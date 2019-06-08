@@ -20,7 +20,7 @@ app = Celery('shub')
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
 app.config_from_object('django.conf:settings', namespace="CELERY")
-app.conf.imports = settings.CELERY_IMPORTS
+#app.conf.imports = settings.CELERY.CELERY_IMPORTS
 
 # This is important! autodiscover_tasks() is supposed to work without
 # providing names, but it doesn't.
