@@ -12,6 +12,7 @@ uwsgi:
     #- /etc/passwd:/etc/passwd 
     #- /etc/shadow:/etc/shadow
   links:
+    - rabbit
     - redis
     - db
 
@@ -49,5 +50,6 @@ worker:
   volumes_from:
     - uwsgi
   links:
+    - rabbit
     - redis
     - db
