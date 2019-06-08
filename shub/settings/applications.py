@@ -27,6 +27,7 @@ INSTALLED_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'background_task',
     'social_django',
     'crispy_forms',
     'django_gravatar',

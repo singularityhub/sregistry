@@ -1,6 +1,7 @@
 anyjson
 celery[redis]
 cython
+django-background-tasks
 django-chosen
 django-crispy-forms
 django-datatables-view
