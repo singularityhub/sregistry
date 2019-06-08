@@ -72,11 +72,11 @@ def parse_hook(cid,
     
     # Determine changed Singularity file(s)
     if commits is None:
-        return build_previous_commits(collection)
-    return build_commits(collection, commits)
+        return build_previous_commits(collection, branch)
+    return build_commits(collection, commits, branch)
 
 
-def build_commits(collection, commits):
+def build_commits(collection, commits, branch):
     '''build commits that come directly from a ping. For this version, we get
        a data structure with a list of added, removed, and modified files.
 
@@ -144,7 +144,7 @@ def build_commits(collection, commits):
                                               recipes=modified,
                                               branch=branch)
 
-def build_previous_commits(collection):   
+def build_previous_commits(collection, branch):   
     '''the result we get when we get commit details (from the API)
        versus an actual commit object is different. This function parses
        the results from "get_commit_details"
