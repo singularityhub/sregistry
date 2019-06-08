@@ -32,13 +32,10 @@ nginx:
 redis:
   restart: always
   image: redis:latest
-  ports:
-    - "6379:6379"
-
 
 worker:
   image: vanessa/sregistry
-  command: celery worker -A shub.celery -Q default -n default@%h -B
+  command: python /code/manage.py rqworker default
   volumes:
     - .:/code
   volumes_from:

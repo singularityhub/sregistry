@@ -221,7 +221,7 @@ class RecipePushViewSet(ModelViewSet):
                             name=self.request.data.get('name'),
                             owner_id=owner.id)
         else:
-            raise PermissionDenied(detail="%s is frozen, push not allowed." %container.get_short_uri())
+            raise PermissionDenied(detail="%s is frozen, push not allowed." % container.get_short_uri())
 
 
 # Receive GitHub Hook
@@ -231,6 +231,8 @@ def receive_build(request, cid):
     '''receive_build will receive the post from Google Cloud Build.
        TODO: how else can we authenticate this?
     '''
+    print(request.body)
+    print(cid)
     if request.method == "POST":
         try:
             container = Container.objects.get(id=cid)

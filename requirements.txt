@@ -1,5 +1,4 @@
 anyjson
-celery[redis]
 cython
 django-chosen
 django-crispy-forms
