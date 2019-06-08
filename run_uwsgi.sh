@@ -8,7 +8,6 @@ python manage.py makemigrations api
 python manage.py makemigrations logs
 python manage.py migrate
 python manage.py collectstatic --noinput
-python manage.py process_tasks &
 service cron start
 
 
