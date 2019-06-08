@@ -76,9 +76,14 @@ def parse_hook(cid,
     return build_commits(collection, commits)
 
 
-def build_commits(collection, commits)
+def build_commits(collection, commits):
     '''build commits that come directly from a ping. For this version, we get
        a data structure with a list of added, removed, and modified files.
+
+       Parameters
+       ==========
+       collection: The collection to get details for.
+       commits: the commits to build.
     '''
     modified = dict()
     removed = []
