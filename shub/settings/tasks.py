@@ -12,6 +12,19 @@ from .config import PLUGINS_ENABLED
 from kombu import Exchange, Queue
 import os
 
+
+RQ_QUEUES = {
+    'default': {
+        'URL': os.getenv('REDIS_URL', 'redis://redis/0'),
+    }
+}
+
+RQ = {
+    'host': 'redis',
+    'db': 0,
+}
+
+
 # background tasks
 BACKGROUND_TASK_RUN_ASYNC=True
 

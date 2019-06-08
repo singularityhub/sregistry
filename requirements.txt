@@ -1,7 +1,6 @@
 anyjson
 celery[redis]
 cython
-django-background-tasks
 django-chosen
 django-crispy-forms
 django-datatables-view
@@ -14,6 +13,7 @@ django-guardian
 django-hstore==1.3.5
 django-notifications-hq
 django-rest-swagger
+django-rq
 django-taggit
 django-taggit-templatetags
 django-user-agents
