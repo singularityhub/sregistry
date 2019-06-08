@@ -33,14 +33,10 @@ nginx:
 redis:
   restart: always
   image: redis:latest
-  ports:
-    - "6379:6379"
 
 rabbit:
   restart: always
   image: rabbitmq:latest
-  ports:
-    - "5462:5462"
 
 worker:
   image: vanessa/sregistry

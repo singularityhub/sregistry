@@ -14,8 +14,8 @@ import os
 
 REDIS_PORT = 6379
 REDIS_DB = 0
-REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
-RABBIT_HOSTNAME = os.environ.get('RABBIT_PORT_5672_TCP', 'rabbit')
+REDIS_HOST = 'redis'
+RABBIT_HOSTNAME = 'rabbit'
 
 if RABBIT_HOSTNAME.startswith('tcp://'):
     RABBIT_HOSTNAME = RABBIT_HOSTNAME.split('//')[1]
@@ -27,6 +27,8 @@ if not BROKER_URL:
         password=os.environ.get('RABBIT_ENV_RABBITMQ_PASS', 'mypass'),
         hostname=RABBIT_HOSTNAME,
         vhost=os.environ.get('RABBIT_ENV_VHOST', ''))
+
+print(BROKER_URL)
 
 # We don't want to have dead connections stored on rabbitmq, so we have to negotiate using heartbeats
 BROKER_HEARTBEAT = '?heartbeat=60'
