@@ -20,6 +20,7 @@ from django.urls import reverse
 from shub.apps.users.models import User
 from shub.logger import bot
 
+import django_rq
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import (
@@ -441,9 +442,9 @@ def verify_payload(request, collection):
 
     # Some newer webhooks have commits
     commits = payload.get('commits')
-    res = parse_hook(cid=collection.id,
-                     branch=branch,
-                     commits=commits)
+    res = django_rq.enqueue(parse_hook, cid=collection.id,
+                                        branch=branch,
+                                        commits=commits)
 
     print(res)
     return JsonResponseMessage(message="Hook received and parsing.",

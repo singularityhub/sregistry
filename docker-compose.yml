@@ -12,7 +12,6 @@ uwsgi:
     #- /etc/passwd:/etc/passwd 
     #- /etc/shadow:/etc/shadow
   links:
-    - rabbit
     - redis
     - db
 
@@ -34,19 +33,13 @@ redis:
   restart: always
   image: redis:latest
 
-rabbit:
-  restart: always
-  image: rabbitmq:latest
-
 worker:
   image: vanessa/sregistry
   command: python /code/manage.py rqworker default
-#  command: celery worker -A shub.celery -Q default -n default@%h -B
   volumes:
     - .:/code
   volumes_from:
     - uwsgi
   links:
-    - rabbit
     - redis
     - db
