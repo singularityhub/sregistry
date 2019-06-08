@@ -20,10 +20,10 @@ import re
 from django.conf import settings
 from django.apps import apps
 
-app = Celery('shub')
-app.config_from_object('django.conf:settings', namespace="CELERY")
-app.conf.imports = settings.CELERY_IMPORTS
-app.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
+#app = Celery('shub')
+#app.config_from_object('django.conf:settings', namespace="CELERY")
+#app.conf.imports = settings.CELERY_IMPORTS
+#app.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
 
 @shared_task
 def prepare_build_task(cid, recipes, branch):
