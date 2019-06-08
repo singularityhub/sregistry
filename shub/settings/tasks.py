@@ -17,7 +17,7 @@ REDIS_DB = 0
 REDIS_HOST = 'redis'
 RABBIT_HOSTNAME = 'rabbit'
 
-BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit:5672//')
+BROKER_URL = os.environ.get('BROKER_URL', 'amqp://admin:mypass@rabbit:5672//')
 TRANSPORT_URL = BROKER_URL
 CELERY_TRANSPORT_URL = BROKER_URL
 CELERY_BROKER_URL = BROKER_URL
