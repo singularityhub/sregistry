@@ -16,6 +16,9 @@ import os
 REDIS_DB = 0  
 REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
 
+#BROKER_URL = 'django://'
+#CELERY_BROKER_URL = 'django://'
+
 # CELERY SETTINGS
 CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_RESULT_BACKEND = "redis://%s:6379/0" % REDIS_HOST

@@ -19,7 +19,7 @@ shubcelery = Celery('shub')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-shubcelery.config_from_object('django.conf:settings', namespace="CELERY")
+shubcelery.config_from_object('django.conf:settings')
 shubcelery.conf.imports = settings.CELERY_IMPORTS
 
 # This is important! autodiscover_tasks() is supposed to work without
