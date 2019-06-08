@@ -13,6 +13,7 @@ from django.conf import settings
 #from shub.apps.api.build.google import delete_storage_files
 from django.contrib.auth.decorators import login_required
 
+from background_task import background
 from dateutil.parser import parse
 import os
 import re
@@ -25,7 +26,7 @@ from django.apps import apps
 #app.conf.imports = settings.CELERY_IMPORTS
 #app.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
 
-@shared_task
+@background(schedule=1)
 def prepare_build_task(cid, recipes, branch):
     '''wrapper to prepare build, to run as a task
 
@@ -54,7 +55,7 @@ def run_delete_storage_files(files):
         delete_storage_files(files)
 
 
-@shared_task
+@background(schedule=1)
 def parse_hook(cid, 
                branch="master",
                commits=None):

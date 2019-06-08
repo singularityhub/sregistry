@@ -440,13 +440,10 @@ def verify_payload(request, collection):
         branch = "master"
 
     # Some newer webhooks have commits
-    if "commits" in payload:
-        commits = payload['commits']
-        res=parse_hook.apply_async(kwargs={'cid': collection.id,
-                                       "branch": branch,
-                                       "commits": commits})
-    else:
-        res=parse_hook.apply_async(kwargs={'cid':collection.id, "branch":branch})
+    commits = payload.get('commits')
+    res = parse_hook(cid=collection.id
+                     branch=branch,
+                     commits=commits)
 
     print(res)
     return JsonResponseMessage(message="Hook received and parsing.",
