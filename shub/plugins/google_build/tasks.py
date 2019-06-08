@@ -81,6 +81,7 @@ def parse_hook(cid,
     for commit in commits:
 
         commit_id = commit.get('sha') or commit.get('id')
+        print(commit)
         commit_date = commit['commit']['committer']['date']
 
         for record in commit['files']:
