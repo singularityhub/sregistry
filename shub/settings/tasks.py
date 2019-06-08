@@ -20,6 +20,7 @@ RABBIT_HOSTNAME = 'rabbit'
 BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit:5672//')
 TRANSPORT_URL = BROKER_URL
 CELERY_TRANSPORT_URL = BROKER_URL
+CELERY_BROKER_URL = BROKER_URL
 if not BROKER_URL:
     BROKER_URL = 'amqp://{user}:{password}@{hostname}/{vhost}/'.format(
         user=os.environ.get('RABBIT_ENV_USER', 'admin'),
