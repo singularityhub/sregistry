@@ -12,7 +12,7 @@ uwsgi:
     #- /etc/passwd:/etc/passwd 
     #- /etc/shadow:/etc/shadow
   links:
-    - rabbit
+    - redis
     - db
 
 nginx:
@@ -29,6 +29,12 @@ nginx:
     - uwsgi
     - db
 
+redis:
+  restart: always
+  image: redis:latest
+  ports:
+    - "6379:6379"
+
 rabbit:
   restart: always
   image: rabbitmq:latest
@@ -43,5 +49,5 @@ worker:
   volumes_from:
     - uwsgi
   links:
-    - rabbit
+    - redis
     - db
