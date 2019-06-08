@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 
 #from background_task import background
 from dateutil.parser import parse
+import django_rq
 import os
 import re
 
@@ -26,7 +27,6 @@ from django.apps import apps
 #app.conf.imports = settings.CELERY_IMPORTS
 #app.autodiscover_tasks(lambda: [a.name for a in apps.get_app_configs()])
 
-#@background(schedule=1)
 def prepare_build_task(cid, recipes, branch):
     '''wrapper to prepare build, to run as a task
 
@@ -36,7 +36,7 @@ def prepare_build_task(cid, recipes, branch):
        recipes: a dictionary of modified recipe files to build
        branch: the repository branch (kept as metadata)
     '''
-    print('RUNNING PREPARE BUILD TASK WITH RECIPES %s' %recipes)
+    print('RUNNING PREPARE BUILD TASK WITH RECIPES %s' % recipes)
     from .actions import receive_build
     from shub.apps.main.views import get_collection
     collection = get_collection(cid)
@@ -136,11 +136,7 @@ def parse_hook(cid,
     # If we have records after parsing
     if modified:
 
-        kwargs = kwargs={"cid": collection.id,
-                         "recipes": modified,
-                         "branch": branch}
-
-        print(kwargs)
-
         # This function submits the google build
-        prepare_build_task.apply_async(kwargs=kwargs)
+        django_rq.enqueue(prepare_build_task, cid=collection.id,
+                                              recipes=modified,
+                                              branch=branch)

@@ -23,6 +23,7 @@ from datetime import datetime
 from notifications.signals import notify
 from shub.apps.users.utils import get_user
 
+import django_rq
 import os
 import json
 import re
@@ -47,8 +48,8 @@ def generate_share(request, cid):
                 share.save()
 
                 # Generate an expiration task
-                expire_share.apply_async(kwargs={"sid": share.id}, 
-                                         eta=expire_date)
+                django_rq.enqueue(expire_share, sid=share.id,
+                                                eta=expire_date)
 
                 link = reverse('download_share', kwargs={'cid':container.id,
                                                          'secret':share.secret })
