@@ -17,10 +17,7 @@ REDIS_DB = 0
 REDIS_HOST = 'redis'
 RABBIT_HOSTNAME = 'rabbit'
 
-if RABBIT_HOSTNAME.startswith('tcp://'):
-    RABBIT_HOSTNAME = RABBIT_HOSTNAME.split('//')[1]
-
-BROKER_URL = os.environ.get('BROKER_URL', '')
+BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit:5672//')
 if not BROKER_URL:
     BROKER_URL = 'amqp://{user}:{password}@{hostname}/{vhost}/'.format(
         user=os.environ.get('RABBIT_ENV_USER', 'admin'),
