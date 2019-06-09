@@ -52,21 +52,25 @@ def trigger_build(sender, instance, **kwargs):
     recipe = os.path.basename(instance.datafile.name)
     os.chdir(os.path.dirname(instance.datafile.name))
     
-    # Submit the build
-    response = client.build(name, 
-                            recipe=recipe,
-                            headless=True,
-                            webhook=reverse('receive_build', {"cid": container.id}))
-
     # Create a container (with status google-build) for the user to watch
     try:
         container = collection.containers.get(tag=instance.tag, 
-                                             name=instance.name)
+                                              name=instance.name)
 
     except ObjectDoesNotExist:
         container = Container.objects.create(collection=collection,
                                              tag=instance.tag,
                                              name=instance.name)
+
+    # If it's frozen, don't submit
+    if container.frozen:
+        return JsonResponseMessage(message="Container is frozen.")
+
+    # Submit the build
+    response = client.build(name, 
+                            recipe=recipe,
+                            headless=True,
+                            webhook=reverse('receive_build', {"cid": container.id}))
 
     # If the container is frozen, no good.
     if not container.frozen:
@@ -76,8 +80,7 @@ def trigger_build(sender, instance, **kwargs):
         container.metadata['builder'] = {"name": "google_build"}
         container.save()
     
-    else:
-        bot.warning('%s is frozen, will not trigger build.' % container)
+    return JsonResponseMessage(message="Build received.")
 
 
 def receive_build(collection, recipes, branch):
