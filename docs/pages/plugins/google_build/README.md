@@ -41,8 +41,14 @@ PLUGINS_ENABLED = [
 ]
 ```
 
+### Secrets
+
 Next, set the following variables in `shub/settings/secrets.py`, 
-that you can create from `dummy_secrets.py` in the shub/settings folder:
+that you can create from `dummy_secrets.py` in the shub/settings folder.
+The first two speak for themselves, your project name and path to your
+Google Application Credentials.
+
+#### Project Identifiers
 
 ```python
 # =============================================================================
@@ -53,7 +59,7 @@ that you can create from `dummy_secrets.py` in the shub/settings folder:
 # google-storage, s3, google-drive, dropbox
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
 SREGISTRY_GOOGLE_PROJECT=myproject-ftw
-...
+
 ```
 
 You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and it will be enough to make the service account
@@ -63,7 +69,40 @@ a project owner. If you are on a Google Cloud instance you can scp (with gcloud)
 $ gcloud compute scp [credentials].json $USER@[INSTANCE]:/tmp --project [PROJECT]
 ```
 
-Optional and required variables are written in detail in the dummy_secrets.py file. 
+#### Build Caching
+
+```python
+SREGISTRY_GOOGLE_BUILD_CACHE="true"
+```
+
+If you set this variable (to anything), it means that after build, you will not
+delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed).
+This defaults to being unset, meaning that files are cleaned up. If you define this as anything, 
+the build files will be cached.
+
+#### Singularity Version
+
+By default, we use the default version 
+# SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
+# if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
+
+# SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
+# is the name for the bucket you want to create. The example here is using the unique identifier appended with “sregistry-" 
+# If you don't define it, it will default to a string that includes the hostname.
+# Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
+# and we recommend creating both <name> and <name>_cloudbuild in the console and then setting the name here.
+
+# SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
+# by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
+
+# GOOGLE_PROJECT_NUMBER=1234455555555
+# required to receive notifications for cloud build.
+
+...
+```
+
+
+These variables are written in detail in the dummy_secrets.py file. 
 If you need more information, you can read [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
 
 Keep in mind that the path to the Google credentials file must be

@@ -38,5 +38,5 @@ rq-scheduler
 shapely
 social-auth-app-django
 social-auth-core[saml]
-sregistry[all-basic]>=0.2.15
+sregistry[all-basic]>=0.2.19
 uwsgi

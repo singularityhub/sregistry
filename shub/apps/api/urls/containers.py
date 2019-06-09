@@ -44,12 +44,12 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
     collection = serializers.SerializerMethodField('collection_name')
     image = serializers.SerializerMethodField('get_download_url')
-    metadata = serializers.SerializerMethodField('get_metadata')
+    metadata = serializers.SerializerMethodField('get_cleaned_metadata')
 
     def collection_name(self, container):
         return container.collection.name
 
-    def get_metadata(self, container):
+    def get_cleaned_metadata(self, container):
         metadata = container.metadata
         del metadata['build_response']
         del metadata['builder']
@@ -74,12 +74,12 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
     collection = serializers.SerializerMethodField('collection_name')
-    metadata = serializers.SerializerMethodField('get_metadata')
+    metadata = serializers.SerializerMethodField('get_cleaned_metadata')
 
     def collection_name(self, container):
         return container.collection.name
 
-    def get_metadata(self, container):
+    def get_cleaned_metadata(self, container):
         metadata = container.metadata
         del metadata['build_response']
         del metadata['builder']

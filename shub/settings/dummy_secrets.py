@@ -79,9 +79,6 @@
 # SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
 # by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
 
-# GOOGLE_PROJECT_NUMBER=1234455555555
-# required to receive notifications for cloud build.
-
 # -----------------------------------------------------------------------------
 # Bitbucket OAuth2
 
