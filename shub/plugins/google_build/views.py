@@ -151,9 +151,16 @@ def save_collection(request):
 
 class RecipePushSerializer(serializers.HyperlinkedModelSerializer):
 
+    created = serializers.DateTimeField(read_only=True)
+    collection = serializers.CharField(read_only=True)
+    tag = serializers.CharField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    owner_id = serializers.CharField(read_only=True)
+    datafile = serializers.FileField(read_only=True)
+
     class Meta:
         model = RecipeFile
-        fields = ('created', 'datafile','collection','tag','name',)
+        fields = ('created', 'datafile', 'collection', 'owner_id', 'tag', 'name',)
 
 
 class RecipePushViewSet(ModelViewSet):
@@ -174,6 +181,7 @@ class RecipePushViewSet(ModelViewSet):
         # Authentication always required for push
 
         if auth is None:
+            print("auth is None")
             raise PermissionDenied(detail="Authentication Required")
 
         owner = get_request_user(auth)
@@ -187,10 +195,12 @@ class RecipePushViewSet(ModelViewSet):
         # Validate Payload
 
         if not validate_request(auth, payload, "build", timestamp):
+            print("auth is not valid for build")
             raise PermissionDenied(detail="Unauthorized")
 
         # Does the user have create permission?
         if not owner.has_create_permission():
+            print("owned doesnt have create permission")
             raise PermissionDenied(detail="Unauthorized Create Permission")
 
         create_new = False
@@ -201,13 +211,16 @@ class RecipePushViewSet(ModelViewSet):
 
             # Only owners can push to existing collections
             if not owner in collection.owners.all():
+                print("user not in owners")
                 raise PermissionDenied(detail="Unauthorized")
 
         except Collection.DoesNotExist:
+            print("collection does not exist")
             raise PermissionDenied(detail="Not Found")
 
         # Validate User Permissions
         if not has_permission(auth, collection, pull_permission=False):
+            print("user does not have permissions.")
             raise PermissionDenied(detail="Unauthorized")
         
         # The collection must exist when we get here
@@ -222,6 +235,7 @@ class RecipePushViewSet(ModelViewSet):
             create_new=True
         
         # Create the recipe to trigger a build
+        print(self.request.data.get('datafile'))
  
         if create_new is True:
             serializer.save(datafile=self.request.data.get('datafile'),
