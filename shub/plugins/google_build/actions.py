@@ -138,7 +138,8 @@ def receive_build(collection, recipes, branch):
 
         # Add the metadata
         container.metadata['build_metadata'] = response['metadata']
-        container.metadata['builder'] = "google_build"
+        container.metadata['builder'] = {"name":"google_build",
+                                         "deffile": deffile}
         container.save()
 
 
