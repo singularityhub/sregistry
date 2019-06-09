@@ -20,7 +20,6 @@ from sregistry.main.google_build.client import get_client
 from datetime import datetime
 from pathlib import Path
 from .utils import convert_size
-import ast
 import os
 
 
