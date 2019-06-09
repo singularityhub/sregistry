@@ -161,7 +161,20 @@ as it doesn't have the recipe kept under any version control.
 
 ### Trigger from Github
 
+You will first need to log in with GitHub, and then navigate to the
+container collections page (the "Containers" link in the navigation):
 
+![assets/img/google-build-new-collection.png](google-build-new-collection.png)
+
+If the Google Build plugin is correctly enabled, you'll see a second option on the 
+right:
+
+![assets/img/google-build-connect-github.png](google-build-connect-github.png)
+
+Select this, and your repositories (and organizations) that you granted
+permission to connect to will show up. You can select one:
+
+![assets/img/google-build-repos.png](google-build-repos.png)
 
 ### Push a Recipe
 

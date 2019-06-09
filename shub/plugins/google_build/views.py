@@ -71,7 +71,7 @@ def connect_github(request):
     # Filter down to repos that haven't had an equivalent URI added
     # This is intentionally different from the uri that we push so that only
     # builds can be supported from GitHub (and they don't cross contaminate)
-    collections = [x['name'] for x in Collection.objects.filter(owners=request.user)]
+    collections = [x.name for x in Collection.objects.filter(owners=request.user)]
 
     # Only requirement is that URI (name) isn't already taken, add to repos
     repos = []
