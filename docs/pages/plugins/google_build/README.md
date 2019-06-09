@@ -17,16 +17,12 @@ Other cloud vendors have been included with sregistry client (AWS, S3, Minio) an
 build and storage pairs can be added here. If you would like to discuss adding a builder
 and storage pair, please [open an issue](https://www.github.com/singularityhub/sregistry).
 
-Don't forget to go back to the [install docs](https://singularityhub.github.io/sregistry/install-settings) where you left off.
-
-## Quick Start
-
-This quick start will walk through setting up custom storage using 
+Don't forget to go back to the [install docs](https://singularityhub.github.io/sregistry/install-settings) where you left off. This quick start will walk through setting up custom storage using 
 [Google Cloud Build](https://singularityhub.github.io/sregistry-cli/client-google-build)
 and [Google Storage](https://singularityhub.github.io/sregistry-cli/client-google-storage) as
 an endpoint.
 
-### Configure sregistry
+## Configure sregistry
 
 By default, google build is disabled. To configure sregistry to 
 use Google Cloud build and Storage, in settings/config.py you can enable the plugin by 
@@ -132,8 +128,7 @@ $ docker-compose up -d
 and confirmed the registry running at localhost, and also have logged in
 (so you have an account with permission to push containers and recipes.)
 
-
-### Singularity Registry Client
+## Singularity Registry Client
 
 If you haven't yet, you will need the [sregistry client](https://singularityhub.github.io/sregistry-cli/) in order to push recipes to build with Google Cloud Build. The minimum version that supports this
 is `0.2.19`. An easy way to install is any of the following:
@@ -151,6 +146,22 @@ $ export SREGISTRY_CLIENT=registry
 
 If you are reading here from the installation docs, you likely haven't
 brought up your registry and should [return there](https://singularityhub.github.io/sregistry/install-settings) where you left off.
+
+## Building Containers
+
+There are two ways to trigger builds:
+
+ 1. Automated trigger from GitHub webhooks
+ 2. Manual push of a recipe
+
+The recommended approach is to enable GitHub authentication and then
+have pushes to your repository trigger builds. For the second approach,
+while you can upload a recipe directly, it is not recommended
+as it doesn't have the recipe kept under any version control.
+
+### Trigger from Github
+
+
 
 ### Push a Recipe
 
@@ -172,6 +183,9 @@ export SREGISTRY_BUILD_TYPE=google_build
 
 Notice that the command simply requires a name for your collection (it doesn't
 need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine. 
+
+Finally, it should be pointed out that you can use the Google Builder integration
+from your command line without having a registry at all. [Singularity Registry Client](https://singularityhub.github.io/sregistry-cli/client-google-build) can serve to build and then pull the image on its own.
 
 <div>
     <a href="/sregistry/plugins"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
