@@ -51,8 +51,9 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
     def get_cleaned_metadata(self, container):
         metadata = container.metadata
-        del metadata['build_response']
-        del metadata['builder']
+        for key in ["build_response", "builder"]:
+            if key in metadata:  
+                del metadata[key]
         return metadata
 
     def get_download_url(self, container):
@@ -81,8 +82,9 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_cleaned_metadata(self, container):
         metadata = container.metadata
-        del metadata['build_response']
-        del metadata['builder']
+        for key in ["build_response", "builder"]:
+            if key in metadata:  
+                del metadata[key]
         return metadata
 
     class Meta:

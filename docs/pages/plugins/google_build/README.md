@@ -69,6 +69,9 @@ a project owner. If you are on a Google Cloud instance you can scp (with gcloud)
 $ gcloud compute scp [credentials].json $USER@[INSTANCE]:/tmp --project [PROJECT]
 ```
 
+Keep in mind that the path to the Google credentials file must be
+within the container (/code is the root folder that is bound to the filesystem).
+
 #### Build Caching
 
 ```python
@@ -82,31 +85,40 @@ the build files will be cached.
 
 #### Singularity Version
 
-By default, we use the default version 
-# SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
-# if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
+By default, we use the default version that is set by the [Google Build](https://singularityhub.github.io/sregistry-cli/client-google-build#environment) client that belongs to Singularity Registry Client.
+However, as this value is subject to be updated, we recommend that you set it in your
+secrets and can then decide when you want to update.
 
-# SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
-# is the name for the bucket you want to create. The example here is using the unique identifier appended with “sregistry-" 
-# If you don't define it, it will default to a string that includes the hostname.
-# Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
-# and we recommend creating both <name> and <name>_cloudbuild in the console and then setting the name here.
-
-# SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
-# by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
-
-# GOOGLE_PROJECT_NUMBER=1234455555555
-# required to receive notifications for cloud build.
-
-...
+```python
+SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
 ```
 
+The version must coincide with a container tag hosted under [singularityware/singularity](https://hub.docker.com/r/singularityware/singularity/).
+
+#### Storage Bucket Name
+
+By default, the bucket name will be called `sregistry-gcloud-build-[hostname]`, and since
+your host is a docker container, that will resolve to a random set of numbers and 
+letters. Here is an example of how to set a custom name:
+
+```python
+SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
+```
+
+Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
+and we recommend creating both `[name]` and `[name]_cloudbuild` in the console and then setting the name here.
+
+#### Private Containers
+
+By default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
+
+```python
+SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
+```
 
 These variables are written in detail in the dummy_secrets.py file. 
 If you need more information, you can read [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
 
-Keep in mind that the path to the Google credentials file must be
-within the container (/code is the root folder that is bound to the filesystem).
 If you are missing some variable, there will be an error message
 on interaction with the Google Cloud Build API since you won't be able to 
 authenticate. Once your settings are ready to go, you will want to continue
@@ -121,14 +133,14 @@ and confirmed the registry running at localhost, and also have logged in
 (so you have an account with permission to push containers and recipes.)
 
 
-### Sregistry Client
+### Singularity Registry Client
 
 If you haven't yet, you will need the [sregistry client](https://singularityhub.github.io/sregistry-cli/) in order to push recipes to build with Google Cloud Build. The minimum version that supports this
 is `0.2.19`. An easy way to install is any of the following:
 
 ```bash
-$ pip install sregistry
-$ pip install sregistry[basic] # without local sqlite database
+$ pip install sregistry[google-build]
+$ pip install sregistry[google-build-basic] # without local sqlite database
 ```
 
 Next, export the client to be your registry.
