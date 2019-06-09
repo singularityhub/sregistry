@@ -39,7 +39,7 @@ def prepare_build_task(cid, recipes, branch):
                   branch=branch)
 
 
-@shared_task
+
 def run_delete_storage_files(files):
     '''A task to delete a set of files in a storage bucket
        TODO: need to write this.
