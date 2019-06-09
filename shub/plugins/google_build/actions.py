@@ -19,6 +19,7 @@ from shub.apps.main.views import update_container_labels
 from sregistry.main.google_build.client import get_client 
 from datetime import datetime
 from pathlib import Path
+from time import sleep
 from .utils import (
     convert_size, 
     JsonResponseMessage
@@ -219,6 +220,9 @@ def complete_build(cid, params):
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
     
+    # Delay in case not finished
+    sleep(2)
+
     # Get an updated status
     response = client._finish_build(build_id)
 
