@@ -154,7 +154,6 @@ class RecipePushSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RecipeFile
         read_only_fields = ('created', 'datafile','collection','tag','name',)
-        fields = ('created', 'datafile','collection','tag','name')
 
 
 class RecipePushViewSet(ModelViewSet):
@@ -200,31 +199,27 @@ class RecipePushViewSet(ModelViewSet):
         try:
             collection = Collection.objects.get(name=collection_name)
 
-            # Only owners can push
+            # Only owners can push to existing collections
             if not owner in collection.owners.all():
                 raise PermissionDenied(detail="Unauthorized")
 
         except Collection.DoesNotExist:
-            collection = None
-            create_new = True
+            raise PermissionDenied(detail="Not Found")
 
         # Validate User Permissions
-
         if not has_permission(auth, collection, pull_permission=False):
             raise PermissionDenied(detail="Unauthorized")
         
-        if collection is not None:
+        # The collection must exist when we get here
+        try:
+            container = Container.objects.get(collection=collection,
+                                              name=name,
+                                              tag=tag)
+            if not container.frozen:
+                create_new = True
 
-            # Determine if container is frozen
-            try:
-                container = Container.objects.get(collection=collection,
-                                                  name=name,
-                                                  tag=tag)
-                if container.frozen is False:
-                    create_new = True
-
-            except Container.DoesNotExist:
-                create_new=True
+        except Container.DoesNotExist:
+            create_new=True
         
         # Create the recipe to trigger a build
  

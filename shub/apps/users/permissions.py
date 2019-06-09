@@ -23,6 +23,7 @@ def has_create_permission(request):
         return True
 
     if USER_COLLECTIONS is True and not request.user.is_anonymous:
+
         # Does the registry have a user collection limit?
         if USER_COLLECTION_LIMIT is not None:
             if request.user.container_collection_owners.count() >= USER_COLLECTION_LIMIT:
