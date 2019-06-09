@@ -257,7 +257,6 @@ def receive_build(request, cid):
                                        complete_build, 
                                        cid=container.id, 
                                        params=params)
-            print(job)
         # TODO: can we limit to receiving from Google Build servers?
 
     return JsonResponseMessage(message="Notification Received",

@@ -25,6 +25,7 @@ from .utils import (
     JsonResponseMessage
 )
 import os
+import django_rq
 
 
 def trigger_build(sender, instance, **kwargs):
@@ -195,7 +196,7 @@ def delete_build(cid):
             client.delete(container_name, force=True)
 
 
-def complete_build(cid, params):
+def complete_build(cid, params, check_again_seconds=10):
     '''finish a build, meaning obtaining the original build_id for the container
        and checking for completion.
 
@@ -203,6 +204,9 @@ def complete_build(cid, params):
        ==========
        cid: the container id to finish the build for, expected to have an id
        params: the parameters from the build. They must have matching build it.
+       check_again_seconds: if the build is still working, check again in this
+                            many seconds. By default, we multiply by 2 each time
+                            (exponential backoff).
     '''
     from shub.apps.main.views import get_container
 
@@ -247,8 +251,29 @@ def complete_build(cid, params):
 
     if "public_url" in response:
         container.metadata['image'] = response['public_url']
-    else:
+
+    elif "status" in response:
+
+        # If it's still working, schedule to check with exponential backoff
+        if response["status"] in ["QUEUED", "WORKING"]:
+            check_again_seconds = check_again_seconds*2
+            print("Build status WORKING: checking in %s seconds" % check_again_seconds)
+
+            # Get the scheduler, submit to check again
+            scheduler = django_rq.get_scheduler('default')
+            scheduler.enqueue_in(timedelta(seconds=check_again_seconds),
+                                 complete_build, 
+                                 cid=container.id, 
+                                 params=params,
+                                 check_again_seconds=check_again_seconds)
+
+    elif "media_link" in response:
         container.metadata['image'] = response['media_link']
+
+    # This is an invalid status, and no action to take
+    else:
+        print("Invalid response, no container link and status not working.")
+        return
 
     # Save the build finish
     container.metadata['build_finish'] =  response
