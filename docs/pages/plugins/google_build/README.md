@@ -176,6 +176,16 @@ permission to connect to will show up. You can select one:
 
 ![assets/img/google-build-repos.png](google-build-repos.png)
 
+Once you've connected the repository, an initial build will build
+the latest version of the recipes that are discovered. Any recipe that 
+is in the format `Singularity.<tag>` or just `Singularity` (tag defaults
+to latest) will be built.
+
+![assets/img/google-build-collection.png](google-build-collection.png)
+
+If you have two recipes named equivalently in different folders, the
+recipe that was more recently updated will be used. 
+
 ### Push a Recipe
 
 When the server is started and the client is ready, it's time to push a recipe
@@ -195,7 +205,44 @@ export SREGISTRY_BUILD_TYPE=google_build
 ```
 
 Notice that the command simply requires a name for your collection (it doesn't
-need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine. 
+need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine.
+
+## Pull Containers
+
+Once you have a container, you of course want to pull it! You can use
+the Singularity Client to do this. Let's say that our server is at `https://www.containers.page`:
+
+```bash
+$ singularity pull shub://containers.page/singularityhub/hello-registry:latest
+ 760.00 KiB / 760.00 KiB [=========================================================================================] 100.00% 5.22 MiB/s 0s
+```
+
+And there you have it!
+
+```bash
+$ ls
+hello-registry_latest.sif
+
+$ singularity run hello-registry_latest.sif 
+Tacotacotaco!
+``` 
+
+Note that having a custom registry name (containers.page, in the above example)
+was a bug in early versions of Singularity 3.x. if you have trouble with 
+this command, you will need to upgrade Singularity.
+
+You can technically also just pull it with simple bash commands, if you
+don't want to rely on Singularity.
+
+```bash
+$ wget $(curl https://containers.page/api/container/singularityhub/hello-registry:latest | jq --raw-output .image)
+```
+
+If you want to pull with Singularity (but get the error) you can also do this:
+
+```bash
+$ singularity pull $(curl https://containers.page/api/container/singularityhub/hello-registry:latest | jq --raw-output .image)
+```
 
 Finally, it should be pointed out that you can use the Google Builder integration
 from your command line without having a registry at all. [Singularity Registry Client](https://singularityhub.github.io/sregistry-cli/client-google-build) can serve to build and then pull the image on its own.

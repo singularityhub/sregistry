@@ -59,6 +59,7 @@ def generate_size_data(collections, collection_level):
 
         # Generate data on the level of containers
         if collection_level is False:
+
             containers = collection.containers.all()
             for container in containers:
                 if container.name not in data[collection.name]:
@@ -66,6 +67,10 @@ def generate_size_data(collections, collection_level):
                 if 'size_mb' in container.metadata:
                     data[collection.name][container.name][container.tag] = {"size": container.metadata['size_mb'],
                                                                             "id":   container.id }
+                elif "size_mb" in container.metrics:
+                    data[collection.name][container.name][container.tag] = {"size": container.metrics['size_mb'],
+                                                                            "id":   container.id }
+ 
         # Generate data on the level of collections
         else:
             data[collection.name] = {'size': collection.total_size(),
