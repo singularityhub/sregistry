@@ -136,7 +136,6 @@
                                                {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
                                        {% endif %}
                                        {% if edit_permission %}</a>{% endif %}
-
                                    {% else %} <!--Container building remotely -->
                                        {% if container.metadata.builder.name == "google_build" %}
                                        {% if container.metadata.build_metadata.build.logUrl %}{% if edit_permission %}<a href="{{ container.metadata.build_metadata.build.logUrl }}">{% else %}<a href="{{ container.metadata.builder.deffile }}">{% endif %}{% endif %}
