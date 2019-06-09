@@ -280,7 +280,7 @@ def complete_build(cid, params, check_again_seconds=10):
 
     # Add response metrics (size and file_hash)
     if "size" in response:
-        container.metrics["size_mb"] = convert_size(response["size"])
+        container.metrics["size_mb"] = round(convert_size(response['size'], "MB"), 3)
 
     # Update the status
     if "status" in response:
