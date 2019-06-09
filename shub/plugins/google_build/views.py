@@ -251,10 +251,11 @@ def receive_build(request, cid):
 
         # Content length is always 47
         if request.META['CONTENT_LENGTH'] == 47:
-            job = scheduler.enqueue_in(timedelta(seconds=10),
-                                       complete_build, 
-                                       cid=container.id, 
-                                       params=params)
+            now = datetime.now()
+            job = scheduler.schedule(now+timedelta(seconds=10),
+                                     complete_build, 
+                                     cid=container.id, 
+                                     params=params)
             print(job)
         # TODO: can we limit to receiving from Google Build servers?
 
