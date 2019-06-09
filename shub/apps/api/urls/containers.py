@@ -44,9 +44,16 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
     collection = serializers.SerializerMethodField('collection_name')
     image = serializers.SerializerMethodField('get_download_url')
+    metadata = serializers.SerializerMethodField('get_metadata')
 
     def collection_name(self, container):
         return container.collection.name
+
+    def get_metadata(self, container):
+        metadata = container.metadata
+        del metadata['build_response']
+        del metadata['builder']
+        return metadata
 
     def get_download_url(self, container):
         secret = container.collection.secret
@@ -67,9 +74,16 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
     collection = serializers.SerializerMethodField('collection_name')
+    metadata = serializers.SerializerMethodField('get_metadata')
 
     def collection_name(self, container):
         return container.collection.name
+
+    def get_metadata(self, container):
+        metadata = container.metadata
+        del metadata['build_response']
+        del metadata['builder']
+        return metadata
 
     class Meta:
         model = Container
@@ -131,15 +145,18 @@ class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
             message = "%s is frozen, delete not allowed." %container.get_short_uri()
             raise PermissionDenied(detail=message, code=304)
 
-        if delete_container(request,container) is True:
+        # This only deletes container object, not remote builds.
+        if delete_container(request, container) is True:
             container.delete()       
             return Response(status=status.HTTP_204_NO_CONTENT)
+
         raise PermissionDenied(detail="Unauthorized")
 
 
     def get(self, request, collection, name, tag=None):
         container = self.get_object(collection=collection, 
-                                    name=name, tag=tag)
+                                    name=name,
+                                    tag=tag)
         return _container_get(request, container, name, tag)
 
 
