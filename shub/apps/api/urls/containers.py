@@ -51,7 +51,7 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
     def get_cleaned_metadata(self, container):
         metadata = container.metadata
-        for key in ["build_metadata", "builder"]:
+        for key in ["build_metadata", "builder", "build_finish"]:
             if key in metadata:  
                 del metadata[key]
         return metadata
@@ -82,7 +82,7 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_cleaned_metadata(self, container):
         metadata = container.metadata
-        for key in ["build_metadata", "builder"]:
+        for key in ["build_metadata", "builder", "build_finish"]:
             if key in metadata:  
                 del metadata[key]
         return metadata
