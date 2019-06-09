@@ -21,6 +21,7 @@ from django.shortcuts import (
     redirect
 )
 
+from shub.apps.main.views import get_container
 from shub.apps.main.models import (
     Collection, 
     Container
@@ -47,7 +48,11 @@ from datetime import (
     timedelta
 )
 
-from .actions import complete_build
+from .actions import (
+    complete_build,
+    delete_build
+)
+
 from .utils import JsonResponseMessage
 import re
 import ast
@@ -77,7 +82,6 @@ def connect_github(request):
     return render(request, "google_build/add_collection.html", context)
 
 
-# New container collection
 @login_required
 def save_collection(request):
     '''save the newly selected collection by the user.
@@ -242,19 +246,9 @@ def receive_build(request, cid):
     print(request.body)
     print(cid)
     if request.method == "POST":
-        print('request is post')
         container = Container.objects.get(id=cid)
         params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
-        print(params)
         scheduler = django_rq.get_scheduler('default')
-        print(scheduler)
-
-        # Content length is always 47
-        #if request.META['CONTENT_LENGTH'] == "47":
-        #    django_rq.enqueue(complete_build, 
-        #                      cid=container.id, 
-        #                      params=params)
-
 
         # Content length is always 47
         if request.META['CONTENT_LENGTH'] == "47":
@@ -268,6 +262,24 @@ def receive_build(request, cid):
     return JsonResponseMessage(message="Notification Received",
                                status=200,
                                status_message="Received")
+
+@login_required
+def delete_container(request, cid):
+    '''delete a container, including it's corresponding files
+       that are stored in Google Build (if they exist)
+    '''
+    container = get_container(cid)
+
+    if not container.has_edit_permission(request):
+        messages.info(request,"This action is not permitted.")
+        return redirect('collections')
+
+    # Send a job to the worker to delete the build files
+    django_rq.enqueue(delete_build, cid=container.id)
+    container.delete()
+    messages.info(request,'Container successfully deleted.')
+    return redirect(container.collection.get_absolute_url())
+
 
 @csrf_exempt
 def receive_hook(request):

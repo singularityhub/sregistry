@@ -78,9 +78,9 @@ class Container(models.Model):
 
         # A remote build will have an image path stored as metadata
         if self.image is None:
-            if "image" in container.metadata:
-                if container.metadata['image'] is not None:   
-                    return container.metadata['image']
+            if "image" in self.metadata:
+                if self.metadata['image'] is not None:   
+                    return self.metadata['image']
 
         # Otherwise return None (no image) or the file
         return self.image

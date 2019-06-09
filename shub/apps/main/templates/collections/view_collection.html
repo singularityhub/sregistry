@@ -101,16 +101,15 @@
                        <form method="POST" action="#" id="container-table">
                            {% csrf_token %}
                            <tbody>
-                           {% for container in containers %}
-                           <tr>
+                           {% for container in containers %}<tr>
                                <td style="width:80px">
-                               {% if edit_permission %}
-                               <a title="delete container" 
+                               {% if edit_permission %}<a title="delete container" 
                                   class="delete_container btn-sm btn btn-control btn-light" 
                                   id="delete{{ container.id }}">
                                    <i class="fa fa-trash"></i></a>
                                    <a id="confirm_delete{{ container.id }}" 
-                                      href="{% url 'delete_container' container.id %}"></a>
+{% if container.metadata.builder.name == "google_build" %}href="{% url 'delete_google_container' container.id %}">
+{% else %}                          href="{% url 'delete_container' container.id %}">{% endif %}</a>
                                {% endif %}                               
                                </td>
 
@@ -138,13 +137,8 @@
                                        {% if edit_permission %}</a>{% endif %}
                                    {% else %} <!--Container building remotely -->
                                        {% if container.metadata.builder.name == "google_build" %}
-                                       {% if container.metadata.build_metadata.build.logUrl %}{% if edit_permission %}<a href="{{ container.metadata.build_metadata.build.logUrl }}">{% else %}<a href="{{ container.metadata.builder.deffile }}">{% endif %}{% endif %}
-                                       <button title="a google build is done remotely with Google Cloud Build"
-                                               style="width:115px" 
-                                               class="btn btn-warning btn-sm"
-                                               >{{ container.metadata.build_metadata.build.status }}</button>
-                                       {% if container.metadata.build_metadata.build.logUrl %}</a>{% endif %}{% endif %} 
-                                   {% endif %}</td>
+                                       {% include "google_build/status.html" %}
+                                       {% endif %}{% endif %}</td>
 
                                <td>{{ container.tag }}</td>
                                <td>{{ container.add_date }}</td>

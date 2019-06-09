@@ -84,6 +84,7 @@ def container_details(request,cid):
     return render(request, 'containers/container_details.html', context)
 
 
+@login_required
 def delete_container(request, cid):
     '''delete a container, including it's corresponding files
     '''

@@ -171,13 +171,37 @@ def get_build_context():
     return context
 
 
+def delete_build(cid):
+    '''Delete artifacts for a container build, if they exist. This is called
+       as a django-rq task for a worker to do from views.py
+
+       Parameters
+       ==========
+       cid: the container id to finish the build for, expected to have an id
+    '''
+    from shub.apps.main.views import get_container
+
+    print("RUNNING DELETE BUILD")
+    container = get_container(cid)
+    context = get_build_context()
+    client = get_client(debug=True, **context)
+
+    # If the container has an image, delete it
+    image = container.get_image() or ""
+    if container.metadata['builder']['name'] == "google_build":
+        if "storage.googleapis.com" in image:
+            print("deleting container %s" % image)
+            container_name = os.path.basename(image)
+            client.delete(container_name, force=True)
+
+
 def complete_build(cid, params):
     '''finish a build, meaning obtaining the original build_id for the container
        and checking for completion.
 
        Parameters
        ==========
-       container: the container to finish the build for, expected to have an id
+       cid: the container id to finish the build for, expected to have an id
        params: the parameters from the build. They must have matching build it.
     '''
     from shub.apps.main.views import get_container
@@ -187,17 +211,14 @@ def complete_build(cid, params):
 
     # Case 1: No id provided
     if "id" not in params:
-        print("ID is not in params")
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 2: the container is already finished or not a google build
     if "build_metadata" not in container.metadata or "builder" not in container.metadata:
-        print("Container metadata is invalid")
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 3: It's not a Google Build
     if container.metadata['builder'].get('name') != "google_build":
-        print("This is not a Google Build")
         return JsonResponseMessage(message="Invalid request.")
 
     # Google build will have an id here
@@ -205,23 +226,18 @@ def complete_build(cid, params):
     status = container.metadata['build_metadata']['build']['status']
 
     # Case 4: Build is already finished
-    active = ["QUEUED", "RUNNING"]
+    active = ["QUEUED", "WORKING"]
     if status not in active:
-        print("Status is not valid.")
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 5: Build id doesn't match
     if build_id != params['id']:
-        print("Build id mismatch.")
         return JsonResponseMessage(message="Invalid request.")
 
     context = get_build_context()
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
-    
-    # Delay in case not finished
-    sleep(10)
 
     # Get an updated status
     response = client._finish_build(build_id)
@@ -240,6 +256,10 @@ def complete_build(cid, params):
     # Add response metrics (size and file_hash)
     if "size" in response:
         container.metrics["size_mb"] = convert_size(response["size"])
+
+    # Update the status
+    if "status" in response:
+        container.metadata['build_metadata']['build']['status'] = response["status"]
 
     # If a file hash is included, we use this as the version (not commit)
     if "file_hash" in response:
