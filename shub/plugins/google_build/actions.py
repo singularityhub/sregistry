@@ -50,8 +50,7 @@ def trigger_build(sender, instance, **kwargs):
     name = "%s/%s:%s" %(instance.collection, instance.name, instance.tag)
 
     # The recipe needs to be in PWD to create the build package
-    recipe = os.path.basename(instance.datafile.name)
-    os.chdir(os.path.dirname(instance.datafile.name))
+    recipe = instance.datafile.name
     
     # Create a container (with status google-build) for the user to watch
     try:
@@ -72,8 +71,9 @@ def trigger_build(sender, instance, **kwargs):
         reverse('receive_build', kwargs={"cid": container.id}))
 
     # Submit the build
-    response = client.build(name, 
-                            recipe=recipe,
+    response = client.build(name,
+                            recipe=os.path.basename(recipe),
+                            context=recipe,
                             headless=True,
                             webhook=webhook)
 
@@ -85,7 +85,7 @@ def trigger_build(sender, instance, **kwargs):
         container.metadata['builder'] = {"name": "google_build"}
         container.save()
 
-    print(response)    
+    print(response)
     return JsonResponseMessage(message="Build received.")
 
 
