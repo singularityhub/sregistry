@@ -221,7 +221,7 @@ def complete_build(cid, params):
     client = get_client(debug=True, **context)
     
     # Delay in case not finished
-    sleep(2)
+    sleep(10)
 
     # Get an updated status
     response = client._finish_build(build_id)
