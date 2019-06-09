@@ -8,6 +8,9 @@ uwsgi:
     - .:/code
     - ./static:/var/www/static
     - ./images:/var/www/images
+    # uncomment for PAM auth
+    #- /etc/passwd:/etc/passwd 
+    #- /etc/shadow:/etc/shadow
   links:
     - redis
     - db
@@ -32,6 +35,17 @@ nginx:
 redis:
   restart: always
   image: redis:latest
+
+scheduler:
+  image: vanessa/sregistry
+  command: python /code/manage.py rqscheduler
+  volumes:
+    - .:/code
+  volumes_from:
+    - uwsgi
+  links:
+    - redis
+    - db
 
 worker:
   image: vanessa/sregistry

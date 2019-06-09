@@ -1,9 +1,9 @@
 {% if container.metadata.build_metadata.build.logUrl %}{% if edit_permission %}<a href="{{ container.metadata.build_metadata.build.logUrl }}">{% else %}<a href="{{ container.metadata.builder.deffile }}">{% endif %}{% endif %}
 {% if container.metadata.build_metadata.build.status == "SUCCESS" %}<button title="a google build is done remotely with Google Cloud Build"
         style="width:115px" 
-        class="btn btn-success btn-sm">{{ container.metadata.build_metadata.build.status }}</button>
+        class="btn btn-success btn-sm">
+        {% if container.frozen %}<i style='color:white' class="fa fa-lock"></i>{% else %}<i style='color:white' class="fa fa-unlock"></i>{% endif %}{{ container.metadata.build_metadata.build.status }}</button>
 {% else %}<button title="a google build is done remotely with Google Cloud Build"
-        style="width:115px" 
+        style="width:115px"
         class="btn btn-warning btn-sm">{{ container.metadata.build_metadata.build.status }}</button>{% endif %}
 {% if container.metadata.build_metadata.build.logUrl %}</a>{% endif %}
-
