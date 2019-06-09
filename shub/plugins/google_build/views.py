@@ -41,6 +41,12 @@ from .github import (
     list_repos
 )
 
+import django_rq
+from datetime import (
+    datetime, 
+    timedelta
+)
+
 from .actions import complete_build
 from .utils import JsonResponseMessage
 import re
@@ -240,15 +246,20 @@ def receive_build(request, cid):
         container = Container.objects.get(id=cid)
         params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
         print(params)
-
+        scheduler = django_rq.get_scheduler('default')
+        print(scheduler)
+        job = scheduler.enqueue_in(timedelta(seconds=10),
+                                   complete_build, 
+                                   cid=container.id, 
+                                   params=params)
+        print(job)
         # TODO: can we limit to receiving from Google Build servers?
         # Should the content length be consistent?
         print('Content Length is %s' % request.META['CONTENT_LENGTH'])
-        return complete_build(container, params)
 
-    # Test an error
-    return JsonResponseMessage(message="Received")  
-
+    return JsonResponseMessage(message="Notification Received",
+                               status=200,
+                               status_message="Received")
 
 @csrf_exempt
 def receive_hook(request):

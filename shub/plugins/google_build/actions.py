@@ -170,7 +170,7 @@ def get_build_context():
     return context
 
 
-def complete_build(container, params):
+def complete_build(cid, params):
     '''finish a build, meaning obtaining the original build_id for the container
        and checking for completion.
 
@@ -179,6 +179,11 @@ def complete_build(container, params):
        container: the container to finish the build for, expected to have an id
        params: the parameters from the build. They must have matching build it.
     '''
+    from shub.apps.main.views import get_collection
+
+    print("RUNNING COMPLETE BUILD")
+    collection = get_collection(cid)
+
     # Case 1: No id provided
     if "id" not in params:
         print("ID is not in params")
@@ -248,6 +253,3 @@ def complete_build(container, params):
         container.metrics['created_at'] = created_at
 
     container.save()
-    return JsonResponseMessage(message="Notification Received",
-                               status=200,
-                               status_message="Received")
