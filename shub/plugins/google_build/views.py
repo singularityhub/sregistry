@@ -153,7 +153,7 @@ class RecipePushSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = RecipeFile
-        read_only_fields = ('created', 'datafile','collection','tag','name',)
+        fields = ('created', 'datafile','collection','tag','name',)
 
 
 class RecipePushViewSet(ModelViewSet):

@@ -200,7 +200,10 @@ $ pip install sregistry[google-build-basic]>=0.2.2 # without local database
 
 Then to submit a build, you'll need to grab your credentials from https://<registry>/token.
 You can write them to your Singularity Registry secrets at `$HOME/.sregistry`. Once your
-token and registry base are defined, you can push like this:
+token and registry base are defined, you will need to create the collection
+in the web interface first to establish yourself as an owner. **You cannot
+push to a collection that does not exist**. Once the collection is
+created (for example, below I created the collection "collection"), you can push like this:
 
 ```bash
 $ sregistry build --name registry://collection/container:tag Singularity --builder google_build
