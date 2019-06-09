@@ -177,7 +177,7 @@ As was stated in the base [README.md](/sregistry/) The components of the applica
 
  - **vanessa/sregistry**: is the main uwsgi application, which serves a Django (python-based) application.
  - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly. Note that we build a custom nginx image that takes advantage of the [nginx upload module](https://www.nginx.com/resources/wiki/modules/upload/).
- - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [celery](http://www.celeryproject.org/), a distributed job queue that fits nicely into Django. The celery worker uses a
+ - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [django-rq]() that uses a
  - **redis**: database to organize the jobs themselves.
 
 This means that, given a pretty basic server to run the application, and enough space connected to it to store the images, you can bring the entire thing up relatively quickly. Awesome! Let's get started and talk about first steps of [install](/sregistry/install). Or read about [use cases first](/sregistry/use-cases)
