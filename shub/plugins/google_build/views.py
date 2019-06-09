@@ -234,18 +234,18 @@ def receive_build(request, cid):
     print(request.body)
     print(cid)
     if request.method == "POST":
-        try:
-            container = Container.objects.get(id=cid)
-            params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
-            return complete_build(container, params)
+        print('request is post')
+        container = Container.objects.get(id=cid)
+        params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
+        return complete_build(container, params)
 
-            # TODO: can we limit to receiving from Google Build servers?
+        # TODO: can we limit to receiving from Google Build servers?
+        # Should the content length be consistent?
+        print('Content Length is %s' % request.META['CONTENT_LENGTH'])
 
-            # Should the content length be consistent?
-            print('Content Length is %s' % request.META['CONTENT_LENGTH'])
-        except:
-            pass
-    
+    # Test an error
+    return JsonResponseMessage(message="Received")  
+
 
 @csrf_exempt
 def receive_hook(request):
