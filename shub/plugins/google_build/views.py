@@ -165,7 +165,8 @@ class RecipePushViewSet(ModelViewSet):
     parser_classes = (MultiPartParser, FormParser,)
 
     def perform_create(self, serializer):
- 
+
+        print(self.request.data) 
         tag = self.request.data.get('tag','latest')                                   
         name = self.request.data.get('name')
         auth = self.request.META.get('HTTP_AUTHORIZATION', None)
@@ -197,7 +198,7 @@ class RecipePushViewSet(ModelViewSet):
 
         # Determine the collection to build the recipe to
         try:
-            collection = Collection.objects.get(name = collection_name)
+            collection = Collection.objects.get(name=collection_name)
 
             # Only owners can push
             if not owner in collection.owners.all():
@@ -246,6 +247,7 @@ def receive_build(request, cid):
     '''
     print(request.body)
     print(cid)
+
     if request.method == "POST":
         container = Container.objects.get(id=cid)
         params = ast.literal_eval(json.loads(request.body.decode('utf-8')))

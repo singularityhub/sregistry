@@ -190,21 +190,24 @@ recipe that was more recently updated will be used.
 
 When the server is started and the client is ready, it's time to push a recipe
 to build! By default, you will need to specify the name of the collection and
-container, and to include the fact that you want to use Google Cloud Build:
+container, and to include the fact that you want to use Google Cloud Build.
+You'll need to install Singularity Registry Client version 0.2.2 or later:
+
+````bash
+$ pip install sregistry[google-build]>=0.2.2
+$ pip install sregistry[google-build-basic]>=0.2.2 # without local database
+```
+
+Then to submit a build, you'll need to grab your credentials from https://<registry>/token.
+You can write them to your Singularity Registry secrets at `$HOME/.sregistry`. Once your
+token and registry base are defined, you can push like this:
 
 ```bash
-$ sregistry build --name google_build://collection/container:tag Singularity
+$ sregistry build --name registry://collection/container:tag Singularity --builder google_build
 ```
 
-Alternatively, if you only aim to use one builder and want to set it as default,
-you can export this once for your session, or more permanently in your bash
-profile.
-
-```
-export SREGISTRY_BUILD_TYPE=google_build
-```
-
-Notice that the command simply requires a name for your collection (it doesn't
+Notice that we specify the builder to be "google_build." Also notice 
+that the command simply requires a name for your collection (it doesn't
 need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine.
 
 ## Pull Containers
