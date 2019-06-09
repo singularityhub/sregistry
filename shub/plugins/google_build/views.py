@@ -250,7 +250,8 @@ def receive_build(request, cid):
         print(scheduler)
 
         # Content length is always 47
-        if request.META['CONTENT_LENGTH'] == 47:
+        print(request.META['CONTENT_LENGTH'])
+        if request.META['CONTENT_LENGTH'] == "47":
             django_rq.enqueue(complete_build, 
                               cid=container.id, 
                               params=params)
