@@ -162,11 +162,11 @@ def JsonResponseMessage(status=500, message=None, status_message='error'):
 def convert_size(bytes, to, bsize=1024):
    '''A function to convert bytes to a human friendly string.
    '''
-    a = {'KB' : 1, 'MB': 2, 'GB' : 3, 'TB' : 4, 'PB' : 5, 'EB' : 6 }
-    r = float(bytes)
-    for i in range(a[to]):
-        r = r / bsize
-    return(r)
+   a = {'KB' : 1, 'MB': 2, 'GB' : 3, 'TB' : 4, 'PB' : 5, 'EB' : 6 }
+   r = float(bytes)
+   for i in range(a[to]):
+       r = r / bsize
+   return(r)
 
 
 def load_body(request):

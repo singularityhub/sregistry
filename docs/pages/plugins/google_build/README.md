@@ -164,24 +164,24 @@ as it doesn't have the recipe kept under any version control.
 You will first need to log in with GitHub, and then navigate to the
 container collections page (the "Containers" link in the navigation):
 
-![assets/img/google-build-new-collection.png](google-build-new-collection.png)
+![/sregistry/assets/img/google-build-new-collection.png](assets/img/google-build-new-collection.png)
 
 If the Google Build plugin is correctly enabled, you'll see a second option on the 
 right:
 
-![assets/img/google-build-connect-github.png](google-build-connect-github.png)
+![/sregistry/assets/img/google-build-connect-github.png](assets/img/google-build-connect-github.png)
 
 Select this, and your repositories (and organizations) that you granted
 permission to connect to will show up. You can select one:
 
-![assets/img/google-build-repos.png](google-build-repos.png)
+![/sregistry/assets/img/google-build-repos.png](assets/img/google-build-repos.png)
 
 Once you've connected the repository, an initial build will build
 the latest version of the recipes that are discovered. Any recipe that 
 is in the format `Singularity.<tag>` or just `Singularity` (tag defaults
 to latest) will be built.
 
-![assets/img/google-build-collection.png](google-build-collection.png)
+![assets/img/google-build-collection.png](assets/img/google-build-collection.png)
 
 If you have two recipes named equivalently in different folders, the
 recipe that was more recently updated will be used. 
