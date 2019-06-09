@@ -239,11 +239,12 @@ def receive_build(request, cid):
         print('request is post')
         container = Container.objects.get(id=cid)
         params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
-        return complete_build(container, params)
+        print(params)
 
         # TODO: can we limit to receiving from Google Build servers?
         # Should the content length be consistent?
         print('Content Length is %s' % request.META['CONTENT_LENGTH'])
+        return complete_build(container, params)
 
     # Test an error
     return JsonResponseMessage(message="Received")  

@@ -181,26 +181,32 @@ def complete_build(container, params):
     '''
     # Case 1: No id provided
     if "id" not in params:
+        print("ID is not in params")
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 2: the container is already finished or not a google build
     if "build_metadata" not in container.metadata or "builder" not in container.metadata:
+        print("Container metadata is invalid")
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 3: It's not a Google Build
     if container.metadata['builder'].get('name') != "google_build":
+        print("This is not a Google Build")
         return JsonResponseMessage(message="Invalid request.")
 
     # Google build will have an id here
     build_id = container.metadata['build_metadata']['build']['id']
+    status = container.metadata['build_metadata']['build']['status']
 
     # Case 4: Build is already finished
     active = ["QUEUED", "RUNNING"]
-    if build_id not in active:
+    if status not in active:
+        print("Status is not valid.")
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 5: Build id doesn't match
     if build_id != params['id']:
+        print("Build id mismatch.")
         return JsonResponseMessage(message="Invalid request.")
 
     context = get_build_context()
