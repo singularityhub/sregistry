@@ -41,6 +41,7 @@ def trigger_build(sender, instance, **kwargs):
     '''
     collection = Collection.objects.get(name=instance.collection)
     context = get_build_context()
+    print("IN TRIGGER BUILD")
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
@@ -66,11 +67,15 @@ def trigger_build(sender, instance, **kwargs):
     if container.frozen:
         return JsonResponseMessage(message="Container is frozen.")
 
+    # Webhook response
+    webhook = "%s%s" % (settings.DOMAIN_NAME,
+        reverse('receive_build', kwargs={"cid": container.id}))
+
     # Submit the build
     response = client.build(name, 
                             recipe=recipe,
                             headless=True,
-                            webhook=reverse('receive_build', {"cid": container.id}))
+                            webhook=webhook)
 
     # If the container is frozen, no good.
     if not container.frozen:
@@ -79,7 +84,8 @@ def trigger_build(sender, instance, **kwargs):
         container.metadata['build_metadata'] = response['metadata']
         container.metadata['builder'] = {"name": "google_build"}
         container.save()
-    
+
+    print(response)    
     return JsonResponseMessage(message="Build received.")
 
 
