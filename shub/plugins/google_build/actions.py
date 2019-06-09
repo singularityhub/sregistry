@@ -179,10 +179,10 @@ def complete_build(cid, params):
        container: the container to finish the build for, expected to have an id
        params: the parameters from the build. They must have matching build it.
     '''
-    from shub.apps.main.views import get_collection
+    from shub.apps.main.views import get_container
 
     print("RUNNING COMPLETE BUILD")
-    collection = get_collection(cid)
+    container = get_container(cid)
 
     # Case 1: No id provided
     if "id" not in params:

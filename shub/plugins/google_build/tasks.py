@@ -57,7 +57,6 @@ def parse_hook(cid,
        and finish parsing. This means generating the new container, 
        and submitting a job to run on Google Cloud Build.
     '''
-    from .github import get_commit_details, get_commit_date
     from shub.apps.main.views import get_collection
 
     print("RUNNING PARSE HOOK")
@@ -146,6 +145,7 @@ def build_previous_commits(collection, branch):
        ==========
        collection: The collection to get details for.
     '''
+    from .github import get_commit_details
     commits = get_commit_details(collection, limit=25)
 
     modified = dict()

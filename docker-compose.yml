@@ -33,6 +33,17 @@ redis:
   restart: always
   image: redis:latest
 
+scheduler:
+  image: vanessa/sregistry
+  command: python /code/manage.py rqscheduler
+  volumes:
+    - .:/code
+  volumes_from:
+    - uwsgi
+  links:
+    - redis
+    - db
+
 worker:
   image: vanessa/sregistry
   command: python /code/manage.py rqworker default
