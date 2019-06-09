@@ -72,8 +72,7 @@ def trigger_build(sender, instance, **kwargs):
 
     # Submit the build
     response = client.build(name,
-                            recipe=os.path.basename(recipe),
-                            context=recipe,
+                            recipe=recipe,
                             headless=True,
                             webhook=webhook)
 
