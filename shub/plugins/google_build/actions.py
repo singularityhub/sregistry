@@ -104,9 +104,8 @@ def receive_build(collection, recipes, branch):
     context = get_build_context()
 
     # If the collection is private, the containers should be too
-    # (this needs to be tested)
-    #if collection.private:
-    #    context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
+    if collection.private:
+        context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)

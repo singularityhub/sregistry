@@ -95,7 +95,9 @@ The version must coincide with a container tag hosted under [singularityware/sin
 
 By default, the bucket name will be called `sregistry-gcloud-build-[hostname]`, and since
 your host is a docker container, that will resolve to a random set of numbers and 
-letters. Here is an example of how to set a custom name:
+letters. For this reason, we *strongly recommend you set a consistent hostname*.
+If you do not and need to remove and bring up the containers again, the bucket
+metadata will not match the new bucket name. Here is an example of how to set a custom name:
 
 ```python
 SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
@@ -212,6 +214,16 @@ $ sregistry build --name registry://collection/container:tag Singularity --build
 Notice that we specify the builder to be "google_build." Also notice 
 that the command simply requires a name for your collection (it doesn't
 need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine.
+
+If you get this error:
+
+```bash
+[================================] 0/0 MB - 00:00:00
+Recipe upload failed: 403 Client Error: Forbidden for url: https://containers.page/google_build/build/.
+```
+
+you forgot to create a collection called "collection" and need to make it in the interface before
+proceeding.
 
 ## Pull Containers
 
