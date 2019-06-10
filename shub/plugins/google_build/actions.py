@@ -222,6 +222,7 @@ def delete_container_collection(cid):
        cid: the collection id to delete.
     '''
     from shub.apps.main.views import get_collection
+    from .github import delete_webhook
     collection = get_collection(cid)
 
     # Delete files before containers
