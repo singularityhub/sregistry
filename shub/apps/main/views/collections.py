@@ -126,18 +126,34 @@ def new_collection(request):
     return redirect("collections")
 
 
-
-
-def view_collection(request, cid):
+def view_named_collection(request, username, reponame):
     '''View container build details (all container builds for a repo)
+       This is the same as view_collection but we look up the collection
+       by its full name.
 
        Parameters
        ==========
-       cid: the collection id
- 
+       username: the owner of the collection
+       reponame: the collection name
     '''
+    # First attempt, try looking up collection by username/reponame
+    try:
+        collection = Collection.objects.get(name="%s/%s" %(username, reponame))
+    except Collection.DoesNotExist:
 
-    collection = get_collection(cid)
+        # Then look for username only
+        try:
+            collection = Collection.objects.get(name=username)
+        except:
+            raise Http404
+
+    return _view_collection(request, collection)
+
+def _view_collection(request, collection):
+    '''a shared function to finish up checking permissions for viewing
+       a collection, and returning to the user. Called by view_named_collection
+       and view_collection
+    '''
     edit_permission = collection.has_edit_permission(request)
     view_permission = collection.has_view_permission(request)
 
@@ -156,6 +172,18 @@ def view_collection(request, cid):
                "star":has_star}
     return render(request, 'collections/view_collection.html', context)
 
+
+def view_collection(request, cid):
+    '''View container build details (all container builds for a repo)
+
+       Parameters
+       ==========
+       cid: the collection id
+ 
+    '''
+
+    collection = get_collection(cid)
+    return _view_collection(request, collection)
 
 
 def collection_settings(request, cid):

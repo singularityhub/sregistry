@@ -26,7 +26,8 @@ from .collections import (
     make_collection_public,
     new_collection,
     my_collections,
-    view_collection
+    view_collection,
+    view_named_collection
 )
 
 

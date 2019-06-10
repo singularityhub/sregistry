@@ -193,11 +193,11 @@ recipe that was more recently updated will be used.
 When the server is started and the client is ready, it's time to push a recipe
 to build! By default, you will need to specify the name of the collection and
 container, and to include the fact that you want to use Google Cloud Build.
-You'll need to install Singularity Registry Client version 0.2.2 or later:
+You'll need to install Singularity Registry Client version 0.2.21 or later:
 
 ````bash
-$ pip install sregistry[google-build]>=0.2.2
-$ pip install sregistry[google-build-basic]>=0.2.2 # without local database
+$ pip install sregistry[google-build]>=0.2.21
+$ pip install sregistry[google-build-basic]>=0.2.21 # without local database
 ```
 
 Then to submit a build, you'll need to grab your credentials from https://<registry>/token.
