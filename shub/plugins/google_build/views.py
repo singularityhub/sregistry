@@ -39,6 +39,7 @@ from sregistry.main.registry.auth import generate_timestamp
 from .github import (
     receive_github_hook,
     create_webhook,
+    delete_webhook,
     get_repo,
     list_repos
 )
@@ -290,6 +291,40 @@ def delete_container(request, cid):
     container.delete()
     messages.info(request,'Container successfully deleted.')
     return redirect(container.collection.get_absolute_url())
+
+
+@login_required
+def delete_collection(request, cid):
+    '''delete a container collection that has Google Builds
+
+       Parameters
+       ==========
+       cid: the collection id to delete
+    '''
+    collection = get_collection(cid)
+
+    # Only an owner can delete
+    if not collection.has_edit_permission(request):
+        messages.info(request,"This action is not permitted.")
+        return redirect('collections')
+
+    # Delete files before containers
+    containers = Container.objects.filter(collection=collection)
+    
+    for container in containers:
+        django_rq.enqueue(delete_build, cid=container.id)
+
+    # Now handle the webhook
+    if "github" in collection.metadata:
+        django_rq.enqueue(delete_webhook, 
+                          uid=request.user.id,
+                          repo=collection.metadata['github']['repo_name'],
+                          hook_id=collection.metadata['github']['webhook']['id'])
+
+    # Finally, delete the collection
+    collection.delete()
+    messages.info(request,'Collection successfully deleted.')
+    return redirect('collections')
 
 
 @csrf_exempt

@@ -236,7 +236,7 @@ $(document).ready(function(){
     $("#delete_collection").click(function(){
         var response = confirm("Are you sure you want to delete this collection of containers?");
         if (response == true) {
-           document.location = "{% url 'delete_collection' collection.id %}";
+           {% if container.metadata.builder.name == "google_build" %}document.location = "{% url 'delete_google_collection' collection.id %}";{% else %}document.location = "{% url 'delete_collection' collection.id %}";{% endif %}
         }
     })
 

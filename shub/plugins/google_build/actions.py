@@ -197,7 +197,6 @@ def delete_build(cid):
     '''
     from shub.apps.main.views import get_container
 
-    print("RUNNING DELETE BUILD")
     container = get_container(cid)
     context = get_build_context()
     client = get_client(debug=True, **context)
@@ -205,6 +204,8 @@ def delete_build(cid):
     # If the container has an image, delete it
     image = container.get_image() or ""
     if container.metadata['builder']['name'] == "google_build":
+
+        # Delete the image
         if "storage.googleapis.com" in image:
             print("deleting container %s" % image)
             container_name = os.path.basename(image)

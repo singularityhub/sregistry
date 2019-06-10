@@ -28,6 +28,8 @@ ENABLE_BITBUCKET_AUTH=False
 
 
 # DOMAIN NAMES
+## IMPORTANT: if/when you switch to https, you need to change "DOMAIN_NAME"
+# to have https, otherwise some functionality will not work (e.g., GitHub webhooks)
 
 DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"

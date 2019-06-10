@@ -77,7 +77,16 @@ def get_auth(user, headers=None, idx=0):
     '''
     if headers is None:
         headers = get_default_headers()
+
     token = get_auth_token(user, idx)
+
+    # Tasks might provide a user id instead
+    if not isinstance(user, User):
+        try:
+            user = User.objects.get(id=user)
+        except User.DoesNotExist:
+            pass
+
     if token is not None:
         token = "token %s" %(token)
         headers["Authorization"] = token
@@ -321,27 +330,25 @@ def create_webhook(user, repo, secret):
 
 ## Delete
 
-def delete_webhook(user, repo):
+def delete_webhook(user, repo, hook_id):
     '''delete_webhook will delete a webhook, done when a user deletes a collection.
+       https://developer.github.com/v3/repos/hooks/#delete-a-hook
+       DELETE /repos/:owner/:repo/hooks/:hook_id
 
        Parameters
        ==========
        user: should be a singularity hub user. This is used to get
              the Github authentication
        repo: should be a complete repo object, including username and reponame
-       secret: should be the randomly generated string created when repo was connected.
     '''
     headers = get_auth(user)
 
-    url = "%s/repos/%s/%s/hooks/%s" %(api_base,
-                                      repo['owner']['login'],
-                                      repo['name'],
-                                      repo['id'])
+    url = "%s/repos/%s/hooks/%s" %(api_base, repo, hook_id)
  
-    response = DELETE(url,headers)
+    response = DELETE(url, headers)
     if response.status_code != 200:
         headers.update(get_auth(user, idx=1))
-        response = DELETE(url,headers)
+        response = DELETE(url, headers)
 
     response = response.json()
     return response
