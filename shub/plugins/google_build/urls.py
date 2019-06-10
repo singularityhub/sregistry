@@ -17,10 +17,10 @@ router.register(r'^build', views.RecipePushViewSet, base_name="build")  # build
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^build/receive/(?P<cid>\d+)?$', views.receive_build, name="receive_build"),
-    url(r'^google_build/delete/(?P<cid>\d+)?$', views.delete_container, 
+    url(r'^github/receive/?$', views.receive_hook, name="receive_hook"),
+    url(r'^build/receive/(?P<cid>\d+)/?$', views.receive_build, name="receive_build"),
+    url(r'^google_build/delete/(?P<cid>\d+)/?$', views.delete_container, 
         name="delete_google_container"),
-    url(r'^github/receive$', views.receive_hook, name="receive_hook"),
-    url(r'^github/save$', views.save_collection, name="save_collection"),
-    url(r'^github/connect$', views.connect_github, name="google_build_connect")
+    url(r'^github/save/?$', views.save_collection, name="save_collection"),
+    url(r'^github/connect/?$', views.connect_github, name="google_build_connect")
 ]
