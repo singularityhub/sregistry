@@ -261,7 +261,7 @@ def get_commit_details(collection, since=None, headers=None, limit=None):
    
     # Second pass, commit date vs. webhook[created_at]
     if not updates:
-        since = collection.metadata['webhook']['created_at']
+        since = collection.metadata['github']['webhook']['created_at']
         updates = get_commits_since(commits, since)
 
     # Last try, since repo created

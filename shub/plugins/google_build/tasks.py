@@ -9,7 +9,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf import settings
-#from shub.apps.api.build.google import delete_storage_files
 from django.contrib.auth.decorators import login_required
 
 from dateutil.parser import parse
@@ -39,14 +38,6 @@ def prepare_build_task(cid, recipes, branch):
                   branch=branch)
 
 
-
-def run_delete_storage_files(files):
-    '''A task to delete a set of files in a storage bucket
-       TODO: need to write this.
-    '''
-    if len(files) > 0:
-        print("Deleting storage files for %s files" %(len(files)))
-        delete_storage_files(files)
 
 
 def parse_hook(cid, 
@@ -136,6 +127,7 @@ def build_commits(collection, commits, branch):
                                               recipes=modified,
                                               branch=branch)
 
+
 def build_previous_commits(collection, branch):   
     '''the result we get when we get commit details (from the API)
        versus an actual commit object is different. This function parses
@@ -148,30 +140,29 @@ def build_previous_commits(collection, branch):
     from .github import get_commit_details
     commits = get_commit_details(collection, limit=25)
 
-    modified = dict()
+    modified = []
     renamed = []
 
     # Find changed files!
     for commit in commits:
 
-        print(commit)
         commit_id = commit.get('sha') or commit.get('id')
         commit_date = commit['commit']['committer']['date']
 
         for record in commit['files']:
 
+            # We care about absolute basename paths
+            filename = record['filename']
+
             # The file could have been removed
             if record['status'] == 'removed':
-                add_record = False
-                remove_record = True
+                continue
 
             # Only going to build updated recipes
             elif record['status'] in ['added', 'modified', 'renamed']:
 
                 # Supports building from Singularity recipes
-                if re.search("Singularity", record['filename']):
-                    add_record = True
-                    remove_record = False
+                if re.search("Singularity", filename):
 
                     # If the record is renamed after in modified, don't add
                     if record['status'] == 'renamed':
@@ -179,24 +170,34 @@ def build_previous_commits(collection, branch):
                                         "from": record['previous_filename'],
                                         "date": commit_date})
 
-                    if record['filename'] in modified:
+                    # The same file
+                    elif record['status'] in ['added', 'modified']:
+                        modified.append({'url': commit['url'],
+                                         'commit': commit_id,
+                                         'recipe': record['filename'],
+                                         'date': commit_date,
+                                         'name': collection.metadata['github']['repo_name']})
 
-                        # Don't add if we have more recent
-                        if parse(commit_date) < parse(modified[record['filename']]['date']): 
-                            add_record = False
+    # Now assemble keepers
+    keepers = {}
+    for entry in modified:
+ 
+        # The recipe is what we compare to
+        recipe = os.path.basename(entry['recipe'])        
+        if recipe in keepers:
+            
+            # Update if it's more recent
+            if parse(keepers[recipe]['date']) < parse(entry['date']): 
+                keepers[recipe] = entry
 
-            # Do we add or remove?
-            if add_record:
-                modified[record['filename']] = {
-                                'url': commit['url'],
-                                'commit': commit_id,
-                                'date': commit_date,
-                                'name': collection.metadata['github']['repo_name']}
+        else:
+            keepers[recipe] = entry
+        
 
-            elif remove_record and record in modified:
-                del modified[record]
-
-    print("MODIFIED RECIPES BEFORE RENAME %s" % modified)
+    # Change the recipe index back to the correct filename
+    modified = {}
+    for recipe, metadata in keepers.items():
+        modified[metadata['recipe']] = metadata
 
     # If the previous filename date is later than the record
     for entry in renamed:
