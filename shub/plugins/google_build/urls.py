@@ -21,6 +21,6 @@ urlpatterns = [
     url(r'^google_build/delete/(?P<cid>\d+)/?$', views.delete_container, 
         name="delete_google_container"),
     url(r'^github/save/?$', views.save_collection, name="save_collection"),
-    url(r'^github/connect/?$', views.connect_github, name="google_build_connect")
-    url(r'^', include(router.urls)),
+    url(r'^github/connect/?$', views.connect_github, name="google_build_connect"),
+    url(r'^', include(router.urls))
 ]
