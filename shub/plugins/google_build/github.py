@@ -290,7 +290,7 @@ def create_webhook(user, repo, secret):
  
     url = "%s/repos/%s/hooks" %(api_base, repo['full_name'])
 
-    callback_url = "%s/%s" %(DOMAIN_NAME, reverse('receive_hook'))
+    callback_url = "%s%s" %(DOMAIN_NAME, reverse('receive_hook'))
 
     config = { "url": callback_url,
                "content_type": "json",
