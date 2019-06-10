@@ -54,26 +54,31 @@ def generate_size_data(collections, collection_level):
     '''
     data = dict()
     for collection in collections:
-        if collection.name not in data:
-            data[collection.name] = {}
+ 
+        collection_name = collection.name
+        if "/" in collection_name:
+            collection_name = collection_name.split('/')[0]
+
+        if collection_name not in data:
+            data[collection_name] = {}
 
         # Generate data on the level of containers
         if collection_level is False:
 
             containers = collection.containers.all()
             for container in containers:
-                if container.name not in data[collection.name]:
-                    data[collection.name][container.name] = dict()
+                if container.name not in data[collection_name]:
+                    data[collection_name][container.name] = dict()
                 if 'size_mb' in container.metadata:
-                    data[collection.name][container.name][container.tag] = {"size": container.metadata['size_mb'],
+                    data[collection_name][container.name][container.tag] = {"size": container.metadata['size_mb'],
                                                                             "id":   container.id }
                 elif "size_mb" in container.metrics:
-                    data[collection.name][container.name][container.tag] = {"size": container.metrics['size_mb'],
+                    data[collection_name][container.name][container.tag] = {"size": container.metrics['size_mb'],
                                                                             "id":   container.id }
  
         # Generate data on the level of collections
         else:
-            data[collection.name] = {'size': collection.total_size(),
+            data[collection_name] = {'size': collection.total_size(),
                                      'id': collection.id,
                                      'n': collection.containers.count() }
                 
@@ -136,7 +141,7 @@ def collection_treemap(request,cid):
         messages.info(request,"You don't have permission to view this collection.")
         return redirect("collections_treemap")
 
-    context = {'collection':collection,
+    context = {'collection': collection,
                'generation_date': datetime.datetime.now().strftime('%m-%d-%y')}
 
     return render(request, "singularity/collection_treemap.html", context)
