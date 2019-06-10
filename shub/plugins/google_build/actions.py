@@ -212,7 +212,7 @@ def delete_build(cid, client=None):
             client.delete(container_name, force=True)
 
 
-def delete_container_collection(cid):
+def delete_container_collection(cid, uid):
     '''Delete artifacts for a container build, if they exist, and then
        the entire collection. This is called
        as a django-rq task for a worker to do from views.py
@@ -220,6 +220,7 @@ def delete_container_collection(cid):
        Parameters
        ==========
        cid: the collection id to delete.
+       uid: the user id requesting permission
     '''
     from shub.apps.main.views import get_collection
     from .github import delete_webhook
@@ -238,8 +239,8 @@ def delete_container_collection(cid):
 
     # Now handle the webhook (a separate task)
     if "github" in collection.metadata:
-        django_rq.enqueue(delete_webhook, 
-                          user=request.user.id,
+        django_rq.enqueue(delete_webhook,
+                          user=uid,
                           repo=collection.metadata['github']['repo_name'],
                           hook_id=collection.metadata['github']['webhook']['id'])
 

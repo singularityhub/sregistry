@@ -316,7 +316,9 @@ def delete_collection(request, cid):
         return redirect('collections')
     
     # Queue the job to delete the collection
-    django_rq.enqueue(delete_container_collection, cid=collection.id)
+    django_rq.enqueue(delete_container_collection, 
+                      cid=collection.id,
+                      uid=request.user.id)
 
     messages.info(request,'Collection requested for deletion.')
     return redirect('collections')
