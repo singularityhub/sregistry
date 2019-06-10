@@ -225,11 +225,13 @@ def _container_get(request, container, name=None, tag=None):
     auth = request.META.get('HTTP_AUTHORIZATION')
 
     if auth is None:
+        print("Auth is None")
         raise PermissionDenied(detail="Authentication Required")
 
     # Validate User Permissions - must have view to pull private image
 
     if not has_permission(auth, container.collection):
+        print("Does not have permission")
         raise PermissionDenied(detail="Unauthorized")
 
     timestamp = generate_timestamp()
@@ -239,7 +241,7 @@ def _container_get(request, container, name=None, tag=None):
                                     tag)
 
     if validate_request(auth, payload, "pull", timestamp):
-        return Response(serializer.data)    
+        return Response(serializer.data)
 
     return Response(400)
 

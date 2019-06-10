@@ -321,7 +321,7 @@ def delete_collection(request, cid):
     # Now handle the webhook
     if "github" in collection.metadata:
         django_rq.enqueue(delete_webhook, 
-                          uid=request.user.id,
+                          user=request.user.id,
                           repo=collection.metadata['github']['repo_name'],
                           hook_id=collection.metadata['github']['webhook']['id'])
 
