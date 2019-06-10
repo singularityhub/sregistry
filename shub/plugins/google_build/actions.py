@@ -42,10 +42,6 @@ def trigger_build(sender, instance, **kwargs):
     collection = Collection.objects.get(name=instance.collection)
     context = get_build_context()
 
-    # If the collection is private, the containers should be too
-    if collection.private:
-        context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
-
     print("IN TRIGGER BUILD")
 
     # Instantiate client with context (connects to buckets)
@@ -107,10 +103,6 @@ def receive_build(collection, recipes, branch):
        branch: the repository branch (kept as metadata)
     '''
     context = get_build_context()
-
-    # If the collection is private, the containers should be too
-    if collection.private:
-        context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
@@ -260,6 +252,10 @@ def complete_build(cid, params, check_again_seconds=10):
         return JsonResponseMessage(message="Invalid request.")
 
     context = get_build_context()
+
+    # If the collection is private, the containers should be too
+    if container.collection.private:
+        context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
