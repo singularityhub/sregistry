@@ -67,13 +67,19 @@ def generate_size_data(collections, collection_level):
 
             containers = collection.containers.all()
             for container in containers:
-                if container.name not in data[collection_name]:
-                    data[collection_name][container.name] = dict()
+ 
+                # Automated builds keep entire repo name under name
+                container_name = container.name
+                if "/" in container_name:
+                    container_name = container_name.split('/')[1]
+
+                if container_name not in data[collection_name]:
+                    data[collection_name][container_name] = dict()
                 if 'size_mb' in container.metadata:
-                    data[collection_name][container.name][container.tag] = {"size": container.metadata['size_mb'],
+                    data[collection_name][container_name][container.tag] = {"size": container.metadata['size_mb'],
                                                                             "id":   container.id }
                 elif "size_mb" in container.metrics:
-                    data[collection_name][container.name][container.tag] = {"size": container.metrics['size_mb'],
+                    data[collection_name][container_name][container.tag] = {"size": container.metrics['size_mb'],
                                                                             "id":   container.id }
  
         # Generate data on the level of collections
