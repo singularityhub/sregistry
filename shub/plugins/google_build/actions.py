@@ -51,6 +51,7 @@ def trigger_build(sender, instance, **kwargs):
 
     # The recipe needs to be in PWD to create the build package
     recipe = instance.datafile.name
+    working_dir = os.path.dirname(recipe)
     
     # Create a container (with status google-build) for the user to watch
     try:
@@ -73,6 +74,7 @@ def trigger_build(sender, instance, **kwargs):
     # Submit the build
     response = client.build(name,
                             recipe=recipe,
+                            working_dir=working_dir,
                             headless=True,
                             webhook=webhook)
 
@@ -99,6 +101,11 @@ def receive_build(collection, recipes, branch):
        branch: the repository branch (kept as metadata)
     '''
     context = get_build_context()
+
+    # If the collection is private, the containers should be too
+    # (this needs to be tested)
+    #if collection.private:
+    #    context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
 
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
