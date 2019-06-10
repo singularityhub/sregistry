@@ -22,7 +22,11 @@ from django.shortcuts import (
     redirect
 )
 
-from shub.apps.main.views import get_container
+from shub.apps.main.views import (
+    get_container,
+    get_collection
+)
+
 from shub.apps.main.models import (
     Collection, 
     Container
