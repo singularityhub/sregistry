@@ -38,7 +38,7 @@
         <!-- Sregistry Examples-->
         <div class="row">
             <div class="col-md-10">
-                <p><strong><a href="https://singularityhub.github.io/sregistry-cli/client-registry" target="_blank">Singularity Global Client</a> Examples</strong></p>
+                <p><strong><a href="https://singularityhub.github.io/sregistry-cli/client-registry" target="_blank">Singularity and Singularity Global Client</a> Examples</strong></p>
                 <p class="well" id="sreg_well">{% if collection.containers.first.metadata.builder.name == "google_build" %}
                      singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}:{{ collection.containers.first.tag }}<br>
                      sregistry pull registry://{{ collection.name }}:{{ collection.containers.first.tag }}<br>
