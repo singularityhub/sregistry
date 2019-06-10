@@ -54,9 +54,10 @@ def download_recipe(request, cid):
     '''download a container recipe
     '''
     container = get_container(cid)
+
     if "deffile" in container.metadata:
         recipe = container.metadata['deffile']
-        filename = "Singularity.%s" %container.tag
+        filename = "Singularity.%s" % container.tag
 
         response = HttpResponse(recipe,
                                 content_type='text/plain')
@@ -117,6 +118,7 @@ def _download_container(container, request):
 
     '''
     if container.image != None:
+
         filename = container.get_download_name()
         filepath = container.image.get_abspath()
 

@@ -113,7 +113,7 @@ def validate_payload(collection, payload, request_signature):
        payload: the request body sent by the service
        request_signature: the signature to compare against
     '''
-    secret = collection.secret.encode('utf-8') # converts to bytes
+    secret = collection.metadata['github']['secret'].encode('utf-8') # converts to bytes
     digest = hmac.new(secret,digestmod=hashlib.sha1,
                       msg=payload).hexdigest()
     signature = 'sha1=%s' %(digest)
@@ -125,7 +125,7 @@ def validate_payload(collection, payload, request_signature):
 ################################################################################
 
 
-def check_headers(request,headers):
+def check_headers(request, headers):
     '''check_headers will ensure that header keys are included in
        a request. If one is missing, returns False
  

@@ -97,7 +97,8 @@ def save_collection(request):
 
         # The checked repos are sent in format REPO_{{ repo.owner.login }}/{{ repo.name }}
         repos = [x.replace('REPO_','') for x in request.POST.keys() if re.search("^REPO_", x)] 
-        secret = uuid.uuid4().__str__()
+        secret = str(uuid.uuid4())
+        webhook_secret = str(uuid.uuid4())
 
         if len(repos) > 0:
 
@@ -116,7 +117,7 @@ def save_collection(request):
 
             webhook = create_webhook(user=request.user,
                                      repo=repo,
-                                     secret=secret)
+                                     secret=webhook_secret)
 
             if "errors" in webhook:
 
@@ -132,6 +133,7 @@ def save_collection(request):
 
                 # Add minimal metadata about repo and webhook
                 collection.metadata['github'] = {'webhook': webhook,
+                                                 'secret': webhook_secret,
                                                  'repo': repo['clone_url'],
                                                  'created_at': repo['created_at'],
                                                  'updated_at': repo['updated_at'],

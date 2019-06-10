@@ -253,10 +253,6 @@ def complete_build(cid, params, check_again_seconds=10):
 
     context = get_build_context()
 
-    # If the collection is private, the containers should be too
-    if container.collection.private:
-        context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
-
     # Instantiate client with context (connects to buckets)
     client = get_client(debug=True, **context)
 
@@ -268,6 +264,9 @@ def complete_build(cid, params, check_again_seconds=10):
 
     if "public_url" in response:
         container.metadata['image'] = response['public_url']
+
+    elif "media_link" in response:
+        container.metadata['image'] = response['media_link']
 
     elif "status" in response:
 
@@ -284,8 +283,6 @@ def complete_build(cid, params, check_again_seconds=10):
                                  params=params,
                                  check_again_seconds=check_again_seconds)
 
-    elif "media_link" in response:
-        container.metadata['image'] = response['media_link']
 
     # This is an invalid status, and no action to take
     else:
