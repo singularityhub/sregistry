@@ -182,7 +182,7 @@ You need to define a registry uri, and different contact information:
 
 ```
 HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
-HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
+HELP_INSTITUTION_SITE = 'https://srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 ```

@@ -39,7 +39,7 @@ ADMINS = (( 'vsochat', 'vsochat@gmail.com'),)
 MANAGERS = ADMINS
 
 HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
-HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
+HELP_INSTITUTION_SITE = 'https://srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
