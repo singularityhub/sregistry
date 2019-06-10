@@ -78,13 +78,14 @@ def trigger_build(sender, instance, **kwargs):
                             headless=True,
                             webhook=webhook)
 
-    # If the container is frozen, no good.
-    if not container.frozen:
-        
-        # Add the metadata
-        container.metadata['build_metadata'] = response['metadata']
-        container.metadata['builder'] = {"name": "google_build"}
-        container.save()
+    # Update the status for the container
+    if "status" in response:
+        container.metadata['build_metadata']['build']['status'] = response["status"]
+
+    # Add the metadata
+    container.metadata['build_metadata'] = response['metadata']
+    container.metadata['builder'] = {"name": "google_build"}
+    container.save()
 
     print(response)
     return JsonResponseMessage(message="Build received.")
