@@ -184,7 +184,7 @@ def get_build_context():
     return context
 
 
-def delete_build(cid):
+def delete_build(cid, client=None):
     '''Delete artifacts for a container build, if they exist. This is called
        as a django-rq task for a worker to do from views.py
 
@@ -195,8 +195,11 @@ def delete_build(cid):
     from shub.apps.main.views import get_container
 
     container = get_container(cid)
-    context = get_build_context()
-    client = get_client(debug=True, **context)
+
+    # if being called from delete_container_collection, just instantiate once
+    if client is None:
+        context = get_build_context()
+        client = get_client(debug=True, **context)
 
     # If the container has an image, delete it
     image = container.get_image() or ""
@@ -207,6 +210,41 @@ def delete_build(cid):
             print("deleting container %s" % image)
             container_name = os.path.basename(image)
             client.delete(container_name, force=True)
+
+
+def delete_container_collection(cid):
+    '''Delete artifacts for a container build, if they exist, and then
+       the entire collection. This is called
+       as a django-rq task for a worker to do from views.py
+
+       Parameters
+       ==========
+       cid: the collection id to delete.
+    '''
+    from shub.apps.main.views import get_collection
+    collection = get_collection(cid)
+
+    # Delete files before containers
+    containers = Container.objects.filter(collection=collection)
+
+    # Create a client to share
+    context = get_build_context()
+    client = get_client(debug=True, **context)
+    
+    # Delete container build objects first
+    for container in containers:
+        delete_build(cid=container.id, client=client)
+
+    # Now handle the webhook (a separate task)
+    if "github" in collection.metadata:
+        django_rq.enqueue(delete_webhook, 
+                          user=request.user.id,
+                          repo=collection.metadata['github']['repo_name'],
+                          hook_id=collection.metadata['github']['webhook']['id'])
+
+    # Finally, delete the collection
+    print("%s deleting." % collection)
+    collection.delete()
 
 
 def complete_build(cid, params, check_again_seconds=10):

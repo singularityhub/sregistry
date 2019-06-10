@@ -56,7 +56,8 @@ from datetime import (
 
 from .actions import (
     complete_build,
-    delete_build
+    delete_build,
+    delete_container_collection
 )
 
 from .utils import JsonResponseMessage
@@ -313,23 +314,11 @@ def delete_collection(request, cid):
     if not collection.has_edit_permission(request):
         messages.info(request,"This action is not permitted.")
         return redirect('collections')
-
-    # Delete files before containers
-    containers = Container.objects.filter(collection=collection)
     
-    for container in containers:
-        django_rq.enqueue(delete_build, cid=container.id)
+    # Queue the job to delete the collection
+    django_rq.enqueue(delete_container_collection, cid=collection.id)
 
-    # Now handle the webhook
-    if "github" in collection.metadata:
-        django_rq.enqueue(delete_webhook, 
-                          user=request.user.id,
-                          repo=collection.metadata['github']['repo_name'],
-                          hook_id=collection.metadata['github']['webhook']['id'])
-
-    # Finally, delete the collection
-    collection.delete()
-    messages.info(request,'Collection successfully deleted.')
+    messages.info(request,'Collection requested for deletion.')
     return redirect('collections')
 
 
