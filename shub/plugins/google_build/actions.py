@@ -41,6 +41,11 @@ def trigger_build(sender, instance, **kwargs):
     '''
     collection = Collection.objects.get(name=instance.collection)
     context = get_build_context()
+
+    # If the collection is private, the containers should be too
+    if collection.private:
+        context["SREGISTRY_GOOGLE_STORAGE_PRIVATE"] = True
+
     print("IN TRIGGER BUILD")
 
     # Instantiate client with context (connects to buckets)

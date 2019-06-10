@@ -306,11 +306,11 @@ def _change_collection_privacy(request, collection, make_private=True):
 
     # Customize message based on making public or private
     status = "private"
-    if make_private == False:
+    if not make_private:
         status = "public"
 
     # If the user has edit permission, make the repo private
-    if edit_permission is True:
+    if edit_permission:
         collection.private = make_private 
         messages.info(request,"Collection set to %s." %(status))
         collection.save()
@@ -321,7 +321,7 @@ def _change_collection_privacy(request, collection, make_private=True):
 
 
 @login_required
-def change_collection_privacy(request,cid,make_private=True):
+def change_collection_privacy(request, cid, make_private=True):
     '''change collection privacy, if the user has permission
 
        Parameters
