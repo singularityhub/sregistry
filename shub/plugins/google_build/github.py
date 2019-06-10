@@ -78,14 +78,14 @@ def get_auth(user, headers=None, idx=0):
     if headers is None:
         headers = get_default_headers()
 
-    token = get_auth_token(user, idx)
-
     # Tasks might provide a user id instead
     if not isinstance(user, User):
         try:
             user = User.objects.get(id=user)
         except User.DoesNotExist:
             pass
+
+    token = get_auth_token(user, idx)
 
     if token is not None:
         token = "token %s" %(token)
