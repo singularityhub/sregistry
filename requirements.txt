@@ -1,4 +1,5 @@
 anyjson
+coreapi==2.3.3
 cython
 django-chosen
 django-crispy-forms
@@ -26,6 +27,7 @@ markdown
 numexpr
 oauth2client==3.0
 Pillow
+PyYAML==5.1
 psycopg2-binary
 pygments
 python3-saml
