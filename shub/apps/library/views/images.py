@@ -103,8 +103,8 @@ class GetImageView(APIView):
         path = "images/%s/%s:%s" %(names['collection'], names['image'], names['tag']) 
         downloads = APIRequestCount.objects.filter(method="get", path__contains=path).count()
 
-        data = {"deleted": False,
-                "createdAt": container.add_date.strftime('%Y-%m-%dT%H:%M:%S%z'),    
+        data = {"deleted": False,                        # 2019-03-15T19:02:24.015Z
+                "createdAt": container.add_date.strftime('%Y-%m-%dT%H:%M:%S.%jZ'), # No idea what their format is...
                 "hash": container.version,
                 "size": container.metadata.get('size_mb'),
                 "entityName": container.name,
@@ -114,4 +114,4 @@ class GetImageView(APIView):
                 "containerStars": container.collection.star_set.count(),
                 "containerDownloads": downloads}
 
-        return Response(data=data, status=200)
+        return Response(data={"data": data}, status=200)

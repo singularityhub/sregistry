@@ -43,7 +43,7 @@ ADD . /code/
 # For development only, install development of sregistry-cli
 RUN pip uninstall -y sregistry && \
     cd /tmp && \
-    git clone -b add/build-workdir https://www.github.com/singularityhub/sregistry-cli && \
+    git clone -b add/pytest https://www.github.com/singularityhub/sregistry-cli && \
     cd sregistry-cli && \
     pip install .[google-build]
 
