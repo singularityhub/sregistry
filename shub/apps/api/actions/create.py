@@ -13,6 +13,7 @@ from sregistry.utils import parse_image_name
 from shub.logger import bot
 from django.db import IntegrityError
 from django.db.utils import DataError
+import django_rq
 import shutil
 import uuid
 import json
@@ -36,7 +37,7 @@ def move_upload_to_storage(collection, upload_id):
     
     # Rename the file, moving from ImageUpload to Storage
     filename = os.path.basename(instance.file.path)
-    new_path = os.path.join(image_home, filename.replace('.part', '.simg'))
+    new_path = os.path.join(image_home, filename.replace('.part', '.sif'))
     shutil.move(instance.file.path, new_path)
     print('%s --> %s' %(instance.file.path, new_path))
     instance.file.name = new_path
@@ -52,7 +53,7 @@ def generate_nginx_storage_path(collection, source, dest):
          source: the source file (under /var/www/images/_upload/{0-9}
          dest: the destination filename
     '''
-    image_home = "%s/%s" %(MEDIA_ROOT, collection.name)
+    image_home = os.path.join(MEDIA_ROOT, collection.name)
     return os.path.join(image_home, os.path.basename(dest))
 
 
@@ -68,13 +69,26 @@ def move_nginx_upload_to_storage(collection, source, dest):
          dest: the destination filename
     '''
     # Create collection root, if it doesn't exist
-    image_home = "%s/%s" %(MEDIA_ROOT, collection.name)
+    image_home = os.path.join(MEDIA_ROOT, collection.name)
     if not os.path.exists(image_home):
         os.mkdir(image_home)
     
     new_path = os.path.join(image_home, os.path.basename(dest))
     shutil.move(source, new_path)
     return new_path
+
+def calculate_version(cid):
+    '''calculate version is run as a separate task after a container upload.
+       Instead of using md5 provided by nginx we calculate sha256 sum and
+       then include as the version variable.
+    '''
+    from shub.apps.main.views import get_container
+    from sregistry.utils import get_file_hash
+    print("Calculating version for upload.")
+    container = get_container(cid)
+    version = "sha256.%s" % get_file_hash(container.image.datafile.path, "sha256")
+    container.version = version
+    container.save()
 
 
 def upload_container(cid, user, name, version, upload_id, size=None):
@@ -185,6 +199,9 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
         # Once the container is saved, delete the intermediate file object
         delete_file_instance(instance)
+
+        # Run a task to calculate the sha256 sum
+        django_rq.enqueue(calculate_version, cid=container.id)
 
 
 def delete_file_instance(instance):

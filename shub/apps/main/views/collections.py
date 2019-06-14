@@ -42,12 +42,29 @@ def get_collection(cid):
        Parameters
        ==========
        cid: the id of the collection to look up
-
    '''
     keyargs = {'id':cid}
     try:
         collection = Collection.objects.get(**keyargs)
     except Collection.DoesNotExist:
+        raise Http404
+    else:
+        return collection
+
+def get_collection_named(name, retry=True):
+    '''get a collection by name. First we try the collection name,
+       then we try splitting if the name includes /
+
+       Parameters
+       ==========
+       name: the name of the collection to look up
+   '''
+    try:
+        collection = Collection.objects.get(name=name)
+    except Collection.DoesNotExist:
+        if retry is True and "/" in name:
+            name = name.split('/')[0]
+            return get_collection_name(name, retry=False)
         raise Http404
     else:
         return collection

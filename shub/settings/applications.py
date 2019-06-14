@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     'shub.apps.logs',
     'shub.apps.main',
     'shub.apps.users',
-    'shub.apps.singularity'
+    'shub.apps.singularity',
+    'shub.apps.library',
 ]
 
 THIRD_PARTY_APPS = [
