@@ -6,15 +6,29 @@ permalink: /client
 toc: false
 ---
 
-<script src="assets/js/asciinema-player.js"></script>
-<link rel="stylesheet" href="assets/css/asciinema-player.css"/>
+## Singularity Pull
 
-The original Singularity Registry Client was provided by [Singularity Python](https://github.com/singularityware/singularity-python), however we have moved the client to have its own module under [sregistry-cli](https://github.com/singularityhub/sregistry-cli). We recommend that you use the latter, and ask for features or updates when necessary. For the new version, see the [getting started guide here](https://singularityhub.github.io/sregistry-cli/client-registry). Note that you will need to [export your credentials](https://singularityhub.github.io/sregistry/credentials) in order to have authenticated
-interaction with sregistry.
+Singularity Registry Server implements a basic version of the Sylabs Library API, 
+meaning that you can pull a container with Singularity directly. For example,
+let's say that I have a collection with a container called `collection/container:tag`.
+and my registry is served at `containers.page`. I could pull it as follows:
+
+```bash
+$ singularity pull --library https://containers.page collection/container:tag
+```
+
+# SRegistry Client
+
+Singularity Registry Global Client, or [sregistry-cli](https://github.com/singularityhub/sregistry-cli),
+is a general client to interact with Singularity images at remote endpoints, and it provides
+such an endpoint for Singularity Registry Server. We will provide
+basic instructions here, and for the full documentation, please see the [getting started guide here](https://singularityhub.github.io/sregistry-cli/client-registry). Note that you will need to [export your credentials](https://singularityhub.github.io/sregistry/credentials) in order to have authenticated interaction with sregistry.
+
 
 ## Install
 
 ### sregistry Installation
+
 `sregistry` is the client for Singularity Registry server. To install, you can do the following:
 
 ```

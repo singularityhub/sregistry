@@ -7,6 +7,7 @@ toc: false
 ---
 
 # Teams
+
 To add a level of organization of users, sregistry has created loose groups of users called Teams. A registry admin can create a team, or if `USER_COLLECTIONS` is True, the an authenticated user can also create them. Creating a team means that the creator (admin or authenticated user) becomes the Owner of the team that can add and remove users. If an admin creates a team for a group of users, he or she must manage it or add a user to the list of owners to do the same. To create a team:
 
  1. Click on the "teams" tab in the navigation bar

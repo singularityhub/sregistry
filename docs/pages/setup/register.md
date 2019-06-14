@@ -90,7 +90,11 @@ thumb: custom/taco-logo.png
 You can then add your files, and submit a PR to the main repo. We will have tests that ping your registry to ensure correct naming of files and registry address, along with a preview of the content that is added. If you want to prevew locally, you can run `jekyll serve`.
 
 
-Great! Now that you have your accounts, you probably want to learn about how to build and push images! First you need to generate a [credential](/sregistry/credentials), and then you will can read about the [client](/sregistry/client).
+Great! Now that you have your accounts, you probably want to learn about how to build and push images! 
+To push directly, you will first need to generate a [credential](/sregistry/credentials). If you 
+have enabled the [Google Build+Github]({{ site.baseurl }}/plugin-google-build) plugin,
+then you will be able to log in with GitHub, and connect GitHub repositories to build 
+on commit. Either way, you should next read about the [client](/sregistry/client).
 
 <div>
     <a href="/sregistry/setup-teams"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>
