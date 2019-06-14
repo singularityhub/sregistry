@@ -64,7 +64,7 @@ def get_collection_named(name, retry=True):
     except Collection.DoesNotExist:
         if retry is True and "/" in name:
             name = name.split('/')[0]
-            return get_collection_name(name, retry=False)
+            return get_collection_named(name, retry=False)
         raise Http404
     else:
         return collection
