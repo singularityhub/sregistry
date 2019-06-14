@@ -2,7 +2,7 @@
 layout: default
 title: Plugins
 pdf: true
-permalink: /plugins
+permalink: /plugins/
 toc: false
 ---
 

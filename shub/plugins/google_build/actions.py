@@ -20,6 +20,7 @@ from sregistry.main.google_build.client import get_client
 from datetime import datetime
 from pathlib import Path
 from time import sleep
+from sregistry.utils import get_recipe_tag
 from .utils import (
     convert_size, 
     JsonResponseMessage
@@ -113,8 +114,7 @@ def receive_build(collection, recipes, branch):
     for recipe, metadata in recipes.items():
 
         # First preference to command line, then recipe tag
-        tag = "".join(Path(recipe).suffixes).strip('.')
-        tag = (tag or "latest").strip('.')
+        tag = get_recipe_tag(recipe) or "latest"
 
         # Get a container, if it exists, we've already written file here
         try:
