@@ -271,12 +271,13 @@ def receive_build(request, cid):
         scheduler = django_rq.get_scheduler('default')
 
         # Content length is always (?)
-        print(request.META['CONTENT_LENGTH']) 
+        print(request.META['CONTENT_LENGTH'])
         #if request.META['CONTENT_LENGTH'] == "47":
         job = scheduler.enqueue_in(timedelta(seconds=10),
                                        complete_build, 
                                        cid=container.id, 
                                        params=params)
+        print(job)
         # TODO: can we limit to receiving from Google Build servers?
 
     return JsonResponseMessage(message="Notification Received",

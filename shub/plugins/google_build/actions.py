@@ -267,7 +267,7 @@ def complete_build(cid, params, check_again_seconds=10):
     container = get_container(cid)
 
     # Case 1: No id provided
-    if "id" not in params or "hash" not in params:
+    if "id" not in params:
         return JsonResponseMessage(message="Invalid request.")
 
     # Case 2: the container is already finished or not a google build
@@ -345,9 +345,14 @@ def complete_build(cid, params, check_again_seconds=10):
         container.metrics["file_hash"] = response["file_hash"]
 
     # Add the version, also calculated by builder
-    container.metrics["sha256"] = "sha256.%s" % params['hash']
-    container.version = "sha256.%s" % params['hash']
+    if "sha256sum" in response:
+        container.metrics["sha256"] = "sha256.%s" % response['sha256sum']
+        container.version = "sha256.%s" % response['sha256sum']
  
+    # Keep an md5, for posterity
+    if "md5sum" in response:
+        container.metrics["md5"] = "md5.%s" % response['md5sum']
+
     # Calculate total time
     if "startTime" in response and "finishTime" in response:
         total_time = parse(response['finishTime']) - parse(response['startTime'])
