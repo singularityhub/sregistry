@@ -39,7 +39,7 @@ def get_container(names):
     container = None
 
     try:
-        collection = get_collection_named(names['collection'])
+        collection = get_collection_named(names['url'])
     except:
         collection = None
 
