@@ -297,7 +297,6 @@ def delete_container(request, cid):
 
     # Send a job to the worker to delete the build files
     django_rq.enqueue(delete_build, cid=container.id)
-    container.delete()
     messages.info(request,'Container successfully deleted.')
     return redirect(container.collection.get_absolute_url())
 
