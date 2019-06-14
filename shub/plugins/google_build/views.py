@@ -270,9 +270,10 @@ def receive_build(request, cid):
         params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
         scheduler = django_rq.get_scheduler('default')
 
-        # Content length is always 47
-        if request.META['CONTENT_LENGTH'] == "47":
-            job = scheduler.enqueue_in(timedelta(seconds=10),
+        # Content length is always (?)
+        print(request.META['CONTENT_LENGTH']) 
+        #if request.META['CONTENT_LENGTH'] == "47":
+        job = scheduler.enqueue_in(timedelta(seconds=10),
                                        complete_build, 
                                        cid=container.id, 
                                        params=params)

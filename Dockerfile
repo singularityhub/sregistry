@@ -33,11 +33,6 @@ RUN apt-get update && apt-get install -y \
     squashfs-tools \
     build-essential
 
-# Install Singularity
-RUN git clone -b vault/release-2.6 https://www.github.com/sylabs/singularity.git
-WORKDIR singularity
-RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
-
 # Install Python requirements out of /tmp so not triggered if other contents of /code change
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
@@ -48,7 +43,7 @@ ADD . /code/
 # For development only, install development of sregistry-cli
 RUN pip uninstall -y sregistry && \
     cd /tmp && \
-    git clone -b add/build-workdir https://www.github.com/singularityhub/sregistry-cli && \
+    git clone -b add/pytest https://www.github.com/singularityhub/sregistry-cli && \
     cd sregistry-cli && \
     pip install .[google-build]
 

@@ -12,7 +12,6 @@ from django.conf.urls import ( url, include )
 import rest_framework.authtoken.views as authviews
 
 from rest_framework import routers
-
 from shub.apps.api.urls.containers import ContainerViewSet
 from shub.apps.api.urls.collections import CollectionViewSet
 from shub.apps.api.actions.push import collection_auth_check
