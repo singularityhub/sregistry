@@ -341,8 +341,8 @@ def complete_build(cid, params, check_again_seconds=10):
         container.metadata['build_metadata']['build']['status'] = response["status"]
 
     # If a file hash is included, we use this as the version (not commit)
-    if "file_hash" in response:
-        container.metrics["file_hash"] = response["file_hash"]
+    if "crc32" in response:
+        container.metrics["crc32"] = response["crc32"]
 
     # Add the version, also calculated by builder
     if "sha256sum" in response:
