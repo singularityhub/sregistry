@@ -209,11 +209,13 @@ def validate_jwt(container, params):
 
     # Compare against what we know
     valid_payload = get_container_payload(container)
+    print(valid_payload)
+    print(payload)
 
-    # Must be equally sized dicts
-    if len(valid_payload) != len(payload):
-        print('INVALID LENGTH')
-        return False
+    # Must be correct size dicts
+    #if len(valid_payload) != len(payload) - 1:
+    #    print('INVALID LENGTH')
+    #    return False
 
     # Every field must be equal
     for key, val in valid_payload.items():
