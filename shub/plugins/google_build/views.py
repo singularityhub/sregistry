@@ -65,7 +65,6 @@ from .utils import (
     validate_jwt
 )
 import re
-import ast
 import json
 import uuid
 
@@ -277,7 +276,7 @@ def receive_build(request, cid):
             return JsonResponseMessage(message="Invalid request.")
 
         # Decode parameters
-        params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
+        params = json.loads(request.body.decode('utf-8'))
 
         # Must include a jwt token that is valid for the container
         if not validate_jwt(container, params):
