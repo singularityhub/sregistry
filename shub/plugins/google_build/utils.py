@@ -184,12 +184,12 @@ def clear_container_payload(container):
     return container
 
 
-def validate_jwt(container, headers):
+def validate_jwt(container, params):
     '''Given a container (with a build secret and other metadata) validate
-       a token header (if it exists). If valid, return true. Otherwise, 
+       a token (if it exists). If valid, return true. Otherwise, 
        return False.
     '''
-    if "token" not in headers:
+    if "token" not in params:
         print('TOKEN NOT IN HEADERS')
         return False
 
@@ -202,7 +202,7 @@ def validate_jwt(container, headers):
 
     # Validate the payload
     try:
-        payload = jwt.decode(request.headers['token'], secret, algorithms=["HS256"])
+        payload = jwt.decode(params['token'], secret, algorithms=["HS256"])
     except (jwt.DecodeError, jwt.ExpiredSignatureError):
         print('TOKEN INVALID')
         return False

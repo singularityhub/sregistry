@@ -271,18 +271,18 @@ def receive_build(request, cid):
 
     if request.method == "POST":
 
-        print(request.headers)
-
         # Must be an existing container
         container = get_container(cid)
         if container is None:
             return JsonResponseMessage(message="Invalid request.")
 
-        # Must include a token header
-        if not validate_jwt(container, request.headers):
+        # Decode parameters
+        params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
+
+        # Must include a jwt token that is valid for the container
+        if not validate_jwt(container, params):
             return JsonResponseMessage(message="Invalid request.")
     
-        params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
         scheduler = django_rq.get_scheduler('default')
         job = scheduler.enqueue_in(timedelta(seconds=10),
                                        complete_build, 

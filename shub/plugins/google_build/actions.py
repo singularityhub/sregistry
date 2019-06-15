@@ -90,7 +90,7 @@ def trigger_build(sender, instance, **kwargs):
                             working_dir=working_dir,
                             headless=True,
                             webhook=webhook,
-                            headers={"token": jwt_token})
+                            extra_data={"token": jwt_token})
 
     # Update the status for the container
     if "status" in response:
