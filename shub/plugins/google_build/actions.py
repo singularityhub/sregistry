@@ -28,9 +28,7 @@ from .utils import (
     generate_jwt_token
 )
 import os
-import uuid
 import django_rq
-import base64
 
 
 def trigger_build(sender, instance, **kwargs):

@@ -24,6 +24,7 @@ import json
 import jwt
 import requests
 import re
+import uuid
 
 ################################################################################
 # REQUESTS
