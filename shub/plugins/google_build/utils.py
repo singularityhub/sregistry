@@ -16,6 +16,7 @@ from rest_framework.permissions import (
     Http404
 )
 
+from sregistry.logger import RobotNamer
 from datetime import datetime, timedelta
 import hashlib
 import hmac

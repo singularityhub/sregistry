@@ -21,7 +21,6 @@ from datetime import datetime
 from pathlib import Path
 from time import sleep
 from sregistry.utils import get_recipe_tag
-from sregistry.logger import RobotNamer
 from .utils import (
     convert_size, 
     create_container_payload,
