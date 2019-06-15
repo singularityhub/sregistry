@@ -23,6 +23,7 @@ from time import sleep
 from sregistry.utils import get_recipe_tag
 from .utils import (
     convert_size, 
+    clear_container_payload,
     create_container_payload,
     JsonResponseMessage,
     generate_jwt_token
