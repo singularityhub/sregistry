@@ -196,7 +196,8 @@ def get_build_context():
 
 
 def delete_build(cid, client=None):
-    '''Delete artifacts for a container build, if they exist. This is called
+    '''Delete artifacts for a container build, if they exist, along
+       with the container object. This is called
        as a django-rq task for a worker to do from views.py
 
        Parameters
@@ -221,6 +222,9 @@ def delete_build(cid, client=None):
             print("deleting container %s" % image)
             container_name = os.path.basename(image)
             client.delete(container_name, force=True)
+
+    # Finally, delete the container
+    container.delete()
 
 
 def delete_container_collection(cid, uid):
