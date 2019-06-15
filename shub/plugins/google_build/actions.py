@@ -10,7 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from shub.logger import bot
 from dateutil.parser import parse
-from django.conf import settings                                                  
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from shub.apps.users.models import User

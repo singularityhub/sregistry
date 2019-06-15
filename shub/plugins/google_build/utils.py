@@ -16,6 +16,7 @@ from rest_framework.permissions import (
     Http404
 )
 
+from django.conf import settings
 from sregistry.logger import RobotNamer
 from datetime import datetime, timedelta
 import hashlib
