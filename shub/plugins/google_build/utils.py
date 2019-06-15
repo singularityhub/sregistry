@@ -189,7 +189,7 @@ def validate_jwt(container, headers):
        a token header (if it exists). If valid, return true. Otherwise, 
        return False.
     '''
-    if "token" not in request.headers:
+    if "token" not in headers:
         print('TOKEN NOT IN HEADERS')
         return False
 
