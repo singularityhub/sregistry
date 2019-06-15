@@ -157,17 +157,26 @@ def receive_build(collection, recipes, branch):
         webhook = "%s%s" % (settings.DOMAIN_NAME,
             reverse('receive_build', kwargs={"cid": container.id}))
 
+        # Generate a one time use secret for jwt web token
+        container.metadata['builder'] = {"name":"google_build",
+                                         "deffile": deffile}
+
+        payload = create_container_payload(container) # does not save
+
+        # Generate the jwt token
+        jwt_token = generate_jwt_token(secret=container.metadata['builder']['secret'],
+                                       payload=payload)
+
         # Submit the build with the GitHub repo and commit
         response = client.build_repo("github.com/%s" % metadata['name'], 
                                       recipe=recipe,
                                       headless=True,
                                       commit=metadata['commit'],
-                                      webhook=webhook)
+                                      webhook=webhook,
+                                      extra_data={"token": jwt_token})
 
         # Add the metadata
         container.metadata['build_metadata'] = response['metadata']
-        container.metadata['builder'] = {"name":"google_build",
-                                         "deffile": deffile}
         container.save()
 
 

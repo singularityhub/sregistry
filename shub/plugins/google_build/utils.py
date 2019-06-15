@@ -190,12 +190,10 @@ def validate_jwt(container, params):
        return False.
     '''
     if "token" not in params:
-        print('TOKEN NOT IN HEADERS')
         return False
 
     # The secret is removed after one response
     if "secret" not in container.metadata['builder']:
-        print('SECRET NOT IN HEADERS')
         return False
    
     secret = container.metadata['builder']['secret']
@@ -204,7 +202,6 @@ def validate_jwt(container, params):
     try:
         payload = jwt.decode(params['token'], secret, algorithms=["HS256"])
     except (jwt.DecodeError, jwt.ExpiredSignatureError):
-        print('TOKEN INVALID')
         return False
 
     # Compare against what we know
@@ -213,10 +210,8 @@ def validate_jwt(container, params):
     # Every field must be equal
     for key, val in valid_payload.items():
         if key not in payload:
-            print('%s not in payload' % key)
             return False
         if payload[key] != valid_payload[key]:
-            print('%s invalid' % key)
             return False
 
     return True        
