@@ -181,7 +181,7 @@ def clear_container_payload(container):
     return container
 
 
-def validate_jwt(container, headers)
+def validate_jwt(container, headers):
     '''Given a container (with a build secret and other metadata) validate
        a token header (if it exists). If valid, return true. Otherwise, 
        return False.
