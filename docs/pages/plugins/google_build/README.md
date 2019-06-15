@@ -106,6 +106,17 @@ SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
 Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
 and we recommend creating both `[name]` and `[name]_cloudbuild` in the console and then setting the name here.
 
+#### Build Expiration 
+
+You must define the number of seconds that your build expires in, meaning that it would no
+longer be accepted by the server.
+
+```python
+SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
+```
+
+The default provided in the dummy secrets, shown above, would indicate 8 hours.
+
 #### Private Containers
 
 By default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.

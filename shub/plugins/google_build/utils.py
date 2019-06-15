@@ -16,9 +16,11 @@ from rest_framework.permissions import (
     Http404
 )
 
+from datetime import datetime, timedelta
 import hashlib
 import hmac
 import json
+import jwt
 import requests
 import re
 
@@ -105,7 +107,9 @@ def paginate(url,headers,min_count=30,start_page=1,params=None, limit=None):
 def validate_payload(collection, payload, request_signature):
     '''validate_payload will retrieve a collection secret, use it
        to create a hexdigest of the payload (request.body) and ensure
-       that it matches the signature in the header)
+       that it matches the signature in the header). This is what we use
+       for GitHub webhooks. The secret used is NOT the collection secret,
+       but a different one for GitHub.
 
        Parameters
        ==========
@@ -118,6 +122,122 @@ def validate_payload(collection, payload, request_signature):
                       msg=payload).hexdigest()
     signature = 'sha1=%s' %(digest)
     return hmac.compare_digest(signature, request_signature)
+
+
+################################################################################
+# JWT
+################################################################################
+
+def get_container_payload(container):
+    '''a helper function to return a consistent container payload.
+
+       Parameters
+       ==========
+       container: a container object to get a payload for
+    '''
+    return {
+        "collection": container.collection.id,
+        "container": container.id,
+        "robot-name": container.metadata['builder']['robot_name'],
+        "tag": container.tag
+    }
+
+
+def create_container_payload(container):
+    '''a helper function to create a consistent container payload.
+
+       Parameters
+       ==========
+       container: a container object to create a payload for
+    '''
+    if "builder" not in container.metadata:
+        container.metadata['builder'] = {}
+
+    if "robot_name" not in container.metadata["builder"]:
+        container.metadata['builder']['robot_name'] = RobotNamer().generate()
+
+    # Always create a new secret
+    container.metadata['builder']['secret'] = str(uuid.uuid4())
+    container.save()
+    return get_container_payload(container)
+
+
+def clear_container_payload(container):
+    '''after we receive the build response, we clear the payload metadata
+       so it cannot be used again. This function does not save, but returns
+       the container for the calling function to do so.
+
+       Parameters
+       ==========
+       container: a container object to clear payload secrets for
+    '''
+    if "builder" in container.metadata:
+        if "robot_namer" in container.metadata['builder']:
+            del container.metadata['builder']['robot_namer']
+
+        if "secret" in container.metadata['builder']:
+            del container.metadata['builder']['secret']
+
+    return container
+
+
+def validate_jwt(container, headers)
+    '''Given a container (with a build secret and other metadata) validate
+       a token header (if it exists). If valid, return true. Otherwise, 
+       return False.
+    '''
+    if "token" not in request.headers:
+        print('TOKEN NOT IN HEADERS')
+        return False
+
+    # The secret is removed after one response
+    if "secret" not in container.metadata['builder']:
+        print('SECRET NOT IN HEADERS')
+        return False
+   
+    secret = container.metadata['builder']['secret']
+
+    # Validate the payload
+    try:
+        payload = jwt.decode(request.headers['token'], secret, algorithms=["HS256"])
+    except (jwt.DecodeError, jwt.ExpiredSignatureError):
+        print('TOKEN INVALID')
+        return False
+
+    # Compare against what we know
+    valid_payload = get_container_payload(container)
+
+    # Must be equally sized dicts
+    if len(valid_payload) != len(payload):
+        print('INVALID LENGTH')
+        return False
+
+    # Every field must be equal
+    for key, val in valid_payload.items():
+        if key not in payload:
+            print('%s not in payload' % key)
+            return False
+        if payload[key] != valid_payload[key]:
+            print('%s invalid' % key)
+            return False
+
+    return True        
+
+
+def generate_jwt_token(secret, payload, algorithm="HS256"):
+    '''given a secret, an expiration in seconds, and an algorithm, generate
+       a jwt token to add as a header to the build response.
+
+       Parameters
+       ==========
+       secret: the container builder secret, only used once
+       payload: the payload to encode
+       algorithm: the algorithm to use.
+    '''
+    # Add an expiration of 8 hours to the payload
+    expires_in = settings.SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
+    payload['exp'] = datetime.utcnow() + timedelta(seconds=expires_in)
+    return jwt.encode(payload, secret, algorithm).decode('utf-8')
 
 
 ################################################################################

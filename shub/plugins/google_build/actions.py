@@ -21,12 +21,17 @@ from datetime import datetime
 from pathlib import Path
 from time import sleep
 from sregistry.utils import get_recipe_tag
+from sregistry.logger import RobotNamer
 from .utils import (
     convert_size, 
-    JsonResponseMessage
+    create_container_payload,
+    JsonResponseMessage,
+    generate_jwt_token
 )
 import os
+import uuid
 import django_rq
+import base64
 
 
 def trigger_build(sender, instance, **kwargs):
@@ -73,12 +78,22 @@ def trigger_build(sender, instance, **kwargs):
     webhook = "%s%s" % (settings.DOMAIN_NAME,
         reverse('receive_build', kwargs={"cid": container.id}))
 
+    # Generate a one time use secret for jwt web token
+    container.metadata['builder'] = {"name": "google_build"}
+
+    payload = create_container_payload(container) # does not save
+
+    # Generate the jwt token
+    jwt_token = generate_jwt_token(secret=container.metadata['builder']['secret'],
+                                   payload=payload)
+
     # Submit the build
     response = client.build(name,
                             recipe=recipe,
                             working_dir=working_dir,
                             headless=True,
-                            webhook=webhook)
+                            webhook=webhook,
+                            headers={"token": jwt_token})
 
     # Update the status for the container
     if "status" in response:
@@ -86,7 +101,6 @@ def trigger_build(sender, instance, **kwargs):
 
     # Add the metadata
     container.metadata['build_metadata'] = response['metadata']
-    container.metadata['builder'] = {"name": "google_build"}
     container.save()
 
     print(response)
@@ -330,7 +344,10 @@ def complete_build(cid, params, check_again_seconds=10):
         return
 
     # Save the build finish
-    container.metadata['build_finish'] =  response
+    container.metadata['build_finish'] = response
+
+    # Clear the container metadata
+    container = clear_container_payload(container)
 
     # Add response metrics (size and file_hash)
     if "size" in response:

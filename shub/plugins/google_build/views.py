@@ -60,7 +60,10 @@ from .actions import (
     delete_container_collection
 )
 
-from .utils import JsonResponseMessage
+from .utils import (
+    JsonResponseMessage,
+    validate_jwt
+)
 import re
 import ast
 import json
@@ -260,13 +263,25 @@ class RecipePushViewSet(ModelViewSet):
 @csrf_exempt
 def receive_build(request, cid):
     '''receive_build will receive the post from Google Cloud Build.
-       TODO: how else can we authenticate this?
+       we check the response header against the jwt token to authenticate,
+       and then check other metadata and permissions in complete_build.
     '''
     print(request.body)
     print(cid)
 
     if request.method == "POST":
-        container = Container.objects.get(id=cid)
+
+        print(request.headers)
+
+        # Must be an existing container
+        container = get_container(cid)
+        if container is None:
+            return JsonResponseMessage(message="Invalid request.")
+
+        # Must include a token header
+        if not validate_jwt(container, request.headers):
+            return JsonResponseMessage(message="Invalid request.")
+    
         params = ast.literal_eval(json.loads(request.body.decode('utf-8')))
         scheduler = django_rq.get_scheduler('default')
         job = scheduler.enqueue_in(timedelta(seconds=10),
@@ -274,9 +289,12 @@ def receive_build(request, cid):
                                        cid=container.id, 
                                        params=params)
 
-    return JsonResponseMessage(message="Notification Received",
-                               status=200,
-                               status_message="Received")
+        return JsonResponseMessage(message="Notification Received",
+                                   status=200,
+                                   status_message="Received")
+
+    return JsonResponseMessage(message="Invalid request.")
+
 
 @login_required
 def delete_container(request, cid):
