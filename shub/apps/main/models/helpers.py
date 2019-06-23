@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from itertools import chain
 from django.http import HttpRequest
-import os
 
 def has_edit_permission(instance, request):
     '''can the user of the request edit the collection or container?
@@ -19,7 +18,6 @@ def has_edit_permission(instance, request):
        ==========
        instance: the container or collection to check
        request: the request with the user object OR the user object
-
     '''
     from .containers import Container
 
@@ -94,7 +92,6 @@ def get_collection_users(instance):
         Parameters
         ==========
         instance: the collection or container object to use
-
     '''
     from .containers import Container
     collection = instance

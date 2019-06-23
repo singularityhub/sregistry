@@ -9,12 +9,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf import settings
-from shub.logger import bot
-from shub.apps.main.views import get_container
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib import messages
 from django.http import JsonResponse
 from .actions import ( 
     get_endpoints, 
@@ -22,12 +19,14 @@ from .actions import (
     search_endpoints
 )
 from .decorators import has_globus_association
+from shub.apps.main.views import get_container
 from shub.plugins.globus.utils import (
     get_client, 
     get_transfer_client,
     associate_user
 )
 
+from social_django.models import UserSocialAuth
 from globus_sdk.exc import TransferAPIError
 
 
@@ -44,7 +43,7 @@ def globus_logout(request):
 
         # Properly revoke and log out
         social = request.user.social_auth.get(provider="globus")
-        for resource, token_info in social.extra_data.items(): 
+        for _, token_info in social.extra_data.items(): 
             for token, token_type in token_info.items():
                 client.oauth2_revoke_token(
                     token, additional_params={'token_type_hint': token_type})
@@ -88,9 +87,9 @@ def globus_login(request):
 
         # Second step of authentication flow - we need to ask for token  
         code = request.GET.get('code')
-        user = associate_user(request.user, 
-                              client=client, 
-                              code=code)
+        associate_user(request.user, 
+                       client=client, 
+                       code=code)
 
     return redirect('globus_transfer')
 
@@ -109,7 +108,7 @@ def globus_transfer(request, cid=None, endpoints=None):
 
     context = {'user': request.user,
                'container': container,
-               'endpoint_search_term': "Search for..." }
+               'endpoint_search_term': "Search for..."}
 
     # Does the user want to search endpoints?
 
@@ -140,12 +139,12 @@ def globus_endpoint(request, endpoint_id=None, cid=None):
 
     context = {'user': request.user,
                'container': container,
-               'endpoint_search_term': "Search for..." }
+               'endpoint_search_term': "Search for..."}
 
     # Get the endpoint
     try:
         client = get_transfer_client(request.user)
-        endpoints =  [client.get_endpoint(endpoint_id).data]
+        endpoints = [client.get_endpoint(endpoint_id).data]
     except TransferAPIError:
         endpoints = get_endpoints(request.user)
 
@@ -163,7 +162,7 @@ def submit_transfer(request, endpoint, cid):
 
     container = get_container(cid)
     if container is None:
-        message = "This container could not be found."
+        m = "This container could not be found."
 
     else:
         result = do_transfer(user=request.user,
@@ -171,9 +170,9 @@ def submit_transfer(request, endpoint, cid):
                              container=container)
 
 
-        link = "https://globus.org/app/activity/%s" %result['task_id']
+        link = "https://globus.org/app/activity/%s" % result['task_id']
         m = result['message']
-        m = "%s: <a target='_blank' href='%s'>view task</a>" %(m, link)
+        m = "%s: <a target='_blank' href='%s'>view task</a>" % (m, link)
 
-    status = {'message': m }
+    status = {'message': m}
     return JsonResponse(status)

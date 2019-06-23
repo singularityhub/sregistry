@@ -8,43 +8,38 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.apps.main.utils import calculate_expiration_date
-from shub.apps.api.tasks import expire_share
-from django.shortcuts import (
-    render, 
-    reverse
-) 
+from django.shortcuts import reverse
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, JsonResponse
-from django.contrib import messages
+from django.http import JsonResponse
 from datetime import datetime
 
-from notifications.signals import notify
-from shub.apps.users.utils import get_user
+from shub.apps.main.utils import calculate_expiration_date
+from shub.apps.main.views import get_container
+from shub.apps.api.tasks import expire_share
 
 import django_rq
-import os
-import json
-import re
 
 
 @login_required
 def generate_share(request, cid):
     '''generate a temporary share link for a container
-    :param cid: the container to generate a share link for
+
+       Parameters
+       ==========
+       cid: the container to generate a share link for
     '''
     container = get_container(cid)
     edit_permission = container.has_edit_permission(request)
 
-    if edit_permission == True:
+    if edit_permission:
         days = request.POST.get('days', None)
         if days is not None:    
             days = int(days)
             try:
                 expire_date = calculate_expiration_date(days)
-                share,created = Share.objects.get_or_create(container=container,
-                                                            expire_date=expire_date)
+                share, _ = Share.objects.get_or_create(container=container,
+                                                       expire_date=expire_date)
                 share.save()
 
                 # Generate an expiration task
@@ -52,16 +47,16 @@ def generate_share(request, cid):
                                                 eta=expire_date)
 
                 link = reverse('download_share', kwargs={'cid':container.id,
-                                                         'secret':share.secret })
+                                                         'secret':share.secret})
 
                 expire_date = datetime.strftime(expire_date, '%b %m, %Y')
                 response = {"status": "success",
                             "days": days,
                             "expire": expire_date,
-                            "link": link }
+                            "link": link}
             except:
                 response = {"status": "error",
-                            "days": days }
+                            "days": days}
 
         return JsonResponse(response)
 

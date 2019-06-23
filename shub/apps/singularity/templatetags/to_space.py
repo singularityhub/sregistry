@@ -15,5 +15,5 @@ register = template.Library()
 @register.filter
 def to_space(value):
     if isinstance(value, str):
-        return value.replace("_"," ")
+        return value.replace("_", " ")
     return value

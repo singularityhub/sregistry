@@ -23,4 +23,3 @@ def tools_view(request):
 
 def terms_view(request):
     return render(request, 'terms/usage_agreement.html')
-

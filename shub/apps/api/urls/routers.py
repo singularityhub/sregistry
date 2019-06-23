@@ -8,7 +8,10 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.conf.urls import ( url, include )
+from django.conf.urls import (
+    url, 
+    include
+)
 import rest_framework.authtoken.views as authviews
 
 from rest_framework import routers
@@ -29,7 +32,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api-token-auth/', authviews.obtain_auth_token ),
+    url(r'^api-token-auth/', authviews.obtain_auth_token),
 
     url(r'^upload/chunked_upload/?$', collection_auth_check, name='collection_auth_check'),
     url(r'^upload/(?P<cid>.+?)/?$', UploadUI.as_view(), name='chunked_upload'),

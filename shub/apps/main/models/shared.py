@@ -9,15 +9,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf import settings
-from shub.apps.users.models import User
 from django.urls import reverse
 from django.db import models
-from django.db.models import Sum
 from django.contrib.postgres.fields import JSONField
 
 import uuid
-import os
-import re
 
 from .helpers import (
     has_view_permission, 
@@ -108,13 +104,11 @@ class Collection(models.Model):
         total = self.total_size(container_name=container_name)
         if total == 0:
             return total
-        return sum(sizes) / len(sizes)
-
+        return total / self.containers.count()
 
     def total_size(self, container_name=None):
         sizes = self.sizes(container_name=container_name)
         return sum(sizes)
-       
 
     def get_uri(self):
         return "%s:%s" %(self.name,
@@ -131,11 +125,11 @@ class Collection(models.Model):
 
     def container_names(self):
         '''return distinct container names'''
-        return list([x[0] for x in self.containers.values_list('name').distinct() if len(x)>0])
+        return list([x[0] for x in self.containers.values_list('name').distinct() if len(x) > 0])
    
     # Permissions
 
-    def has_edit_permission(self,request):
+    def has_edit_permission(self, request):
         '''can the user of the request edit the collection
         '''
         return has_edit_permission(request=request,
@@ -150,19 +144,18 @@ class Collection(models.Model):
 
 
 
-    def has_collection_star(self,request):
+    def has_collection_star(self, request):
         '''returns true or false to indicate
-        if a user has starred a collection'''
-        has_star = False
+           if a user has starred a collection
+        '''
         if request.user.is_authenticated:
             try:
-                star = Star.objects.get(user=request.user,
-                                        collection=self)
-                has_star = True 
+                Star.objects.get(user=request.user,
+                                 collection=self)
+                return True 
             except:
-                pass
-        return has_star
-
+                return False
+        return False
 
 
     class Meta:
@@ -190,7 +183,7 @@ class Star(models.Model):
         return "collection"
 
     class Meta:
-        unique_together = ('user','collection',)
+        unique_together = ('user', 'collection',)
         app_label = 'main'
 
 
@@ -207,7 +200,7 @@ class Share(models.Model):
         self.secret = str(uuid.uuid4())
 
     def save(self, *args, **kwargs):
-        if self.secret in ['',None]:
+        if self.secret in ['', None]:
             self.generate_secret()
         super(Share, self).save(*args, **kwargs)
 
@@ -218,7 +211,7 @@ class Share(models.Model):
         return "main"
 
     class Meta:
-        unique_together = ('expire_date','container',)
+        unique_together = ('expire_date', 'container',)
         app_label = 'main'
 
 
@@ -238,14 +231,14 @@ class Label(models.Model):
                                          related_name='containers')
 
     def __str__(self):
-        return "%s:%s" %(self.key,self.value)
+        return "%s:%s" %(self.key, self.value)
 
     def __unicode__(self):
-        return "%s:%s" %(self.key,self.value)
+        return "%s:%s" %(self.key, self.value)
 
     def get_label(self):
         return "label"
 
     class Meta:
         app_label = 'main'
-        unique_together =  (("key","value"),)
+        unique_together = (("key", "value"),)

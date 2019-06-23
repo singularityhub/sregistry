@@ -13,33 +13,35 @@ from django.shortcuts import (
     render
 )
 
+from django.contrib import messages
+from django.utils import timezone
 from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
-from shub.apps.users.models import User
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
-from django.utils import timezone
 
 
-#######################################################################################
+################################################################################
 # AUTHENTICATION
-#######################################################################################
+################################################################################
 
 
-def validate_credentials(user,context=None):
+def validate_credentials(user, context=None):
     '''validate_credentials will return a context object with "aok" for each credential
-    that exists, and "None" if it does not for a given user
-    :param user: the user to check, should have social_auth
-    :param context: an optional context object to append to
+       that exists, and "None" if it does not for a given user
+ 
+       Parameters
+       ==========
+       user: the user to check, should have social_auth
+       context: an optional context object to append to
     '''
-    if context == None:
+    if context is None:
         context = dict()
 
     # Right now we have github for repos and google for storage
-    credentials = [{'provider':'google-oauth2','key':'google_credentials'},
-                   {'provider':'github','key':'github_credentials'},
-                   {'provider':'globus','key':'globus_credentials'},
-                   {'provider':'twitter','key':'twitter_credentials'}] 
+    credentials = [{'provider':'google-oauth2', 'key':'google_credentials'},
+                   {'provider':'github', 'key':'github_credentials'},
+                   {'provider':'globus', 'key':'globus_credentials'},
+                   {'provider':'twitter', 'key':'twitter_credentials'}] 
 
     # Iterate through credentials, and set each available to aok. This is how
     # the templates will know to tell users which they need to add, etc.
@@ -48,7 +50,7 @@ def validate_credentials(user,context=None):
         credential = None
         if not user.is_anonymous:
             credential = user.get_credentials(provider=group['provider'])
-        if credential != None:
+        if credential is not None:
             context[group['key']] = 'aok'
         else:
             credentials_missing = None
@@ -64,27 +66,27 @@ def agree_terms(request):
         request.user.agree_terms = True
         request.user.agree_terms_date = timezone.now()
         request.user.save()
-        response_data = {'status': request.user.agree_terms }
+        response_data = {'status': request.user.agree_terms}
         return JsonResponse(response_data)
 
     return JsonResponse({"Unicorn poop cookies...": "I will never understand the allure."})
 
 
 
-def login(request,message=None):
+def login(request, message=None):
     '''login will either show the user a button to login with github, and then a link
-    to their collections (given storage is set up) or a link to connect storage (if it 
-    isn't)
+       to their collections (given storage is set up) or a link to connect storage (if it 
+       isn't)
     '''
     if message is not None:
-        messages.info(message)    
+        messages.info(request, message)    
 
-    context=None
+    context = None
     if request.user.is_authenticated:
         if not request.user.agree_terms:
-            return render(request,'terms/usage_agreement_login.html', context)
+            return render(request, 'terms/usage_agreement_login.html', context)
         context = validate_credentials(user=request.user)
-    return render(request,'social/login.html', context)
+    return render(request, 'social/login.html', context)
 
 
 @login_required
@@ -117,15 +119,14 @@ def redirect_if_no_refresh_token(backend, response, social, *args, **kwargs):
 
 def social_user(backend, uid, user=None, *args, **kwargs):
     '''OVERRIDED: It will give the user an error message if the
-    account is already associated with a username.'''
+       account is already associated with a username.'''
     provider = backend.name
     social = backend.strategy.storage.user.get_social_auth(provider, uid)
 
     if social:
         if user and social.user != user:
             msg = 'This {0} account is already in use.'.format(provider)
-            return login(request=backend.strategy.request,
-                         message=msg)
+            return login(request=backend.strategy.request, message=msg)
             #raise AuthAlreadyAssociated(backend, msg)
         elif not user:
             user = social.user

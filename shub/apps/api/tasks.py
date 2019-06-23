@@ -8,13 +8,19 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.conf import settings
-import os
+from shub.logger import bot
 
 def expire_share(sid):
+    '''expire a share based on its id, meaning deleting it so that
+       it can no longer be used.
+
+       Parameters
+       ==========
+       sid: the share id to expire
+    '''
     from shub.apps.main.models import Share
     try:
         share = Share.objects.get(id=sid)
         share.delete()
     except Share.DoesNotExist:
-        bot.warning("Share %s expired." %sid)
+        bot.warning("Share %s expired." % sid)

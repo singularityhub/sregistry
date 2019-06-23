@@ -8,41 +8,24 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.apps.main.models import (
-    Container, 
-    Collection,
-    Label,
-    Star
-)
-
+from shub.apps.main.models import Label
+from django.http.response import Http404
+from django.contrib import messages
+from django.db.models import Count
 from django.shortcuts import (
-    get_object_or_404, 
-    render_to_response, 
     render, 
     redirect
 )
 
 from django.db.models import Q
-from django.http import (
-    JsonResponse, 
-    HttpResponseRedirect
-)
-from django.http.response import Http404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.db.models import Count
+from django.http import HttpResponseRedirect
 
-import os
-import re
-import uuid
-
-from .collections import get_collection
 from django.urls import reverse
 
 
 #### GETS #############################################################
 
-def get_label(key=None,value=None):
+def get_label(key=None, value=None):
 
     keyargs = dict()
     if key is not None:
@@ -62,51 +45,49 @@ def get_label(key=None,value=None):
 def all_labels(request):
     # Generate queryset of labels annotated with count based on key, eg {'key': 'maintainer', 'id__count': 1}
     labels = Label.objects.values('key').annotate(Count("id")).order_by()
-    context = {"labels":labels}
+    context = {"labels": labels}
     return render(request, 'labels/all_labels.html', context)
 
 
-def view_label(request,lid):
+def view_label(request, lid):
     '''view containers with a specific, exact key/pair'''
     try:
         label = Label.objects.get(id=lid)
     except:
-        messages.info(request,"This label does not exist.")
+        messages.info(request, "This label does not exist.")
         return redirect('all_labels')
 
-    context = {"label":label }
+    context = {"label": label}
 
     return render(request, 'labels/view_label.html', context)
 
 
-def view_label_keyval(request,key,value):
+def view_label_keyval(request, key, value):
     '''view containers with a specific, exact key/pair'''
     try:
-        label = Label.objects.get(key=key,
-                                  value=value)
+        label = Label.objects.get(key=key, value=value)
     except:
-        messages.info(request,"This label does not exist.")
+        messages.info(request, "This label does not exist.")
         return redirect('all_labels')
 
-    url = reverse('view_label_id', kwargs={'lid': label.id })
+    url = reverse('view_label_id', kwargs={'lid': label.id})
     return HttpResponseRedirect(url)
 
 
-def view_label_key(request,key):
+def view_label_key(request, key):
     '''view all labels with a shared key'''
     labels = Label.objects.filter(key=key)
-    context = {"labels":labels,
-               "key":key }
+    context = {"labels": labels, "key": key}
     return render(request, 'labels/view_label_key.html', context)
 
 
-def update_container_labels(container,labels):
-    for name,value in labels.items():
-        if isinstance(value,str):
+def update_container_labels(container, labels):
+    for name, value in labels.items():
+        if isinstance(value, str):
             value = value.lower()
 
-        label,created = Label.objects.get_or_create(key=name.lower(),
-                                                    value=value)
+        label, _ = Label.objects.get_or_create(key=name.lower(),
+                                               value=value)
 
         label.save()
         

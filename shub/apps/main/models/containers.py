@@ -11,7 +11,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from shub.apps.api.models import ImageFile
 from django.urls import reverse
 from django.db import models
-from django.db.models import Q, DO_NOTHING
 from django.db.models.signals import pre_delete
 
 from django.contrib.postgres.fields import JSONField
@@ -38,9 +37,9 @@ ACTIVE_CHOICES = ((True, 'Active'),
                   (False, 'Disabled'))
 
 
-def delete_imagefile(sender,instance,**kwargs):
-    if instance.image not in ['',None]:
-        if hasattr(instance.image,'datafile'):
+def delete_imagefile(sender, instance, **kwargs):
+    if instance.image not in ['', None]:
+        if hasattr(instance.image, 'datafile'):
             instance.image.datafile.delete()
 
 ################################################################################
@@ -48,26 +47,26 @@ def delete_imagefile(sender,instance,**kwargs):
 ################################################################################
 
 
-verbose_frozen_name="is the container frozen, meaning builds will not be replaced?"
+verbose_frozen_name = "is the container frozen, meaning builds will not be replaced?"
 
 class Container(models.Model):
-    '''A container is a base (singularity) container, stored as a file (image) with a unique id and name
+    '''A container is a base (singularity) container with a unique id and name
     '''
     add_date = models.DateTimeField('date container added', auto_now=True)
 
     # When the collection is deleted, DO delete the Container object
-    collection = models.ForeignKey('main.Collection', null=False,blank=False, 
+    collection = models.ForeignKey('main.Collection', null=False, blank=False, 
                                                       related_name="containers", 
                                                       on_delete=models.CASCADE)
 
     # When the Image File is deleted, don't delete the Container object (can be updated)
     image = models.ForeignKey(ImageFile, null=True, blank=False, on_delete=models.SET_NULL)
     metadata = JSONField(default=dict, blank=True)
-    metrics = JSONField(default=dict,blank=True)
+    metrics = JSONField(default=dict, blank=True)
     name = models.CharField(max_length=250, null=False, blank=False)
-    tag = models.CharField(max_length=250,null=False,blank=False,default="latest")
-    secret = models.CharField(max_length=250,null=True,blank=True)
-    version = models.CharField(max_length=250,null=True,blank=True)
+    tag = models.CharField(max_length=250, null=False, blank=False, default="latest")
+    secret = models.CharField(max_length=250, null=True, blank=True)
+    version = models.CharField(max_length=250, null=True, blank=True)
     tags = TaggableManager()
     frozen = models.BooleanField(choices=FROZEN_CHOICES,
                                  default=False,
@@ -107,7 +106,7 @@ class Container(models.Model):
                             self.name,
                             version)
 
-    def update_secret(self,save=True):
+    def update_secret(self, save=True):
         '''secret exists to make brute force download not possible'''
         self.secret = str(uuid.uuid4())
         if save is True:
@@ -119,29 +118,26 @@ class Container(models.Model):
         super(Container, self).save(*args, **kwargs)
 
     def get_image_path(self):
-        if self.image not in [None,""]:
+        if self.image not in [None, ""]:
             return self.image.datafile.path
         return None
 
     def get_download_name(self, extension="sif"):
-        image_path = self.get_image_path()
-        return "%s.%s" %(self.get_uri().replace('/','-'), extension)
+        return "%s.%s" %(self.get_uri().replace('/', '-'), extension)
 
     def members(self):
         return get_collection_users(self)
 
     def get_download_url(self):
-        if self.image not in [None,""]:
+        if self.image not in [None, ""]:
             return self.image.datafile.file
         return None
 
     def get_label(self):
         return "container"
 
-
     def __str__(self):
         return self.get_uri()
-
 
     def __unicode__(self):
         return self.get_uri()
@@ -149,7 +145,7 @@ class Container(models.Model):
     class Meta:
         ordering = ['name']
         app_label = 'main' 
-        unique_together =  (("name","tag","collection"),)
+        unique_together = (("name", "tag", "collection"),)
 
     def get_absolute_url(self):
         return_cid = self.id
@@ -157,14 +153,15 @@ class Container(models.Model):
 
 
     def labels(self):
+        from shub.apps.main.models import Label
         return Label.objects.filter(containers=self)
         
 
-    def has_edit_permission(self,request):
+    def has_edit_permission(self, request):
         return has_edit_permission(request=request,
                                    instance=self.collection)
 
-    def has_view_permission(self,request):
+    def has_view_permission(self, request):
         return has_view_permission(request=request,
                                    instance=self.collection)
 

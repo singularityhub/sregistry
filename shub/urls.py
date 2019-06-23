@@ -10,17 +10,19 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from importlib import import_module
 
-from django.conf.urls import include, url
-from shub.apps.base import urls as base_urls
-from shub.apps.main import urls as main_urls
-from shub.apps.users import urls as user_urls
-from shub.apps.api import urls as api_urls
-from shub.apps.library import urls as library_urls
-
+from django.conf import settings
+from django.conf.urls import (include, url)
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap, index
-
-from django.conf import settings
+from shub.apps.api import urls as api_urls
+from shub.apps.base import urls as base_urls
+from shub.apps.library import urls as library_urls
+from shub.apps.main import urls as main_urls
+from shub.apps.users import urls as user_urls
+from shub.apps.base.sitemap import (
+    CollectionSitemap, 
+    ContainerSitemap
+)
 
 from rest_framework.schemas import get_schema_view
 from rest_framework.documentation import include_docs_urls
@@ -31,16 +33,10 @@ API_DESCRIPTION = 'Open Source Container Registry API'
 schema_view = get_schema_view(title=API_TITLE)
 
 # Configure custom error pages
-from django.conf.urls import ( handler404, handler500 )
 handler404 = 'shub.apps.base.views.handler404'
 handler500 = 'shub.apps.base.views.handler500'
 
 # Sitemaps
-from shub.apps.base.sitemap import (
-    CollectionSitemap, 
-    ContainerSitemap
-)
-
 sitemaps = {"containers": ContainerSitemap,
             "collections": CollectionSitemap}
 

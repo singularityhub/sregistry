@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
-from rest_framework.routers import DefaultRouter
+from django.conf.urls import url
+#from rest_framework.routers import DefaultRouter
 
 from shub.apps.library import views
 

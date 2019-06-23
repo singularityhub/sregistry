@@ -24,7 +24,7 @@ if "google_build" in PLUGINS_ENABLED:
                                 "read:org",
                                 "admin:org_hook",
                                 "deployment_status"]
-    ENABLE_GITHUB_AUTH=True
+    ENABLE_GITHUB_AUTH = True
 
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:

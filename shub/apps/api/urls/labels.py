@@ -9,26 +9,13 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf.urls import url
-from django.http import Http404
 
-import os
+from shub.apps.main.models import Label
 
-from shub.apps.api.urls.serializers import (
-    HyperlinkedImageURL,
-    SerializedContributors,
-    HyperlinkedDownloadURL,
-    HyperlinkedRelatedURL
+from rest_framework import (
+    serializers,
+    viewsets
 )
-from shub.apps.main.models import (
-    Container, 
-    Collection,
-    Label
-)
-
-
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -38,8 +25,6 @@ from rest_framework.views import APIView
 ################################################################################
 
 class LabelSerializer(serializers.ModelSerializer):
-    #containers = serializers.PrimaryKeyRelatedField(many=True, 
-    #                                                queryset=Container.objects.all())
 
     containers = serializers.SerializerMethodField('list_containers')
 
@@ -51,7 +36,7 @@ class LabelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Label
-        fields = ('key','value','containers',)
+        fields = ('key', 'value', 'containers',)
 
 
 
@@ -82,7 +67,7 @@ class LabelDetail(APIView):
             return Label.objects.all()
 
         if key is not None and value is not None:
-            return Label.objects.filter(key=key,value=value)
+            return Label.objects.filter(key=key, value=value)
 
         if key is None:
             return Label.objects.filter(value=value)
@@ -90,7 +75,7 @@ class LabelDetail(APIView):
         return Label.objects.filter(key=key)
 
     def get(self, request, key=None, value=None):
-        labels = self.get_object(key,value)
+        labels = self.get_object(key, value)
         data = [LabelSerializer(l).data for l in labels]
         return Response(data)
    

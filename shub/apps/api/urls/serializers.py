@@ -30,8 +30,6 @@ class SerializedContributors(serializers.CharField):
 class HyperlinkedDownloadURL(serializers.RelatedField):
     def to_representation(self, value):
         if value:
-            print(value)
-            print(request)
             request = self.context.get('request', None)
             return request.build_absolute_uri(value + "download")
 

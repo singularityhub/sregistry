@@ -8,7 +8,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
@@ -21,8 +20,7 @@ import os
 def get_upload_folder(instance, filename):
     '''a helper function to upload a recipe file to storage.
     '''
-    from shub.apps.main.models import Container, Collection
-    tag = instance.tag.lower()
+    from shub.apps.main.models import Collection
     collection_name = instance.collection.lower()
     instance.collection = collection_name
     

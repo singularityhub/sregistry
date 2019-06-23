@@ -8,18 +8,17 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.logger import bot
 from dateutil.parser import parse
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
-from shub.apps.users.models import User
+from shub.logger import bot
 from shub.apps.main.models import Container, Collection
-from shub.apps.main.views import update_container_labels
 from sregistry.main.google_build.client import get_client 
-from datetime import datetime
-from pathlib import Path
-from time import sleep
+from datetime import (
+    datetime, 
+    timedelta
+)
 from sregistry.utils import get_recipe_tag
 from .utils import (
     convert_size, 

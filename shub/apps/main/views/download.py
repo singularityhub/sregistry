@@ -8,40 +8,23 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.apps.main.models import (
-    Container, 
-    Collection,
-    Share,
-    Star
-)
+from django.contrib import messages
+from django.http.response import Http404
 
-from django.shortcuts import (
-    get_object_or_404, 
-    render_to_response, 
-    render, 
-    redirect
-)
+from django.shortcuts import redirect
 
 from django.http import (
-    JsonResponse,
     HttpResponse,
     FileResponse
 )
 
-from shub.apps.main.utils import (
-    calculate_expiration_date,
-    validate_share
-)
+from shub.apps.main.models import Share
+from shub.apps.main.utils import validate_share
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http.response import Http404
 from rest_framework import status
 from rest_framework.response import Response
 
 import os
-import re
-import uuid
 
 from .containers import get_container
 
@@ -117,14 +100,14 @@ def _download_container(container, request):
        container: the container to download
 
     '''
-    if container.image != None:
+    if container.image is not None:
 
         filename = container.get_download_name()
         filepath = container.image.get_abspath()
 
         f = open(filepath, 'rb')
         response = FileResponse(f, content_type='application/img')
-        response['Content-Disposition'] = 'attachment; filename="%s"' %filename
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         response['Content-Length'] = os.path.getsize(filepath)
 
         return response

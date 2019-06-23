@@ -10,4 +10,3 @@ urlpatterns = [
         auth_views.LoginView.as_view(template_name='pam_auth/logout.html'),
                      name="pam_auth-logout"),
 ]
-

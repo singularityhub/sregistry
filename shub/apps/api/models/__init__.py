@@ -28,8 +28,7 @@ def get_upload_to(instance, filename):
 def get_upload_folder(instance, filename):
     '''a helper function to upload to storage
     '''
-    from shub.apps.main.models import Container, Collection
-    tag = instance.tag.lower()
+    from shub.apps.main.models import Collection
     collection_name = instance.collection.lower()
     instance.collection = collection_name
     
@@ -42,7 +41,7 @@ def get_upload_folder(instance, filename):
         collection.save()
 
     # Create collection root, if it doesn't exist
-    image_home = "%s/%s" %(settings.MEDIA_ROOT,collection_name)
+    image_home = "%s/%s" %(settings.MEDIA_ROOT, collection_name)
     if not os.path.exists(image_home):
         os.mkdir(image_home)
     

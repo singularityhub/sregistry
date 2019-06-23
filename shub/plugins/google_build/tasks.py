@@ -9,15 +9,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-
 from dateutil.parser import parse
 import django_rq
 import os
 import re
 
-from django.conf import settings
-from django.apps import apps
 
 
 def prepare_build_task(cid, recipes, branch):
@@ -90,7 +86,6 @@ def build_commits(collection, commits, branch):
             # Supports building from Singularity recipes
             if re.search("Singularity", filename):
                 add_record = True
-                remove_record = False
 
             if filename in modified:
 

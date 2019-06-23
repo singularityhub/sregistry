@@ -15,7 +15,6 @@ from django.core.management.base import (
 
 from shub.apps.users.models import User
 from shub.logger import bot
-import re
 
 class Command(BaseCommand):
     '''add superuser will add admin and manager privs singularity 
@@ -27,7 +26,7 @@ class Command(BaseCommand):
         parser.add_argument('--username', dest='username', default=None, type=str)
 
     help = "Generates a superuser for the registry."
-    def handle(self,*args, **options):
+    def handle(self, *args, **options):
         if options['username'] is None:
             raise CommandError("Please provide a username with --username")
 

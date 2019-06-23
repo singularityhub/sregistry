@@ -8,25 +8,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.conf.urls import url
-from django.http import Http404
+from django.conf import settings
 from django.shortcuts import (
     redirect,
     reverse
 )
 from sregistry.utils import parse_image_name
-import os
 
 from shub.apps.logs.models import APIRequestCount
-from shub.apps.api.utils import ObjectOnlyPermissions
-from shub.apps.main.models import Container, Collection
 from shub.apps.main.views import get_collection_named
 
-from django.conf import settings
-
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
@@ -62,7 +53,7 @@ class DownloadImageView(APIView):
             return container.metadata['image']
                 
         secret = container.collection.secret
-        url = reverse('download_container', kwargs= {'cid':container.id,
+        url = reverse('download_container', kwargs={'cid':container.id,
                                                      'secret':secret})
         return "%s%s" %(settings.DOMAIN_NAME, url)
 

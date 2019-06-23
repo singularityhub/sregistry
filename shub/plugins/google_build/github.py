@@ -8,58 +8,31 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-import json
-import requests
-
-from django.http import (
-    HttpResponse, 
-    JsonResponse
-)
-
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
-from shub.apps.users.models import User
-from shub.logger import bot
 
 import django_rq
-from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework import (
-    authentication, 
-    status
-)
-
-from rest_framework.response import Response
-
-from shub.apps.main.models import (
-    Container, 
-    Collection
-)
+from shub.apps.users.models import User
+from shub.logger import bot
+from shub.settings import DOMAIN_NAME
+from shub.apps.main.models import Collection
 
 from .utils import (
     check_headers,
-    format_params,
     get_default_headers,
     JsonResponseMessage, 
     load_body,
     paginate,
-    validate_payload
-)
-
-from .utils import (
+    validate_payload,
     DELETE,
     POST
 )
 
-from shub.settings import DOMAIN_NAME
-
 from dateutil.parser import parse
-import json
-import os
 from datetime import datetime
-import pickle
 import re
 import requests
-import uuid
 
 
 api_base = 'https://api.github.com'
@@ -104,7 +77,7 @@ def get_auth_token(user, idx=0):
     auth = [x for x in user.social_auth.all() if x.provider == 'github-private']
 
     # 2. Github public second priority
-    if len(auth) == 0:
+    if not auth:
         auth = [x for x in user.social_auth.all() if x.provider == 'github']
 
     if len(auth) > idx:
@@ -127,8 +100,8 @@ def get_repo(user, reponame, username, headers=None):
     if headers is None:
         headers = get_auth(user)
     headers['Accept'] = "application/vnd.github.mercy-preview+json" 
-    url = "%s/repos/%s/%s" %(api_base,username,reponame)
-    response = requests.get(url,headers=headers)
+    url = "%s/repos/%s/%s" %(api_base, username, reponame)
+    response = requests.get(url, headers=headers)
 
     # Case 2: public and private
     if response.status_code != 200:
@@ -150,12 +123,12 @@ def list_repos(user, headers=None):
     if headers is None:
         headers = get_auth(user)
     url = "%s/user/repos" %(api_base)
-    repos = paginate(url=url,headers=headers)
+    repos = paginate(url=url, headers=headers)
 
     if not repos:
         auth_headers = get_auth(user, idx=1)
         headers.update(auth_headers)
-        repos = paginate(url=url,headers=headers)
+        repos = paginate(url=url, headers=headers)
     return repos
 
 
@@ -184,11 +157,11 @@ def get_commits(user, uri, headers=None, sha=None, limit=None):
 
     # Option 2, return paginated commits
     commits = paginate(url=url, headers=headers, limit=limit)
-    if len(commits) == 0:
+    if not commits:
         auth_headers = get_auth(user, idx=1)
         headers.update(auth_headers)
-        commits = paginate(url=url,headers=headers,limit=limit)
-    bot.debug('Found %s commits'%len(commits))
+        commits = paginate(url=url, headers=headers, limit=limit)
+    bot.debug('Found %s commits'% len(commits))
     return commits
 
 
@@ -202,7 +175,7 @@ def get_branch_commits(user, uri, branch):
     if response.status_code != 200:
         auth_headers = get_auth(user, idx=1)
         headers.update(auth_headers)
-        response = requests.get(url=url,headers=headers)
+        response = requests.get(url=url, headers=headers)
     return response.json()
 
 
@@ -219,7 +192,7 @@ def get_commits_since(commits, since):
     updates = []
     seen = []
 
-    def isnew(changed,since):
+    def isnew(changed, since):
         if isinstance(since, int):
             since = datetime.fromtimestamp(since).strftime('%Y-%m-%dT%H:%M:%SZ')
         if parse(changed) >= parse(since):
@@ -228,7 +201,7 @@ def get_commits_since(commits, since):
 
     for commit in commits:
         commit_date = get_commit_date(commit)
-        if isnew(commit_date,since) and commit['sha'] not in seen:
+        if isnew(commit_date, since) and commit['sha'] not in seen:
             updates.append(commit)
             seen.append(commit['sha'])
 
@@ -301,14 +274,14 @@ def create_webhook(user, repo, secret):
 
     callback_url = "%s%s/" %(DOMAIN_NAME.strip('/'), reverse('receive_hook'))
 
-    config = { "url": callback_url,
-               "content_type": "json",
-               "secret": secret }
+    config = {"url": callback_url,
+              "content_type": "json",
+              "secret": secret}
 
-    params = { "name" : "web",
-               "active" : True,
-               "events" : ["push", "deployment"],
-               "config" : config }
+    params = {"name": "web",
+              "active": True,
+              "events": ["push", "deployment"],
+              "config": config}
 
     # Create webhook
     response = POST(url, headers=headers, data=params)
@@ -377,7 +350,7 @@ def receive_github_hook(request):
     if request.method == "POST":
 
         # Has to have Github-Hookshot
-        if not re.search('GitHub-Hookshot',request.META["HTTP_USER_AGENT"]):
+        if not re.search('GitHub-Hookshot', request.META["HTTP_USER_AGENT"]):
             return JsonResponseMessage(message="Agent not allowed")
 
         # Only allow application/json content type
@@ -428,7 +401,6 @@ def verify_payload(request, collection):
     from shub.plugins.google_build.tasks import parse_hook
 
     payload = load_body(request)
-    repo = payload.get('repository')
 
     # Validate the payload with the collection secret
     signature = request.META.get('HTTP_X_HUB_SIGNATURE')
@@ -443,7 +415,7 @@ def verify_payload(request, collection):
 
     # If a branch is provided, this is the version  "ref": "refs/heads/master",
     try:
-        branch = payload.get('ref','refs/heads/master').replace('refs/heads/','')
+        branch = payload.get('ref', 'refs/heads/master').replace('refs/heads/', '')
     except:
         branch = "master"
 

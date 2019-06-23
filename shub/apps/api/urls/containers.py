@@ -8,33 +8,29 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
+from django.conf import settings
 from django.conf.urls import url
+from django.urls import reverse
+
+from shub.apps.api.utils import validate_request
+from shub.apps.main.models import Container
+from shub.apps.logs.mixins import LoggingMixin
+from shub.apps.api.utils import has_permission
+
+from sregistry.main.registry.auth import generate_timestamp
+
+from rest_framework import (
+    generics,
+    serializers,
+    viewsets,
+    status
+)
 from rest_framework.exceptions import (
     PermissionDenied,
     NotFound
 )
-
-
-from shub.apps.api.utils import validate_request
-from sregistry.main.registry.auth import generate_timestamp
-
-from django.urls import reverse
-from django.http import Http404
-
-import os
-from shub.apps.main.models import Container, Collection
-
-from rest_framework import generics
-from shub.apps.logs.mixins import LoggingMixin
-from shub.apps.main.query import container_lookup
-from shub.apps.api.utils import has_permission
-
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.conf import settings
 
 ################################################################################
 # Single Object Serializers
@@ -62,14 +58,15 @@ class SingleContainerSerializer(serializers.ModelSerializer):
             return container.metadata['image']
                 
         secret = container.collection.secret
-        url = reverse('download_container', kwargs= {'cid':container.id,
-                                                     'secret':secret})
-        return "%s%s" %(settings.DOMAIN_NAME, url)
+        download_url = reverse('download_container', 
+                               kwargs={'cid': container.id, 'secret': secret})
+
+        return "%s%s" %(settings.DOMAIN_NAME, download_url)
 
     class Meta:
         model = Container
-        fields = ('id','name','image','tag','add_date', 'metrics',
-                  'version','tag','frozen', 'metadata', 'collection')
+        fields = ('id', 'name', 'image', 'tag', 'add_date', 'metrics',
+                  'version', 'tag', 'frozen', 'metadata', 'collection')
 
 ################################################################################
 # Multiple Object Serializers
@@ -93,8 +90,8 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Container
-        fields = ('id','name','tag','add_date', 'metrics',
-                  'version','tag', 'frozen', 'metadata', 'collection')
+        fields = ('id', 'name', 'tag', 'add_date', 'metrics',
+                  'version', 'tag', 'frozen', 'metadata', 'collection')
 
     id = serializers.ReadOnlyField()
 
@@ -123,7 +120,7 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
 class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
     '''Retrieve a container instance based on it's name
     '''
-    def get_object(self, collection, name, tag=None, version=None):
+    def get_object(self, collection, name, tag=None, version=None): # pylint: disable=arguments-differ
 
         try:
 
@@ -249,7 +246,7 @@ def _container_get(request, container, name=None, tag=None):
 class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
     '''Retrieve a container instance based on it's id
     '''
-    def get_object(self, cid):
+    def get_object(self, cid): # pylint: disable=arguments-differ
         from shub.apps.main.views.containers import get_container
         container = get_container(cid)
         return container
@@ -282,7 +279,7 @@ class ContainerSearch(APIView):
                                         tag=tag)
         
     def get(self, request, name, collection=None, tag=None):
-        containers = self.get_object(name,collection,tag)
+        containers = self.get_object(name, collection, tag)
         data = [ContainerSerializer(c).data for c in containers]
         return Response(data)
     

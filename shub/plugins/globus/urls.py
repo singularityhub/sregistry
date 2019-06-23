@@ -8,5 +8,5 @@ urlpatterns = [
     url(r'^endpoint/(?P<endpoint_id>.+?)/(?P<cid>\d+)?$', views.globus_endpoint, name='globus_endpoint'),
     url(r'^endpoint/(?P<cid>\d+)/?$', views.globus_endpoint, name='globus_endpoint'),
     url(r'^transfer/(?P<cid>\d+)/?$', views.globus_transfer, name='globus_transfer'),
-    url(r'^transfer/(?P<endpoint>.+?)/container/(?P<cid>\d+)/?$', views.submit_transfer,name='submit_transfer'),
+    url(r'^transfer/(?P<endpoint>.+?)/container/(?P<cid>\d+)/?$', views.submit_transfer, name='submit_transfer')
 ]

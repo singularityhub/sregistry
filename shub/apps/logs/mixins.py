@@ -32,7 +32,7 @@ class BaseLoggingMixin(object):
             attributes = getattr(self, method)
             view_name = (type(attributes.__self__).__module__ + '.' +
                          type(attributes.__self__).__name__)
-        except Exception:
+        except:
             pass
 
         # get the method of the view
@@ -101,17 +101,12 @@ class BaseLoggingMixin(object):
         response_ms = int(response_timedelta.total_seconds() * 1000)
 
         # save to log
-        if (self._should_log(request, response)):
+        if self._should_log(request, response):
             self.request.log.response = response.rendered_content
             self.request.log.status_code = response.status_code
             self.request.log.response_ms = response_ms
-            #try:
             self.request.log.save()
-            #except:
-                # ensure that a DB error doesn't prevent API call to continue as expected
-            #    pass
 
-        # return
         return response
 
     def _should_log(self, request, response):

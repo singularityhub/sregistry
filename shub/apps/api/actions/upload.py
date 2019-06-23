@@ -8,25 +8,25 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.logger import bot
 from urllib.parse import unquote
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import TemplateView
+from django.contrib import messages
 
 from shub.apps.main.models import Collection
-from sregistry.main.registry.auth import generate_timestamp
 from shub.apps.api.utils import ( 
     get_request_user,
     has_permission,
     validate_request
 )
 
+from sregistry.main.registry.auth import generate_timestamp
+
 from rest_framework.exceptions import PermissionDenied
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import TemplateView
-from django.contrib import messages
 
 import os
 

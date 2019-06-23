@@ -21,7 +21,6 @@ def get_user(uid):
        Parameters
        ==========
        uid: the id of the user
-
     '''
     from shub.apps.users.models import User
     keyargs = {'id':uid}
@@ -36,7 +35,7 @@ def get_user(uid):
 def get_usertoken(user):
     try:
         token = Token.objects.get(user=user)
-    except TokenDoesNotExist:
+    except Token.DoesNotExist:
         token = Token.objects.create(user=user)
     return token.key
 
@@ -70,9 +69,12 @@ def create_code_challenge():
 
 def basic_auth_header(username, password):
     '''return a base64 encoded header object to
-    generate a token
-    :param username: the username
-    :param password: the password
+       generate a token
+
+       Parameters
+       ==========
+       username: the username
+       password: the password
     '''
     s = "%s:%s" % (username, password)
     if sys.version_info[0] >= 3:
@@ -82,4 +84,3 @@ def basic_auth_header(username, password):
         credentials = base64.b64encode(s)
     auth = {"Authorization": "Basic %s" % credentials}
     return auth
-

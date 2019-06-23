@@ -9,28 +9,28 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from datetime import timedelta
+from django.conf import settings
 from django.utils import timezone
 
-from shub.apps.main.models import Container
 from sregistry.utils import read_json
-from django.conf import settings
 
-from itertools import chain
 import os
 import re
-import requests
 import tempfile
 
 
 def get_nightly_comparisons(date=None):
     '''load the latest nightly comparisons.
-    :param date: if provided, will load specified date instead of latest.
+
+       Parameters
+       ==========
+       date: if provided, will load specified date instead of latest.
     '''
-    root = os.path.abspath(os.path.join(settings.MEDIA_ROOT,'trees','nightly'))
-    base_name = "%s/container-tree" %(root)
-    if date == None:
+    root = os.path.abspath(os.path.join(settings.MEDIA_ROOT, 'trees', 'nightly'))
+    base_name = "%s/container-tree" % root
+    if date is None:
         date = "latest"
-    base_name = "%s-%s.json" %(base_name,date)
+    base_name = "%s-%s.json" %(base_name, date)
     if os.path.exists(base_name):
         return read_json(base_name)
     return None
@@ -40,7 +40,7 @@ def write_tmpfile(memory_file):
     '''save tmp will extract a file to a temporary location
     '''
     tmpdir = tempfile.mkdtemp()
-    file_name = '%s/%s' %(tmpdir,memory_file.name)
+    file_name = '%s/%s' %(tmpdir, memory_file.name)
     with open(file_name, 'wb+') as dest:
         for chunk in memory_file.chunks():
             dest.write(chunk)
@@ -53,12 +53,12 @@ def format_collection_name(collection_name):
     return collection_name.strip('-').lower()
 
 
-def format_container_name(name,special_characters=None):
+def format_container_name(name, special_characters=None):
     '''format_container_name will take a name supplied by the user,
-    remove all special characters (except for those defined by "special-characters"
-    and return the new image name.
+       remove all special characters (except for those defined by "special-characters"
+       and return the new image name.
     '''
-    if special_characters == None:
+    if special_characters is None:
         special_characters = []
     return ''.join(e.lower() for e in name if e.isalnum() or e in special_characters)
 
@@ -66,14 +66,14 @@ def format_container_name(name,special_characters=None):
 def validate_share(share):
     '''compare the share expiration date with the current date
 
-    Parameters
-    ==========
-    share: a shub.apps.main.models.Share object, holding a container,
-           and an expiration date.
+       Parameters
+       ==========
+       share: a shub.apps.main.models.Share object, holding a container,
+              and an expiration date.
 
-    Returns
-    =======
-    True if valid, False if not. If False, will delete share.
+       Returns
+       =======
+       True if valid, False if not. If False, will delete share.
     '''
     today = timezone.now()
     if today <= share.expire_date:

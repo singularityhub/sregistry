@@ -11,11 +11,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 # AUTHENTICATION
 
 # Which social auths do you want to use?
-ENABLE_GOOGLE_AUTH=False
-ENABLE_TWITTER_AUTH=False
-ENABLE_GITHUB_AUTH=True
-ENABLE_GITLAB_AUTH=False
-ENABLE_BITBUCKET_AUTH=False
+ENABLE_GOOGLE_AUTH = False
+ENABLE_TWITTER_AUTH = False
+ENABLE_GITHUB_AUTH = True
+ENABLE_GITLAB_AUTH = False
+ENABLE_BITBUCKET_AUTH = False
 
 # NOTE you will need to set autehtication methods up.
 # Configuration goes into secrets.py
@@ -33,9 +33,9 @@ ENABLE_BITBUCKET_AUTH=False
 
 DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
-DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://','')
+DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://', '')
 
-ADMINS = (( 'vsochat', 'vsochat@gmail.com'),)
+ADMINS = (('vsochat', 'vsochat@gmail.com'),)
 MANAGERS = ADMINS
 
 HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
@@ -78,14 +78,13 @@ DATABASES = {
 
 # After how many single containers should we switch to showing collections
 # only? >= 1000
-VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
-
+VISUALIZATION_TREEMAP_COLLECTION_SWITCH = 1000
 
 # Logging
 
 # Do you want to save complete response metadata per each pull?
 # If you disable, we still keep track of collection pull counts, but not specific versions
-LOGGING_SAVE_RESPONSES=True
+LOGGING_SAVE_RESPONSES = True
 
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it

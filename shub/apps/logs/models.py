@@ -76,13 +76,12 @@ def finalize_request(sender, instance, **kwargs):
        method, and path
     '''
     from shub.apps.logs.utils import get_request_collection
-    from django.conf import settings
     collection = get_request_collection(instance)
 
     if collection is not None:    
-        counter,created = APIRequestCount.objects.get_or_create(path=instance.view,
-                                                                method=instance.view_method,
-                                                                collection=collection)
+        counter, _ = APIRequestCount.objects.get_or_create(path=instance.view,
+                                                           method=instance.view_method,
+                                                           collection=collection)
         counter.count += 1
         counter.save()
 

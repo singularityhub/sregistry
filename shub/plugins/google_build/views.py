@@ -10,16 +10,18 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.parsers import (
-    FormParser, 
-    MultiPartParser
-)
-
 from django.contrib import messages
 from django.shortcuts import (
     render, 
     redirect
+)
+
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import (
+    FormParser, 
+    MultiPartParser
 )
 
 from shub.apps.main.views import (
@@ -31,28 +33,24 @@ from shub.apps.main.models import (
     Collection, 
     Container
 )
-from rest_framework.viewsets import ModelViewSet
-from .models import RecipeFile
+
 from shub.apps.api.utils import (
     get_request_user,
     validate_request,
     has_permission
 )
-from rest_framework import serializers
+
 from sregistry.main.registry.auth import generate_timestamp
 from .github import (
     receive_github_hook,
     create_webhook,
-    delete_webhook,
     get_repo,
     list_repos
 )
 
+from .models import RecipeFile
 import django_rq
-from datetime import (
-    datetime, 
-    timedelta
-)
+from datetime import timedelta
 
 from .actions import (
     complete_build,
@@ -99,15 +97,15 @@ def save_collection(request):
     if request.method == "POST":
 
         # The checked repos are sent in format REPO_{{ repo.owner.login }}/{{ repo.name }}
-        repos = [x.replace('REPO_','') for x in request.POST.keys() if re.search("^REPO_", x)] 
+        repos = [x.replace('REPO_', '') for x in request.POST.keys() if re.search("^REPO_", x)] 
         secret = str(uuid.uuid4())
         webhook_secret = str(uuid.uuid4())
 
-        if len(repos) > 0:
+        if repos:
 
             # If the user doesn't have permission to create a collection
             if not request.user.has_create_permission():
-                messages.error("You do not have permission to create a collection.")
+                messages.error(request, "You do not have permission to create a collection.")
                 return redirect('collections')
 
             # Always just take the first one
@@ -126,7 +124,7 @@ def save_collection(request):
 
                 # If there is an error, we should tell user about it
                 message = ','.join([x['message'] for x in webhook['errors']])
-                messages.info(request,"Errors: %s" % message)
+                messages.info(request, "Errors: %s" % message)
 
             # If the webhook was successful, it will have a ping_url
             elif "ping_url" in webhook:
@@ -183,7 +181,7 @@ class RecipePushViewSet(ModelViewSet):
     def perform_create(self, serializer):
 
         print(self.request.data) 
-        tag = self.request.data.get('tag','latest')                                   
+        tag = self.request.data.get('tag', 'latest')                                   
         name = self.request.data.get('name')
         auth = self.request.META.get('HTTP_AUTHORIZATION', None)
         collection_name = self.request.data.get('collection')
@@ -242,7 +240,7 @@ class RecipePushViewSet(ModelViewSet):
                 create_new = True
 
         except Container.DoesNotExist:
-            create_new=True
+            create_new = True
         
         # Create the recipe to trigger a build
         print(self.request.data.get('datafile'))
@@ -250,7 +248,7 @@ class RecipePushViewSet(ModelViewSet):
         if create_new is True:
             serializer.save(datafile=self.request.data.get('datafile'),
                             collection=self.request.data.get('collection'),
-                            tag=self.request.data.get('tag','latest'),
+                            tag=self.request.data.get('tag', 'latest'),
                             name=self.request.data.get('name'),
                             owner_id=owner.id)
         else:
@@ -283,10 +281,10 @@ def receive_build(request, cid):
             return JsonResponseMessage(message="Invalid request.")
     
         scheduler = django_rq.get_scheduler('default')
-        job = scheduler.enqueue_in(timedelta(seconds=10),
-                                       complete_build, 
-                                       cid=container.id, 
-                                       params=params)
+        scheduler.enqueue_in(timedelta(seconds=10),
+                             complete_build, 
+                             cid=container.id, 
+                             params=params)
 
         return JsonResponseMessage(message="Notification Received",
                                    status=200,
@@ -303,12 +301,12 @@ def delete_container(request, cid):
     container = get_container(cid)
 
     if not container.has_edit_permission(request):
-        messages.info(request,"This action is not permitted.")
+        messages.info(request, "This action is not permitted.")
         return redirect('collections')
 
     # Send a job to the worker to delete the build files
     django_rq.enqueue(delete_build, cid=container.id)
-    messages.info(request,'Container successfully deleted.')
+    messages.info(request, 'Container successfully deleted.')
     return redirect(container.collection.get_absolute_url())
 
 
@@ -324,7 +322,7 @@ def delete_collection(request, cid):
 
     # Only an owner can delete
     if not collection.has_edit_permission(request):
-        messages.info(request,"This action is not permitted.")
+        messages.info(request, "This action is not permitted.")
         return redirect('collections')
     
     # Queue the job to delete the collection
@@ -332,7 +330,7 @@ def delete_collection(request, cid):
                       cid=collection.id,
                       uid=request.user.id)
 
-    messages.info(request,'Collection requested for deletion.')
+    messages.info(request, 'Collection requested for deletion.')
     return redirect('collections')
 
 

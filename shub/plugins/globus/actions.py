@@ -9,15 +9,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 
-from shub.apps.users.models import User
-from django.contrib.auth.decorators import login_required
-from social_django.models import UserSocialAuth
-from shub.plugins.globus.utils import (
-    get_client,
-    get_transfer_client
-)
 from django.conf import settings
-import requests
+from shub.plugins.globus.utils import get_transfer_client
 import globus_sdk
 
 
@@ -61,7 +54,7 @@ def do_transfer(user, endpoint, container):
                                     endpoint,
                                     label="Singularity Registry Transfer",
                                     sync_level="checksum")
-    tdata.add_item(source.replace(settings.MEDIA_ROOT,'/code/images'), 
-                   source.replace(settings.MEDIA_ROOT,'').strip('/'))
+    tdata.add_item(source.replace(settings.MEDIA_ROOT, '/code/images'), 
+                   source.replace(settings.MEDIA_ROOT, '').strip('/'))
     transfer_result = client.submit_transfer(tdata)
     return transfer_result

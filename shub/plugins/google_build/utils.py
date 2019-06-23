@@ -9,13 +9,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.http import JsonResponse
-
-from rest_framework.permissions import (
-    DjangoObjectPermissions,
-    SAFE_METHODS, 
-    Http404
-)
-
 from django.conf import settings
 from sregistry.logger import RobotNamer
 from datetime import datetime, timedelta
@@ -24,7 +17,6 @@ import hmac
 import json
 import jwt
 import requests
-import re
 import uuid
 
 ################################################################################
@@ -32,7 +24,7 @@ import uuid
 ################################################################################
 
 
-def POST(url,headers, data=None, params=None):
+def POST(url, headers, data=None, params=None):
     '''post_url will use the requests library to post to a url
     '''
     if data is not None:
@@ -49,7 +41,7 @@ def DELETE(url, headers, data=None, params=None):
         return requests.delete(url,
                                headers=headers,
                                data=json.dumps(data))
-    return requests.delete(url,headers=headers)
+    return requests.delete(url, headers=headers)
 
 
 def format_params(url, params):
@@ -62,17 +54,17 @@ def format_params(url, params):
     '''
     # Always try to get 100 per page
     params["per_page"] = 100
-    count=0
-    for param,value in params.items():
+    count = 0
+    for param, value in params.items():
         if count == 0:
-            url = "%s?%s=%s" %(url,param,value)
+            url = "%s?%s=%s" %(url, param, value)
         else:
-            url = "%s&%s=%s" %(url,param,value)
-        count+=1
+            url = "%s&%s=%s" %(url, param, value)
+        count += 1
     return url
 
 
-def paginate(url,headers,min_count=30,start_page=1,params=None, limit=None):
+def paginate(url, headers, min_count=30, start_page=1, params=None, limit=None):
     '''paginate will send posts to a url with post_url
        until the results count is not exceeded
 
@@ -81,7 +73,7 @@ def paginate(url,headers,min_count=30,start_page=1,params=None, limit=None):
        min_count: the results count to go to
        start_page: the starting page
     '''
-    if params == None:
+    if params is None:
         params = dict()
     result = []
     result_count = 1000
@@ -94,12 +86,12 @@ def paginate(url,headers,min_count=30,start_page=1,params=None, limit=None):
                 return result
 
         params['page'] = page
-        paginated_url = format_params(url,params)
+        paginated_url = format_params(url, params)
         new_result = requests.get(paginated_url, headers=headers).json()
         result_count = len(new_result)
 
         # If the user triggers bad credentials, empty repository, stop
-        if isinstance(new_result,dict):
+        if isinstance(new_result, dict):
             return result
         
         result = result + new_result
@@ -121,7 +113,8 @@ def validate_payload(collection, payload, request_signature):
        request_signature: the signature to compare against
     '''
     secret = collection.metadata['github']['secret'].encode('utf-8') # converts to bytes
-    digest = hmac.new(secret,digestmod=hashlib.sha1,
+    digest = hmac.new(secret, 
+                      digestmod=hashlib.sha1,
                       msg=payload).hexdigest()
     signature = 'sha1=%s' %(digest)
     return hmac.compare_digest(signature, request_signature)
@@ -208,7 +201,7 @@ def validate_jwt(container, params):
     valid_payload = get_container_payload(container)
 
     # Every field must be equal
-    for key, val in valid_payload.items():
+    for key, _ in valid_payload.items():
         if key not in payload:
             return False
         if payload[key] != valid_payload[key]:
@@ -272,14 +265,14 @@ def JsonResponseMessage(status=500, message=None, status_message='error'):
 ################################################################################
 
 
-def convert_size(bytes, to, bsize=1024):
-   '''A function to convert bytes to a human friendly string.
-   '''
-   a = {'KB' : 1, 'MB': 2, 'GB' : 3, 'TB' : 4, 'PB' : 5, 'EB' : 6 }
-   r = float(bytes)
-   for i in range(a[to]):
-       r = r / bsize
-   return(r)
+def convert_size(size_bytes, to, bsize=1024):
+    '''A function to convert bytes to a human friendly string.
+    '''
+    a = {'KB': 1, 'MB': 2, 'GB': 3, 'TB': 4, 'PB': 5, 'EB': 6}
+    r = float(size_bytes)
+    for _ in range(a[to]):
+        r = r / bsize
+    return r
 
 
 def load_body(request):

@@ -9,7 +9,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf.urls import url, include
-from django.conf import settings
 import shub.apps.users.views as user_views
 from social_django import urls as social_urls
 

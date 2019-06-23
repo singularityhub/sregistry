@@ -9,27 +9,14 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from crispy_forms.layout import (
-    Button, 
-    Field, 
-    HTML, 
     Layout, 
     Submit
 )
 
-from crispy_forms.bootstrap import (
-    AppendedText, 
-    FormActions, 
-    PrependedText, 
-    Tab,
-    TabHolder
-)
-
-from crispy_forms.bootstrap import StrictButton
 from crispy_forms.helper import FormHelper
 from shub.apps.users.models import Team
 
 from django.forms import ModelForm
-from django import forms
 
 
 class TeamForm(ModelForm):
@@ -47,5 +34,4 @@ class TeamForm(ModelForm):
         super(TeamForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout = Layout()
-        tab_holder = TabHolder()
         self.helper.add_input(Submit("submit", "Save"))

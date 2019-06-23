@@ -8,11 +8,10 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.views.generic.base import TemplateView
 from django.conf.urls import url 
 
 from rest_framework_swagger.views import get_swagger_view
-swagger_view = get_swagger_view(title='Singularity Registry API',url='')
+swagger_view = get_swagger_view(title='Singularity Registry API', url='')
 
 urlpatterns = [
     url(r'^$', swagger_view)

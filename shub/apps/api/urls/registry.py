@@ -10,11 +10,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.conf.urls import url
 from django.conf import settings
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework.response import Response
-import os
-    
+from rest_framework import (
+    serializers,
+    viewsets
+)
+from rest_framework.response import Response    
 
 
 ################################################################################
@@ -24,10 +24,9 @@ import os
 
 class Registry(object):
     def __init__(self, **kwargs):
-       self.name = settings.REGISTRY_NAME
-       self.id = settings.REGISTRY_URI
-       self.url = settings.DOMAIN_NAME
-
+        self.name = settings.REGISTRY_NAME
+        self.id = settings.REGISTRY_URI
+        self.url = settings.DOMAIN_NAME
 
 class RegistrySerializer(serializers.Serializer):
     name = serializers.CharField(max_length=256)

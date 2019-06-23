@@ -11,9 +11,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from shub.apps.main.models import Container, Collection
 from sregistry.utils import parse_image_name
-from shub.logger import bot
 from django.db.models import Q
-import os
 
 def collection_query(q):
     return Collection.objects.filter(
@@ -31,7 +29,7 @@ def container_query(q, across_collections=1):
     # Return complete lookup with image, collection, tag
     q = parse_image_name(q, defaults=False)
 
-    if across_collections is True:
+    if across_collections:
         if q['tag'] is not None:
 
             # Query across collections for image name and tag
@@ -59,7 +57,8 @@ def container_query(q, across_collections=1):
 
 def specific_container_query(name, collection=None, tag=None):
     '''single container query is intended to return a queryset when a specific collection and
-    container name is asked for.'''
+       container name is asked for.
+    '''
     if collection is not None:
         collection = collection.lower()
     if name is not None:
@@ -74,11 +73,11 @@ def specific_container_query(name, collection=None, tag=None):
         return Container.objects.filter(name=name)
 
     if tag is None:
-        return Container.objects.filter(collection__name=collection,name=name)
+        return Container.objects.filter(collection__name=collection, name=name)
 
     if collection is None:
-        return Container.objects.filter(tag=tag,name=name) 
-    return Container.objects.filter(collection__name=collection,name=name, tag=tag)
+        return Container.objects.filter(tag=tag, name=name) 
+    return Container.objects.filter(collection__name=collection, name=name, tag=tag)
 
 
 
@@ -107,16 +106,16 @@ def container_lookup(collection, name, tag=None, return_collection=False):
                                           collection__name=collection)
 
     # If no contenders, try sending most recent tag
-    if len(contenders) == 0:
+    if not contenders:
         contenders = Container.objects.filter(name=name,
                                               collection__name=collection)
 
-    if len(contenders) == 0:
+    if not contenders:
         return container # No contenders, return None
     
     container = contenders.last()
 
-    if return_collection == True and container is not None:
+    if return_collection and container is not None:
         return container.collection
 
     return container
