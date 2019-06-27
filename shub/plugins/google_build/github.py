@@ -15,7 +15,10 @@ import django_rq
 
 from shub.apps.users.models import User
 from shub.logger import bot
-from shub.settings import DOMAIN_NAME
+from shub.settings import (
+    DOMAIN_NAME, 
+    SREGISTRY_GOOGLE_BUILD_LIMIT
+)
 from shub.apps.main.models import Collection
 
 from .utils import (
@@ -345,7 +348,6 @@ def receive_github_hook(request):
       - The user must be the owner of the container collection, associated with 
         the Github account
     '''
-
     # We do these checks again for sanity
     if request.method == "POST":
 
@@ -399,6 +401,7 @@ def verify_payload(request, collection):
     '''verify payload will verify a payload'''
 
     from shub.plugins.google_build.tasks import parse_hook
+    from shub.plugins.google_build.actions import is_over_limit
 
     payload = load_body(request)
 
@@ -421,6 +424,15 @@ def verify_payload(request, collection):
 
     # Some newer webhooks have commits
     commits = payload.get('commits')
+
+    # Ensure we aren't over limit
+    if is_over_limit():
+        message = ("Registry concurrent build limit is " +
+                    "%s" % SREGISTRY_GOOGLE_BUILD_LIMIT + ". Please try again later.")
+
+        return JsonResponseMessage(message=message,
+                                   status_message="Permission Denied")             
+
     res = django_rq.enqueue(parse_hook, cid=collection.id,
                                         branch=branch,
                                         commits=commits)

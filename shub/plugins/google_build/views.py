@@ -10,6 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import (
     render, 
@@ -55,7 +56,8 @@ from datetime import timedelta
 from .actions import (
     complete_build,
     delete_build,
-    delete_container_collection
+    delete_container_collection,
+    is_over_limit
 )
 
 from .utils import (
@@ -201,7 +203,6 @@ class RecipePushViewSet(ModelViewSet):
 
 
         # Validate Payload
-
         if not validate_request(auth, payload, "build", timestamp):
             print("auth is not valid for build")
             raise PermissionDenied(detail="Unauthorized")
@@ -210,6 +211,13 @@ class RecipePushViewSet(ModelViewSet):
         if not owner.has_create_permission():
             print("owned doesnt have create permission")
             raise PermissionDenied(detail="Unauthorized Create Permission")
+
+        # Are we over the build limit?
+        if is_over_limit():
+            message = ("Registry concurrent build limit is " +
+                        "%s" % SREGISTRY_GOOGLE_BUILD_LIMIT + ". Please try again later.")
+            print(message)
+            raise PermissionDenied(detail=message)
 
         create_new = False
 

@@ -273,6 +273,25 @@ def delete_container_collection(cid, uid):
     collection.delete()
 
 
+def is_over_limit(limit=None):
+    '''check if we are over the limit for active builds. Returns a boolean to
+       indicate true or false.
+    '''
+    # Allow the function to set a custom limit
+    limit = limit or settings.SREGISTRY_GOOGLE_BUILD_LIMIT
+
+    context = get_build_context()
+
+    # Instantiate client with context (connects to buckets)
+    client = get_client(debug=True, **context)
+
+    project = settings.SREGISTRY_GOOGLE_PROJECT
+
+    result = self._build_service.projects().builds().list(projectId=project,
+                                 filter='status="QUEUED" OR status="WORKING"').execute()
+    return len(result) > limit
+
+
 def complete_build(cid, params, check_again_seconds=10):
     '''finish a build, meaning obtaining the original build_id for the container
        and checking for completion.

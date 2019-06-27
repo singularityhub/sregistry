@@ -79,6 +79,18 @@ delete intermediate dependencies in cloudbuild bucket (keep them as cache for re
 This defaults to being unset, meaning that files are cleaned up. If you define this as anything, 
 the build files will be cached.
 
+#### Build Limit
+
+```python
+SREGISTRY_GOOGLE_BUILD_LIMIT=100
+```
+
+To prevent denial of service attacks on Google Cloud Storage, you should
+set a reasonable limit for the number of active, concurrent builds. This
+number should be based on your expected number of users, repositories, and
+recipes per repository.
+
+
 #### Singularity Version
 
 By default, we use the default version that is set by the [Google Build](https://singularityhub.github.io/sregistry-cli/client-google-build#environment) client that belongs to Singularity Registry Client.

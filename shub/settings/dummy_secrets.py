@@ -67,6 +67,10 @@
 # After build, do not delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed). 
 # Defaults to being unset, meaning that files are cleaned up. If you define this as anything, the build files will be cached.
 
+# SREGISTRY_GOOGLE_BUILD_LIMIT=100
+# To prevent denial of service attacks on Google Cloud Storage, you should set a reasonable limit for the number of active, concurrent builds. 
+# This number should be based on your expected number of users, repositories, and recipes per repository.
+
 # SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
 # if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
 
