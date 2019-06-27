@@ -121,6 +121,13 @@ def save_collection(request):
             # Collection needs to exist before webhook
             collection = Collection.objects.create(secret=secret, 
                                                    name=repo['full_name'])
+            collection.metadata['github'] = {'secret': webhook_secret,
+                                             'repo': repo['clone_url'],
+                                             'created_at': repo['created_at'],
+                                             'updated_at': repo['updated_at'],
+                                             'pushed_at': repo['pushed_at'],
+                                             'repo_id': repo['id'],
+                                             'repo_name': repo['full_name']}
             collection.save()
 
             webhook = create_webhook(user=request.user,
@@ -137,14 +144,7 @@ def save_collection(request):
             elif "ping_url" in webhook:
 
                 # Add minimal metadata about repo and webhook
-                collection.metadata['github'] = {'webhook': webhook,
-                                                 'secret': webhook_secret,
-                                                 'repo': repo['clone_url'],
-                                                 'created_at': repo['created_at'],
-                                                 'updated_at': repo['updated_at'],
-                                                 'pushed_at': repo['pushed_at'],
-                                                 'repo_id': repo['id'],
-                                                 'repo_name': repo['full_name']}
+                collection.metadata['github']['webhook'] webhook
 
                 collection.owners.add(request.user)                        
 
