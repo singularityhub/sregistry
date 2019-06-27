@@ -372,6 +372,7 @@ def receive_github_hook(request):
         payload = load_body(request)
         repo = payload.get('repository')
 
+        print(repo)
         try:
             collection = Collection.objects.get(name=repo['full_name'])
         except Collection.DoesNotExist:
