@@ -144,7 +144,7 @@ def save_collection(request):
             elif "ping_url" in webhook:
 
                 # Add minimal metadata about repo and webhook
-                collection.metadata['github']['webhook'] webhook
+                collection.metadata['github']['webhook'] = webhook
 
                 collection.owners.add(request.user)                        
 
