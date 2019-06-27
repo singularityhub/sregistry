@@ -291,8 +291,8 @@ def is_over_limit(limit=None):
     client = get_client(debug=True, **context)
 
     project = settings.SREGISTRY_GOOGLE_PROJECT
-    result = self._build_service.projects().builds().list(projectId=project,
-                                 filter='status="QUEUED" OR status="WORKING"').execute()
+    result = client._build_service.projects().builds().list(projectId=project,
+                                   filter='status="QUEUED" OR status="WORKING"').execute()
     return len(result) > limit
 
 
