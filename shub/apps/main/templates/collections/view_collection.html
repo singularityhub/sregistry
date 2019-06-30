@@ -13,6 +13,14 @@
   min-width:20px !important;
 }
 
+#collection_tags {
+    float:right;
+    background:white; 
+    border-radius:10px;
+    border:none;
+    margin-bottom:50px
+}
+
 #star {
     padding-left:25px; 
     float:right; 
@@ -32,8 +40,21 @@
 <div class="row" style="margin-top:30px">
     
     <!-- Container collection meta -->
-    <div class="col-md-10">
+    <div class="col-md-4">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
+    </div>
+    <div class="col-md-6">    
+        <div class="card">
+            <div class="header">
+           {% if collection.tags.count > 0 %}
+           <ul id="collection_tags">
+           {% for tag in collection.tags.all %}
+               <li name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</li>
+           {% endfor %}
+           </ul>
+           {% endif %}
+            </div>
+       </div>   
     </div>
     <div class="col-md-2">
 

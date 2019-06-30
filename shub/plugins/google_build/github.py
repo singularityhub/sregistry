@@ -304,6 +304,23 @@ def create_webhook(user, repo, secret):
     return response
 
 
+def update_webhook_metadata(repo):
+    '''based on a repository field from a webhook payload, return an
+       updated data structure with fields that we care about.
+
+       Parameters
+       ==========
+       repo: the repository object to get fields from
+    '''
+    return {'repo': repo['clone_url'],
+            'private': repo['private'],
+            'description': repo['description'],
+            'created_at': repo['created_at'],
+            'updated_at': repo['updated_at'],
+            'pushed_at': repo['pushed_at'],
+            'repo_id': repo['id'],
+            'repo_name': repo['full_name']}
+
 ## Delete
 
 def delete_webhook(user, repo, hook_id):
@@ -378,6 +395,10 @@ def receive_github_hook(request):
         except Collection.DoesNotExist:
             return JsonResponseMessage(message="Collection not found",
                                        status=404)
+
+        # Update repo metadata that might change 
+        collection.metadata['github'].update(update_webhook_metadata(repo))
+        collection.save()
 
         # We only currently parse user collections for Github
         do_build = False

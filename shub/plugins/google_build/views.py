@@ -43,10 +43,11 @@ from shub.apps.api.utils import (
 
 from sregistry.main.registry.auth import generate_timestamp
 from .github import (
-    receive_github_hook,
     create_webhook,
     get_repo,
-    list_repos
+    list_repos,
+    receive_github_hook,
+    update_webhook_metadata
 )
 
 from .models import RecipeFile
@@ -121,13 +122,9 @@ def save_collection(request):
             # Collection needs to exist before webhook
             collection = Collection.objects.create(secret=secret, 
                                                    name=repo['full_name'])
-            collection.metadata['github'] = {'secret': webhook_secret,
-                                             'repo': repo['clone_url'],
-                                             'created_at': repo['created_at'],
-                                             'updated_at': repo['updated_at'],
-                                             'pushed_at': repo['pushed_at'],
-                                             'repo_id': repo['id'],
-                                             'repo_name': repo['full_name']}
+
+            collection.metadata['github'] = {'secret': webhook_secret}
+            collection.metadata['github'].update(update_webhook_metadata())
             collection.save()
 
             webhook = create_webhook(user=request.user,

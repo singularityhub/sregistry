@@ -114,6 +114,7 @@ def receive_build(collection, recipes, branch):
        recipes: a dictionary of modified recipe files to build
        branch: the repository branch (kept as metadata)
     '''
+    from .github import get_auth_token
     context = get_build_context()
 
     # Instantiate client with context (connects to buckets)
@@ -166,13 +167,19 @@ def receive_build(collection, recipes, branch):
         jwt_token = generate_jwt_token(secret=container.metadata['builder']['secret'],
                                        payload=payload)
 
+        # If the repo is private, we need to account for that
+        token = None
+        if collection.metadata['github'].get('private', False) is True:
+            token = get_auth_token(collection.owners.first())
+
         # Submit the build with the GitHub repo and commit
         response = client.build_repo("github.com/%s" % metadata['name'], 
-                                      recipe=recipe,
-                                      headless=True,
-                                      commit=metadata['commit'],
-                                      webhook=webhook,
-                                      extra_data={"token": jwt_token})
+                                     recipe=recipe,
+                                     headless=True,
+                                     token=token,
+                                     commit=metadata['commit'],
+                                     webhook=webhook,
+                                     extra_data={"token": jwt_token})
 
         # Add the metadata
         container.metadata['build_metadata'] = response['metadata']
