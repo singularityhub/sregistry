@@ -118,6 +118,17 @@ SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
 Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
 and we recommend creating both `[name]` and `[name]_cloudbuild` in the console and then setting the name here.
 
+#### Build Timeout
+
+The number of seconds for the build to timeout. If set to None, will be 10 minutes. If
+unset, it will default to 3 hours. This time should be less than the `SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS`. If
+you want to use the default, don't define this variable in your secrets.
+
+```python
+# SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None
+```
+
+
 #### Build Expiration 
 
 You must define the number of seconds that your build expires in, meaning that it would no

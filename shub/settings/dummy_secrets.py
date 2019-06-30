@@ -83,6 +83,10 @@
 # SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
 # by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
 
+#SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None
+# The number of seconds for the build to timeout. If set to None, will be 10 minutes. If
+# unset, will default to 3 hours. This time should be less than the SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
+
 # SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
 # The number of seconds for the build to expire, meaning it's response is no longer accepted by the server. This must be defined.
 # The default 28800 indicates 8 hours (in seconds)
