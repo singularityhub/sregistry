@@ -12,6 +12,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from taggit.managers import TaggableManager
 
 import uuid
 
@@ -56,6 +57,7 @@ class Collection(models.Model):
     modify_date = models.DateTimeField('date modified', auto_now=True)
     secret = models.CharField(max_length=200, null=False, verbose_name="Collection secret for webhook")
     metadata = JSONField(default=dict) # open field for metadata about a collection
+    tags = TaggableManager()
 
     # Users
     owners = models.ManyToManyField('users.User', blank=True, default=None,
