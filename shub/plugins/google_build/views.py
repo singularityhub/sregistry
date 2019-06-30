@@ -124,7 +124,7 @@ def save_collection(request):
                                                    name=repo['full_name'])
 
             collection.metadata['github'] = {'secret': webhook_secret}
-            collection.metadata['github'].update(update_webhook_metadata())
+            collection.metadata['github'].update(update_webhook_metadata(repo))
             collection.save()
 
             webhook = create_webhook(user=request.user,
