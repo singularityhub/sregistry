@@ -43,9 +43,7 @@
     <div class="col-md-4">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
     </div>
-    <div class="col-md-6">    
-        <div class="card">
-            <div class="header">
+    <div class="col-md-6">
            {% if collection.tags.count > 0 %}
            <ul id="collection_tags">
            {% for tag in collection.tags.all %}
@@ -53,8 +51,6 @@
            {% endfor %}
            </ul>
            {% endif %}
-            </div>
-       </div>   
     </div>
     <div class="col-md-2">
 
