@@ -47,7 +47,7 @@
            {% if collection.tags.count > 0 %}
            <ul id="collection_tags">
            {% for tag in collection.tags.all %}
-               <span class="badge" style="color:royalblue" name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</span>
+               <span class="badge" style="background-color:royalblue" name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</span>
            {% endfor %}
            </ul>
            {% endif %}
