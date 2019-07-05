@@ -129,7 +129,7 @@ metadata will not match the new bucket name. Here is an example of how to set a 
 SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
 ```
 
-Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
+Additionally, a temporary bucket is created with the same name ending in `_cloudbuild`. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
 and we recommend creating both `[name]` and `[name]_cloudbuild` in the console and then setting the name here.
 
 #### Build Timeout

@@ -70,6 +70,13 @@ cp $INSTALL_ROOT/sregistry/scripts/nginx-index.html /var/www/html/index.html
 rm /var/www/html/index.nginx-debian.html
 ```
 
+If you want your page to use the same SSL certificates, a nginx-default.conf is also
+provided that will point to the same certificates on the server (generation discussed later):
+
+```bash
+cp $INSTALL_ROOT/sregistry/scripts/nginx-default.conf /etc/nginx/conf.d/default.conf
+```
+
 If you don't care about user experience during updates and server downtime, you can just ignore this.
 
 ## Custom Domain
@@ -123,7 +130,7 @@ version](https://github.com/singularityhub/sregistry/blob/master/scripts/generat
  - moving them to where they need to be.
  - add a reminder or some other method to renew within 89 days
 
-Once you have done this (and you are ready for https), you should use the `docker-compose.yml` and the `nginx.conf` provided in the folder [https](https). So do something like this:
+Once you have done this (and you are ready for https), you should use the `docker-compose.yml` and the `nginx.conf` provided in the folder [https](https://github.com/singularityhub/sregistry/blob/master/https/). So do something like this:
 
 ```bash
 mkdir http
