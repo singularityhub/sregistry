@@ -15,7 +15,6 @@ from shub.logger import bot
 from random import choice
 from datetime import datetime
 import os
-import re
 
 
 class Command(BaseCommand):
@@ -25,7 +24,7 @@ class Command(BaseCommand):
     '''
     help = "produce registration markdown file"
 
-    def handle(self,*args, **options):
+    def handle(self, *args, **options):
 
         template = 'tools/template-registry.md'
         outfile = os.path.basename(template).replace('template-', "%s-" % settings.REGISTRY_URI)
@@ -35,10 +34,9 @@ class Command(BaseCommand):
         except:
             admin = "sregistry-robot"
             bot.warning('No admin in settings, will use %s' %admin)
-            pass
 
         # Generate a robot number
-        number = choice(list(range(1,15571)))
+        number = choice(list(range(1, 15571)))
         context = {"REGISTRY_URI": settings.REGISTRY_URI,
                    "REGISTRY_NAME": settings.REGISTRY_NAME,
                    "DOMAIN_NAME": settings.DOMAIN_NAME,
@@ -49,7 +47,7 @@ class Command(BaseCommand):
         content = render_to_string(template, context)
 
         # Write to file
-        with open(outfile,'w') as filey:
+        with open(outfile, 'w') as filey:
             filey.writelines(content)
 
         bot.newline()

@@ -2,7 +2,7 @@
 layout: default
 title: Plugins
 pdf: true
-permalink: /plugins
+permalink: /plugins/
 toc: false
 ---
 
@@ -24,12 +24,12 @@ your registries' local `shub/settings/secrets.py` file.
  - [PAM-Auth](/sregistry/plugin-pam): authentication using PAM (unix host users)
  - [Globus](/sregistry/plugin-globus): connect and transfer using Globus
  - [SAML](/sregistry/plugin-saml): Authentication with SAML
+ - [Google Build](/sregistry/plugin-google-build) provides build and storage on Google Cloud.
 
 ## Writing a Plugin
 
 An sregistry plugin is a Django App, that lives inside `shub/plugins/<plugin-name>`.
-
-The plugin interface is currently under development. At present, each plugin:
+Each plugin:
 
  - Must provide a `urls.py` listing any URLs that will be exposed under `/plugin-name`
  - Can provide additional, models, views, templates, static files.

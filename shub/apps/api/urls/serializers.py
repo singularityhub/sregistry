@@ -10,9 +10,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from rest_framework import serializers
 
-##############################################################################
+################################################################################
 # Hyperlink Serializers
-##############################################################################
+################################################################################
 
 class HyperlinkedImageURL(serializers.CharField):
     def to_representation(self, value):
@@ -30,8 +30,6 @@ class SerializedContributors(serializers.CharField):
 class HyperlinkedDownloadURL(serializers.RelatedField):
     def to_representation(self, value):
         if value:
-            print(value)
-            print(request)
             request = self.context.get('request', None)
             return request.build_absolute_uri(value + "download")
 

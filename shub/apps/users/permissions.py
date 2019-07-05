@@ -8,20 +8,28 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.settings import USER_COLLECTIONS
-
+from shub.settings import (
+    USER_COLLECTIONS,
+    USER_COLLECTION_LIMIT
+)
 
 def has_create_permission(request):
     ''' determine if a user can create a team.
   
         1. superusers and admin (global) can.
         2. If user collections is True, users can create teams
- 
-   '''
+    '''
     if request.user.is_superuser or request.user.is_staff:
         return True
+
     if USER_COLLECTIONS is True and not request.user.is_anonymous:
+
+        # Does the registry have a user collection limit?
+        if USER_COLLECTION_LIMIT is not None:
+            if request.user.container_collection_owners.count() >= USER_COLLECTION_LIMIT:
+                return False
         return True
+
     return False
 
 

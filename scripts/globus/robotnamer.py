@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 '''
-
 Copyright (C) 2019 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
@@ -48,15 +47,14 @@ class RobotNamer:
 
 
     def generate(self, delim='-', length=4, chars='0123456789'):
-        '''
-        Generate a robot name. Inspiration from Haikunator, but much more
+        '''Generate a robot name. Inspiration from Haikunator, but much more
                  poorly implemented ;)
 
-        Parameters
-        ==========
-        delim: Delimiter
-        length: TokenLength
-        chars: TokenChars
+            Parameters
+            ==========
+            delim: Delimiter
+            length: TokenLength
+            chars: TokenChars
         '''
 
         descriptor = self._select(self._descriptors)

@@ -11,12 +11,17 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from shub.apps.users.models import User
 from shub.apps.main.models import Collection, Star
 from shub.apps.logs.models import APIRequestCount
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models.aggregates import Count
-from django.shortcuts import render, redirect
-from shub.settings import USER_COLLECTIONS
+from django.shortcuts import (
+    get_object_or_404,
+    render, 
+    redirect
+)
 from django.db.models import Q, Sum
+
 
 
 @login_required

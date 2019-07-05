@@ -14,6 +14,6 @@ register = template.Library()
 
 @register.filter
 def to_dash(value):
-    if isinstance(value,str):
-        return value.replace(".","-")
+    if isinstance(value, str):
+        return value.replace(".", "-")
     return value

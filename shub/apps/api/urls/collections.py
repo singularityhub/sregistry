@@ -9,31 +9,22 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf.urls import url
-from django.http import Http404
-import os
-
-from shub.apps.api.urls.containers import ContainerSerializer
-from shub.apps.api.utils import ObjectOnlyPermissions
-from shub.apps.main.models import Container, Collection
-
-from shub.apps.main.query import (
-    container_lookup,
-    collection_query,
-    container_query
-)
-
 from django.conf import settings
 
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework.relations import PrimaryKeyRelatedField
+from shub.apps.api.utils import ObjectOnlyPermissions
+from shub.apps.main.models import Collection
+from shub.apps.main.query import collection_query
+
+from rest_framework import (
+    serializers,
+    viewsets
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-    
 
-##############################################################################
+################################################################################
 # Single Object Serializers
-##############################################################################
+################################################################################
 
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -51,16 +42,13 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ('id','name','add_date','modify_date',
-                  'metadata', 'containers')
+        fields = ('id', 'name', 'add_date', 'modify_date', 'metadata', 'containers')
 
 
-
-#########################################################################
+################################################################################
 # ViewSets
 # requests for (paginated) information about containers and collections
-#########################################################################
-
+################################################################################
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,9 +60,9 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 
-#########################################################################
+################################################################################
 # Container Details: custom views for specific collections
-#########################################################################
+################################################################################
 
 
 class CollectionDetailByName(APIView):
@@ -99,17 +87,16 @@ class CollectionDetailByName(APIView):
     
 
 
-#########################################################################
+################################################################################
 # Search
-#########################################################################
+################################################################################
 
 
 class CollectionSearch(APIView):
     """search for a list of collections depending on a query. This is
-    a general search to look across all fields for one term
+       a general search to look across all fields for one term
     """
     def get_object(self, query):
-        from shub.apps.main.query import collection_query
         collections = collection_query(query.lower())
         return collections
 
@@ -119,9 +106,9 @@ class CollectionSearch(APIView):
         return Response(serializer.data)    
 
 
-#########################################################################
+################################################################################
 # urlpatterns
-#########################################################################
+################################################################################
 
 
 urlpatterns = [

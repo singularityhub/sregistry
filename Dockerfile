@@ -33,11 +33,6 @@ RUN apt-get update && apt-get install -y \
     squashfs-tools \
     build-essential
 
-# Install Singularity
-RUN git clone -b vault/release-2.6 https://www.github.com/sylabs/singularity.git
-WORKDIR singularity
-RUN ./autogen.sh && ./configure --prefix=/usr/local && make && make install
-
 # Install Python requirements out of /tmp so not triggered if other contents of /code change
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
@@ -47,7 +42,7 @@ ADD . /code/
 
 ################################################################################
 # PLUGINS
-# You are free to comment out those plugins that you don't want to use
+# You are free to uncomment the plugins that you want to use
 
 # Install LDAP (uncomment if wanted)
 # RUN pip install python3-ldap
@@ -55,6 +50,9 @@ ADD . /code/
 
 # Install PAM Authentication (uncomment if wanted)
 # RUN pip install django-pam
+
+# Ensure Google Build Installed
+# RUN pip install sregistry[google-build]
 
 # Install Globus (uncomment if wanted)
 # RUN /bin/bash /code/scripts/globus/globus-install.sh

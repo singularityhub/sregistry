@@ -22,7 +22,7 @@ def help_processor(request):
             'HELP_INSTITUTION_SITE': settings.HELP_INSTITUTION_SITE}
 
 def settings_processor(request):
-    return {'PRIVATE_ONLY': settings.PRIVATE_ONLY }
+    return {'PRIVATE_ONLY': settings.PRIVATE_ONLY}
 
 
 def auth_processor(request):
@@ -32,5 +32,3 @@ def auth_processor(request):
             "ENABLE_GITLAB_AUTH": settings.ENABLE_GITLAB_AUTH,
             "ENABLE_BITBUCKET_AUTH": settings.ENABLE_BITBUCKET_AUTH,
             "PLUGINS_ENABLED": settings.PLUGINS_ENABLED}
-
-

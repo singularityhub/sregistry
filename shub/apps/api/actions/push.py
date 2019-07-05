@@ -8,22 +8,24 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.logger import bot
+
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework.exceptions import PermissionDenied
 
 from shub.apps.main.models import Collection
-from django.views.decorators.csrf import csrf_exempt
 from shub.apps.main.utils import format_collection_name
 from shub.apps.api.utils import ( 
     validate_request,
     has_permission, 
     get_request_user
 )
+from sregistry.main.registry.auth import generate_timestamp
 
 import json
 import uuid
-from sregistry.main.registry.auth import generate_timestamp
+
 
 @csrf_exempt
 def collection_auth_check(request):
@@ -31,15 +33,15 @@ def collection_auth_check(request):
         return a collection id (cid) if a collection exists and the user
         has permission to upload. If not, a permission denied is returned.
     '''
-    auth=request.META.get('HTTP_AUTHORIZATION', None)
+    auth = request.META.get('HTTP_AUTHORIZATION', None)
   
     # Load the body, which is json with variables
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
     # Get variables
-    tag=body.get('tag','latest')                                   
-    name=body.get('name')
+    tag = body.get('tag', 'latest')               
+    name = body.get('name')
     collection_name = format_collection_name(body.get('collection'))
 
     print(tag, name, collection_name, auth, body)
@@ -72,8 +74,12 @@ def collection_auth_check(request):
     # 2- the user is a superuser or staff
     # 3- the user is owner of a collection
     if not has_permission(auth, collection, pull_permission=False):
-         raise PermissionDenied(detail="Unauthorized")
-        
+        raise PermissionDenied(detail="Unauthorized")
+       
+    # If the user cannot create a new collection
+    if not owner.has_create_permission():
+        raise PermissionDenied(detail="Unauthorized")    
+
     # If we get here user has create permission, does collection exist?
     if collection is None:
         collection = Collection.objects.create(name=collection_name,
@@ -83,4 +89,4 @@ def collection_auth_check(request):
         collection.save()
 
     # Return json response with collection id
-    return JsonResponse({'cid': collection.id })
+    return JsonResponse({'cid': collection.id})

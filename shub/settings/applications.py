@@ -23,21 +23,21 @@ INSTALLED_APPS = [
     'shub.apps.logs',
     'shub.apps.main',
     'shub.apps.users',
-    'shub.apps.singularity'
+    'shub.apps.singularity',
+    'shub.apps.library',
 ]
 
 THIRD_PARTY_APPS = [
     'social_django',
     'crispy_forms',
+    'django_rq',
     'django_gravatar',
     'django_extensions',
-    'djcelery',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
     'taggit',
 ]
-
 
 
 INSTALLED_APPS += THIRD_PARTY_APPS

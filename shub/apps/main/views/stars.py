@@ -9,37 +9,20 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from shub.apps.main.models import (
-    Container, 
     Collection,
     Star
 )
 
-from django.shortcuts import (
-    get_object_or_404, 
-    render_to_response, 
-    render, 
-    redirect
-)
-
-from django.db.models.aggregates import Count
-from django.http import (
-    JsonResponse, 
-    HttpResponseRedirect
-)
-from .collections import get_collection
-from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.shortcuts import render
+from django.db.models.aggregates import Count
+from django.http import JsonResponse
+from .collections import get_collection
 
 
-import os
-import re
-import uuid
-
-
-###############################################################################################
-# COLLECTIONS #################################################################################
-###############################################################################################
+################################################################################
+# COLLECTIONS ##################################################################
+################################################################################
 
 def collection_stars(request):
     '''This is a "favorite" view of collections ordered based on number of stars.
@@ -47,8 +30,8 @@ def collection_stars(request):
    
     # Favorites based on stars
     collections = Collection.objects.filter(private=False).annotate(Count('star', distinct=True)).order_by('-star__count')
-    collections = [x for x in collections if x.star__count>0]
-    context = {"collections": collections }
+    collections = [x for x in collections if x.star__count > 0]
+    context = {"collections": collections}
     return render(request, 'stars/collection_stars.html', context)
 
 
@@ -57,9 +40,10 @@ def collection_downloads(request):
     '''
 
     from shub.apps.logs.models import APIRequestCount
-    favorites = APIRequestCount.objects.filter(method="get",path__contains="ContainerDetailByName").order_by('-count')
+    favorites = APIRequestCount.objects.filter(method="get",
+                                               path__contains="ContainerDetailByName").order_by('-count')
 
-    context = {"favorites": favorites }
+    context = {"favorites": favorites}
     return render(request, 'stars/collection_downloads.html', context)
 
 
@@ -68,7 +52,7 @@ def collection_downloads(request):
 #######################################################################################
 
 @login_required
-def star_collection(request,cid):
+def star_collection(request, cid):
     '''change favorite status of collection. If it's favorited, unfavorite by deleting
     the star. If not, then create it.
     '''

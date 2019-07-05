@@ -15,19 +15,18 @@ from django.core.management.base import (
 
 from shub.apps.users.models import User
 from shub.logger import bot
-import re
 
 class Command(BaseCommand):
     '''remove superuser will remove admin privs for a singularity 
-    registry. The super user is an admin that can build, delete,
-    and manage images
+       registry. The super user is an admin that can build, delete,
+       and manage images
     '''
     def add_arguments(self, parser):
         # Positional arguments
         parser.add_argument('--username', dest='username', default=None, type=str)
 
     help = "Removes superuser priviledges for the registry."
-    def handle(self,*args, **options):
+    def handle(self, *args, **options):
         if options['username'] is None:
             raise CommandError("Please provide a username with --username")
 

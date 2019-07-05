@@ -9,17 +9,20 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf import settings
-from django.contrib.auth.models import Group
-from django.db.models.signals import ( post_save, pre_save )
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
-from shub.apps.users.utils import get_usertoken
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models.signals import (
+    post_save, 
+    pre_save
+)
+from django.dispatch import receiver
+
 from django.urls import reverse
 from django.db import models
+
+
+from rest_framework.authtoken.models import Token
+from shub.apps.users.utils import get_usertoken
 from itertools import chain
-import datetime
-import re
 import os
 
 ################################################################################
@@ -36,7 +39,7 @@ def get_image_path(instance, filename):
 
 
 TEAM_TYPES = (('invite', 'Invite only. The user must be invited by an owner'),
-              ('open','Open. Anyone can join the team without asking.'))
+              ('open', 'Open. Anyone can join the team without asking.'))
 
 
 class CustomUserManager(BaseUserManager):
@@ -133,7 +136,7 @@ class User(AbstractUser):
             except:
                 # Case 2: more than one credential for the provider
                 credential = self.social_auth.filter(provider=provider)      
-                if len(credential) > 0:
+                if credential:
                     return credential.last()
     
 
@@ -265,10 +268,10 @@ class Team(models.Model):
 
         
     def __str__(self):
-        return "%s" %(self.name)
+        return "%s" % self.name
 
     def __unicode__(self):
-        return "%s" %(self.name)
+        return "%s" % self.name
 
     def get_label(self):
         return "users"
@@ -289,7 +292,7 @@ class MembershipInvite(models.Model):
         return "<%s:%s>" %(self.id, self.team.name)
 
     def __unicode__(self):
-        return "<%s:%s>" %(self.id,self.team.name)
+        return "<%s:%s>" %(self.id, self.team.name)
 
     def get_label(self):
         return "users"
@@ -303,8 +306,7 @@ class MembershipInvite(models.Model):
     
     class Meta:
         app_label = 'users'
-        unique_together =  (("code", "team"),)
-
+        unique_together = (("code", "team"),)
 
 
 ################################################################################
@@ -313,10 +315,10 @@ class MembershipInvite(models.Model):
 
 
 @receiver(pre_save, sender=Team)
-def create_team_group(sender, instance,  **kwargs):
+def create_team_group(sender, instance, **kwargs):
 
     # Get the name from the team
-    name = instance.name.replace(' ','-').lower().strip()
+    name = instance.name.replace(' ', '-').lower().strip()
     instance.name = name
     
 

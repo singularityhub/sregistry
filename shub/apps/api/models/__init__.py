@@ -9,10 +9,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.files.storage import FileSystemStorage
-from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
+from .storage import OverwriteStorage
 import uuid
 import time
 import hashlib
@@ -29,8 +28,7 @@ def get_upload_to(instance, filename):
 def get_upload_folder(instance, filename):
     '''a helper function to upload to storage
     '''
-    from shub.apps.main.models import Container, Collection
-    tag = instance.tag.lower()
+    from shub.apps.main.models import Collection
     collection_name = instance.collection.lower()
     instance.collection = collection_name
     
@@ -43,7 +41,7 @@ def get_upload_folder(instance, filename):
         collection.save()
 
     # Create collection root, if it doesn't exist
-    image_home = "%s/%s" %(settings.MEDIA_ROOT,collection_name)
+    image_home = "%s/%s" %(settings.MEDIA_ROOT, collection_name)
     if not os.path.exists(image_home):
         os.mkdir(image_home)
     
@@ -53,20 +51,13 @@ def get_upload_folder(instance, filename):
 
 
 ################################################################################
-# MODELS & STORAGE
+# MODELS
 ################################################################################
 
 
-class OverwriteStorage(FileSystemStorage):
-
-    def get_available_name(self, name, max_length=None):
-        # If the filename already exists, remove it as if it was a true file system
-        if self.exists(name):
-            os.remove(os.path.join(settings.MEDIA_ROOT, name))
-        return name
-
-
 class ImageFile(models.Model):
+    '''an ImageFile is a Singularity container pushed directly.
+    '''
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)
     tag = models.CharField(max_length=200, null=False)

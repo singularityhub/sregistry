@@ -17,6 +17,6 @@ urlpatterns = [
     url(r'^about$', views.about_view, name="about"),
     url(r'^tools$', views.tools_view, name="tools"),
     url(r'^terms$', views.terms_view, name="terms"),
-    url(r'^robots\.txt/$',TemplateView.as_view(template_name='base/robots.txt', 
-                                               content_type='text/plain')),
+    url(r'^robots\.txt/$', TemplateView.as_view(template_name='base/robots.txt', 
+                                                content_type='text/plain')),
 ]

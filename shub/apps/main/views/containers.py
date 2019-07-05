@@ -19,13 +19,12 @@ from django.shortcuts import (
 )
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import (
+    HttpResponseRedirect, 
+    Http404
+)
 from django.contrib import messages
 from datetime import datetime
-
-import os
-import json
-import re
 
 
 
@@ -40,7 +39,6 @@ def get_container(cid):
         return container
 
 
-
 ################################################################################
 # HELPERS ######################################################################
 ################################################################################
@@ -49,11 +47,11 @@ def view_container(request, cid):
     container = get_container(cid)
 
     if not container.has_view_permission(request):
-        messages.info(request,"This container is private.")
+        messages.info(request, "This container is private.")
         return redirect('collections')
 
-    messages.info(request,"We don't know what to do for this view yet, ideas?")
-    return redirect('collection_details',cid=container.collection.id)
+    messages.info(request, "We don't know what to do for this view yet, ideas?")
+    return redirect('collection_details', cid=container.collection.id)
 
 
 def view_named_container(request, collection, name, tag):
@@ -63,38 +61,39 @@ def view_named_container(request, collection, name, tag):
                                           name=name,
                                           tag=tag)
     except Container.DoesNotExist:
-        messages.info(request,"Container not found.")
+        messages.info(request, "Container not found.")
         return redirect('collections')
 
-    return container_details(request,container.id)
+    return container_details(request, container.id)
 
 
-def container_details(request,cid):
+def container_details(request, cid):
     container = get_container(cid)
 
     if not container.has_view_permission(request):
-        messages.info(request,"This container is private.")
+        messages.info(request, "This container is private.")
         return redirect('collections')
 
     edit_permission = container.has_edit_permission(request)
     labels = Label.objects.filter(containers=container)
-    context = { "container":container,
-                "labels":labels,
-                "edit_permission": edit_permission }
+    context = {"container": container,
+               "labels": labels,
+               "edit_permission": edit_permission}
     return render(request, 'containers/container_details.html', context)
 
 
+@login_required
 def delete_container(request, cid):
     '''delete a container, including it's corresponding files
     '''
     container = get_container(cid)
 
     if not container.has_edit_permission(request):
-        messages.info(request,"This action is not permitted.")
+        messages.info(request, "This action is not permitted.")
         return redirect('collections')
 
     container.delete()
-    messages.info(request,'Container successfully deleted.')
+    messages.info(request, 'Container successfully deleted.')
     return redirect(container.collection.get_absolute_url())
 
 
@@ -103,30 +102,30 @@ def container_tags(request, cid):
     container = get_container(cid)
 
     if not container.has_view_permission(request):
-        messages.info(request,"This container is private.")
+        messages.info(request, "This container is private.")
         return redirect('collections')
 
     context = {"container": container}
     return render(request, 'containers/container_tags.html', context)
 
 
-
-
-
-###############################################################################################
-# FREEZE ######################################################################################
-###############################################################################################
+################################################################################
+# FREEZE #######################################################################
+################################################################################
 
 
 @login_required
-def change_freeze_status(request,cid):
+def change_freeze_status(request, cid):
     '''freeze or unfreeze a container
-    :param cid: the container to freeze or unfreeze
+
+       Parameters
+       ==========
+       cid: the container to freeze or unfreeze
     '''
     container = get_container(cid)
     edit_permission = container.has_edit_permission(request)
 
-    if edit_permission == True:
+    if edit_permission:
 
         # If the container wasn't frozen, assign new version
         # '2017-08-06T19:28:43.294175'
@@ -136,14 +135,14 @@ def change_freeze_status(request,cid):
         container.frozen = not container.frozen
         container.save()
         message = "Container %s:%s be overwritten by new pushes." %(container.name,
-                                                                                        container.tag)
+                                                                    container.tag)
         if container.frozen: 
             message = "%s:%s is frozen, and will not be overwritten by push." %(container.name,
                                                                                 container.tag)
 
         messages.info(request, message)
     else:
-        messages.info(request,"You do not have permissions to perform this operation.")
+        messages.info(request, "You do not have permissions to perform this operation.")
 
     previous_page = request.META.get('HTTP_REFERER', None)
     if previous_page is not None:

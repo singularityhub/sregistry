@@ -8,11 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-
 from django.shortcuts import render
-from django.template.context import RequestContext
-from django.db.models import Q
-
 
 # Search Pages #################################################################
 
@@ -21,7 +17,7 @@ def search_view(request):
     return render(request, 'search/search.html', context)
 
 
-def search_query(request,query=None):
+def search_query(request, query=None):
     '''query is a post, and results returned immediately'''
     from shub.apps.main.query import collection_query
     context = {'submit_result':'anything'}
@@ -41,7 +37,7 @@ def container_search(request):
         q = request.GET.get('q')
         if q is not None:    
             results = collection_query(q)
-            context = {"results":results,
+            context = {"results": results,
                        "submit_result": "anything"}
 
             return render(request, 'search/result.html', context)

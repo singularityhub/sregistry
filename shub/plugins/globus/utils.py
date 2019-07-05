@@ -8,13 +8,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-import pickle
-from shub.apps.users.models import User
-from social_django.models import UserSocialAuth
-from django.contrib.auth import login
-import requests
-import globus_sdk
 from django.conf import settings
+from social_django.models import UserSocialAuth
+import globus_sdk
 
 def get_client():
     '''return client to handle authentication'''
@@ -62,8 +58,7 @@ def associate_user(user, client, code):
     # Associate with the user account
     token_id = tokens.decode_id_token(client)
  
-    # Look up the user based on email
-    email = token_id['email']
+    # Look up the user based on token
     try:
         social = user.social_auth.get(provider="globus",
                                       uid=token_id["sub"])

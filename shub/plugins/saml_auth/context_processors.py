@@ -15,4 +15,4 @@ from shub.settings import (
 
 def saml_processor(request):
     return {'AUTH_SAML_IDP': AUTH_SAML_IDP,
-            'AUTH_SAML_INSTITUTION': AUTH_SAML_INSTITUTION }
+            'AUTH_SAML_INSTITUTION': AUTH_SAML_INSTITUTION}

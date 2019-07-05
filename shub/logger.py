@@ -25,7 +25,7 @@ DEBUG = 5
 
 class ShubMessage:
 
-    def __init__(self,MESSAGELEVEL=None):
+    def __init__(self, MESSAGELEVEL=None):
         self.level = get_logging_level()
         self.history = []
         self.errorStream = sys.stderr
@@ -43,12 +43,13 @@ class ShubMessage:
 
     def useColor(self):
         '''useColor will determine if color should be added
-        to a print. Will check if being run in a terminal, and
-        if has support for asci'''
+           to a print. Will check if being run in a terminal, and
+           if has support for ascii
+        '''
         COLORIZE = get_user_color_preference()
         if COLORIZE is not None:
             return COLORIZE
-        streams = [self.errorStream,self.outputStream]
+        streams = [self.errorStream, self.outputStream]
         for stream in streams:
             if not hasattr(stream, 'isatty'):
                 return False
@@ -57,9 +58,10 @@ class ShubMessage:
         return True
 
 
-    def addColor(self,level,text):
+    def addColor(self, level, text):
         '''addColor to the prompt (usually prefix) if terminal
-        supports, and specified to do so'''
+           supports, and specified to do so
+        '''
         if self.colorize:
             if level in self.colors:
                 text = "%s%s%s" %(self.colors[level],
@@ -68,7 +70,7 @@ class ShubMessage:
         return text
 
 
-    def emitError(self,level):
+    def emitError(self, level):
         '''determine if a level should print to
         stderr, includes all levels but INFO and QUIET'''
         if level in [ABRT,
@@ -78,21 +80,20 @@ class ShubMessage:
                      VERBOSE1,
                      VERBOSE2,
                      VERBOSE3,
-                     DEBUG ]:
+                     DEBUG]:
             return True
         return False
 
 
-    def emitOutput(self,level):
+    def emitOutput(self, level):
         '''determine if a level should print to stdout
         only includes INFO'''
-        if level in [LOG,
-                     INFO]:
+        if level in [LOG, INFO]:
             return True
         return False
 
 
-    def isEnabledFor(self,messageLevel):
+    def isEnabledFor(self, messageLevel):
         '''check if a messageLevel is enabled to emit a level
         '''
         if messageLevel <= self.level:
@@ -100,25 +101,28 @@ class ShubMessage:
         return False
 
 
-    def emit(self,level,message,prefix=None):
+    def emit(self, level, message, prefix=None):
         '''emit is the main function to print the message
-        optionally with a prefix
-        :param level: the level of the message
-        :param message: the message to print
-        :param prefix: a prefix for the message
+           optionally with a prefix
+       
+           Parameters
+           ==========
+           level: the level of the message
+           message: the message to print
+           prefix: a prefix for the message
         '''
 
         if prefix is not None:
-            prefix = self.addColor(level,"%s " %(prefix))
+            prefix = self.addColor(level, "%s " % prefix)
         else:
             prefix = ""
-            message = self.addColor(level,message)
+            message = self.addColor(level, message)
 
         # Add the prefix 
-        message = "%s%s" %(prefix,message)
+        message = "%s%s" %(prefix, message)
 
         if not message.endswith('\n'):
-            message = "%s\n" %message
+            message = "%s\n" % message
 
         # If the level is quiet, only print to error
         if self.level == QUIET:
@@ -127,26 +131,26 @@ class ShubMessage:
         # Otherwise if in range print to stdout and stderr
         elif self.isEnabledFor(level):
             if self.emitError(level):
-                self.write(self.errorStream,message)
+                self.write(self.errorStream, message)
             else:
-                self.write(self.outputStream,message)
+                self.write(self.outputStream, message)
 
         # Add all log messages to history
         self.history.append(message)
 
 
-    def write(self,stream,message):
+    def write(self, stream, message):
         '''write will write a message to a stream, 
-        first checking the encoding
+           first checking the encoding
         '''
-        if isinstance(message,bytes):
+        if isinstance(message, bytes):
             message = message.decode('utf-8')
         stream.write(message)
 
 
-    def get_logs(self,join_newline=True):
+    def get_logs(self, join_newline=True):
         ''''get_logs will return the complete history, joined by newline
-        (default) or as is.
+            (default) or as is.
         '''
         if join_newline:
             return '\n'.join(self.history)
@@ -154,12 +158,21 @@ class ShubMessage:
         
 
 
-    def show_progress(self,iteration,total,length=40,min_level=0,prefix=None,
-                      carriage_return=True,suffix=None,symbol=None):
+    def show_progress(self, iteration,
+                      total,
+                      length=40,
+                      min_level=0,
+                      prefix=None,
+                      carriage_return=True,
+                      suffix=None,
+                      symbol=None):
         '''create a terminal progress bar, default bar shows for verbose+
-        :param iteration: current iteration (Int)
-        :param total: total iterations (Int)
-        :param length: character length of bar (Int)
+         
+           Parameters
+           ==========
+           iteration: current iteration (Int)
+           total: total iterations (Int)
+           length: character length of bar (Int)
         '''
         percent = 100 * (iteration / float(total))
         progress = int(length * iteration // total)
@@ -188,45 +201,48 @@ class ShubMessage:
         if self.level > min_level:
             percent = "%5s" %("{0:.1f}").format(percent)
             output = '\r' + prefix +  " |%s| %s%s %s" % (bar, percent, '%', suffix)            
-            sys.stdout.write(output),
+            sys.stdout.write(output)
             if iteration == total and carriage_return: 
                 sys.stdout.write('\n')
             sys.stdout.flush()
 
 
+    def abort(self, message):
+        self.emit(ABRT, message, 'ABRT')
 
-    def abort(self,message):
-        self.emit(ABRT,message,'ABRT')        
+    def error(self, message):
+        self.emit(ERROR, message, 'ERROR')        
 
-    def error(self,message):
-        self.emit(ERROR,message,'ERROR')        
+    def exit(self, message, return_code=1):
+        self.emit(ERROR, message, 'ERROR')
+        sys.exit(return_code)
 
-    def warning(self,message):
-        self.emit(WARNING,message,'WARNING')        
+    def warning(self, message):
+        self.emit(WARNING, message, 'WARNING')
 
-    def log(self,message):
-        self.emit(LOG,message,'LOG')        
+    def log(self, message):
+        self.emit(LOG, message, 'LOG')        
 
-    def info(self,message):
-        self.emit(INFO,message)        
+    def info(self, message):
+        self.emit(INFO, message) 
 
     def newline(self):
-        self.write(self.outputStream,'\n')  
+        self.write(self.outputStream, '\n')
 
-    def verbose(self,message):
-        self.emit(VERBOSE,message,"VERBOSE")        
+    def verbose(self, message):
+        self.emit(VERBOSE, message, "VERBOSE")        
 
-    def verbose1(self,message):
-        self.emit(VERBOSE,message,"VERBOSE1")        
+    def verbose1(self, message):
+        self.emit(VERBOSE, message, "VERBOSE1")        
 
-    def verbose2(self,message):
-        self.emit(VERBOSE2,message,'VERBOSE2')        
+    def verbose2(self, message):
+        self.emit(VERBOSE2, message, 'VERBOSE2')        
 
-    def verbose3(self,message):
-        self.emit(VERBOSE3,message,'VERBOSE3')        
+    def verbose3(self, message):
+        self.emit(VERBOSE3, message, 'VERBOSE3')        
 
-    def debug(self,message):
-        self.emit(DEBUG,message,'DEBUG')        
+    def debug(self, message):
+        self.emit(DEBUG, message, 'DEBUG')
 
     def is_quiet(self):
         '''is_quiet returns true if the level is under 1
@@ -238,26 +254,27 @@ class ShubMessage:
 
 def get_logging_level():
     '''get_logging_level will configure a logging to standard out based on the user's
-    selected level, which should be in an environment variable called
-    SOM_MESSAGELEVEL. if SOM_MESSAGELEVEL is not set, the maximum level
-    (5) is assumed (all messages).     
+       selected level, which should be in an environment variable called
+       SREGISTRY_MESSAGELEVEL. if SOM_MESSAGELEVEL is not set, the maximum level
+       (5) is assumed (all messages).     
     '''
-    return int(os.environ.get("SOM_MESSAGELEVEL",5))
+    return int(os.environ.get("SREGISTRY_MESSAGELEVEL", 5))
     
 
 def get_user_color_preference():
-    COLORIZE = os.environ.get('SOM_COLORIZE',None)
+    '''see in the environment if the user wants to disable colored logging'''
+    COLORIZE = os.environ.get('SREGISTRY_COLORIZE', None)
     if COLORIZE is not None:
         COLORIZE = convert2boolean(COLORIZE)
     return COLORIZE
 
 
 def convert2boolean(arg):
-  '''convert2boolean is used for environmental variables that must be
-  returned as boolean'''
-  if not isinstance(arg,bool):
-      return arg.lower() in ("yes", "true", "t", "1","y")
-  return arg
-
+    '''convert2boolean is used for environmental variables that must be
+       returned as boolean
+    '''
+    if not isinstance(arg, bool):
+        return arg.lower() in ("yes", "true", "t", "1", "y")
+    return arg
 
 bot = ShubMessage()

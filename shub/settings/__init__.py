@@ -1,4 +1,6 @@
 from importlib import import_module
+import os
+import sys
 
 from .applications import *
 from .config import *
@@ -9,8 +11,20 @@ from .api import *
 from .tasks import *
 
 # If PAM_AUTH in plugins enbled, add django_pam
-if "pam_auth" in INSTALLED_APPS:
+if "pam_auth" in PLUGINS_ENABLED:
     INSTALLED_APPS += ['django_pam']
+
+# If google_build in use, we are required to include GitHub
+if "google_build" in PLUGINS_ENABLED:
+
+    # For task discovery by celery
+    SOCIAL_AUTH_GITHUB_SCOPE = ["admin:repo_hook",
+                                "repo:status",
+                                "user:email",
+                                "read:org",
+                                "admin:org_hook",
+                                "deployment_status"]
+    ENABLE_GITHUB_AUTH = True
 
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:

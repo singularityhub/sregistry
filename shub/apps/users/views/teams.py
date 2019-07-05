@@ -11,14 +11,17 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.http.response import Http404
 from django.http import (
     HttpResponseRedirect,
     JsonResponse
 )
 
-from shub.settings import USER_COLLECTIONS
 from shub.apps.users.forms import TeamForm
-from shub.apps.users.models import ( User, Team, MembershipInvite )
+from shub.apps.users.models import (
+    Team,
+    MembershipInvite
+)
 from shub.apps.users.permissions import ( 
     has_create_permission, 
     is_invite_valid 
@@ -54,9 +57,11 @@ def get_team(tid):
 @login_required
 def edit_team(request, tid=None):
     '''edit_team is the view to edit an existing team, or create a new team.
-    :parma tid: the team id to edit or create. If none, indicates a new team
+
+       Parameters
+       ==========
+       tid: the team id to edit or create. If none, indicates a new team
     '''
- 
     if tid:
         team = get_team(tid)
         edit_permission = team.has_edit_permission(request)
@@ -109,7 +114,7 @@ def view_teams(request):
     create_permission = has_create_permission(request)
 
     context = {"teams": teams,
-               "has_create_permission" : create_permission }
+               "has_create_permission" : create_permission}
 
     return render(request, "teams/all_teams.html", context)
 
@@ -166,13 +171,12 @@ def join_team(request, tid, code=None):
                 messages.info(request, "This code is invalid to join this team.")
 
     if add_user:   
-
         if user not in team.get_members():
             team.members.add(user)
             team.save()
-            messages.info(request,"You have been added to team %s" %(team.name))
+            messages.info(request, "You have been added to team %s" % team.name)
         else:
-            messages.info(request,"You are already a member of %s" %(team.name))
+            messages.info(request, "You are already a member of %s" % team.name)
 
     return HttpResponseRedirect(team.get_absolute_url())
 
@@ -306,7 +310,7 @@ def delete_team(request, tid):
     team = get_team(tid)
 
     if request.user in team.owners.all():
-        messages.info(request,'%s has been deleted.' %team.name)
+        messages.info(request, '%s has been deleted.' % team.name)
         team.delete()
     else:
         messages.info(request, "You are not allowed to perform this action.")

@@ -8,8 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from django.conf.urls import url, include
-from django.conf import settings
+from django.conf.urls import url
 import shub.apps.users.views as views
 
 urlpatterns = [
@@ -29,7 +28,6 @@ urlpatterns = [
 
     # Add members and owners
     url(r'^teams/(?P<tid>.+?)/add/owner/(?P<uid>.+?)$', views.add_owner, name="remove_owner"),
-
-    url(r'^teams/new$',views.edit_team,name='new_team'),
+    url(r'^teams/new$', views.edit_team, name='new_team'),
 
 ]

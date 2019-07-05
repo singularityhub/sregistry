@@ -74,17 +74,15 @@
 $(document).ready(function(){
 
     $('#contributors').DataTable();
-
     $('.material-pagination').hide();
 
     // Or the entire collection
     $("#delete_collection").click(function(){
-        var response = confirm("Are you sure you want to delete this collection of builds?");
+        var response = confirm("Are you sure you want to delete this collection of containers?");
         if (response == true) {
-           document.location = "{% url 'delete_collection' collection.id %}";
+           {% if collection.containers.count > 0 %}{% if collection.containers.all.0.metadata.builder.name == "google_build" %}document.location = "{% url 'delete_google_collection' collection.id %}";{% endif %}{% else %}document.location = "{% url 'delete_collection' collection.id %}";{% endif %}
         }
     })
-
 
 })
 

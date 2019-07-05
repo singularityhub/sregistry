@@ -16,9 +16,10 @@ to work together using [docker-compose.yml](docker-compose.yml).
 The images are the following:
 
  - **vanessa/sregistry**: is the main uwsgi application, which serves a Django (python-based) application.
- - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly.
- - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [celery](http://www.celeryproject.org/), a distributed job queue that fits nicely into Django. The celery worker uses a
+ - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly. Note that we build a custom nginx image that takes advantage of the [nginx upload module](https://www.nginx.com/resources/wiki/modules/upload/).
+ - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [django-rq](https://github.com/rq/django-rq) that uses a
  - **redis**: database to organize the jobs themselves.
+ - **scheduler** jobs can be scheduled using the scheduler.
 
 For more information about Singularity Registry Server, please reference the 
 [docs](https://singularityhub.github.io/sregistry). If you have any issues, 

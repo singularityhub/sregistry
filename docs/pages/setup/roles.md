@@ -30,7 +30,15 @@ is an anonymous user of the registry. In the case of a private registry, this in
 
 Based on the above and granted that you are setting up the server and reading this, you will be a **superuser** because you have permissions to control the Docker images and grant other users (and yourself) the ability to push with the role **admin**.
 
-Next, learn how users can be a part of [teams](/sregistry/setup-teams)
+# Google Build + GitHub
+
+If you have enabled the [Google Build+Github]({{ site.baseurl }}/plugin-google-build) plugin,
+then your users will be able to log in with GitHub, and build collections that are
+linked to GitHub repositories. In this case, permissions for the registry interaction
+do not extend to GitHub. For example, if you build from a repository that you own,
+adding a collaborator or another owner will not change anything on GitHub.
+
+Speaking of collaborators, next, learn how users can be a part of [teams](/sregistry/setup-teams)
 
 <div>
     <a href="/sregistry/setup-interact"><button class="previous-button btn btn-primary"><i class="fa fa-chevron-left"></i> </button></a>

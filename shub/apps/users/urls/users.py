@@ -18,6 +18,4 @@ urlpatterns = [
     url(r'^token', views.view_token, name="token"),
     url(r'^u/profile', views.view_profile, name="profile"),
     #url(r'^(?P<username>[A-Za-z0-9@/./+/-/_]+)/$',views.view_profile,name="profile"),
-
 ]
-

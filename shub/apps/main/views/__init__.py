@@ -22,11 +22,13 @@ from .collections import (
     edit_collection,
     edit_contributors,
     get_collection,    
+    get_collection_named,
     make_collection_private,
     make_collection_public,
     new_collection,
     my_collections,
-    view_collection
+    view_collection,
+    view_named_collection
 )
 
 

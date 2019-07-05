@@ -8,64 +8,50 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.apps.main.models import (
-    Container, 
-    Collection,
-    Share,
-    Star
-)
+from django.contrib import messages
+from django.http.response import Http404
 
-from django.shortcuts import (
-    get_object_or_404, 
-    render_to_response, 
-    render, 
-    redirect
-)
+from django.shortcuts import redirect
 
 from django.http import (
-    JsonResponse,
     HttpResponse,
     FileResponse
 )
 
-from shub.apps.main.utils import (
-    calculate_expiration_date,
-    validate_share
-)
+from shub.apps.main.models import Share
+from shub.apps.main.utils import validate_share
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http.response import Http404
 from rest_framework import status
 from rest_framework.response import Response
 
 import os
-import re
-import uuid
 
 from .containers import get_container
 
 
-
-#######################################################################################
+################################################################################
 # CONTAINER DOWNLOAD
-#######################################################################################
+################################################################################
 
-def download_recipe(request,cid):
+def download_recipe(request, cid):
     '''download a container recipe
     '''
     container = get_container(cid)
+
     if "deffile" in container.metadata:
         recipe = container.metadata['deffile']
-        filename = "Singularity.%s" %container.tag
+        filename = "Singularity.%s" % container.tag
 
         response = HttpResponse(recipe,
                                 content_type='text/plain')
         response['Content-Disposition'] = 'attachment; filename="%s"' %filename
         return response
 
+    messages.info(request, "Container does not have recipe locally.")
+    return redirect(container.get_absolute_url())
 
-def download_share(request,cid,secret):
+
+def download_share(request, cid, secret):
     '''download a custom share for a container
     '''
     container = get_container(cid)
@@ -86,7 +72,7 @@ def download_share(request,cid,secret):
     if secret != share.secret:
         raise Response(status.HTTP_401_UNAUTHORIZED)
 
-    return _download_container(container)
+    return _download_container(container, request)
 
 
 
@@ -99,10 +85,10 @@ def download_container(request, cid, secret):
     if container.collection.secret != secret:
         raise Http404
 
-    return _download_container(container)
+    return _download_container(container, request)
 
 
-def _download_container(container):
+def _download_container(container, request):
     '''
        download_container is the shared function between downloading a share
        or a direct container download. For each, we create a FileResponse
@@ -114,13 +100,22 @@ def _download_container(container):
        container: the container to download
 
     '''
+    if container.image is not None:
 
-    filename = container.get_download_name()
-    filepath = container.image.get_abspath()
+        filename = container.get_download_name()
+        filepath = container.image.get_abspath()
 
-    f = open(filepath, 'rb')
-    response = FileResponse(f, content_type='application/img')
-    response['Content-Disposition'] = 'attachment; filename="%s"' %filename
-    response['Content-Length'] = os.path.getsize(filepath)
+        f = open(filepath, 'rb')
+        response = FileResponse(f, content_type='application/img')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        response['Content-Length'] = os.path.getsize(filepath)
 
-    return response
+        return response
+ 
+    # A remove build will store a metadata image url
+    elif 'image' in container.metadata:
+        return redirect(container.metadata['image'])
+
+    else:
+        messages.info(request, "Container does not have image served locally.")
+        raise Http404

@@ -13,6 +13,14 @@
   min-width:20px !important;
 }
 
+#collection_tags {
+    float:right;
+    background:white; 
+    border-radius:10px;
+    border:none;
+    margin-bottom:50px
+}
+
 #star {
     padding-left:25px; 
     float:right; 
@@ -32,8 +40,17 @@
 <div class="row" style="margin-top:30px">
     
     <!-- Container collection meta -->
-    <div class="col-md-10">
+    <div class="col-md-4">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
+    </div>
+    <div class="col-md-6">
+           {% if collection.tags.count > 0 %}
+           <ul id="collection_tags">
+           {% for tag in collection.tags.all %}
+               <span class="badge" style="background-color:royalblue" name="{{ tag.name }}" id="{{ tag.id }}">{{ tag.name }}</span>
+           {% endfor %}
+           </ul>
+           {% endif %}
     </div>
     <div class="col-md-2">
 
@@ -101,19 +118,16 @@
                        <form method="POST" action="#" id="container-table">
                            {% csrf_token %}
                            <tbody>
-                           {% for container in containers %}
-                           <tr>
+                           {% for container in containers %}<tr>
                                <td style="width:80px">
-
-                               {% if edit_permission %}
-                               <a title="delete container" 
+                               {% if edit_permission %}<a title="delete container" 
                                   class="delete_container btn-sm btn btn-control btn-light" 
                                   id="delete{{ container.id }}">
                                    <i class="fa fa-trash"></i></a>
                                    <a id="confirm_delete{{ container.id }}" 
-                                      href="{% url 'delete_container' container.id %}"></a>
-                               {% endif %}
-                               
+{% if container.metadata.builder.name == "google_build" %}href="{% url 'delete_google_container' container.id %}">
+{% else %}                          href="{% url 'delete_container' container.id %}">{% endif %}</a>
+                               {% endif %}                               
                                </td>
 
                                <td><a href="{% url 'container_details' container.id %}">
@@ -121,29 +135,33 @@
                                    </a>
                                </td>
                                 
-                               <td><a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a></td>
+                               <td>{% if container.builder.deffile %}<a href="{{ container.builder.deffile }}" target="_blank">Singularity.{{ container.tag }}</a>{% else %}
+                               <a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a>{% endif %}</td>
                                <td>
-                                   {% if edit_permission %}
-                                   <a href="{% url 'change_freeze_status' container.id %}">
-                                   {% endif %}
-                                   
-                                   {% if container.frozen %}
-                                   <button title="a frozen tag is locked from being overwritten with a push."
-                                           style="width:115px" 
-                                           class="btn btn-info btn-sm"
-                                           {% if edit_permission %}{% else %}disabled{% endif %}>FROZEN <i style='color:white' class="fa fa-lock"></i></button>
-                                   {% else %}
-                                   <button title="freezing a container prevents pushing for the specified tag."
-                                           style="width:115px" 
-                                           class="btn btn-success btn-sm"
-                                           {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
-                                   {% endif %}</td>
-                                   {% if edit_permission %}</a>{% endif %}
+                                   {% if container.image %}<!--Container was pushed directly-->
+                                       {% if edit_permission %}<a href="{% url 'change_freeze_status' container.id %}">{% endif %}
+                                       {% if container.frozen %}
+                                       <button title="a frozen tag is locked from being overwritten with a push."
+                                               style="width:115px" 
+                                               class="btn btn-info btn-sm"
+                                               {% if edit_permission %}{% else %}disabled{% endif %}>FROZEN <i style='color:white' class="fa fa-lock"></i></button>
+                                       {% else %}
+                                       <button title="freezing a container prevents pushing for the specified tag."
+                                               style="width:115px" 
+                                               class="btn btn-success btn-sm"
+                                               {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
+                                       {% endif %}
+                                       {% if edit_permission %}</a>{% endif %}
+                                   {% else %} <!--Container building remotely -->
+                                       {% if container.metadata.builder.name == "google_build" %}
+                                       {% include "google_build/status.html" %}
+                                       {% endif %}{% endif %}</td>
+
                                <td>{{ container.tag }}</td>
                                <td>{{ container.add_date }}</td>
                                <td>
 
-                               {% if container.image %} 
+                               {% if container.image %}<!-- Globus only works for local images -->
                                {% if 'globus' in PLUGINS_ENABLED %}{% include "globus/_container_details.html" %}{% endif %}
                                {% endif %}
                            </td>                                
@@ -228,14 +246,6 @@ $(document).ready(function(){
            var container_id = $(this).attr('id')
            var url = $("#confirm_" + container_id).attr('href');
            document.location = url;
-        }
-    })
-
-    // Or the entire collection
-    $("#delete_collection").click(function(){
-        var response = confirm("Are you sure you want to delete this collection of containers?");
-        if (response == true) {
-           document.location = "{% url 'delete_collection' collection.id %}";
         }
     })
 

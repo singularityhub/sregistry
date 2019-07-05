@@ -50,10 +50,14 @@ class APIRequestCount(models.Model):
     ''' Keep track of a count of requests based on path and
     view type, for quick querying later'''
     from shub.apps.main.models import Collection
+
     # When the collection is deleted, the count is deleted too
-    collection = models.ForeignKey(Collection, default=None, 
-                                   blank=False, null=True, 
+    collection = models.ForeignKey(Collection,
+                                   default=None, 
+                                   blank=False, 
+                                   null=True, 
                                    on_delete=models.CASCADE)
+
     count = models.PositiveIntegerField(default=0)
     path = models.CharField(max_length=200, db_index=True)
     method = models.CharField(max_length=200, db_index=True)
@@ -69,15 +73,15 @@ class APIRequestCount(models.Model):
                    # BaseAPIRequestLog (instance)
 def finalize_request(sender, instance, **kwargs):
     '''finalize request will add a counter object for the collection,
-       method, and path'''
+       method, and path
+    '''
     from shub.apps.logs.utils import get_request_collection
-    from django.conf import settings
     collection = get_request_collection(instance)
 
     if collection is not None:    
-        counter,created = APIRequestCount.objects.get_or_create(path=instance.view,
-                                                                method=instance.view_method,
-                                                                collection=collection)
+        counter, _ = APIRequestCount.objects.get_or_create(path=instance.view,
+                                                           method=instance.view_method,
+                                                           collection=collection)
         counter.count += 1
         counter.save()
 

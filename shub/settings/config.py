@@ -11,11 +11,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 # AUTHENTICATION
 
 # Which social auths do you want to use?
-ENABLE_GOOGLE_AUTH=False
-ENABLE_TWITTER_AUTH=False
-ENABLE_GITHUB_AUTH=True
-ENABLE_GITLAB_AUTH=False
-ENABLE_BITBUCKET_AUTH=False
+ENABLE_GOOGLE_AUTH = False
+ENABLE_TWITTER_AUTH = False
+ENABLE_GITHUB_AUTH = True
+ENABLE_GITLAB_AUTH = False
+ENABLE_BITBUCKET_AUTH = False
 
 # NOTE you will need to set autehtication methods up.
 # Configuration goes into secrets.py
@@ -28,25 +28,29 @@ ENABLE_BITBUCKET_AUTH=False
 
 
 # DOMAIN NAMES
+## IMPORTANT: if/when you switch to https, you need to change "DOMAIN_NAME"
+# to have https, otherwise some functionality will not work (e.g., GitHub webhooks)
 
 DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
-DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://','')
+DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace('http://', '')
 
-ADMINS = (( 'vsochat', 'vsochat@gmail.com'),)
+ADMINS = (('vsochat', 'vsochat@gmail.com'),)
 MANAGERS = ADMINS
 
 HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
-HELP_INSTITUTION_SITE = 'srcc.stanford.edu'
+HELP_INSTITUTION_SITE = 'https://srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
-
 
 
 # PERMISSIONS
 
 # Allow users to create public collections
 USER_COLLECTIONS = True
+
+# Limit users to N collections (None is unlimited)
+USER_COLLECTION_LIMIT = 2
 
 # Should registries by default be private, with no option for public?
 PRIVATE_ONLY = False
@@ -74,14 +78,13 @@ DATABASES = {
 
 # After how many single containers should we switch to showing collections
 # only? >= 1000
-VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
-
+VISUALIZATION_TREEMAP_COLLECTION_SWITCH = 1000
 
 # Logging
 
 # Do you want to save complete response metadata per each pull?
 # If you disable, we still keep track of collection pull counts, but not specific versions
-LOGGING_SAVE_RESPONSES=True
+LOGGING_SAVE_RESPONSES = True
 
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it
@@ -91,12 +94,14 @@ LOGGING_SAVE_RESPONSES=True
 # Available Plugins:
 
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+# - google_build: a custom storage with that uses Google Cloud Build + Storage
 # - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
-# - saml: authentication with SAML
+# - saml_auth: authentication with SAML
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
+#    'google_build'  
 #    'pam_auth',
 #    'globus',
 #    'saml_auth'

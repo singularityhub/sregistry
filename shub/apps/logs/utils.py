@@ -8,16 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-
-from shub.apps.main.models import Container
-
-from itertools import chain
-import os
 import json
-import re
-import requests
-import tempfile
-
 
 def get_request_collection(instance):
     '''obtain the collection from a request
@@ -34,7 +25,7 @@ def get_request_collection(instance):
         response = json.loads(instance.response)   
         name = response['collection']
     except:
-        collection_name = instance.path.replace('/api/container/','')
+        collection_name = instance.path.replace('/api/container/', '')
         name = parse_image_name(collection_name)['collection']
 
     try:

@@ -13,10 +13,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Set environment variable SINGULARITY_HUB to true, as indicator for singularity-python
-SINGULARITY_HUB = True
-os.environ['SINGULARITY_HUB'] = "%s" %SINGULARITY_HUB
-
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
 SOCIAL_AUTH_USER_MODEL = 'users.User'
