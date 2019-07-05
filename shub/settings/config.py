@@ -94,14 +94,14 @@ LOGGING_SAVE_RESPONSES = True
 # Available Plugins:
 
 # - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+# - google_build: a custom storage with that uses Google Cloud Build + Storage
 # - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
-# - saml: authentication with SAML
-# - google_build: a custom storage with that uses Google Cloud Build + Storage
+# - saml_auth: authentication with SAML
 
 PLUGINS_ENABLED = [
 #    'ldap_auth',
-    'google_build'  
+#    'google_build'  
 #    'pam_auth',
 #    'globus',
 #    'saml_auth'

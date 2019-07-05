@@ -37,6 +37,20 @@ PLUGINS_ENABLED = [
 ]
 ```
 
+And uncomment installing the google build client in the Dockerfile:
+
+```bash
+# Ensure Google Build Installed
+# RUN pip install sregistry[google-build]
+```
+
+You will need to build the image locally, with other additional
+changes (usually plugins) you want enabled:
+
+```bash
+$ docker build -t vanessa/sregistry .
+```
+
 ### Secrets
 
 Next, set the following variables in `shub/settings/secrets.py`, 

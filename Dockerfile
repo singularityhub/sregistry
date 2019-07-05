@@ -40,13 +40,6 @@ RUN pip install -r /tmp/requirements.txt
 
 ADD . /code/
 
-# For development only, install development of sregistry-cli
-RUN pip uninstall -y sregistry && \
-    cd /tmp && \
-    git clone -b add/google-build-timeout https://www.github.com/singularityhub/sregistry-cli && \
-    cd sregistry-cli && \
-    pip install .[google-build]
-
 ################################################################################
 # PLUGINS
 # You are free to uncomment the plugins that you want to use
@@ -57,6 +50,9 @@ RUN pip uninstall -y sregistry && \
 
 # Install PAM Authentication (uncomment if wanted)
 # RUN pip install django-pam
+
+# Ensure Google Build Installed
+# RUN pip install sregistry[google-build]
 
 # Install Globus (uncomment if wanted)
 # RUN /bin/bash /code/scripts/globus/globus-install.sh
