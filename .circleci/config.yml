@@ -52,11 +52,14 @@ dockerenv: &dockerenv
             DOCKERFILE=Dockerfile
         fi
         REPO_NAME=/tmp/src
+        # Set the version from VERSION
+        CONTAINER_VERSION=$(cat $REPO_NAME/VERSION)
         echo "Container name is ${CONTAINER_NAME}"
         # export to bash environment
         echo "export CONTAINER_NAME=${CONTAINER_NAME}" >> ${BASH_ENV}
         echo "export DOCKER_TAG=${DOCKER_TAG}" >> ${BASH_ENV}
         echo "export REPO_NAME=${REPO_NAME}" >> ${BASH_ENV}
+        echo "export CONTAINER_VERSION=${CONTAINER_VERSION}" >> ${BASH_ENV}
         echo "export DOCKERFILE=${DOCKERFILE}" >> ${BASH_ENV}
         cat ${BASH_ENV}
 
@@ -103,14 +106,15 @@ dockerdeploy: &dockerdeploy
       if [[ -n "$DOCKER_PASS" ]]; then
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             # Primary Container
-            docker push ${CONTAINER_NAME}:${DOCKER_TAG}
             echo "Tagging latest image..."
             docker tag ${CONTAINER_NAME}:${DOCKER_TAG} ${CONTAINER_NAME}:latest
-            docker push ${CONTAINER_NAME}:latest
+            echo "Tagging version..."
+            docker tag ${CONTAINER_NAME}:${DOCKER_TAG} ${CONTAINER_NAME}:${CONTAINER_VERSION}
+            docker push ${CONTAINER_NAME}
             # Nginx Container
-            docker push ${CONTAINER_NAME}_nginx:${DOCKER_TAG}
             docker tag ${CONTAINER_NAME}_nginx:${DOCKER_TAG} ${CONTAINER_NAME}_nginx:latest
-            docker push ${CONTAINER_NAME}_nginx:latest
+            docker tag ${CONTAINER_NAME}_nginx:${DOCKER_TAG} ${CONTAINER_NAME}_nginx:${CONTAINER_VERSION}
+            docker push ${CONTAINER_NAME}_nginx
       fi
 
 dockerbuild: &dockerbuild
@@ -157,16 +161,6 @@ jobs:
             - cache/container.tar.gz
             - cache/nginx.tar.gz
             - src
-
-  update_cache:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: /tmp
-      - save_cache:
-         key: docker-v1-{{ .Branch }}
-         paths:
-            - /tmp/cache/container.tar.gz
 
   update_cache:
     <<: *defaults
