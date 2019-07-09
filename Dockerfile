@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y \
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
+RUN pip install django-rq
 
 ADD . /code/
 
