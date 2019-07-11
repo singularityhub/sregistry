@@ -1,11 +1,15 @@
 #!/bin/bash
 
+python manage.py makemigrations users
+python manage.py makemigrations api
+python manage.py makemigrations logs 
+python manage.py makemigrations main
 python manage.py makemigrations
+python manage.py migrate users
 python manage.py migrate auth
 python manage.py migrate
 python manage.py collectstatic --noinput
 service cron start
-
 
 if grep -Fxq "PLUGINS_ENABLED+=[\"globus\"]" /code/shub/settings/config.py
 then
