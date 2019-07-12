@@ -14,7 +14,7 @@ sudo apt-get update
 sudo apt-get install python-certbot-nginx
 
 # Get certificates (might need sudo)
-sudo certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}"--email "${EMAIL}" --agree-tos --redirect
+certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --email "${EMAIL}" --agree-tos --redirect
 
 # The prompt is interactive, and will show the locations of certificates
 

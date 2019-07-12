@@ -12,7 +12,6 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
- - generate_cert.sh: use sudo for certbot
  - documentation fixes
  - application migrations added back in run_uwsgi.sh (1.1.01)
  - addition of Google Cloud Build, versioning, tags to collections (1.1.0)

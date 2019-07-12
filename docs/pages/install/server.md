@@ -88,6 +88,7 @@ this to be a custom hostname that you use, and custom names and unique resource 
 registry. For example, if you have a Google Domain and are using Google Cloud, you should be able to set it up using [Cloud DNS](https://console.cloud.google.com/net-services/dns/api/enable?nextPath=%2Fzones&project=singularity-static-registry&authuser=1). Usually this means
 creating a zone for your instance, adding a Google Domain, and copying the DNS records for
 the domain into Google Domains. Sometimes it can take a few days for changes to propogate.
+You are strongly encouraged to register both `your.domain.com`, as well as `www.your.domain.com` and have them point to the same IP address.
 We will discuss setting up https in a later section.
 
 ## Storage
