@@ -1,4 +1,10 @@
 ---
 layout: default
 ---
-{{ content }}
+<div class="md-content"> 
+    <article class="md-content__inner md-typeset">
+    {{ content }}
+    {% include toc.html %}
+    {% include editable.html %}
+    </article>
+</div>      

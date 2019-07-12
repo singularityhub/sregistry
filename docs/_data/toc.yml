@@ -1,30 +1,69 @@
-  - title: "Home"
-    url: "/sregistry/"
-    slug: sregistry
-  - title: "Introduction"
-    url: "/sregistry/intro"
-    slug: intro
-  - title: "Use Cases"
-    url: "/sregistry/use-cases"
-    slug: use-cases
-  - title: "Frequently Asked Questions"
-    url: "/sregistry/faq"
-    slug: faq
-  - title: "Installation"
-    url: "/sregistry/install"
-    slug: install
-  - title: "Setup"
-    url: "/sregistry/setup"
-    slug: setup
-  - title: "Accounts and Credentials"
-    url: "/sregistry/credentials"
-    slug: credentials
-  - title: "Plugins"
-    url: "/sregistry/plugins"
-    slug: plugins
-  - title: "Collection Interface"
-    url: "/sregistry/interface"
-    slug: interface
-  - title: "Clients"
-    url: "/sregistry/client"
-    slug: client
+- title: Introduction
+  url: docs/introduction
+  children:
+    - title: About
+      url: about
+    - title: Use Cases
+      url: docs/use-cases
+    - title: Frequently Asked Questions
+      url: docs/faq
+    - title: Policy
+      url: policy
+- title: Getting Started
+  url: docs/introduction
+  children:
+    - title: Reproducible Science
+      url: docs/introduction#a-need-for-reproducible-science
+    - title: Naming Images
+      url: docs/introduction#how-are-images-named
+    - title: Sharing Images
+      url: docs/introduction#how-are-images-shared
+    - title: Interfaces
+      url: docs/interface
+    - title: Terms
+      url: docs/introduction#terms
+- title: Installation
+  url: docs/install
+  children:
+    - title: Overview
+      url: docs/install
+    - title: Host Dependencies
+      url: docs/install/host
+    - title: Settings
+      url: docs/install/settings
+    - title: Web Server and Storage
+      url: docs/install/server
+    - title: Containers
+      url: docs/install/containers
+- title: Setup
+  url: docs/setup
+  children:
+    - title: Overview
+      url: docs/setup
+    - title: Interaction
+      url: docs/setup/interact
+    - title: User Roles
+      url: docs/setup/roles
+    - title: Teams
+      url: docs/setup/teams
+    - title: Registration
+      url: docs/setup/registration
+- title: Accounts and Credentials
+  url: docs/accounts/credentials
+- title: Plugins
+  url: docs/plugins
+  children:
+    - title: Overview
+      url: docs/plugins
+    - title: LDAP Authentication
+      url: docs/plugins/ldap
+    - title: PAM Authentication
+      url: docs/plugins/pam
+    - title: Globus Connect
+      url: docs/plugins/globus
+    - title: SAML Authentication
+      url: docs/plugins/saml
+    - title: Google Build
+      url: docs/plugins/google-build
+- title: Clients
+  url: docs/client

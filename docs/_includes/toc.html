@@ -1,16 +1,35 @@
-<div id="table-of-contents"></div>
-<script src="{{ site.baseurl }}/assets/js/toc.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
 <script>
 $(document).ready(function() {
-    
-    var headers = '.main-content h1, .main-content h2, .main-content h3'
-    $('#table-of-contents').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: headers });
-    $('#table-of-contents').on('click', 'a', function() {
-        var target = $(this.getAttribute('href'));
-        console.log(target);
-        var scroll_target = target.offset().top;
-        $(window).scrollTop(scroll_target - 10);
-        return false;
-    })
-});
+
+    var toc = $('#nav-toc');
+
+    // Select each header
+    sections = $('#md-container-pancakes h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            var div_text = section.text().split('¶')[0];
+            var parent = $("#" + div_id)
+            var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+            $(toc).append(content);
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil( "h1" );
+            $.each(contenders, function(idx, contender){
+               if($(contender).is('h2')) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+    });
 </script>
