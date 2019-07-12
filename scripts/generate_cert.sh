@@ -14,7 +14,7 @@ sudo apt-get update
 sudo apt-get install python-certbot-nginx
 
 # Get certificates (might need sudo)
-certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --email "${EMAIL}" --agree-tos --redirect
+sudo certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}"--email "${EMAIL}" --agree-tos --redirect
 
 # The prompt is interactive, and will show the locations of certificates
 
@@ -46,8 +46,8 @@ certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --email "${EMAIL}" --
 
 # Since the containers expect these files to be in /etc/ssl, copy there
 # This CANNOT be a link.
-sudo cp /etc/letsencrypt/live/containers.page/fullchain.pem /etc/ssl/certs/chained.pem
-sudo cp /etc/letsencrypt/live/containers.page/privkey.pem /etc/ssl/private/domain.key
+sudo cp /etc/letsencrypt/live/${DOMAIN}/fullchain.pem /etc/ssl/certs/chained.pem
+sudo cp /etc/letsencrypt/live/${DOMAIN}/privkey.pem /etc/ssl/private/domain.key
 
 # Create recursive backup
 backup=$(echo /etc/letsencrypt{,.bak.$(date +%s)} | cut -d ' ' -f 2)
