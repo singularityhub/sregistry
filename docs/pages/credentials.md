@@ -21,7 +21,7 @@ Once you select a user, there will be checkboxes to give staff or superuser stat
 
 
 ### Secrets
-After you create a user, you will need a way to communicate to the registry, and validate your identity. We need to put our credentials in a hidden file called `.sregistry` in our `$HOME` directory. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](/sregistry/setup), making yourself a superuser and admin and logging in (remember this part?)
+After you create a user, you will need a way to communicate to the registry, and validate your identity. This can be done by defining the `SREGISTRY_REGISTRY_BASE`, `SREGISTRY_REGISTRY_USERNAME` and `SREGISTRY_REGISTRY_TOKEN` environment variables. Each time we use the client, the secrets is used to encrypt a call and time-specific token that the registry can un-encrypt with the same key, and verify the payload. After creating your account in [setup](/sregistry/setup), making yourself a superuser and admin and logging in (remember this part?)
 
 
 ```
@@ -30,7 +30,7 @@ docker exec $NAME python /code/manage.py add_superuser --username vsoch
 docker exec $NAME python /code/manage.py add_admin --username vsoch
 ```
 
-You will want to go to [http://127.0.0.1/token](http://127.0.0.1/token) and copy paste the entire json object into a file called `.sregistry` in your `$HOME` folder. **Important** you must be a superuser **and** admin to build images. If you don't add yourself as an admin, the menu looks like this:
+You will want to go to [http://127.0.0.1/token](http://127.0.0.1/token) and use the contents of the json object to define the necessary environment variabes. **Important** you must be a superuser **and** admin to build images. If you don't add yourself as an admin, the menu looks like this:
 
 ![/assets/img/without-superuser.png](assets/img/without-superuser.png)
 
@@ -39,13 +39,21 @@ As an admin, you see the button for "token":
 ![/assets/img/with-superuser.png](assets/img/with-superuser.png)
 
 
-Here is the token page - note the button on the left will copy the text to your clipboard, for pasting in a file at `$HOME/sregistry`.
+Here is the token page - note the button on the left will copy the text to your clipboard.
 
 ![/assets/img/token.png](assets/img/token.png)
 
-Now when we try to communicate with [the client](/sregistry-cli/client-registry), it finds the token and can identify us. 
+Define the following variables, by using the corresponding keys from the json object:
 
+```bash
+export SREGISTRY_REGISTRY_BASE=http://127.0.0.1
+export SREGISTRY_REGISTRY_USERNAME=vsoch
+export SREGISTRY_REGISTRY_TOKEN=5027225717bf0030465db1e7099e496022c42181
 ```
+
+Now when we try to communicate with [the client](/sregistry-cli/client-registry), it finds the token and can identify us.
+
+```bash
 export SREGISTRY_CLIENT=registry
 sregistry list
 No container collections found.
