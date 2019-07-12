@@ -71,7 +71,8 @@ rm /var/www/html/index.nginx-debian.html
 ```
 
 If you want your page to use the same SSL certificates, a nginx-default.conf is also
-provided that will point to the same certificates on the server (generation discussed later):
+provided that will point to the same certificates on the server (generation discussed later).
+Please execute this command only after the certificates have been generated, or you won't be able to generate them:
 
 ```bash
 cp $INSTALL_ROOT/sregistry/scripts/nginx-default.conf /etc/nginx/conf.d/default.conf
