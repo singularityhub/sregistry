@@ -54,7 +54,7 @@ $ python manage.py add_superuser --username vsoch
 DEBUG Username: vsoch
 DEBUG vsoch is now a superuser.
 
-$ python manage.py add_superuser --username vsoch
+$ python manage.py add_admin --username vsoch
 DEBUG Username: vsoch
 DEBUG vsoch can now manage and build.
 
