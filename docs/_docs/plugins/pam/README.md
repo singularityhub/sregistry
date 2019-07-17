@@ -11,11 +11,9 @@ The `pam_auth` plugin allows users to login to sregistry using the unix accounts
 the host system.
 
 To enable PAM authentication you must:
-
-  * Uncomment the Dockerfile section to install PAM dependencies *before* building the image
   * Add `pam_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
   * Uncomment binds to /etc/shadow and /etc/passwd in `docker-compose.yml`
-
+  * Build the docker image with the build argument ENABLE_PAM set to true
 More detailed instructions are below.
 
 ## Permissions
@@ -28,14 +26,8 @@ and each user will still each need to export their token to push.  You can read 
 ## Getting Started
 
 This is the detailed walkthough to set up the PAM AUthentication plugin. 
-First, uncomment installation of the module in the Dockerfile:
 
-```bash
-# Install PAM Authentication (uncomment if wanted)
-RUN pip install django-pam
-```
-
-Then, uncomment "pam_auth" at the bottom of `shub/settings/config.py` to 
+First, uncomment "pam_auth" at the bottom of `shub/settings/config.py` to 
 enable the login option.
 
 ```bash
@@ -47,7 +39,7 @@ PLUGINS_ENABLED = [
 ]
 ```
 
-Finally, since we need to get access to users from the host,
+Since we need to get access to users from the host,
 you need to edit the `docker-compose.yml` and uncomment binds to your host:
 
 ```bash
@@ -76,3 +68,8 @@ $ sudo adduser --disabled-login --system --home /var/cache/nginx --ingroup nginx
 
 Note that this solution [would require restarting the container](https://github.com/jupyterhub/jupyterhub/issues/535) for changes on the host to take effect (for example,
 adding new users). If you find a better way to do this, please test and open an issue to add to this documentation.
+
+Finally, you must build the docker image with the build argument ENABLE_PAM set to true:
+```bash
+$ docker build --build-arg ENABLE_PAM=true -t vanessa/sregistry .
+```

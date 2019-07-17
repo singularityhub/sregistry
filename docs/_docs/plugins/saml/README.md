@@ -14,12 +14,19 @@ To enable SAML authentication you must:
   * Add `saml_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
   * Add some configuration detials to `shub/settings/config.py`
   * Configure the details of your SAML provider in in `shub/settings/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
+  * Build the docker image with the build argument ENABLE_SAML set to true:
+    ```bash
+    $ docker build --build-arg ENABLE_SAML=true -t vanessa/sregistry .
+    ```
+
 
 If you haven't yet created a secrets.py, a good start is to do the following:
 
 ```
 cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 ```
+
+
   
 ## Quick Start
 This quick start is intended to demonstrate basic functionality of the SAML authentication. 

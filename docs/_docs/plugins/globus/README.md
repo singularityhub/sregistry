@@ -11,12 +11,6 @@ The `globus` plugin allows a logged in user to connect their Globus account to a
 
 
 ## Setup
-First uncomment the line to install Globus in the Dockerfile.
-
-```bash
-# Install Globus (uncomment if wanted)
-RUN /bin/bash /code/scripts/globus/globus-install.sh
-```
 
 In your `shub/settings/secrets.py` file you need to add a client id and secret generated at [https://developers.globus.org/](https://developers.globus.org/). Navigate to the site and do the following:
 
@@ -52,11 +46,9 @@ SOCIAL_AUTH_GLOBUS_SECRET="xxxxxxxxxxxxxxx"
 ```
 
 If you don't yet have a `secrets.py` you can copy the `dummy_secrets.py` in the same folder, which has commented out examples of the above.
-Then build the container. Given that you have uncommented the line in the Dockerfile, the build
-process will install Globus.
-
+Then, you must build the container setting the build argument ENABLE_GLOBUS to true.
 ```
-docker build -t vanessa/sregistry .
+docker build --build-arg ENABLE_GLOBUS=true -t vanessa/sregistry .
 ```
 
 Once the build is done, start the container.
