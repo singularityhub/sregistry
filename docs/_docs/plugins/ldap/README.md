@@ -13,7 +13,7 @@ LDAP directory. This supports logins against [Microsoft Active Directory](https:
 
 To enable LDAP authentication you must:
 
-  * Uncomment the Dockerfile section to install LDAP dependencies *before* building the image
+  * Build the docker image with the build argument ENABLE_LDAP set to true
   * Add `ldap_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
   * Configure the details of your LDAP directory in `shub/settings/secrets.py`. See
     `shub/settings/dummy_secrets.py` for an example OpenLDAP configuration. A good start is to do the following:
@@ -301,6 +301,11 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 ```
 
 Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/config.py`.
+
+Finally, you must build the Docker image with the build argument ENABLE_LDAP set to true:
+```bash
+docker build --build-arg ENABLE_LDAP=true -t vanessa/sregistry . 
+```
 
 It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
 

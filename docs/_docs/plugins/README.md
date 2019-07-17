@@ -25,6 +25,21 @@ your registries' local `shub/settings/secrets.py` file.
  - [SAML](saml): Authentication with SAML
  - [Google Build](google-build) provides build and storage on Google Cloud.
 
+The Dockerfile has some build arguments to build the Docker image according to the plugins software requirements. These variables are set to false by default:
+```bash
+ARG ENABLE_LDAP=false
+ARG ENABLE_PAM=false
+ARG ENABLE_GOOGLEBUILD=false
+ARG ENABLE_GLOBUS=false
+ARG ENABLE_SAML=false
+```
+
+Therefore, if you want to install the requirements of all current supported plugins, you can build the image as follows: 
+```bash
+docker build --build-arg ENABLE_LDAP=true --build-arg ENABLE_PAM=true  --build-arg ENABLE_GOOGLEBUILD=true --build-arg ENABLE_GLOBUS=true --build-arg ENABLE_SAML=true -t vanessa/sregistry .
+```
+
+
 ## Writing a Plugin
 
 An sregistry plugin is a Django App, that lives inside `shub/plugins/<plugin-name>`.
@@ -44,6 +59,10 @@ and `CONTEXT_PROCESSORS` listed in the plugin `__init.py__` is merged into the p
 More documentation will be added as the plugin interface is developed. For now, see plugins
 distrubuted with sregisty under `shub/plugins` for example code.
 
+Besides, if your plugin has any specific software requirements that are not currently available in the Docker image and **those requirements are compatible with the current software**, you can set a new build argument `ENABLE_{PLUGIN_NAME}` and add the corresponding installation commands in the `PLUGINS` section of the Dockerfile with the following format:
+```bash
+RUN if $ENABLE_{PLUGIN_NAME}; then {INSTALLATION_COMMAND}; fi;
+```
 ## Writing Documentation
 Documentation for your plugin is just as important as the plugin itself! You should create a subfolder under
 `docs/pages/plugins/<your-plugin>` with an appropriate README.md that is linked to in this file.

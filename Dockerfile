@@ -3,6 +3,12 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND noninteractive
 ENV MESSAGELEVEL QUIET
 
+ARG ENABLE_LDAP=false
+ARG ENABLE_PAM=false
+ARG ENABLE_GOOGLEBUILD=false
+ARG ENABLE_GLOBUS=false
+ARG ENABLE_SAML=false
+
 ################################################################################
 # CORE
 # Do not modify this section
@@ -45,21 +51,21 @@ ADD . /code/
 # You are free to uncomment the plugins that you want to use
 
 # Install LDAP (uncomment if wanted)
-# RUN pip install python3-ldap
-# RUN pip install django-auth-ldap
+RUN if $ENABLE_LDAP; then pip install python3-ldap ; fi;
+RUN if $ENABLE_LDAP; then pip install django-auth-ldap ; fi;
 
 # Install PAM Authentication (uncomment if wanted)
-# RUN pip install django-pam
+RUN if $ENABLE_PAM; then pip install django-pam ; fi;
 
 # Ensure Google Build Installed
-# RUN pip install sregistry[google-build]
+RUN if $ENABLE_GOOGLEBUILD; then pip install sregistry[google-build] ; fi;
 
 # Install Globus (uncomment if wanted)
-# RUN /bin/bash /code/scripts/globus/globus-install.sh
+RUN if $ENABLE_GLOBUS; then /bin/bash /code/scripts/globus/globus-install.sh ; fi;
 
 # Install SAML (uncomment if wanted)
-# RUN pip install python3-saml
-# RUN pip install social-auth-core[saml]
+RUN if $ENABLE_SAML; then pip install python3-saml ; fi;
+RUN if $ENABLE_SAML; then pip install social-auth-core[saml] ; fi;
 
 ################################################################################
 # BASE

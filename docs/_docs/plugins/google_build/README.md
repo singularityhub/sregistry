@@ -35,19 +35,10 @@ PLUGINS_ENABLED = [
      'google_build'
 ]
 ```
-
-And uncomment installing the google build client in the Dockerfile:
-
-```bash
-# Ensure Google Build Installed
-# RUN pip install sregistry[google-build]
-```
-
-You will need to build the image locally, with other additional
-changes (usually plugins) you want enabled:
+You will need to build the image locally with, at least, the build argument ENABLE_GOOGLEBUILD set to true:
 
 ```bash
-$ docker build -t vanessa/sregistry .
+$ docker build --build-arg ENABLE_GOOGLEBUILD=true -t vanessa/sregistry .
 ```
 
 ## Secrets
