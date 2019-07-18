@@ -132,6 +132,17 @@ you want to use the default, don't define this variable in your secrets.
 # SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None
 ```
 
+### Signed URL Expiration
+
+By default, the containers are made private, and then granted access via signed urls.
+You can optionally adjust the time that the URL will expire in, although it's recommended
+that this is kept small:
+
+```python
+CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
+```
+
+This can be much smaller than 10, as we only need it to endure for the POST.
 
 ### Build Expiration 
 

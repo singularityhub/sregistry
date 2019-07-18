@@ -8,13 +8,19 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
-from shub.settings import PRIVATE_ONLY
+from shub.settings import (
+    PRIVATE_ONLY,
+    COLLECTIONS_VIEW_PAGE_COUNT as collection_count,
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
 from shub.apps.users.views import validate_credentials
 from shub.apps.main.utils import format_collection_name
 from shub.apps.main.models import (
     Container, 
     Collection
 )
+
 
 from django.shortcuts import (
     render, 
@@ -25,11 +31,12 @@ from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from itertools import chain
+from ratelimit.decorators import ratelimit
 
 import uuid
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def get_collection(cid):
     ''' get a collection based on its primary id, raise 404 not found
         if... not found :)
@@ -46,6 +53,7 @@ def get_collection(cid):
     else:
         return collection
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def get_collection_named(name, retry=True):
     '''get a collection by name. First we try the collection name,
        then we try splitting if the name includes /
@@ -69,15 +77,14 @@ def get_collection_named(name, retry=True):
 # COLLECTIONS ##################################################################
 ################################################################################
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def all_collections(request):
     '''view all container collections. This only includes public collections,
        and we add collections for which the user has permission.
 
     '''
-
-    # public collections
-    collections = Collection.objects.filter(private=False)
+    limit = min(Collection.objects.count(), collection_count)
+    collections = Collection.objects.filter(private=False).annotate(Count('star', distinct=True)).order_by('-star__count')[:limit]
 
     # private that the user can view
     private_collections = [x for x in Collection.objects.filter(private=True)
@@ -92,6 +99,7 @@ def all_collections(request):
     return render(request, 'collections/all_collections.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def my_collections(request):
     '''this view will provide a list of collections for the logged in user
@@ -107,7 +115,7 @@ def my_collections(request):
     return render(request, 'collections/all_collections.html', context)
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def new_collection(request):
     '''new_container_collection will display a form to generate a new collection
@@ -137,7 +145,7 @@ def new_collection(request):
     messages.info(request, "You don't have permission to perform this action.")
     return redirect("collections")
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_named_collection(request, username, reponame):
     '''View container build details (all container builds for a repo)
        This is the same as view_collection but we look up the collection
@@ -160,6 +168,7 @@ def view_named_collection(request, username, reponame):
             raise Http404
 
     return _view_collection(request, collection)
+
 
 def _view_collection(request, collection):
     '''a shared function to finish up checking permissions for viewing
@@ -185,6 +194,7 @@ def _view_collection(request, collection):
     return render(request, 'collections/view_collection.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_collection(request, cid):
     '''View container build details (all container builds for a repo)
 
@@ -198,6 +208,7 @@ def view_collection(request, cid):
     return _view_collection(request, collection)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def collection_settings(request, cid):
     '''Collection settings is the entrypoint for editing the builder, branches,
        and administrative actions like disabling and deleting collections. if 
@@ -238,6 +249,7 @@ def collection_settings(request, cid):
     return render(request, 'collections/collection_settings.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def edit_collection(request, cid):
     '''edit collection will let the user specify a different image for
        their builds, in the case that the provided isn't large enough, etc.
@@ -274,7 +286,7 @@ def edit_collection(request, cid):
 
     return render(request, 'collections/edit_collection.html', context)
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def collection_commands(request, cid):
     '''collection commands will show the user example commands for interacting
        with a collection
@@ -295,8 +307,7 @@ def collection_commands(request, cid):
     context = {"collection":collection}
     return render(request, 'collections/collection_commands.html', context)
 
-
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def delete_collection(request, cid):
     '''delete a container collection
 
@@ -305,12 +316,24 @@ def delete_collection(request, cid):
        cid: the collection id to delete
 
     '''
+    if not _delete_collection(request, cid):
+        messages.info(request, "This action is not permitted.")
+        return redirect('collections')
+
+    messages.info(request, 'Collection successfully deleted.')
+    return redirect('collections')
+
+
+def _delete_collection(request, cid):
+    ''' the underlying call for delete_collection, intended for use
+        also not directly from a view. Returns True or False if the
+        collection is deleted.
+    '''
     collection = get_collection(cid)
 
     # Only an owner can delete
     if not collection.has_edit_permission(request):
-        messages.info(request, "This action is not permitted.")
-        return redirect('collections')
+        return False
 
     # Delete files before containers
     containers = Container.objects.filter(collection=collection)
@@ -318,10 +341,7 @@ def delete_collection(request, cid):
     for container in containers:
         container.delete()
     collection.delete()
-
-    messages.info(request, 'Collection successfully deleted.')
-    return redirect('collections')
-
+    return True
 
 
 ################################################################################
@@ -357,6 +377,7 @@ def _change_collection_privacy(request, collection, make_private=True):
     return collection
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def change_collection_privacy(request, cid, make_private=True):
     '''change collection privacy, if the user has permission
@@ -376,7 +397,7 @@ def change_collection_privacy(request, cid, make_private=True):
 
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def make_collection_private(request, cid):
     '''make collection private will make a collection private
@@ -388,6 +409,7 @@ def make_collection_private(request, cid):
     return change_collection_privacy(request, cid, make_private=True)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def make_collection_public(request, cid):
     '''make collection public will make a collection public
@@ -440,7 +462,7 @@ def _edit_contributors(userids, collection, add_user=True, level="contributor"):
 
     return collection
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def edit_contributors(request, cid):
     '''edit_contributors is the submission to see, add, and delete contributors 

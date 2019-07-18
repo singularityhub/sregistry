@@ -12,6 +12,9 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - adding django-ratelimit to all views, customized via settings (1.1.02)
+   - button in profile to delete account
+   - API throttle with defaults for users and anon
  - documentation fixes
  - application migrations added back in run_uwsgi.sh (1.1.01)
    - major update of documentation theme

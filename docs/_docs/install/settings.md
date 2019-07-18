@@ -8,7 +8,6 @@ toc: false
 
 See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
 
-
 ## Secrets
 
 There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
@@ -234,7 +233,54 @@ DEFAULT_PRIVATE=True
 `PRIVATE_ONLY` takes preference to `DEFAULT_PRIVATE`. In other words, if you set `PRIVATE_ONLY` to True, the default has to be private, the change to `DEFAULT_PRIVATE` is meaningless, and a user cannot change a collection to be public.
 
 
+### Collections Page Display
+
+On the main server's `<domain>/collections` page, users will be shown
+some limited set of collections, plus those that are private that they own.
+Since this could slow down the page if the number is huge, you are given
+control of this number:
+
+```python
+# The number of collections to show on the /<domain>/collections page
+COLLECTIONS_VIEW_PAGE_COUNT=250
+```
+
+For larger registries, it's recommended to disable this view all together, and
+encourage users to find containers via "search." If you think this should
+be a default, please open an issue to discuss.
+
+
+### View Rate Limits
+
+While it's unlikely someone would be malicious to request a view, we can't
+disregard it completely. For all views, we use django-ratelimit to limit
+views to a certain number per day based on the ip address. For most views,
+you can define the variables:
+
+```python
+VIEW_RATE_LIMIT="50/1d"  # The rate limit for each view, django-ratelimit, "50 per day per ipaddress)
+VIEW_RATE_LIMIT_BLOCK=True # Given that someone goes over, are they blocked for the period?
+```
+
+In the example above, we limit each ip address to 50/day. We block any addresses
+that go over, until the next period begins.
+
+### Container GET Limits
+
+Too many get requests for any particular container, whether stored locally or in
+Google Storage (Google Cloud Build + GitHub plugin) could lead to a DoS for the server.
+Thus, we have a limit on the total number of weekly GET requests per container:
+
+```python
+# The maximum number of downloads allowed per container, per week
+CONTAINER_WEEKLY_GET_LIMIT=100
+```
+
+The `Container` object has a get_limit and get_count that are adjusted when a
+user downloads a container. A weekly cron job will reset the get_count.
+
 ### Database
+
 By default, the database itself will be deployed as a postgres image called `db`. You probably don't want this for production (for example, I use a second instance with postgres and a third with a hot backup, but it's an ok solution for a small cluster or single user. Either way, we recommend backing it up every so often.
 
 When your database is set up, you can define it in your `secrets.py` and it will override the Docker image one in the `settings/main.py file`. It should look something like this
@@ -275,5 +321,33 @@ By default, Singularity Registry keeps track of all requests to pull containers,
 ```python
 LOGGING_SAVE_RESPONSES=True
 ```
+
+## API
+
+Take a look in [settings/api.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/api.py)
+to configure your restful API. You can uncomment the first block to require authentication:
+
+```python
+  'DEFAULT_PERMISSION_CLASSES': (
+      'rest_framework.permissions.IsAuthenticated',
+   ),
+```
+
+And also choose throttle rates for users and anonymous API requests.
+
+```python
+    # You can also customize the throttle rates, for anon and users
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    # https://www.django-rest-framework.org/api-guide/throttling/
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+    },
+```
+
+These are important metrics to ensure that your server isn't subject to a DoS attack.
+
 
 Great job! Let's now [configure your web server and storage](server).

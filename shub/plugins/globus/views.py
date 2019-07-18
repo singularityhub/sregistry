@@ -26,11 +26,16 @@ from shub.plugins.globus.utils import (
     associate_user
 )
 
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
+from ratelimit.decorators import ratelimit
 from social_django.models import UserSocialAuth
 from globus_sdk.exc import TransferAPIError
 
-
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 @has_globus_association
 def globus_logout(request):
@@ -63,6 +68,7 @@ def globus_logout(request):
     return redirect("%s%s" %(logout_url, params))
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def globus_login(request):
     '''
@@ -94,6 +100,7 @@ def globus_login(request):
     return redirect('globus_transfer')
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 @has_globus_association
 def globus_transfer(request, cid=None, endpoints=None):
@@ -128,6 +135,7 @@ def globus_transfer(request, cid=None, endpoints=None):
     return render(request, 'globus/transfer.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 @has_globus_association
 def globus_endpoint(request, endpoint_id=None, cid=None):
@@ -153,6 +161,7 @@ def globus_endpoint(request, endpoint_id=None, cid=None):
     return render(request, 'globus/transfer.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 @has_globus_association
 def submit_transfer(request, endpoint, cid):

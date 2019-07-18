@@ -13,6 +13,11 @@ from shub.apps.main.models import (
     Label
 )
 
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 from django.shortcuts import (
     render, 
     redirect
@@ -25,7 +30,7 @@ from django.http import (
 )
 from django.contrib import messages
 from datetime import datetime
-
+from ratelimit.decorators import ratelimit
 
 
 # get container
@@ -43,6 +48,7 @@ def get_container(cid):
 # HELPERS ######################################################################
 ################################################################################
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_container(request, cid):
     container = get_container(cid)
 
@@ -54,6 +60,7 @@ def view_container(request, cid):
     return redirect('collection_details', cid=container.collection.id)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_named_container(request, collection, name, tag):
     '''view a specific container based on a collection, container, and tag'''
     try:
@@ -67,6 +74,7 @@ def view_named_container(request, collection, name, tag):
     return container_details(request, container.id)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def container_details(request, cid):
     container = get_container(cid)
 
@@ -82,6 +90,7 @@ def container_details(request, cid):
     return render(request, 'containers/container_details.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def delete_container(request, cid):
     '''delete a container, including it's corresponding files
@@ -97,6 +106,7 @@ def delete_container(request, cid):
     return redirect(container.collection.get_absolute_url())
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def container_tags(request, cid):
     '''view container tags'''
     container = get_container(cid)
@@ -114,6 +124,7 @@ def container_tags(request, cid):
 ################################################################################
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def change_freeze_status(request, cid):
     '''freeze or unfreeze a container

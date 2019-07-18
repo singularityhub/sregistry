@@ -12,6 +12,7 @@ django-gravatar2
 django-guardian
 django-hstore==1.3.5
 django-notifications-hq
+django-ratelimit==2.0.0
 django-rest-swagger
 django-rq
 django-taggit

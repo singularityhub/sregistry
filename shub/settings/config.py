@@ -44,7 +44,7 @@ REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
 
-# PERMISSIONS
+# Permissions and Views
 
 # Allow users to create public collections
 USER_COLLECTIONS = True
@@ -58,6 +58,11 @@ PRIVATE_ONLY = False
 # Should the default for a new registry be private or public?
 DEFAULT_PRIVATE = False
 
+# The number of collections to show on the /<domain>/collections page
+COLLECTIONS_VIEW_PAGE_COUNT=250
+
+# The maximum number of downloads allowed per container, per week
+CONTAINER_WEEKLY_GET_LIMIT=100
 
 # DATABASE
 
@@ -86,10 +91,13 @@ VISUALIZATION_TREEMAP_COLLECTION_SWITCH = 1000
 # If you disable, we still keep track of collection pull counts, but not specific versions
 LOGGING_SAVE_RESPONSES = True
 
+# Rate Limits
+
+VIEW_RATE_LIMIT="50/1d"  # The rate limit for each view, django-ratelimit, "50 per day per ipaddress)
+VIEW_RATE_LIMIT_BLOCK=True # Given that someone goes over, are they blocked for the period?
+
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it
-
-
 
 # Available Plugins:
 

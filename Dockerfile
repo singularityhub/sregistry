@@ -59,6 +59,7 @@ RUN if $ENABLE_PAM; then pip install django-pam ; fi;
 
 # Ensure Google Build Installed
 RUN if $ENABLE_GOOGLEBUILD; then pip install sregistry[google-build] ; fi;
+ENV SREGISTRY_GOOGLE_STORAGE_PRIVATE=true
 
 # Install Globus (uncomment if wanted)
 RUN if $ENABLE_GLOBUS; then /bin/bash /code/scripts/globus/globus-install.sh ; fi;
@@ -80,8 +81,9 @@ RUN apt-get autoremove -y
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install crontab to setup job
+# Install crontab to setup jobs
 RUN echo "0 0 * * * /usr/bin/python /code/manage.py generate_tree" >> /code/cronjob
+RUN echo "0 * * * Mon /usr/bin/python /code/manage.py reset_container_limits" >> /code/cronjob
 RUN crontab /code/cronjob
 RUN rm /code/cronjob
 

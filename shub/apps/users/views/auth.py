@@ -19,6 +19,12 @@ from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 
+from ratelimit.decorators import ratelimit
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 
 ################################################################################
 # AUTHENTICATION
@@ -60,6 +66,7 @@ def validate_credentials(user, context=None):
     return context
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def agree_terms(request):
     '''ajax view for the user to agree'''
     if request.method == 'POST':
@@ -72,7 +79,7 @@ def agree_terms(request):
     return JsonResponse({"Unicorn poop cookies...": "I will never understand the allure."})
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def login(request, message=None):
     '''login will either show the user a button to login with github, and then a link
        to their collections (given storage is set up) or a link to connect storage (if it 
@@ -92,7 +99,7 @@ def login(request, message=None):
 @login_required
 def logout(request):
     '''log the user out, first trying to remove the user_id in the request session
-    skip if it doesn't exist
+       skip if it doesn't exist
     '''
     try:
         del request.session['user_id']
@@ -104,9 +111,9 @@ def logout(request):
 
 
 
-#######################################################################################
+################################################################################
 # SOCIAL AUTH
-#######################################################################################
+################################################################################
 
 def redirect_if_no_refresh_token(backend, response, social, *args, **kwargs):
     '''http://python-social-auth.readthedocs.io/en/latest/use_cases.html#re-prompt-google-oauth2-users-to-refresh-the-refresh-token

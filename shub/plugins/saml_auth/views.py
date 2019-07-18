@@ -12,8 +12,16 @@ from django.http import HttpResponse
 from django.urls import reverse
 from social_django.utils import load_strategy, load_backend
 
+from ratelimit.decorators import ratelimit
+
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 # SAML Authentication
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def saml_metadata_view(request):
     complete_url = reverse('social:complete', args=("saml", ))
     saml_backend = load_backend(

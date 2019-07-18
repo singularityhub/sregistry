@@ -21,12 +21,19 @@ from shub.apps.api.utils import (
     has_permission, 
     get_request_user
 )
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
+from ratelimit.decorators import ratelimit
 from sregistry.main.registry.auth import generate_timestamp
 
 import json
 import uuid
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @csrf_exempt
 def collection_auth_check(request):
     ''' check permissions and 

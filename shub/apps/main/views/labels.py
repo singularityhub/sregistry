@@ -17,11 +17,16 @@ from django.shortcuts import (
     redirect
 )
 
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 
 from django.urls import reverse
-
+from ratelimit.decorators import ratelimit
 
 #### GETS #############################################################
 
@@ -41,7 +46,7 @@ def get_label(key=None, value=None):
         return label
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def all_labels(request):
     # Generate queryset of labels annotated with count based on key, eg {'key': 'maintainer', 'id__count': 1}
     labels = Label.objects.values('key').annotate(Count("id")).order_by()
@@ -49,6 +54,7 @@ def all_labels(request):
     return render(request, 'labels/all_labels.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_label(request, lid):
     '''view containers with a specific, exact key/pair'''
     try:
@@ -62,6 +68,7 @@ def view_label(request, lid):
     return render(request, 'labels/view_label.html', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_label_keyval(request, key, value):
     '''view containers with a specific, exact key/pair'''
     try:
@@ -73,14 +80,14 @@ def view_label_keyval(request, key, value):
     url = reverse('view_label_id', kwargs={'lid': label.id})
     return HttpResponseRedirect(url)
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_label_key(request, key):
     '''view all labels with a shared key'''
     labels = Label.objects.filter(key=key)
     context = {"labels": labels, "key": key}
     return render(request, 'labels/view_label_key.html', context)
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def update_container_labels(container, labels):
     for name, value in labels.items():
         if isinstance(value, str):

@@ -41,6 +41,11 @@ from shub.apps.api.utils import (
     has_permission
 )
 
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 from sregistry.main.registry.auth import generate_timestamp
 from .github import (
     create_webhook,
@@ -65,10 +70,13 @@ from .utils import (
     JsonResponseMessage,
     validate_jwt
 )
+
+from ratelimit.decorators import ratelimit
 import re
 import json
 import uuid
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def connect_github(request):
     '''create a new container collection based on connecting GitHub.
@@ -92,6 +100,7 @@ def connect_github(request):
     return render(request, "google_build/add_collection.html", context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def save_collection(request):
     '''save the newly selected collection by the user.
@@ -264,6 +273,7 @@ class RecipePushViewSet(ModelViewSet):
 
 # Receive GitHub Hook
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @csrf_exempt
 def receive_build(request, cid):
     '''receive_build will receive the post from Google Cloud Build.
@@ -300,6 +310,7 @@ def receive_build(request, cid):
     return JsonResponseMessage(message="Invalid request.")
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def delete_container(request, cid):
     '''delete a container, including it's corresponding files
@@ -317,6 +328,7 @@ def delete_container(request, cid):
     return redirect(container.collection.get_absolute_url())
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def delete_collection(request, cid):
     '''delete a container collection that has Google Builds
@@ -325,20 +337,32 @@ def delete_collection(request, cid):
        ==========
        cid: the collection id to delete
     '''
-    collection = get_collection(cid)
-
-    # Only an owner can delete
-    if not collection.has_edit_permission(request):
+    if not _delete_collection(request, cid):
         messages.info(request, "This action is not permitted.")
         return redirect('collections')
+
+    messages.info(request, 'Collection requested for deletion.')
+    return redirect('collections')
+
+def _delete_collection(request, cid):
+    '''the underlying function to delete a collection, returns True/False
+       if done to the calling view.
+
+       Parameters
+       ==========
+       cid: the collection id to delete
+    '''
+    collection = get_collection(cid)
+    
+    # Only an owner can delete
+    if not collection.has_edit_permission(request):
+        return False
     
     # Queue the job to delete the collection
     django_rq.enqueue(delete_container_collection, 
                       cid=collection.id,
                       uid=request.user.id)
-
-    messages.info(request, 'Collection requested for deletion.')
-    return redirect('collections')
+    return True
 
 
 @csrf_exempt

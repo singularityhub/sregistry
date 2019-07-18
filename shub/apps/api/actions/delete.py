@@ -11,7 +11,14 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from shub.logger import bot
 from shub.apps.api.utils import validate_request
 from sregistry.main.registry.auth import generate_timestamp
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
 
+from ratelimit.decorators import ratelimit
+
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def delete_container(request, container):
     '''delete a container only given authentication to do so'''
 

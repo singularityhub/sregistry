@@ -23,16 +23,21 @@ from shub.apps.api.utils import (
     has_permission,
     validate_request
 )
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
 
 from sregistry.main.registry.auth import generate_timestamp
 
+from ratelimit.decorators import ratelimit
 from rest_framework.exceptions import PermissionDenied
 
 import os
 
 # Terminal Upload
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @csrf_exempt
 def upload_complete(request):
     '''view called on /api/upload/complete after nginx upload module finishes.

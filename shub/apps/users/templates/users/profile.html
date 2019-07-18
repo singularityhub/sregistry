@@ -44,9 +44,11 @@
             <li><a data-toggle="pill" id="pill-collections" href="#collections">Collections</a></li>
             <li><a data-toggle="pill" id="pill-favorites" href="#favorites">Favorites</a></li>
             <li><a data-toggle="pill" id="pill-danger" href="#integrations">Integrations</a></li>
-            {% if request.user.is_superuser %}
-            <li><a id="pill-admin" target="_blank" href="{% url 'admin:index' %}">Admin</a></li>
-            {% endif %}
+            {% if request.user.is_authenticated %}{% if request.user.username == profile.username %}
+            <li><a data-toggle="pill" id="pill-danger" href="#account">Account</a></li>
+            {% endif %}{% endif %}
+            {% if request.user.is_superuser %}<li><a id="pill-admin" target="_blank" href="{% url 'admin:index' %}">Admin</a></li>
+{% endif %}
         </ul>
     </div>
     <div class="col-md-1"></div>
@@ -67,7 +69,10 @@
             </div>
             <div id="integrations" class="tab-pane fade">
                {% include "users/_profile_integrations.html" %}
-            </div>
+            </div>{% if request.user.username == profile.username %}
+            <div id="account" class="tab-pane fade">
+               {% include "users/_profile_admin.html" %}
+            </div>{% endif %}
         </div>
     </div>
 </div>

@@ -8,16 +8,29 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 '''
 
+from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.conf import settings
+from oauth2client.client import GoogleCredentials
+from googleapiclient import discovery
+import google.auth.transport.requests
+import google.auth
+import google.auth.iam
 from sregistry.logger import RobotNamer
-from datetime import datetime, timedelta
 import hashlib
 import hmac
 import json
 import jwt
+import binascii
+import collections
+import hashlib
+import re
+import sys
 import requests
+from urllib.parse import unquote
+from six.moves.urllib.parse import quote
 import uuid
+
 
 ################################################################################
 # REQUESTS
@@ -224,6 +237,119 @@ def generate_jwt_token(secret, payload, algorithm="HS256"):
     expires_in = settings.SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
     payload['exp'] = datetime.utcnow() + timedelta(seconds=expires_in)
     return jwt.encode(payload, secret, algorithm).decode('utf-8')
+
+
+def generate_signed_url(storage_path, expiration=None, headers=None, http_method="GET"):
+    '''generate_signed_url will generate a signed url for a storage object,
+       given that it's allowance is less than the GET limit. The signed URL
+       ONLY needs to endure for the post request, so we limit it to 10 seconds.
+       https://cloud.google.com/storage/docs/access-control/signing-urls-manually.
+
+       # This function needs to be tested
+    '''
+    # Can't get a signed URL for a container without image
+    if storage_path is None:
+        return storage_path
+
+    # The expiration time in seconds, cannot exceed 604800 (7 days)
+    if expiration is None:
+        expiration = settings.CONTAINER_SIGNED_URL_EXPIRE_SECONDS # 10
+
+    credentials, _ = google.auth.default()
+    storage_credentials = GoogleCredentials.get_application_default()
+    service = discovery.build("storage", "v1", credentials=storage_credentials) 
+    
+    bucket_name = get_bucket_name(storage_path)
+    bucket = service.buckets().get(bucket=bucket_name).execute()
+ 
+    object_name = get_object_name(storage_path, bucket_name)
+    if object_name is None:
+        return object_name
+
+    # The blob must exist
+    try:
+        blob = service.objects().get(bucket=bucket['id'], object=object_name).execute()
+    except: # HttpError:
+        return None
+
+    escaped_object_name = quote(object_name, safe='')
+    canonical_uri = '/{}/{}'.format(bucket_name, escaped_object_name)
+
+    # Generate the timestamp
+    datetime_now = datetime.utcnow()
+    request_timestamp = datetime_now.strftime('%Y%m%dT%H%M%SZ')
+    datestamp = datetime_now.strftime('%Y%m%d')
+
+    # Prepare the signer (will use correct client email)
+    request = google.auth.transport.requests.Request()
+    credentials.refresh(request)
+
+    # Prepare credential for service account
+    client_email = credentials.service_account_email
+    credential_scope = '{}/auto/storage/goog4_request'.format(datestamp)
+    credential = '{}/{}'.format(client_email, credential_scope)
+
+    if headers is None:
+        headers = dict()
+    headers['host'] = 'storage.googleapis.com'
+
+    canonical_headers = ''
+    ordered_headers = collections.OrderedDict(sorted(headers.items()))
+    for k, v in ordered_headers.items():
+        lower_k = str(k).lower()
+        strip_v = str(v).lower()
+        canonical_headers += '{}:{}\n'.format(lower_k, strip_v)
+
+    signed_headers = ''
+    for k, _ in ordered_headers.items():
+        lower_k = str(k).lower()
+        signed_headers += '{};'.format(lower_k)
+    signed_headers = signed_headers[:-1]  # remove trailing ';'
+
+    query_parameters = dict()
+    query_parameters['X-Goog-Algorithm'] = 'GOOG4-RSA-SHA256'
+    query_parameters['X-Goog-Credential'] = credential
+    query_parameters['X-Goog-Date'] = request_timestamp
+    query_parameters['X-Goog-Expires'] = expiration
+    query_parameters['X-Goog-SignedHeaders'] = signed_headers
+
+    canonical_query_string = ''
+    ordered_query_parameters = collections.OrderedDict(
+        sorted(query_parameters.items()))
+    for k, v in ordered_query_parameters.items():
+        encoded_k = quote(str(k), safe='')
+        encoded_v = quote(str(v), safe='')
+        canonical_query_string += '{}={}&'.format(encoded_k, encoded_v)
+    canonical_query_string = canonical_query_string[:-1]  # remove trailing ';'
+
+    canonical_request = '\n'.join([http_method,
+                                   canonical_uri,
+                                   canonical_query_string,
+                                   canonical_headers,
+                                   signed_headers,
+                                   'UNSIGNED-PAYLOAD'])
+
+    canonical_request_hash = hashlib.sha256(
+        canonical_request.encode()).hexdigest()
+
+    string_to_sign = '\n'.join(['GOOG4-RSA-SHA256',
+                                request_timestamp,
+                                credential_scope,
+                                canonical_request_hash])
+    signer = google.auth.iam.Signer(
+        request,
+        credentials,
+        client_email)
+
+    signature = binascii.hexlify(signer.sign(string_to_sign)).decode()
+
+    host_name = 'https://storage.googleapis.com'
+    signed_url = '{}{}?{}&X-Goog-Signature={}'.format(host_name, canonical_uri,
+                                                      canonical_query_string,
+                                                      signature)
+    return signed_url
+
+
 
 
 ################################################################################

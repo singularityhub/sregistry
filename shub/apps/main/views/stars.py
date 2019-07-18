@@ -13,10 +13,16 @@ from shub.apps.main.models import (
     Star
 )
 
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models.aggregates import Count
 from django.http import JsonResponse
+from ratelimit.decorators import ratelimit
 from .collections import get_collection
 
 

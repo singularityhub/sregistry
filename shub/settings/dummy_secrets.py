@@ -91,6 +91,11 @@
 # The number of seconds for the build to expire, meaning it's response is no longer accepted by the server. This must be defined.
 # The default 28800 indicates 8 hours (in seconds)
 
+#CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
+# The number of seconds to expire a signed URL given to download a container
+# from storage. This can be much smaller than 10, as we only need it to endure
+# for the POST.
+
 # -----------------------------------------------------------------------------
 # Bitbucket OAuth2
 

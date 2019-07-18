@@ -12,6 +12,10 @@ from shub.apps.main.models import (
     Container, 
     Collection
 )
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
 
 from django.conf import settings
 from django.shortcuts import (
@@ -20,7 +24,7 @@ from django.shortcuts import (
 )
 
 from django.contrib import messages
-
+from ratelimit.decorators import ratelimit
 import datetime
 
 
@@ -28,6 +32,7 @@ import datetime
 # FILE SYSTEM USAGE ############################################################
 ################################################################################
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def generate_size_data(collections, collection_level):
     '''generate a datastructure that can be rendered as:
         id,value
@@ -84,6 +89,7 @@ def generate_size_data(collections, collection_level):
     return data
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def get_filtered_collections(request):
     '''return all collections or only public, given user accessing
        this function will return all collections based on a permission level
@@ -100,6 +106,7 @@ def get_filtered_collections(request):
 
 ### Treemap Views and Context
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def generate_treemap_context(request):
     collections = get_filtered_collections(request)
     containers = Container.objects.filter(collection__in=collections)
@@ -109,6 +116,7 @@ def generate_treemap_context(request):
             "collections_count": collections.count()}
     
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def containers_treemap(request):
     '''show disk usage with a container treemap, 
        for all containers across collections.
@@ -119,6 +127,7 @@ def containers_treemap(request):
     return render(request, "singularity/containers_treemap.html", context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def collections_treemap(request, context=None):
     ''' collection treemap shows total size of a collection'''
     if context is None:
@@ -126,6 +135,7 @@ def collections_treemap(request, context=None):
     return render(request, "singularity/collections_treemap.html", context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def collection_treemap(request, cid):
     ''' collection treemap shows size of containers across a single collection'''
     try:
@@ -153,11 +163,13 @@ def base_size_data(request, collection_level=False, collections=None):
     collections = generate_size_data(collections, collection_level)
     return {'collections': collections}
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def container_size_data(request):
     context = base_size_data(request)
     return render(request, 'singularity/container_size_data.csv', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def collection_size_data(request):
     ''' generate container size data for all collections
     '''
@@ -165,6 +177,7 @@ def collection_size_data(request):
     return render(request, 'singularity/collection_size_data.csv', context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def single_collection_size_data(request, cid):
     ''' generate size data for single collection treemap
     '''

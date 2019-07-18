@@ -9,8 +9,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 
-API_VERSION = "v1"
 REST_FRAMEWORK = {
+    # You can require authentication for your API
     #'DEFAULT_PERMISSION_CLASSES': (
     #    'rest_framework.permissions.IsAuthenticated',
     #),
@@ -20,5 +20,17 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+
+    # You can also customize the throttle rates, for anon and users
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    # https://www.django-rest-framework.org/api-guide/throttling/
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+    },
     'PAGE_SIZE': 10
 }
+
+API_VERSION = "v1"
