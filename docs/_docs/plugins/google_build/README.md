@@ -157,10 +157,43 @@ The default provided in the dummy secrets, shown above, would indicate 8 hours.
 
 ### Private Containers
 
-By default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
+Without this variable, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. You
+should export this variable as True so that containers are kept private, and
+signed URLs are used to control access. If no variable is found, images are made public by default.
 
 ```python
 SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
+```
+
+### Disable Github
+
+If you need to globally disable GitHub, meaning that users cannot make new
+collections and webhooks are disabled, you can do that:
+
+```python
+DISABLE_GITHUB=True
+```
+
+
+### Disable Building
+
+Disable all building, including pushing of containers and recipes. By
+default, for a working registry, this should be False.
+
+```python
+DISABLE_BUILDING=True
+```
+
+This setting is also in the main settings page, but mentioned here for 
+Google Cloud Build.
+
+### Disable Build Receive
+
+Prevent responses from being received from Google Cloud Build (returns permission
+denied).
+
+```python
+DISABLE_BUILD_RECEIVE=True
 ```
 
 These variables are written in detail in the dummy_secrets.py file. 

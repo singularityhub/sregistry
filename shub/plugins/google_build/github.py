@@ -16,6 +16,8 @@ import django_rq
 from shub.apps.users.models import User
 from shub.logger import bot
 from shub.settings import (
+    DISABLE_GITHUB,
+    DISABLE_BUILDING,
     DOMAIN_NAME, 
     SREGISTRY_GOOGLE_BUILD_LIMIT
 )
@@ -300,7 +302,10 @@ def create_webhook(user, repo, secret):
                          reponame=repo['name'],
                          username=repo['owner']['login'])
 
-    response['topics'] = full_repo['topics']
+    response['topics'] = []
+    if "topics" in full_repo:
+        response['topics'] = full_repo['topics']
+
     return response
 
 
@@ -368,7 +373,9 @@ def receive_github_hook(request):
     # We do these checks again for sanity
     if request.method == "POST":
 
-        # Has to have Github-Hookshot
+        if DISABLE_GITHUB or DISABLE_BUILDING:
+            return JsonResponseMessage(message="Building is disabled")
+
         if not re.search('GitHub-Hookshot', request.META["HTTP_USER_AGENT"]):
             return JsonResponseMessage(message="Agent not allowed")
 
@@ -459,7 +466,6 @@ def verify_payload(request, collection):
                                         branch=branch,
                                         commits=commits)
 
-    print(res)
     return JsonResponseMessage(message="Hook received and parsing.",
                                status=200,
                                status_message="Received") 

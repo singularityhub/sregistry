@@ -24,6 +24,7 @@ from shub.apps.api.utils import (
     validate_request
 )
 from shub.settings import (
+    DISABLE_BUILDING,
     VIEW_RATE_LIMIT as rl_rate, 
     VIEW_RATE_LIMIT_BLOCK as rl_block
 )
@@ -57,12 +58,14 @@ def upload_complete(request):
         csrftoken = request.META.get('CSRF_COOKIE')
 
         if auth is None and csrftoken is None:
-
-            # Clean up the file
             if os.path.exists(filename):
                 os.remove(path)
-
             raise PermissionDenied(detail="Authentication Required")
+
+        if DISABLE_BUILDING:
+            if os.path.exists(filename):
+                os.remove(path)
+            raise PermissionDenied(detail="Uploading is disabled.")
 
         # at this point, the collection MUST exist
         try:

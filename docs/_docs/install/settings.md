@@ -279,6 +279,15 @@ CONTAINER_WEEKLY_GET_LIMIT=100
 The `Container` object has a get_limit and get_count that are adjusted when a
 user downloads a container. A weekly cron job will reset the get_count.
 
+### Disable Building
+
+Disable all building, including pushing of containers and recipes. By
+default, for a working registry, this should be False.
+
+```python
+DISABLE_BUILDING=True
+```
+
 ### Database
 
 By default, the database itself will be deployed as a postgres image called `db`. You probably don't want this for production (for example, I use a second instance with postgres and a third with a hot backup, but it's an ok solution for a small cluster or single user. Either way, we recommend backing it up every so often.

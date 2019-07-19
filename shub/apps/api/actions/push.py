@@ -22,6 +22,7 @@ from shub.apps.api.utils import (
     get_request_user
 )
 from shub.settings import (
+    DISABLE_BUILDING,
     VIEW_RATE_LIMIT as rl_rate, 
     VIEW_RATE_LIMIT_BLOCK as rl_block
 )
@@ -40,6 +41,9 @@ def collection_auth_check(request):
         return a collection id (cid) if a collection exists and the user
         has permission to upload. If not, a permission denied is returned.
     '''
+    if DISABLE_BUILDING:
+        raise PermissionDenied(detail="Push is disabled.")
+
     auth = request.META.get('HTTP_AUTHORIZATION', None)
   
     # Load the body, which is json with variables

@@ -96,6 +96,15 @@
 # from storage. This can be much smaller than 10, as we only need it to endure
 # for the POST.
 
+# DISABLE_GITHUB=False
+# A global setting to disable all webhooks / interaction with Github
+
+# DISABLE_BUILDING=False
+# A global setting to disable all building
+
+# DISABLE_BUILD_RECEIVE=False
+# prevent responses from being received from Google Cloud Build
+
 # -----------------------------------------------------------------------------
 # Bitbucket OAuth2
 
