@@ -35,6 +35,8 @@
       url: docs/install/server
     - title: Containers
       url: docs/install/containers
+    - title: Ansible
+      url: docs/install/ansible
 - title: Setup
   url: docs/setup
   children:
