@@ -71,8 +71,6 @@ def move_nginx_upload_to_storage(collection, source, dest):
         os.makedirs(image_home)
     
     new_path = os.path.join(image_home, os.path.basename(dest))
-    print(source)
-    print(new_path)
     shutil.move(source, new_path)
     return new_path
 

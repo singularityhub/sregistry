@@ -132,8 +132,8 @@ def _download_container(container, request):
     elif 'image' in container.metadata:
          
         if "google_build" in PLUGINS_ENABLED:
-            from shub.plugins.google_build.utils import generage_signed_url
-            signed_url = generage_signed_url(container.metadata['image'])
+            from shub.plugins.google_build.utils import generate_signed_url
+            signed_url = generate_signed_url(container.metadata['image'])
 
             # If we can generate a URL, add one to limit and return url
             if signed_url != None and container.get_count < container.get_limit:

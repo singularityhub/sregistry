@@ -67,7 +67,14 @@ CONTAINER_WEEKLY_GET_LIMIT=100
 # Disable all pushes of containers, recipes, etc. Also for Google Cloud Build
 DISABLE_BUILDING=False
 
-# These settings are specific to Google Cloud Build
+# Plugins ######################################################################
+# See dummy_secrets.py for more details.
+
+SREGISTRY_GOOGLE_BUILD_LIMIT=100
+SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.3.0-slim"
+SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None # None defaults to 10 minutes
+SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
+CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
 
 # A global setting to disable all webhooks / interaction with Github
 DISABLE_GITHUB=False

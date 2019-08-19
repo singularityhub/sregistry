@@ -352,9 +352,6 @@ def complete_build(cid, params, check_again_seconds=10):
     # Get an updated status
     response = client._finish_build(build_id)
 
-    print("RESPONSE")
-    print(response)
-
     if "public_url" in response:
         container.metadata['image'] = response['public_url']
 
