@@ -36,7 +36,6 @@ from ratelimit.decorators import ratelimit
 import uuid
 
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def get_collection(cid):
     ''' get a collection based on its primary id, raise 404 not found
         if... not found :)
@@ -203,7 +202,6 @@ def view_collection(request, cid):
        cid: the collection id
  
     '''
-
     collection = get_collection(cid)
     return _view_collection(request, collection)
 
