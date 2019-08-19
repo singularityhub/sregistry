@@ -68,9 +68,11 @@ def move_nginx_upload_to_storage(collection, source, dest):
     # Create collection root, if it doesn't exist
     image_home = os.path.join(MEDIA_ROOT, collection.name)
     if not os.path.exists(image_home):
-        os.mkdir(image_home)
+        os.makedirs(image_home)
     
     new_path = os.path.join(image_home, os.path.basename(dest))
+    print(source)
+    print(new_path)
     shutil.move(source, new_path)
     return new_path
 
