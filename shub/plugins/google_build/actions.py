@@ -188,7 +188,7 @@ def receive_build(collection, recipes, branch):
 
 def get_build_context():
     '''get shared build context between recipe build (push of a recipe) and
-       GitHub triggered build. This function takes no arguments
+       GitHub triggered build. This function takes no arguments.
     '''
     # We checked that the setting is defined, here ensure exists
     if not os.path.exists(settings.GOOGLE_APPLICATION_CREDENTIALS):
@@ -204,7 +204,6 @@ def get_build_context():
     # The following are optional
     for attr in ['SREGISTRY_GOOGLE_BUILD_CACHE',
                  'SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION',
-                 'SREGISTRY_GOOGLE_STORAGE_PRIVATE',
                  'SREGISTRY_GOOGLE_STORAGE_BUCKET']:
         if hasattr(settings, attr):
             context[attr] = getattr(settings, attr)

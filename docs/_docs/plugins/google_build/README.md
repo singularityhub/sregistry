@@ -142,7 +142,8 @@ that this is kept small:
 CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
 ```
 
-This can be much smaller than 10, as we only need it to endure for the POST.
+This can be much smaller than 10, as we only need it to endure for the POST. I've tested and found
+that 3-5 seconds is about right.
 
 ### Build Expiration 
 
@@ -155,15 +156,6 @@ SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
 
 The default provided in the dummy secrets, shown above, would indicate 8 hours.
 
-### Private Containers
-
-Without this variable, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. You
-should export this variable as True so that containers are kept private, and
-signed URLs are used to control access. If no variable is found, images are made public by default.
-
-```python
-SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
-```
 
 ### Disable Github
 

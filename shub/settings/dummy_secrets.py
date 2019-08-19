@@ -80,9 +80,6 @@
 # Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
 # and we recommend creating both <name> and <name>_cloudbuild in the console and then setting the name here.
 
-# SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
-# by default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
-
 #SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None
 # The number of seconds for the build to timeout. If set to None, will be 10 minutes. If
 # unset, will default to 3 hours. This time should be less than the SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
