@@ -39,12 +39,13 @@
         <div class="row">
             <div class="col-md-10">
                 <p><strong>Singularity and <a href="https://singularityhub.github.io/sregistry-cli/client-registry" target="_blank">Singularity Global Client</a> Examples</strong></p>
-                <p class="well" id="sreg_well">
+                <p class="well" id="sreg_well">{% if "google_build" in PLUGINS_ENABLED %}
                      singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}:{{ collection.containers.first.tag }}<br>
                      sregistry pull registry://{{ collection.name }}:{{ collection.containers.first.tag }}<br>
                      sregistry search registry://{{ collection.name }}<br>{% else %}
+                     singularity pull shub://{{ DOMAIN_NAKED }}/{{ collection.name }}:{{ collection.containers.first.tag }}<br>
                      sregistry pull registry://{{ collection.name }}/{{ collection.containers.first.name }}:{{ collection.containers.first.tag }}<br>
-                     sregistry search registry://{{ collection.name }}/{{ collection.containers.first.name }}<br>
+                     sregistry search registry://{{ collection.name }}/{{ collection.containers.first.name }}<br>{% endif %}
                 </p>
             </div>
             <div class="col-md-2">
