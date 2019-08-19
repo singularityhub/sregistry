@@ -111,7 +111,6 @@ def upload_container(cid, user, name, version, upload_id, size=None):
     from shub.apps.main.models import (Container, Collection)
     from shub.apps.api.models import (ImageUpload, ImageFile)
     collection = Collection.objects.get(id=cid)
-    print(name)
 
     # Only continue if user is an owner
     if user in collection.owners.all():
@@ -119,6 +118,9 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         # parse the image name, get the datafile
         names = parse_image_name(name, version=version)
         storage = os.path.basename(names['storage'])
+
+        # Remove upload collection name, must use actual collection name
+        names['uri'] = "%s/%s" % (collection.name, '/'.join(names['uri'].split('/')[1:]))
         print(names)
 
         # Catch the data error before trying to create it
