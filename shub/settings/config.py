@@ -61,8 +61,9 @@ DEFAULT_PRIVATE = False
 # The number of collections to show on the /<domain>/collections page
 COLLECTIONS_VIEW_PAGE_COUNT=250
 
-# The maximum number of downloads allowed per container, per week
+# The maximum number of downloads allowed per container/collection, per week
 CONTAINER_WEEKLY_GET_LIMIT=100
+COLLECTION_WEEKLY_GET_LIMIT=100
 
 # Disable all pushes of containers, recipes, etc. Also for Google Cloud Build
 DISABLE_BUILDING=False

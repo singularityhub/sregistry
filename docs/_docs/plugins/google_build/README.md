@@ -63,7 +63,12 @@ SREGISTRY_GOOGLE_PROJECT=myproject-ftw
 ```
 
 You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and it will be enough to make the service account
-a project owner. If you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
+a project owner. To allow for signed urls, you will need to also add [iam.serviceAccounts.signBlob](https://cloud.google.com/iam/credentials/reference/rest/v1/projects.serviceAccounts/signBlob?authuser=1)
+to the permissions. This is associated with the role "Service Account Token Creator" and I've added
+it in the past by going to IAM and Admin -> IAM and then selecting the service account and 
+searching for that role. Yes, it's sort of annoying to get working the first time. ;/
+
+If you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
 
 ```bash
 $ gcloud compute scp [credentials].json $USER@[INSTANCE]:/tmp --project [PROJECT]

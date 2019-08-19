@@ -351,6 +351,34 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
 
 
 
+def get_object_name(storage_path, bucket_name):
+    '''based on a storage bucket and path, return an object path
+       that can be used for a signed url.
+    '''
+    regexp = 'https://www.googleapis.com/download/storage/v[0-9]{1}/b/%s/o/(?P<path>.+)[?]' % bucket_name
+    match = re.search(regexp, storage_path)
+    if match is None:
+        return match
+
+    # singularityhub/github.com/<user>/<repo>/<commit>/<hash>
+    return unquote(match.groupdict()['path'])
+
+
+
+def get_bucket_name(object_name):
+    '''get_bucket_name will return the default bucket name. We first try
+       to get from the client settings, otherwise we get from the object.
+    '''
+    # First default to what is defined with server
+    if hasattr(settings, "SREGISTRY_GOOGLE_STORAGE_BUCKET"):
+        return settings.SREGISTRY_GOOGLE_STORAGE_BUCKET
+
+    # https://www.googleapis.com/download/storage/v1/b/<bucket>/o
+    parts = re.split('/v[0-9]{1}/b/', object_name)
+    bucket_name = parts[1].split('/')[0]
+    print('Bucket name is %s' % bucket_name)
+    return bucket_name
+
 
 ################################################################################
 # HEADERS/NAMING
