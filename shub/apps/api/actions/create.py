@@ -111,6 +111,7 @@ def upload_container(cid, user, name, version, upload_id, size=None):
     from shub.apps.main.models import (Container, Collection)
     from shub.apps.api.models import (ImageUpload, ImageFile)
     collection = Collection.objects.get(id=cid)
+    print(name)
 
     # Only continue if user is an owner
     if user in collection.owners.all():
@@ -118,6 +119,7 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         # parse the image name, get the datafile
         names = parse_image_name(name, version=version)
         storage = os.path.basename(names['storage'])
+        print(names)
 
         # Catch the data error before trying to create it
         new_path = generate_nginx_storage_path(collection, upload_id, storage)
