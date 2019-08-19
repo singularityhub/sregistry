@@ -4,6 +4,7 @@
 .*
 !/.gitignore
 __pycache__
+Gemfile.lock
 *.img
 sregistry
 _site
