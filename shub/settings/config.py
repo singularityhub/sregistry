@@ -67,6 +67,18 @@ CONTAINER_WEEKLY_GET_LIMIT=100
 # Disable all pushes of containers, recipes, etc. Also for Google Cloud Build
 DISABLE_BUILDING=False
 
+# These settings are specific to Google Cloud Build
+
+# A global setting to disable all webhooks / interaction with Github
+DISABLE_GITHUB=False
+
+# A global setting to disable all building
+DISABLE_BUILDING=False
+
+# prevent responses from being received from Google Cloud Build
+DISABLE_BUILD_RECEIVE=False
+
+
 # DATABASE
 
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
