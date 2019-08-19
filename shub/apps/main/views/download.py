@@ -121,7 +121,9 @@ def _download_container(container, request):
 
         # Add 1 to the get count
         if container.get_count < container.get_limit:
-            container.get_count +=1
+            container.get_count += 1
+            container.collection.get_count += 1
+            container.collection.save()
             container.save()
             return response
 
@@ -137,7 +139,9 @@ def _download_container(container, request):
 
             # If we can generate a URL, add one to limit and return url
             if signed_url != None and container.get_count < container.get_limit:
-                container.get_count +=1
+                container.get_count += 1
+                container.collection.get_count += 1
+                container.collection.save()
                 container.save()
                 return redirect(signed_url)
             return HttpResponseForbidden()

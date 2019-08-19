@@ -229,10 +229,6 @@ def _container_get(request, container, name=None, tag=None):
 
     if not is_private:
         serializer = SingleContainerSerializer(container)
-        container.get_count += 1
-        container.collection.get_count += 1
-        container.collection.save()
-        container.save()
         return Response(serializer.data)
 
     # Determine if user has permission to get if private
@@ -256,10 +252,6 @@ def _container_get(request, container, name=None, tag=None):
 
     if validate_request(auth, payload, "pull", timestamp):
         serializer = SingleContainerSerializer(container)
-        container.get_count += 1
-        container.collection.get_count += 1
-        container.collection.save()
-        container.save()
         return Response(serializer.data)
 
     return Response(400)
