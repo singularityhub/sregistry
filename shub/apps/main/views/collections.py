@@ -26,7 +26,7 @@ from django.shortcuts import (
     render, 
     redirect
 )
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http.response import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
