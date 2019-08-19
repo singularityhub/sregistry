@@ -15,10 +15,7 @@ from django.urls import reverse
 from shub.apps.api.utils import validate_request
 from shub.apps.main.models import Container
 from shub.apps.logs.mixins import LoggingMixin
-from shub.apps.api.utils import (
-    has_permission,
-    generate_signed_url
-)
+from shub.apps.api.utils import has_permission
 
 from sregistry.main.registry.auth import generate_timestamp
 
