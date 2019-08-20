@@ -192,7 +192,6 @@ class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIVie
                                         name=full_name,
                                         tag=tag)        
 
-        print(container)
         return _container_get(request, container, name, tag)
 
 
@@ -227,7 +226,6 @@ def _container_get(request, container, name=None, tag=None):
 
     if not is_private:
         serializer = SingleContainerSerializer(container)
-        print(serializer.data)
         return Response(serializer.data)
 
     # Determine if user has permission to get if private
