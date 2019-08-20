@@ -230,9 +230,15 @@ def delete_build(cid, client=None):
 
     # If the container has an image, delete it
     image = container.get_image() or ""
-    if container.metadata['builder']['name'] == "google_build":
 
-        # Delete the image
+    is_google_build = False
+    if "builder" in container.metadata:
+        if "name" in container.metadata['builder']:
+            if container.metadata['builder']['name'] == "google_build":
+                is_google_build = True
+
+    # Case 1: A google build
+    if is_google_build:
         if "storage.googleapis.com" in image:
             print("deleting container %s" % image)
             container_name = os.path.basename(image)
