@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^tags/?$', views.all_tags, name='all_tags'),
     url(r'^collections/downloads/?$', views.collection_downloads, name='collection_downloads'),
     url(r'^collections/stars/?$', views.collection_stars, name='collection_stars'),
-    url(r'^collections/favorite/(?P<cid>\d+)/?$', views.star_collection, name='favorite'),
+    url(r'^favorite/(?P<cid>\d+)/?$', views.star_collection, name='favorite'),
     url(r'^tags/containers/(?P<cid>\d+)/add/?$', views.add_tag, name='add_tag'),
     url(r'^tags/containers/(?P<cid>\d+)/remove/?$', views.remove_tag, name='remove_tag'),
 
