@@ -284,9 +284,8 @@ class RecipePushViewSet(ModelViewSet):
             raise PermissionDenied(detail="%s is frozen, push not allowed." % container.get_short_uri())
 
 
-# Receive GitHub Hook
+# Receive GitHub and Google Hooks
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @csrf_exempt
 def receive_build(request, cid):
     '''receive_build will receive the post from Google Cloud Build.
