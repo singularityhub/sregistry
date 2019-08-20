@@ -286,8 +286,8 @@ class RecipePushViewSet(ModelViewSet):
 
 # Receive GitHub Hook
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @csrf_exempt
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def receive_build(request, cid):
     '''receive_build will receive the post from Google Cloud Build.
        we check the response header against the jwt token to authenticate,
