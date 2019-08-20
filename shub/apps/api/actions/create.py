@@ -119,11 +119,6 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         names = parse_image_name(name, version=version)
         storage = os.path.basename(names['storage'])
 
-        # Remove upload collection name, must use actual collection name
-        names['uri'] = "%s/%s" % (collection.name, names['tag'])
-        names = parse_image_name(names['uri'], version=version, tag=names['tag'])
-        print(names)
-
         # Catch the data error before trying to create it
         new_path = generate_nginx_storage_path(collection, upload_id, storage)
 
@@ -144,7 +139,7 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
         image = ImageFile.objects.create(collection=collection,
                                          tag=names['tag'],
-                                         name=names['uri'],
+                                         name=collection.name,
                                          owner_id=user.id,
                                          datafile=instance.file)
 
