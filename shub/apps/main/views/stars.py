@@ -13,6 +13,7 @@ from shub.apps.main.models import (
     Star
 )
 
+from django.http.response import Http404
 from shub.settings import (
     VIEW_RATE_LIMIT as rl_rate, 
     VIEW_RATE_LIMIT_BLOCK as rl_block
@@ -53,15 +54,17 @@ def collection_downloads(request):
     return render(request, 'stars/collection_downloads.html', context)
 
 
-#######################################################################################
+################################################################################
 # COLLECTION STARS
-#######################################################################################
+################################################################################
 
-@login_required
 def star_collection(request, cid):
     '''change favorite status of collection. If it's favorited, unfavorite by deleting
-    the star. If not, then create it.
+       the star. If not, then create it.
     '''
+    if not request.user.is_authenticated:
+        raise Http404
+
     collection = get_collection(cid)
     try:
         star = Star.objects.get(user=request.user,
