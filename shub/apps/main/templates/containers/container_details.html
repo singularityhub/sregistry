@@ -66,7 +66,7 @@
         <div style="padding:20px">
             <div class="header">
                 <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">
-                    {{ container.get_uri }}</h2>
+                    {{ container.get_uri }}</h2></a>
                 {% if container.version %}<p>Version {{ container.version }}</p>{% endif %}
                 <h3>
                      <span class="icon-controls" style="position:relative;top:-70px">
