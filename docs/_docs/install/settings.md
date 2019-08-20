@@ -279,6 +279,21 @@ CONTAINER_WEEKLY_GET_LIMIT=100
 The `Container` object has a get_limit and get_count that are adjusted when a
 user downloads a container. A weekly cron job will reset the get_count.
 
+### Collection GET Limits
+
+It could be the case that a user continually rebuilds containers to get around the
+single container get limit, in which case we've also added a collection
+weekly get limit.
+
+```python
+# The maximum number of downloads allowed per collection, per week
+COLLECTION_WEEKLY_GET_LIMIT=100
+```
+
+The `Collection` object also has a get_limit and get_count that are adjusted when a
+user downloads a container, reset by the same cron task.
+
+
 ### Disable Building
 
 Disable all building, including pushing of containers and recipes. By
@@ -287,6 +302,9 @@ default, for a working registry, this should be False.
 ```python
 DISABLE_BUILDING=True
 ```
+
+For other disable and limit arguments (for GitHub, creating, or receiving builds) see the
+[Google Build Plugin](/sregistry/docs/plugins/google-build).
 
 ### Database
 
