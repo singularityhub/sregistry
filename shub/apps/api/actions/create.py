@@ -137,9 +137,20 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         else:
             instance = move_upload_to_storage(collection, upload_id)
 
+        print(names)
+
+        # A collection name can have a slash (or not)
+        container_uri = names['uri']
+        container_name = names['image']
+        if "/" in collection.name:
+            container_uri = "%s:%s" %(collection.name, names['tag'])
+            if names['version']:
+                container_uri = "%s:%s@%s" %(collection.name, names['tag'], names['version'])
+            container_name = collection.name
+
         image = ImageFile.objects.create(collection=collection,
                                          tag=names['tag'],
-                                         name=collection.name,
+                                         name=container_uri,
                                          owner_id=user.id,
                                          datafile=instance.file)
 
@@ -147,7 +158,7 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         # Filter by negative id so we get the more recent container first.
         collection_set = collection.containers
         containers = collection_set.filter(tag=names['tag'],
-                                           name=names['image']).order_by('-id')
+                                           name=container_name).order_by('-id')
 
         # If one exists, we check if it's frozen
         create_new = True
@@ -166,16 +177,14 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         if create_new is True:
             try:
                 container = Container.objects.create(collection=collection,
-                                                     name=collection.name,
+                                                     name=container_name,
                                                      tag=names['tag'],
                                                      image=image,
                                                      version=names['version'])
 
             # Catches when container is frozen, and version already exists
             except IntegrityError:
-                message = '%s:%s@%s already exists.' %(collection.name,
-                                                       names['tag'],
-                                                       names['version'])
+                message = '%s already exists.' % container_uri
                 bot.error(message)
                 delete_file_instance(instance)
                 return message
