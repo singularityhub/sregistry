@@ -32,7 +32,6 @@ import datetime
 # FILE SYSTEM USAGE ############################################################
 ################################################################################
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def generate_size_data(collections, collection_level):
     '''generate a datastructure that can be rendered as:
         id,value
