@@ -72,3 +72,5 @@
       url: docs/plugins/google-build
 - title: Clients
   url: docs/client
+- title: News
+  url: news
