@@ -41,6 +41,14 @@ from shub.apps.api.utils import (
     has_permission
 )
 
+from shub.settings import (
+    DISABLE_GITHUB,
+    DISABLE_BUILDING,
+    DISABLE_BUILD_RECEIVE,
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 from sregistry.main.registry.auth import generate_timestamp
 from .github import (
     create_webhook,
@@ -65,14 +73,20 @@ from .utils import (
     JsonResponseMessage,
     validate_jwt
 )
+
+from ratelimit.decorators import ratelimit
 import re
 import json
 import uuid
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def connect_github(request):
     '''create a new container collection based on connecting GitHub.
     '''
+    if DISABLE_GITHUB:
+        messages.info(request, "Making new collections is currently disabled")
+        return redirect("collections")
 
     # All repos owned by the user on GitHub are contenders
     contenders = list_repos(request.user)
@@ -92,10 +106,14 @@ def connect_github(request):
     return render(request, "google_build/add_collection.html", context)
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def save_collection(request):
     '''save the newly selected collection by the user.
     '''
+    if DISABLE_GITHUB:
+        messages.info(request, "Making new collections is currently disabled")
+        return redirect("collections")
 
     if request.method == "POST":
 
@@ -187,6 +205,10 @@ class RecipePushViewSet(ModelViewSet):
         auth = self.request.META.get('HTTP_AUTHORIZATION', None)
         collection_name = self.request.data.get('collection')
 
+        # Building is disabled
+        if DISABLE_BUILDING:
+            raise PermissionDenied(detail="Building is disabled.")
+        
         # Authentication always required for push
 
         if auth is None:
@@ -262,7 +284,7 @@ class RecipePushViewSet(ModelViewSet):
             raise PermissionDenied(detail="%s is frozen, push not allowed." % container.get_short_uri())
 
 
-# Receive GitHub Hook
+# Receive GitHub and Google Hooks
 
 @csrf_exempt
 def receive_build(request, cid):
@@ -272,6 +294,10 @@ def receive_build(request, cid):
     '''
     print(request.body)
     print(cid)
+
+    if DISABLE_BUILD_RECEIVE:
+        print("DISABLE_BUILD_RECEIVE is active.")
+        return JsonResponseMessage(message="Building receive is disabled.")
 
     if request.method == "POST":
 
@@ -300,6 +326,7 @@ def receive_build(request, cid):
     return JsonResponseMessage(message="Invalid request.")
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def delete_container(request, cid):
     '''delete a container, including it's corresponding files
@@ -317,6 +344,7 @@ def delete_container(request, cid):
     return redirect(container.collection.get_absolute_url())
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def delete_collection(request, cid):
     '''delete a container collection that has Google Builds
@@ -325,20 +353,32 @@ def delete_collection(request, cid):
        ==========
        cid: the collection id to delete
     '''
-    collection = get_collection(cid)
-
-    # Only an owner can delete
-    if not collection.has_edit_permission(request):
+    if not _delete_collection(request, cid):
         messages.info(request, "This action is not permitted.")
         return redirect('collections')
+
+    messages.info(request, 'Collection requested for deletion.')
+    return redirect('collections')
+
+def _delete_collection(request, cid):
+    '''the underlying function to delete a collection, returns True/False
+       if done to the calling view.
+
+       Parameters
+       ==========
+       cid: the collection id to delete
+    '''
+    collection = get_collection(cid)
+    
+    # Only an owner can delete
+    if not collection.has_edit_permission(request):
+        return False
     
     # Queue the job to delete the collection
     django_rq.enqueue(delete_container_collection, 
                       cid=collection.id,
                       uid=request.user.id)
-
-    messages.info(request, 'Collection requested for deletion.')
-    return redirect('collections')
+    return True
 
 
 @csrf_exempt

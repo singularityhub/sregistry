@@ -66,8 +66,7 @@
         <div style="padding:20px">
             <div class="header">
                 <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">
-                    {% if container.metadata.builder.name %}{{ container.collection.name }}:{{ container.tag }}</a>{% else %}
-                    {{ container.collection.name }}</a>/{{ container.name }}:{{ container.tag }}{% endif %}</h2>
+                    {{ container.get_uri }}</h2></a>
                 {% if container.version %}<p>Version {{ container.version }}</p>{% endif %}
                 <h3>
                      <span class="icon-controls" style="position:relative;top:-70px">

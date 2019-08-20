@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^terms/agree', views.agree_terms, name="agree_terms"),
     url(r'^token', views.view_token, name="token"),
     url(r'^u/profile', views.view_profile, name="profile"),
-    #url(r'^(?P<username>[A-Za-z0-9@/./+/-/_]+)/$',views.view_profile,name="profile"),
+    url(r'^u/delete$', views.delete_account, name="delete_account"),  # delete account
+    url(r'^(?P<username>[A-Za-z0-9@/./+/-/_]+)/$', views.view_profile,name="profile"),
 ]

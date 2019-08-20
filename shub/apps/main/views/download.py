@@ -10,6 +10,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.contrib import messages
 from django.http.response import Http404
+from django.http import HttpResponseForbidden
 
 from django.shortcuts import redirect
 
@@ -20,7 +21,13 @@ from django.http import (
 
 from shub.apps.main.models import Share
 from shub.apps.main.utils import validate_share
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block,
+    PLUGINS_ENABLED
+)
 
+from ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -33,6 +40,7 @@ from .containers import get_container
 # CONTAINER DOWNLOAD
 ################################################################################
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def download_recipe(request, cid):
     '''download a container recipe
     '''
@@ -51,6 +59,7 @@ def download_recipe(request, cid):
     return redirect(container.get_absolute_url())
 
 
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def download_share(request, cid, secret):
     '''download a custom share for a container
     '''
@@ -75,7 +84,7 @@ def download_share(request, cid, secret):
     return _download_container(container, request)
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def download_container(request, cid, secret):
     '''download a container
     '''
@@ -110,12 +119,35 @@ def _download_container(container, request):
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         response['Content-Length'] = os.path.getsize(filepath)
 
-        return response
- 
+        # Add 1 to the get count
+        if container.get_count < container.get_limit:
+            container.get_count += 1
+            container.collection.get_count += 1
+            container.collection.save()
+            container.save()
+            return response
+
+        return HttpResponseForbidden()
+
+  
     # A remove build will store a metadata image url
     elif 'image' in container.metadata:
-        return redirect(container.metadata['image'])
+         
+        if "google_build" in PLUGINS_ENABLED:
+            from shub.plugins.google_build.utils import generate_signed_url
+            signed_url = generate_signed_url(container.metadata['image'])
+
+            # If we can generate a URL, add one to limit and return url
+            if signed_url != None and container.get_count < container.get_limit:
+                container.get_count += 1
+                container.collection.get_count += 1
+                container.collection.save()
+                container.save()
+                return redirect(signed_url)
+            return HttpResponseForbidden()
+
+        # There is no container
+        raise Http404
 
     else:
-        messages.info(request, "Container does not have image served locally.")
         raise Http404

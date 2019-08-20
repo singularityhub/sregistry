@@ -9,6 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from shub.apps.api.models import ImageFile
+from shub.settings import CONTAINER_WEEKLY_GET_LIMIT
 from django.urls import reverse
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -71,6 +72,10 @@ class Container(models.Model):
     frozen = models.BooleanField(choices=FROZEN_CHOICES,
                                  default=False,
                                  verbose_name=verbose_frozen_name)
+
+    # Limits on number of GETS - the counter (top) and then a custom value
+    get_count = models.PositiveIntegerField(null=False, blank=False, default=0)
+    get_limit = models.PositiveIntegerField(null=False, blank=False, default=CONTAINER_WEEKLY_GET_LIMIT)
 
     # A helper function to get an image.
     def get_image(self):

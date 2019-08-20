@@ -63,7 +63,12 @@ SREGISTRY_GOOGLE_PROJECT=myproject-ftw
 ```
 
 You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and it will be enough to make the service account
-a project owner. If you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
+a project owner. To allow for signed urls, you will need to also add [iam.serviceAccounts.signBlob](https://cloud.google.com/iam/credentials/reference/rest/v1/projects.serviceAccounts/signBlob?authuser=1)
+to the permissions. This is associated with the role "Service Account Token Creator" and I've added
+it in the past by going to IAM and Admin -> IAM and then selecting the service account and 
+searching for that role. Yes, it's sort of annoying to get working the first time. ;/
+
+If you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
 
 ```bash
 $ gcloud compute scp [credentials].json $USER@[INSTANCE]:/tmp --project [PROJECT]
@@ -132,6 +137,18 @@ you want to use the default, don't define this variable in your secrets.
 # SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None
 ```
 
+### Signed URL Expiration
+
+By default, the containers are made private, and then granted access via signed urls.
+You can optionally adjust the time that the URL will expire in, although it's recommended
+that this is kept small:
+
+```python
+CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
+```
+
+This can be much smaller than 10, as we only need it to endure for the POST. I've tested and found
+that 3-5 seconds is about right.
 
 ### Build Expiration 
 
@@ -144,12 +161,36 @@ SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
 
 The default provided in the dummy secrets, shown above, would indicate 8 hours.
 
-### Private Containers
 
-By default, images that you upload will be made public, meaning that a user that stumbles on the URL (or has permission to read your bucket otherwise) will be able to see and download them. If you want to make images globally private you should export this variable as some derivative of yes/true. If no variable is found, images are made public by default.
+### Disable Github
+
+If you need to globally disable GitHub, meaning that users cannot make new
+collections and webhooks are disabled, you can do that:
 
 ```python
-SREGISTRY_GOOGLE_STORAGE_PRIVATE=True 
+DISABLE_GITHUB=True
+```
+
+
+### Disable Building
+
+Disable all building, including pushing of containers and recipes. By
+default, for a working registry, this should be False.
+
+```python
+DISABLE_BUILDING=True
+```
+
+This setting is also in the main settings page, but mentioned here for 
+Google Cloud Build.
+
+### Disable Build Receive
+
+Prevent responses from being received from Google Cloud Build (returns permission
+denied).
+
+```python
+DISABLE_BUILD_RECEIVE=True
 ```
 
 These variables are written in detail in the dummy_secrets.py file. 

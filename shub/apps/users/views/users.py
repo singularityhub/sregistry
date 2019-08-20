@@ -11,7 +11,12 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from shub.apps.users.models import User
 from shub.apps.main.models import Collection, Star
 from shub.apps.logs.models import APIRequestCount
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
 
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models.aggregates import Count
@@ -21,9 +26,10 @@ from django.shortcuts import (
     redirect
 )
 from django.db.models import Q, Sum
+from ratelimit.decorators import ratelimit
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def view_token(request):
     ''' tokens are valid for pushing (creating collections) and only available
@@ -34,7 +40,7 @@ def view_token(request):
     return render(request, 'users/token.html')
 
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def view_profile(request, username=None):
     '''view a user's profile, including collections and download counts
     '''
@@ -80,3 +86,33 @@ def view_profile(request, username=None):
                'favorites': favorites}
 
     return render(request, 'users/profile.html', context)
+
+
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+@login_required
+def delete_account(request):
+    '''delete a user's account and all associated containers.'''
+    from shub.settings import PLUGINS_ENABLED
+
+    from shub.apps.main.views.collections import _delete_collection
+    if "google_build" in PLUGINS_ENABLED:
+        from shub.plugins.google_build.views import _delete_collection
+
+    if not request.user or request.user.is_anonymous:
+        messages.info(request, "This action is not prohibited.")
+        return redirect('index')
+
+    # Delete collections first
+    collections = Collection.objects.filter(owner=request.user)
+
+    # Delete each collection
+    for collection in collections:
+        _delete_collection(request, collection)
+        
+    # Log the user out
+    logout(request)
+    request.user.is_active = False
+    request.user.save()
+    request.user.delete()
+    messages.info(request, "Thank you for using Singularity Hub!")
+    return redirect('index')

@@ -29,6 +29,7 @@ from rest_framework.exceptions import (
     PermissionDenied,
     NotFound
 )
+from ratelimit.mixins import RatelimitMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -54,9 +55,6 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
     def get_download_url(self, container):
 
-        if "image" in container.metadata:
-            return container.metadata['image']
-                
         secret = container.collection.secret
         download_url = reverse('download_container', 
                                kwargs={'cid': container.id, 'secret': secret})
@@ -117,9 +115,14 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
 ################################################################################
 
 
-class ContainerDetailByName(LoggingMixin, generics.GenericAPIView):
+class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIView):
     '''Retrieve a container instance based on it's name
     '''
+    ratelimit_key = 'ip'
+    ratelimit_rate = settings.VIEW_RATE_LIMIT 
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = 'GET'
+
     def get_object(self, collection, name, tag=None, version=None): # pylint: disable=arguments-differ
 
         try:
@@ -210,12 +213,19 @@ def _container_get(request, container, name=None, tag=None):
     if tag is None:
         tag = container.tag
 
-    serializer = SingleContainerSerializer(container)
-    is_private = container.collection.private
+    # The user isn't allowed to get more than the limit
+    if container.get_count >= container.get_limit:
+        return Response(429)
+
+    if container.collection.get_count >= container.collection.get_limit:
+        return Response(429)
 
     # All public images are pull-able
 
+    is_private = container.collection.private
+
     if not is_private:
+        serializer = SingleContainerSerializer(container)
         return Response(serializer.data)
 
     # Determine if user has permission to get if private
@@ -238,30 +248,11 @@ def _container_get(request, container, name=None, tag=None):
                                     tag)
 
     if validate_request(auth, payload, "pull", timestamp):
+        serializer = SingleContainerSerializer(container)
         return Response(serializer.data)
 
     return Response(400)
 
-
-class ContainerDetailById(LoggingMixin, generics.GenericAPIView):
-    '''Retrieve a container instance based on it's id
-    '''
-    def get_object(self, cid): # pylint: disable=arguments-differ
-        from shub.apps.main.views.containers import get_container
-        container = get_container(cid)
-        return container
-
-    def delete(self, request, cid):
-        from shub.apps.api.actions import delete_container
-        container = self.get_object(cid)
-        if delete_container(request, container) is True:
-            container.delete()       
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(400)
-        
-    def get(self, request, cid):
-        container = self.get_object(cid)
-        return _container_get(request, container)
 
 
 ################################################################################
@@ -298,5 +289,4 @@ urlpatterns = [
     url(r'^container/(?P<collection>.+?)/(?P<name>.+?)@(?P<version>.+?)/?$', ContainerDetailByName.as_view()),
     url(r'^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)/?$', ContainerDetailByName.as_view()),
     url(r'^container/(?P<collection>.+?)/(?P<name>.+?)/?$', ContainerDetailByName.as_view()),
-    url(r'^containers/(?P<cid>.+?)/?$', ContainerDetailById.as_view())
 ]

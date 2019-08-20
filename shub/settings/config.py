@@ -44,7 +44,7 @@ REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
 
 
-# PERMISSIONS
+# Permissions and Views
 
 # Allow users to create public collections
 USER_COLLECTIONS = True
@@ -57,6 +57,34 @@ PRIVATE_ONLY = False
 
 # Should the default for a new registry be private or public?
 DEFAULT_PRIVATE = False
+
+# The number of collections to show on the /<domain>/collections page
+COLLECTIONS_VIEW_PAGE_COUNT=250
+
+# The maximum number of downloads allowed per container/collection, per week
+CONTAINER_WEEKLY_GET_LIMIT=100
+COLLECTION_WEEKLY_GET_LIMIT=100
+
+# Disable all pushes of containers, recipes, etc. Also for Google Cloud Build
+DISABLE_BUILDING=False
+
+# Plugins ######################################################################
+# See dummy_secrets.py for more details.
+
+SREGISTRY_GOOGLE_BUILD_LIMIT=100
+SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.3.0-slim"
+SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None # None defaults to 10 minutes
+SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
+CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
+
+# A global setting to disable all webhooks / interaction with Github
+DISABLE_GITHUB=False
+
+# A global setting to disable all building
+DISABLE_BUILDING=False
+
+# prevent responses from being received from Google Cloud Build
+DISABLE_BUILD_RECEIVE=False
 
 
 # DATABASE
@@ -86,10 +114,13 @@ VISUALIZATION_TREEMAP_COLLECTION_SWITCH = 1000
 # If you disable, we still keep track of collection pull counts, but not specific versions
 LOGGING_SAVE_RESPONSES = True
 
+# Rate Limits
+
+VIEW_RATE_LIMIT="50/1d"  # The rate limit for each view, django-ratelimit, "50 per day per ipaddress)
+VIEW_RATE_LIMIT_BLOCK=True # Given that someone goes over, are they blocked for the period?
+
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it
-
-
 
 # Available Plugins:
 

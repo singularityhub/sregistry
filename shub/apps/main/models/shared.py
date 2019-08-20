@@ -71,6 +71,10 @@ class Collection(models.Model):
                                           help_text="users with edit permission to the collection",
                                           verbose_name="Contributors")
     
+    # Weekly GET limit for collection
+    get_count = models.PositiveIntegerField(null=False, blank=False, default=0)
+    get_limit = models.PositiveIntegerField(null=False, blank=False, default=settings.COLLECTION_WEEKLY_GET_LIMIT)
+
     # By default, collections are public
     private = models.BooleanField(choices=PRIVACY_CHOICES, 
                                   default=get_privacy_default,

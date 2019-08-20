@@ -188,7 +188,7 @@ def receive_build(collection, recipes, branch):
 
 def get_build_context():
     '''get shared build context between recipe build (push of a recipe) and
-       GitHub triggered build. This function takes no arguments
+       GitHub triggered build. This function takes no arguments.
     '''
     # We checked that the setting is defined, here ensure exists
     if not os.path.exists(settings.GOOGLE_APPLICATION_CREDENTIALS):
@@ -204,7 +204,6 @@ def get_build_context():
     # The following are optional
     for attr in ['SREGISTRY_GOOGLE_BUILD_CACHE',
                  'SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION',
-                 'SREGISTRY_GOOGLE_STORAGE_PRIVATE',
                  'SREGISTRY_GOOGLE_STORAGE_BUCKET']:
         if hasattr(settings, attr):
             context[attr] = getattr(settings, attr)
@@ -231,9 +230,15 @@ def delete_build(cid, client=None):
 
     # If the container has an image, delete it
     image = container.get_image() or ""
-    if container.metadata['builder']['name'] == "google_build":
 
-        # Delete the image
+    is_google_build = False
+    if "builder" in container.metadata:
+        if "name" in container.metadata['builder']:
+            if container.metadata['builder']['name'] == "google_build":
+                is_google_build = True
+
+    # Case 1: A google build
+    if is_google_build:
         if "storage.googleapis.com" in image:
             print("deleting container %s" % image)
             container_name = os.path.basename(image)
@@ -352,9 +357,6 @@ def complete_build(cid, params, check_again_seconds=10):
 
     # Get an updated status
     response = client._finish_build(build_id)
-
-    print("RESPONSE")
-    print(response)
 
     if "public_url" in response:
         container.metadata['image'] = response['public_url']

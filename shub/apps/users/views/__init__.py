@@ -1,4 +1,5 @@
 from .users import (
+    delete_account,
     view_token,
     view_profile
 )

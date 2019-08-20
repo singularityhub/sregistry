@@ -18,9 +18,15 @@ from shub.apps.main.utils import calculate_expiration_date
 from shub.apps.main.views import get_container
 from shub.apps.api.tasks import expire_share
 
+from shub.settings import (
+    VIEW_RATE_LIMIT as rl_rate, 
+    VIEW_RATE_LIMIT_BLOCK as rl_block
+)
+
 import django_rq
+from ratelimit.decorators import ratelimit
 
-
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
 def generate_share(request, cid):
     '''generate a temporary share link for a container
