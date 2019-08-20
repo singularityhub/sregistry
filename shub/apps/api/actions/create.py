@@ -166,17 +166,16 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         if create_new is True:
             try:
                 container = Container.objects.create(collection=collection,
-                                                     name=names['image'],
+                                                     name=collection.name,
                                                      tag=names['tag'],
                                                      image=image,
                                                      version=names['version'])
 
             # Catches when container is frozen, and version already exists
             except IntegrityError:
-                message = '%s/%s:%s@%s already exists.' %(collection.name,
-                                                          names['image'],
-                                                          names['tag'],
-                                                          names['version'])
+                message = '%s:%s@%s already exists.' %(collection.name,
+                                                       names['tag'],
+                                                       names['version'])
                 bot.error(message)
                 delete_file_instance(instance)
                 return message
