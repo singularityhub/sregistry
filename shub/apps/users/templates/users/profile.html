@@ -103,6 +103,13 @@ $(document).ready(function(){
     $('input').on('keyup',function(){
         $('.material-pagination').hide();
     })
+
+    $("#delete_account").click(function(){
+        var response = confirm("Are you sure you want to delete your account?");
+        if (response == true) {
+           document.location = "{% url 'delete_account' %}";
+        }
+    })
  
     $(".browser-default").change(function(){
         $('.material-pagination').hide();

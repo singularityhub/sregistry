@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - accidental removed of user profile prefix for custom profile (1.1.04)
  - adding django-ratelimit to all views, customized via settings (1.1.03)
    - button in profile to delete account
    - API throttle with defaults for users and anon
