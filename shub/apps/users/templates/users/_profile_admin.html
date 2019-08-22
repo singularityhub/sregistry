@@ -10,12 +10,3 @@
                <button class="btn btn-danger">Delete Account</button></a>
     </div>
 </div>
-
-<script>
-    $("#delete_account").click(function(){
-        var response = confirm("Are you sure you want to delete this container?");
-        if (response == true) {
-           document.location = "{% url 'delete_account' %}";
-        }
-    })
-</script>

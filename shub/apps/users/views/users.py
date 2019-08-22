@@ -103,7 +103,7 @@ def delete_account(request):
         return redirect('index')
 
     # Delete collections first
-    collections = Collection.objects.filter(owner=request.user)
+    collections = Collection.objects.filter(owners=request.user)
 
     # Delete each collection
     for collection in collections:
@@ -112,7 +112,5 @@ def delete_account(request):
     # Log the user out
     logout(request)
     request.user.is_active = False
-    request.user.save()
-    request.user.delete()
-    messages.info(request, "Thank you for using Singularity Hub!")
+    messages.info(request, "Thank you for using Singularity Registry Server!")
     return redirect('index')
