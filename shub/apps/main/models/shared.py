@@ -43,8 +43,8 @@ def get_privacy_default():
 #########################################b######################################
 
 class Collection(models.Model):
-    '''A container collection is a build (multiple versions of the same image) created by an owner,
-    with other possible contributors
+    '''A container collection is a build (multiple versions of the same image) 
+       created by an owner, with other possible contributors
     '''
 
     # Container Collection Descriptors

@@ -66,6 +66,10 @@ class DownloadImageView(APIView):
         if container is None:
             return Response(status=404)
 
+        # Private containers are simply not accessible - no way to authenticate
+        if container.collection.private:
+            return Response(status=404)
+
         return redirect(self.get_download_url(container))
 
 
@@ -85,6 +89,10 @@ class GetImageView(APIView):
         # TODO: need to check permissions here
         # TODO: what to return when can't find container?
         if container is None:
+            return Response(status=404)
+
+        # Private containers are simply not accessible - no way to authenticate
+        if container.collection.private:
             return Response(status=404)
 
         # Get other tags
