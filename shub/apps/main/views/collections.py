@@ -229,13 +229,10 @@ def collection_settings(request, cid):
     owners_ids = [x.id for x in collection.owners.all()]
     contrib_ids = [x.id for x in collection.contributors.all()]
 
-    if request.user not in collection.owners.all():
-        messages.info(request, "Only owners can change collection settings")
-        return redirect('collection_details', cid=collection.id)
-
+    # Superusers, staff, and owners can edit collection settings
     if not edit_permission:
         messages.info(request, "You are not permitted to perform this action.")
-        return redirect('collections')
+        return redirect('collection_details', cid=collection.id)
                
     context = {'collection': collection,
                'teams': Team.objects.all(),
