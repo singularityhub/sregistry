@@ -71,7 +71,7 @@
     <div class="col-md-12">
         <div >
                 
-            {% if request.user in collection.owners.all %}
+            {% if edit_permission %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
             <a href="{% url 'chunked_upload' collection.id %}"><button class="btn btn-sm btn-default"><i class="fa fa-plus"></i></button></a>
