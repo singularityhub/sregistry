@@ -38,7 +38,7 @@ PLUGINS_ENABLED = [
 You will need to build the image locally with, at least, the build argument ENABLE_GOOGLEBUILD set to true:
 
 ```bash
-$ docker build --build-arg ENABLE_GOOGLEBUILD=true -t vanessa/sregistry .
+$ docker build --build-arg ENABLE_GOOGLEBUILD=true -t quay.io/quay.io/vanessa/sregistry .
 ```
 
 ## Secrets

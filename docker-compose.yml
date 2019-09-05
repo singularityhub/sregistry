@@ -3,7 +3,7 @@ db:
 
 uwsgi:
   restart: always
-  image: vanessa/sregistry
+  image: quay.io/vanessa/sregistry
   volumes:
     - .:/code
     - ./static:/var/www/static
@@ -17,7 +17,7 @@ uwsgi:
 
 nginx:
   restart: always
-  image: vanessa/sregistry_nginx
+  image: quay.io/vanessa/sregistry_nginx
   ports:
     - "80:80"
   volumes:
@@ -34,7 +34,7 @@ redis:
   image: redis:latest
 
 scheduler:
-  image: vanessa/sregistry
+  image: quay.io/vanessa/sregistry
   command: python /code/manage.py rqscheduler
   volumes:
     - .:/code
@@ -45,7 +45,7 @@ scheduler:
     - db
 
 worker:
-  image: vanessa/sregistry
+  image: quay.io/vanessa/sregistry
   command: python /code/manage.py rqworker default
   volumes:
     - .:/code

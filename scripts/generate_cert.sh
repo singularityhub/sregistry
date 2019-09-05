@@ -64,6 +64,6 @@ sudo service nginx stop
 
 cd $INSTALL_ROOT/sregistry
 
-# First up will pull required containers, and you should have already built vanessa/sregistry
-# docker build -t vanessa/sregistry .
+# First up will pull required containers, and you should have already built quay.io/vanessa/sregistry
+# docker build -t quay.io/vanessa/sregistry .
 docker-compose up -d

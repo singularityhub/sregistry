@@ -42,7 +42,7 @@ github_repo: "sregistry"
 # Optional
 twitter: vsoch
 linkedin: vsochat
-dockerhub: vanessa
+registry: https://quay.io/repository/vanessa/sregistry
 # google-analytics: UA-XXXXXXXXXX
 # Image and (square) dimension for logo (don't start with /)
 # If commented, will use material hat theme

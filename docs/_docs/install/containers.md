@@ -7,15 +7,15 @@ toc: true
 # Installation: Start Containers
 
 Whether you build or not, the compose command will bring up the application 
-(and download containers provided on Docker Hub, if they aren't in your cache).
+(and download containers provided on Quay.io, previously on Docker Hub, if they aren't in your cache).
 
 ## What containers are provided?
 
-Singularity Registy Server uses the following images, all provided on Docker Hub 
+Singularity Registy Server uses the following images, all provided on Quay.io
 (or you can build the registry-specific ones locally):
 
- - [vanessa/sregistry](https://hub.docker.com/r/vanessa/sregistry): is the core application image, generated from the Dockerfile in the base of the repository.
- - [vanessa/sregistry_nginx](https://hub.docker.com/r/vanessa/sregistry_nginx/): Is the nginx container installed with the nginx upload module, intended for use with speedy uploads. It is generated from the subfolder "nginx" in the repository.
+ - [quay.io/vanessa/sregistry]({{ site.registry }}): is the core application image, generated from the Dockerfile in the base of the repository.
+ - [quay.io/vanessa/sregistry_nginx]({{ site.registry }}_nginx/): Is the nginx container installed with the nginx upload module, intended for use with speedy uploads. It is generated from the subfolder "nginx" in the repository.
 
 To use these images provided, you can bring up the containers like so:
 
@@ -59,8 +59,8 @@ docker-compose rm
 If you want to re-pull (or for other reason, remove) the core images, do that too:
 
 ```
-docker rmi vanessa/sregistry
-docker rmi vanessa/sregistry_nginx
+docker rmi quay.io/vanessa/sregistry
+docker rmi quay.io/vanessa/sregistry_nginx
 ```
 
 You can inspect any container by looking at its logs:
@@ -126,14 +126,14 @@ If you make changes to either of the images locally (or have other reason to bui
 you can do this!  In the base of the repository:
 
 ```bash
-docker build -t vanessa/sregistry .
+docker build -t quay.io/vanessa/sregistry .
 ```
 
 And then to build nginx:
 
 ```
 cd nginx
-docker build -t vanessa/sregistry_nginx .
+docker build -t quay.io/vanessa/sregistry_nginx .
 ```
 
 That's it! Likely the easiest thing to do is just `docker-compose up -d` and let the containers
