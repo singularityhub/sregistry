@@ -16,7 +16,7 @@ To enable SAML authentication you must:
   * Configure the details of your SAML provider in in `shub/settings/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
   * Build the docker image with the build argument ENABLE_SAML set to true:
     ```bash
-    $ docker build --build-arg ENABLE_SAML=true -t vanessa/sregistry .
+    $ docker build --build-arg ENABLE_SAML=true -t quay.io/vanessa/sregistry .
     ```
 
 

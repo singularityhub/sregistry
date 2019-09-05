@@ -19,7 +19,7 @@ Singularity Registry Server needs a web accessible server that can install and r
 
 The components of the application include databases, a web server, worker, and application:
 
- - **vanessa/sregistry**: is the main uwsgi application, which serves a Django (python-based) application.
+ - **quay.io/vanessa/sregistry**: is the main uwsgi application, which serves a Django (python-based) application.
  - **nginx**: pronounced (engine-X) is the webserver. The starter application is configured for http, however you should follow the instructions to set up https properly. Note that we build a custom nginx image that takes advantage of the [nginx upload module](https://www.nginx.com/resources/wiki/modules/upload/).
  - **worker**: is the same uwsgi image, but with a running command that is specialized to perform tasks. The tasks are run via [django-rq](https://github.com/rq/django-rq) that uses a
  - **redis**: database to organize the jobs themselves.

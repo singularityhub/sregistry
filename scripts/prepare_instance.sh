@@ -75,6 +75,6 @@ if [ ! -d $INSTALL_ROOT/sregistry ]; then
     git clone https://www.github.com/singularityhub/sregistry.git
 
     cd sregistry
-    docker build -t vanessa/sregistry .
+    docker build -t quay.io/vanessa/sregistry .
     docker-compose up -d
 fi

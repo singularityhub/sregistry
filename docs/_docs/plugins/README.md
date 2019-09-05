@@ -36,7 +36,7 @@ ARG ENABLE_SAML=false
 
 Therefore, if you want to install the requirements of all current supported plugins, you can build the image as follows: 
 ```bash
-docker build --build-arg ENABLE_LDAP=true --build-arg ENABLE_PAM=true  --build-arg ENABLE_GOOGLEBUILD=true --build-arg ENABLE_GLOBUS=true --build-arg ENABLE_SAML=true -t vanessa/sregistry .
+docker build --build-arg ENABLE_LDAP=true --build-arg ENABLE_PAM=true  --build-arg ENABLE_GOOGLEBUILD=true --build-arg ENABLE_GLOBUS=true --build-arg ENABLE_SAML=true -t quay.io/vanessa/sregistry .
 ```
 
 

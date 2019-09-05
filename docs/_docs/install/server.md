@@ -17,7 +17,7 @@ are a ton faster! You shouldn't need to do anything special when you bring up th
 keep in mind that if you are deploying this without docker containers (e.g., using your own
 web server) you will need to equivalently compile nginx with the module enabled. A standard
 server without this module will no longer work. Currently, we use an image provided on Docker Hub,
-[vanessa/sregistry_nginx](https://hub.docker.com/r/vanessa/sregistry_nginx). If you want to build this image
+[quay.io/vanessa/sregistry_nginx](https://hub.docker.com/r/quay.io/vanessa/sregistry_nginx). If you want to build this image
 on your own, you can change the section in the `docker-compose.yml` file to `build` instead of use an
 `image`.  See [this issue](https://github.com/singularityhub/sregistry/issues/140) for the rationale for
 having the pre-built image. To build, change this section:
@@ -25,7 +25,7 @@ having the pre-built image. To build, change this section:
 ```bash
 nginx:
   restart: always
-  image: vanessa/sregistry_nginx
+  image: quay.io/vanessa/sregistry_nginx
   ports:
     - "80:80"
   volumes:
@@ -144,12 +144,12 @@ If you run into strange errors regarding any kind of authentication / server / n
 
 
 ## Build the Image (Optional)
-If you want to try it, you can build the image. Note that this step isn't necessary as the image is provided on [Docker Hub](https://hub.docker.com/r/vanessa/sregistry/). This step is optional. However, if you are developing you likely want to build the image locally. You can do:
+If you want to try it, you can build the image. Note that this step isn't necessary as the image is provided on [Quay.io]({{ site.registry }}). This step is optional. However, if you are developing you likely want to build the image locally. You can do:
 
 
 ```bash
 cd sregistry
-docker build -t vanessa/sregistry .
+docker build -t quay.io/vanessa/sregistry .
 ```
 
 Next, why don't you [start Docker containers](containers) to get your own registry going.
