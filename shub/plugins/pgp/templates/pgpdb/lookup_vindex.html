@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% blocktrans %}Search results for '{{ search }}'{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+  <style>
+.public-key-packet td:nth-child(1),
+.userid-packet td:nth-child(1) {
+ font-weight: bold;
+}
+  </style>{% endblock %}
+
+{% block body %}
+  <div class="row">
+   <div>
+    <h1>{% blocktrans %}Search results for '{{ search }}'{% endblocktrans %}</h1>
+    <div>
+     <table class="table">
+      <thead>
+       <tr>
+        <th>{% trans 'Type' %}</th>
+        <th>{% trans 'Bits' %}</th>
+        <th>{% trans 'Algorithm' %}</th>
+        <th>{% trans 'Key ID' %}</th>
+        <th>{% trans 'CreationTime' %}</th>
+       </tr>
+      </thead>
+      <tbody>{% for key in keys %}{% for packet in key.packets %}
+       <tr class="{% if packet.is_public_key %}public-key-packet{% endif %}{% if packet.is_userid %}userid-packet{% endif %}{% if packet.is_signature %}signature-packet{% endif %}">
+{% if packet.is_public_key %}        <td>{% if not packet.is_sub %}{% trans 'pub' %}{% else %}{% trans 'sub' %}{% endif %}</td>
+        <td>{{ packet.bits }}</td>
+        <td>{{ packet.simple_algorithm_str }}</td>
+        <td><a href="lookup?op=get&amp;search=0x{{ packet.keyid }}">{{ packet.keyid }}</a></td>
+        <td>{{ packet.creation_time }}</td>
+{% endif %}{% if packet.is_userid %}        <td>{% trans 'uid' %}</td>
+        <td colspan="4">{{ packet.userid }}</td>
+{% endif %}{% if packet.is_signature %}        <td>{% trans 'sig' %}</td>
+        <td>-</td>
+        <td>{% blocktrans with pka=packet.simple_pka_str hash=packet.hash_str %}{{ pka }} with {{ hash }}{% endblocktrans %}</td>
+        <td><a href="lookup?op=get&amp;search=0x{{ packet.keyid }}">{{ packet.keyid }}</a></td>
+        <td>{{ packet.creation_time }}</td>
+{% endif %}
+       </tr>{% endfor %}{% endfor %}
+      </tbody>
+     </table>
+    </div>
+   </div>
+  </div>{% endblock %}

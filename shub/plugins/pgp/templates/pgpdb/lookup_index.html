@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% blocktrans %}Search results for '{{ search }}'{% endblocktrans %}{% endblock %}
+
+{% block content %}
+  <div class="row">
+   <div>
+    <h1>{% blocktrans %}Search results for '{{ search }}'{% endblocktrans %}</h1>
+    <div>
+     <table class="table">
+      <thead>
+       <tr>
+        <th>{% trans 'Type' %}</th>
+        <th>{% trans 'Bits' %}</th>
+        <th>{% trans 'Key ID' %}</th>
+        <th>{% trans 'CreationTime' %}</th>
+        <th>{% trans 'User ID' %}</th>
+       </tr>
+      </thead>
+      <tbody>{% for key in keys %}
+       <tr>
+        <td>{% trans 'pub' %}</td>
+        <td>{{ key.first.public_key.bits }}</td>
+        <td><a href="lookup?op=get&amp;search=0x{{ key.first.public_key.keyid }}">{{ key.first.public_key.keyid }}</a></td>
+        <td>{{ key.first.public_key.creation_time }}</td>
+        <td><a href="lookup?op=vindex&amp;search=0x{{ key.first.public_key.keyid }}">{{ key.first.userid.userid }}</a></td>
+       </tr>{% endfor %}
+      </tbody>
+     </table>
+    </div>
+   </div>
+  </div>{% endblock %}

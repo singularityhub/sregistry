@@ -58,5 +58,10 @@ urlpatterns = [
 for plugin in settings.PLUGINS_ENABLED:
     urls_module = 'shub.plugins.' + plugin + '.urls'
     plugin_urls = import_module(urls_module)
+
     url_regex = '^' + plugin + '/'
+
+    # per protocol, keystore must be /pks
+    if plugin == "pgp":
+        url_regex = '^pks/'
     urlpatterns.append(url(url_regex, include(plugin_urls)))

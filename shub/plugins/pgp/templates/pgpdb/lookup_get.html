@@ -1,0 +1,16 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% blocktrans with keyid=key.first.public_key.keyid %}Public Key Server -- Get ``{{ search }}''{% endblocktrans %}{% endblock %}
+
+{% block body %}
+  <div class="row">
+   <div>
+    <h1>{% blocktrans with keyid=key.first.public_key.keyid %}Public Key Server -- Get ``{{ search }}''{% endblocktrans %}</h1>
+    <hr/>
+<pre>
+{{ key }}
+</pre>
+   </div>
+  </div>{% endblock %}

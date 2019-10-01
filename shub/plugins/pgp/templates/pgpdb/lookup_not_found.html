@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans 'Invalid PGP key' %}{% endblock %}
+
+{% block body %}
+  <div class="container">
+   <p>{% blocktrans %}Key not found.{% endblocktrans %}</p>
+  </div>{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans 'Key registered' %}{% endblock %}
+
+{% block body %}
+  <div class="row">
+   <p>{% blocktrans %}PGP key registered.{% endblocktrans %}</p>
+  </div>{% endblock %}
