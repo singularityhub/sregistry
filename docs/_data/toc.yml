@@ -60,6 +60,8 @@
   children:
     - title: Overview
       url: docs/plugins
+    - title: Keystore
+      url: docs/plugins/pgp
     - title: LDAP Authentication
       url: docs/plugins/ldap
     - title: PAM Authentication
