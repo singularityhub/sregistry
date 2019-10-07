@@ -24,8 +24,10 @@ your registries' local `shub/settings/secrets.py` file.
  - [Globus](globus): connect and transfer using Globus
  - [SAML](saml): Authentication with SAML
  - [Google Build](google-build) provides build and storage on Google Cloud.
+ - [Keystore](pgp) provides a standard keystore for signing containers
 
 The Dockerfile has some build arguments to build the Docker image according to the plugins software requirements. These variables are set to false by default:
+
 ```bash
 ARG ENABLE_LDAP=false
 ARG ENABLE_PAM=false

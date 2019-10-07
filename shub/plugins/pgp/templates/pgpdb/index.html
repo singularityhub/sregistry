@@ -1,0 +1,39 @@
+{% extends "base/base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans 'PGP Keyserver' %}{% endblock %}
+
+{% block content %}
+
+<div id="fh5co-portfolio">
+{% include "messages/message.html" %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>{% blocktrans %}OpenPGP Public Key Server{% endblocktrans %}</h1>
+        <hr/>
+        <h2>{% blocktrans %}Extract an OpenPGP Key{% endblocktrans %}</h2>
+        <form action="lookup" class="form-horizontal" method="get">
+            {{ lookup_form|crispy }}
+            <div class="form-group">
+                <button class="btn btn-danger" type="reset" value="{% trans 'Reset' %}"/>
+                <button class="btn btn-primary" type="submit" value="{% trans 'Search' %}"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+   <hr/>
+   <h2>{% blocktrans %}Submit a new OpenPGP Key{% endblocktrans %}</h2>
+   <p>{% blocktrans %}Enter ASCII-armored OpenPGP key here:{% endblocktrans %}</p>
+   <form action="add" method="post">
+    {{ add_form|crispy }}
+    <div class="form-group">
+     <input class="btn btn-danger" type="reset" value="{% trans 'Reset' %}"/>
+     <input class="btn btn-primary" type="submit" value="{% trans 'Submit' %}"/>
+    </div>
+   </form>
+  </div>
+{% endblock %}

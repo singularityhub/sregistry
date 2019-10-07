@@ -129,8 +129,10 @@ VIEW_RATE_LIMIT_BLOCK=True # Given that someone goes over, are they blocked for 
 # - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
 # - saml_auth: authentication with SAML
+# - pgp: deploy a key server alongside your registry
 
 PLUGINS_ENABLED = [
+#    'pgp'
 #    'ldap_auth',
 #    'google_build'  
 #    'pam_auth',

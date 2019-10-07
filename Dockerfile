@@ -5,6 +5,7 @@ ENV MESSAGELEVEL QUIET
 
 ARG ENABLE_LDAP=false
 ARG ENABLE_PAM=false
+ARG ENABLE_PGP=false
 ARG ENABLE_GOOGLEBUILD=false
 ARG ENABLE_GLOBUS=false
 ARG ENABLE_SAML=false
@@ -56,6 +57,9 @@ RUN if $ENABLE_LDAP; then pip install django-auth-ldap ; fi;
 
 # Install PAM Authentication (uncomment if wanted)
 RUN if $ENABLE_PAM; then pip install django-pam ; fi;
+
+# PGP keystore dependencies
+RUN if $ENABLE_PGP; then pip install pgpdump>=1.4; fi;
 
 # Ensure Google Build Installed
 RUN if $ENABLE_GOOGLEBUILD; then pip install sregistry[google-build] ; fi;
