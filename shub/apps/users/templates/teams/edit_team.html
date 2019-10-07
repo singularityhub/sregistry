@@ -8,6 +8,7 @@
     <img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/>
 </span>
 <div class="row" style="margin-top:30px; margin-left:-10px">
+
     <div class="col-md-12">
         {% if team.id %}
         <h3 class="title"><a href="{% url 'team_details' team.id %}" style="text-decoration:none; margin-right:15px"><< </a> {{ title }}</h3>
@@ -40,16 +41,11 @@
                        Permission needed to join team<span class="asteriskField">*</span> 
                        </label>
                        <div class="controls">
-                           <select name="permission" 
-                               class="select form-control"
-                               id="id_permission">
-                               {% if team.permission == "invite" %}
-                               <option value="invite" selected="">Invite only. The user must be invited by an owner</option>
-                               <option value="open">Open. Anyone can join the team without asking.</option>
-                               {% else %}
-                               <option value="open" selected="">Open. Anyone can join the team without asking.</option>
-                               <option value="invite">Invite only. The user must be invited by an owner</option>
-                               {% endif %}
+                           <select name="permission" class="custom-select" id="id_permission">{% if team.permission == "invite" %}
+                               <option value="invite" selected>Invite only. The user must be invited by an owner</option>
+                               <option value="open">Open. Anyone can join the team without asking.</option>{% else %}
+                               <option value="open" selected>Open. Anyone can join the team without asking.</option>
+                               <option value="invite">Invite only. The user must be invited by an owner</option>{% endif %}
                            </select>
                        </div>
                    </div>
