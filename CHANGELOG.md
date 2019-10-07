@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - fixing bug with select for team permissions (0.1.08)
  - adding backup as cron job (1.1.07)
  - collection settings are viewable by registry staff/superusers (1.1.06)
  - library pull needs to minimally check if container is private (1.1.05)
