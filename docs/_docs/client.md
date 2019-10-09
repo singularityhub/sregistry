@@ -23,6 +23,56 @@ You can also pull a container using Singularity natively with the `shub://` uri:
 $ singularity pull shub://containers.page/collection/container:tag
 ```
 
+## Singularity Push
+
+As of version `1.1.10`, Singularity Registry Server offers a library endpoint
+to authenticate and then push containers. First, create an endpoint for your
+registry:
+
+```bash
+$ singularity remote add --no-login DinosaurCloud cloud.dinosaur.io
+```
+
+Verify it's there:
+
+```bash
+$ singularity remote list
+NAME           URI              	GLOBAL
+DinosaurCloud  cloud.dinosaur.io        NO
+[SylabsCloud]  cloud.sylabs.io   	YES
+```
+
+**Important** Sylabs requires these endpoints to have https, for obvious reasons. If you want to test with localhost, you'll need to edit [this file](https://github.com/sylabs/singularity/blob/5e483be4af2e120e646d33f0757e855c8d3be2da/internal/pkg/remote/remote.go#L237)
+and re-compile Singularity to set the url to have http. That's how
+I developed this set of endpoints.
+
+Then you'll first need to get your token at the /token endpoint, for example:
+
+```bash
+1eb5bc1daeca0f5a215ec242c9690209ca0b3d71
+```
+
+And then provide it (via copy paste) to the Singularity client to create a remote endpoint for your registry:
+
+```bash
+$ singularity remote login DinosaurCloud
+INFO:    Authenticating with remote: DinosaurCloud
+Generate an API Key at https://127.0.0.1/auth/tokens, and paste here:
+API Key: 
+INFO:    API Key Verified!
+```
+
+If you paste a token that isn't valid, you'll get a different message
+
+```bash
+$ singularity remote login DinosaurCloud
+INFO:    Authenticating with remote: DinosaurCloud
+Generate an API Key at https://127.0.0.1/auth/tokens, and paste here:
+API Key: 
+FATAL:   while verifying token: error response from server: Invalid Token
+```
+
+
 # Singularity Registry Client
 
 Singularity Registry Global Client, or [sregistry-cli](https://github.com/singularityhub/sregistry-cli),

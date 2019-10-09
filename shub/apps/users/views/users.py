@@ -27,7 +27,7 @@ from django.shortcuts import (
 )
 from django.db.models import Q, Sum
 from ratelimit.decorators import ratelimit
-
+from rest_framework.authtoken.models import Token
 
 @ratelimit(key='ip', rate=rl_rate, block=rl_block)
 @login_required
@@ -37,6 +37,23 @@ def view_token(request):
         user's are allowed to create collections, they can push to those for
         which they are an owner or contributor. 
     '''
+    return render(request, 'users/token.html')
+
+
+@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+@login_required
+def update_token(request):
+    '''a user is allowed to change/update their current token
+    '''
+    try:
+        token = Token.objects.get(user=request.user)
+        token.delete()
+    except Token.DoesNotExist:
+        pass
+
+    token = Token.objects.create(user=request.user)
+    token.save()
+    
     return render(request, 'users/token.html')
 
 

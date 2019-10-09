@@ -189,7 +189,7 @@ def validate_request(auth,
         return False
 
     request_signature = values['Signature']
-    secret = user.token()
+    secret = user.token
     return validate_secret(secret, payload, request_signature)
 
 

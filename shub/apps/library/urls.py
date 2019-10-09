@@ -7,10 +7,15 @@ from shub.apps.library import views
 #router = DefaultRouter()
 #router.register(r'images', views.ImageViewSet)
 
-# The patterns here are prefixed with v2/
+# The patterns here are prefixed with v1/
+
 urlpatterns = [
+
+
     url(r'^images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
     url(r'^imagefile/(?P<name>.+?)/?$', views.DownloadImageView.as_view()),
+    url(r'^token-status$', views.TokenStatusView.as_view()),
+
     url(r'^$', views.LibraryBaseView.as_view())
 #    url(r'^', include(router.urls)),
 ]

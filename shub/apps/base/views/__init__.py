@@ -3,6 +3,10 @@ from .errors import (
     handler500
 )
 
+from .assets import (
+    config_prod_json
+)
+
 from .main import (
     index_view,
     about_view,

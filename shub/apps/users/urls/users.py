@@ -15,7 +15,11 @@ import shub.apps.users.views as views
 urlpatterns = [
 
     url(r'^terms/agree$', views.agree_terms, name="agree_terms"),
+
+    # Only provided to be compatible with Sylabs /auth/tokens
     url(r'^token$', views.view_token, name="token"),
+    url(r'^auth/tokens$', views.view_token, name="tokens"),
+    url(r'^token/update$', views.update_token, name="update_token"),
     url(r'^u/profile$', views.view_profile, name="profile"),
     url(r'^u/delete$', views.delete_account, name="delete_account"),  # delete account
     url(r'^u/profile/(?P<username>.+)$', views.view_profile,name="profile"),

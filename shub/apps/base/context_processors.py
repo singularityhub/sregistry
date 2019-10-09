@@ -14,7 +14,8 @@ def domain_processor(request):
     return {'domain': settings.DOMAIN_NAME,
             'DOMAIN_NAKED':settings.DOMAIN_NAKED,
             'REGISTRY_URI': settings.REGISTRY_URI,
-            'REGISTRY_NAME': settings.REGISTRY_NAME}
+            'REGISTRY_NAME': settings.REGISTRY_NAME,
+            'GOOGLE_ANALYTICS': settings.GOOGLE_ANALYTICS}
 
 
 def help_processor(request):

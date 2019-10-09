@@ -19,7 +19,6 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.db import models
 
-
 from rest_framework.authtoken.models import Token
 from shub.apps.users.utils import get_usertoken
 from itertools import chain
@@ -149,6 +148,7 @@ class User(AbstractUser):
     def get_label(self):
         return "users"
 
+    @property
     def token(self):
         return get_usertoken(self)
 

@@ -42,7 +42,7 @@ HELP_CONTACT_EMAIL = 'vsochat@stanford.edu'
 HELP_INSTITUTION_SITE = 'https://srcc.stanford.edu'
 REGISTRY_NAME = "Tacosaurus Computing Center"
 REGISTRY_URI = "taco"
-
+GOOGLE_ANALYTICS = None # "UA-XXXXXXXXX"
 
 # Permissions and Views
 
