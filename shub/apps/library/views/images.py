@@ -16,31 +16,19 @@ from django.shortcuts import (
 from sregistry.utils import parse_image_name
 
 from shub.apps.logs.models import APIRequestCount
-from shub.apps.main.views import get_collection_named
+from shub.apps.main.models import Collection
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 
-
-def get_container(names):
-    '''a helper function to take a parsed uri names, and return
-       an associated container
-    '''
-    container = None
-
-    try:
-        collection = get_collection_named(names['url'])
-    except:
-        collection = None
-
-    # If we have a collection, next look for the tag or version
-    if collection is not None:
-        container = collection.containers.filter(tag=names['tag']).first()
-        if container is None:
-            container = collection.containers.filter(version=names['version']).first()
-
-    return container
+from .helpers import (
+    generate_collections_list,
+    generate_collection_metadata,
+    get_token,
+    get_container,
+    validate_token
+)
 
 
 class DownloadImageView(APIView):
@@ -60,6 +48,9 @@ class DownloadImageView(APIView):
     def get(self, request, name):
         names = parse_image_name(name)
         container = get_container(names)
+
+        # Does it come with headers?
+        print(request.META)
 
         # TODO: need to check permissions here
         # TODO: what to return when can't find container?
@@ -114,3 +105,50 @@ class GetImageView(APIView):
                 "containerDownloads": downloads}
 
         return Response(data={"data": data}, status=200)
+
+
+#TODO: this need ratelimit added (or is already present from django restful?)
+
+class CollectionsView(APIView):
+    '''Return a simple list of collections
+       GET /v1/collections
+    '''
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request):
+
+        print(request.data)
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+
+        token = get_token(request)
+        collections = generate_collections_list(token.user)
+        return Response(data=collections, status=200)
+
+
+class GetNamedCollectionView(APIView):
+    '''Given a collection, return the associated metadata.
+       GET /v1/collections/<username>/<name>
+    '''
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request, username, name):
+
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+
+        # The user is associated with the token
+        token = get_token(request)
+
+        # Look up the collection
+        try:
+            collection = Collection.objects.get(name=name)
+        except Collection.DoesNotExist:
+            return Response(status=404)        
+
+        if token.user in collection.owners.all():
+            metadata = generate_collection_metadata(collection, token.user)
+            return Response(data={"data": metadata}, status=200)
+        return Response(status=404)

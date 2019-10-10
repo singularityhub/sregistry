@@ -15,6 +15,13 @@ urlpatterns = [
     url(r'^images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
     url(r'^imagefile/(?P<name>.+?)/?$', views.DownloadImageView.as_view()),
     url(r'^token-status$', views.TokenStatusView.as_view()),
+    url(r'^collections/(?P<username>.+?)/(?P<name>.+?)$', views.GetNamedCollectionView.as_view()),
+    url(r'^collections$', views.CollectionsView.as_view()),
+    url(r'^entities/(?P<username>.+?)/?$', views.GetNamedEntityView.as_view()),
+    url(r'^entities/?$', views.GetEntitiesView.as_view()),
+ 
+    # TODO: the endpoint here should exist to create the container
+    #/v1/containers/vsoch/dinosaur-collection/container
 
     url(r'^$', views.LibraryBaseView.as_view())
 #    url(r'^', include(router.urls)),

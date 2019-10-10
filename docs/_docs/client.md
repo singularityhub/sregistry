@@ -43,10 +43,10 @@ DinosaurCloud  cloud.dinosaur.io        NO
 ```
 
 **Important** Sylabs requires these endpoints to have https, for obvious reasons. If you want to test with localhost, you'll need to edit [this file](https://github.com/sylabs/singularity/blob/5e483be4af2e120e646d33f0757e855c8d3be2da/internal/pkg/remote/remote.go#L237)
-and re-compile Singularity to set the url to have http. That's how
-I developed this set of endpoints.
+and re-compile Singularity to set the url to have http. The example above is a hypothetical "cloud.dinosaur.io" however in actual development, I used 127.0.0.1 (and you'll see it 
+in various spots below). This is how I developed this set of endpoints.
 
-Then you'll first need to get your token at the /token endpoint, for example:
+Once you add the remote, then you'll first need to get your token at the /token endpoint, for example:
 
 ```bash
 1eb5bc1daeca0f5a215ec242c9690209ca0b3d71
@@ -72,6 +72,41 @@ API Key:
 FATAL:   while verifying token: error response from server: Invalid Token
 ```
 
+In case you are wondering, the token is kept in plaintext at `/home/vanessa/.singularity/remote.yaml`
+so once you specify to use an endpoint, it knows the token.
+
+```
+$ cat /home/vanessa/.singularity/remote.yaml Active: DinosaurCloud
+Remotes:
+  DinosaurCloud:
+    URI: 127.0.0.1
+    Token: 1eb5bcrdaeca0f5a215ef242c9690209ca0b3d71
+    System: false
+  SylabsCloud:
+    URI: cloud.sylabs.io
+    Token: hahhaayeahrightdude
+    System: true
+```
+
+The easiest thing to do is now to set your remote to be DinosaurCloud (or whatever
+you called it) so you don't need to specify the push command with `--library`:
+
+```bash
+singularity use remote DinosaurCloud
+```
+
+Now that we have a token, let's try a push! For security purposes, the collection
+should already exist, and be owned by you.
+
+```bash 
+                                         # library://user/collection/container[:tag]
+$ singularity push -U busybox_latest.sif library://vsoch/collection/container:tag
+```
+
+We use `-U` for unsigned.
+
+# VERSION SHOULD RETURN
+# {'data': {'version': 'v1.0.4-0-g24d3b74', 'apiVersion': '2.0.0-alpha.2'}}
 
 # Singularity Registry Client
 
