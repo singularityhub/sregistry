@@ -9,6 +9,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 '''
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.storage import default_storage
 from django.shortcuts import (
     redirect,
     reverse
@@ -27,7 +29,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 
+from .parsers import OctetStreamParser
 from .helpers import (
     formatString,
     generate_collections_list,
@@ -41,48 +45,122 @@ from .helpers import (
 
 import django_rq
 import uuid
+import os
 
-class PushImageFileView(RatelimitMixin, GenericAPIView):
+class CompletePushImageFileView(RatelimitMixin, GenericAPIView):
     '''After creating the container, push the image file. Still check
        all credentials!
     '''
-    renderer_classes = (JSONRenderer,)
     ratelimit_key = 'ip'
     ratelimit_rate = settings.VIEW_RATE_LIMIT 
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
     ratelimit_method = 'GET'
     renderer_classes = (JSONRenderer,)
 
-    def post(self, request, container_id):
+    def get(self, request, container_id, format=None):
 
-        print("POST PushImageFileView")
-        print(container_id)
+        # TODO: need to figure out what this view does
+        print("GET CompletePushImageFileView")
         print(request.META)
         print(request.data)
-        print(request.FILES)
+        return Response(status=200)
+
+
+class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
+    '''After creating the container, push the image file. Still check
+       all credentials!
+    '''
+    ratelimit_key = 'ip'
+    ratelimit_rate = settings.VIEW_RATE_LIMIT 
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = 'POST'
+    renderer_classes = (JSONRenderer,)
+
+    def post(self, request, container_id, format=None):
+
+        print("POST RequestPushImageFileView")
 
         if not validate_token(request):
             print("Token not valid")
             return Response(status=404)
 
-        token = get_token(request)
-
-       # STOPPED HERE - request.META has wsgi.file_wrapper that we should be able
-       # to stream to file?
-              
-# uwsgi_1_f2461bcb4d31 | {'wsgi.url_scheme': 'http', 'SERVER_PROTOCOL': 'HTTP/1.1', 'REMOTE_ADDR': '172.17.0.1', 'wsgi.file_wrapper': <built-in function uwsgi_sendfile>, 'DOCUMENT_ROOT': '/etc/nginx/html', 'wsgi.errors': <_io.TextIOWrapper name=2 mode='w' encoding='UTF-8'>, 'SERVER_NAME': 'localhost', 'HTTP_ACCEPT_ENCODING': 'gzip', 'uwsgi.version': b'2.0.18', 'SCRIPT_NAME': '', 'HTTP_USER_AGENT': 'Go-http-client/1.1', 'wsgi.multiprocess': True, 'HTTP_AUTHORIZATION': 'BEARER xxxxxxxxxxxx', 'uwsgi.node': b'40e6429d3b61', 'REQUEST_METHOD': 'POST', 'wsgi.version': (1, 0), 'REQUEST_URI': '/v2/imagefile/9', 'HTTP_CONTENT_LENGTH': '63', 'wsgi.input': <uwsgi._Input object at 0x7f68374d8a08>, 'SERVER_PORT': '80', 'QUERY_STRING': '', 'wsgi.multithread': True, 'CONTENT_TYPE': '', 'REMOTE_PORT': '60666', 'CONTENT_LENGTH': '63', 'uwsgi.core': 1, 'HTTP_HOST': '127.0.0.1', 'wsgi.run_once': False, 'PATH_INFO': '/v2/imagefile/9'}
-# uwsgi_1_f2461bcb4d31 | Unsupported Media Type: /v2/imagefile/9
-
-        # Look up the collection
+        # Look up the container to set a temporary upload secret
         try:
             container = Container.objects.get(id=container_id)
         except Container.DoesNotExist:
             return Response(status=404)        
-        
+
+        # check user permission
+        token = get_token(request)
         if token.user not in container.collection.owners():
+            return Response(status=403)
+
+        push_secret = str(uuid.uuid4())
+        container.metadata['pushSecret'] = push_secret
+        container.save()
+
+        # TODO this could check for Google Build, and return signed upload URL
+        url = settings.DOMAIN_NAME + reverse('PushImageFileView', args=[str(container_id), push_secret])
+
+        data = {"uploadURL": url}
+        return Response(data={"data": data}, status=200)
+
+
+class PushImageFileView(RatelimitMixin, GenericAPIView):
+    '''After creating the container, push the image file. Still check
+       all credentials!
+    '''
+    ratelimit_key = 'ip'
+    ratelimit_rate = settings.VIEW_RATE_LIMIT 
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = 'PUT'
+    renderer_classes = (JSONRenderer,)
+    parser_classes = (OctetStreamParser,)
+
+    def put(self, request, container_id, secret, format=None):
+
+        print("PUT PushImageFileView")
+        print(container_id)
+        print(request.META)
+        print(secret)
+
+        # Look up the container
+        try:
+            container = Container.objects.get(id=container_id)
+        except Container.DoesNotExist:
+            return Response(status=404)        
+
+        # The secret must match the one just generated for the URL
+        if container.metadata.get('pushSecret', 'nope') != secret:
             return Response(status=403)  
+        del container.metadata['pushSecret']
+        
+        # Create collection root, if it doesn't exist
+        image_home = "%s/%s" %(settings.MEDIA_ROOT, container.collection.name)
+        if not os.path.exists(image_home):
+            os.mkdir(image_home)
+    
+        # Write the file to location
+        from shub.apps.api.models import ImageFile
+        container_path = os.path.join(image_home, "%s:%s.sif" % (container.name, container.version))
+        file_obj = request.data['file']
 
+        with default_storage.open(container_path, 'wb+') as destination:
+            for chunk in file_obj.chunks():
+                destination.write(chunk)
 
+        # Save newly uploaded file to model
+        reopen = open(container_path, "rb")
+        django_file = File(reopen)
+
+        print(container_path)
+        imagefile = ImageFile(collection=container.collection.name,
+                              name=container_path)
+        imagefile.datafile.save(container_path, django_file, save=True)
+        container.image = imagefile
+        container.save()
+
+        return Response(status=200) 
 
 class PushImageView(RatelimitMixin, GenericAPIView):
     '''Given a collection and container name, return the associated metadata.
@@ -174,6 +252,7 @@ class DownloadImageView(RatelimitMixin, GenericAPIView):
 
         return redirect(self.get_download_url(container))
 
+#TODO need to enforce create rate limits here on containers
 #TODO can we get arch or fingerprint from push?
 #TODO need to check how generating download counts (not working)
 

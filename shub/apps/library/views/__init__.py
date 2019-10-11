@@ -5,6 +5,8 @@ from .images import (
     GetImageView, 
     PushImageView,
     PushImageFileView,
+    CompletePushImageFileView,
+    RequestPushImageFileView,
     DownloadImageView,
     CollectionsView,
     ContainersView,

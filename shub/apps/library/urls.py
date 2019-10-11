@@ -17,7 +17,13 @@ urlpatterns = [
 
     url(r'^v1/images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
 
-    url(r'^v2/imagefile/(?P<container_id>.+?)/?$', views.PushImageFileView.as_view()), # push image, post only
+    url(r'^v2/imagefile/(?P<container_id>.+?)/?$', views.RequestPushImageFileView.as_view()), # return push url
+
+    #TODO need to implement this view to complete (adding tag maybe?)
+    url(r'^v2/imagefile/(?P<container_id>.+?)/_complete?$', views.CompletePushImageFileView.as_view()),
+    url(r'^v2/push/imagefile/(?P<container_id>.+?)/(?P<secret>.+?)?$', 
+        views.PushImageFileView.as_view(), name="PushImageFileView"), # push image
+
     url(r'^v1/imagefile/(?P<name>.+?)/?$', views.DownloadImageView.as_view()), # not sure this is used
 
     url(r'^v1/token-status$', views.TokenStatusView.as_view()),
