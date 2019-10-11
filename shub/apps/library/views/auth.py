@@ -34,7 +34,12 @@ class GetNamedEntityView(APIView):
     '''Given a request for an entity, return the response
     '''
     renderer_classes = (JSONRenderer,)
+
     def get(self, request, username):
+
+        print("GET NamedEntityView")
+        print(request.query_params)
+        print(username)
 
         token = validate_token(request)
         if token:
@@ -52,7 +57,7 @@ class GetNamedEntityView(APIView):
                 return Response(status=404)
 
             # Generate user data
-            data = {"data": generate_user_data(user)}
+            data = generate_user_data(user)
 
             return Response(data={"data": data}, status=200)
         return Response(status=404)
@@ -64,12 +69,15 @@ class GetEntitiesView(APIView):
     renderer_classes = (JSONRenderer,)
     def get(self, request, format=None):
 
-        print(request.data)
-        token = validate_token(request)
-        if token:
+        print("GET GetEntitiesView")
+
+        if validate_token(request):
+
+            print("TOKEN IS VALID")
+            token = get_token(request)
 
             # Generate user data
-            data = {"data": generate_user_data(user)}
-
+            data = {"data": generate_user_data(token.user)}
             return Response(data=data, status=200)
+
         return Response(status=404)

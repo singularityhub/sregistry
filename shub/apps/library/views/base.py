@@ -19,7 +19,7 @@ class LibraryBaseView(APIView):
       GET of /v2 has header "Docker-Distribution-API-Version":"registry/2.0"
     '''
     renderer_classes = (JSONRenderer,)
-    def get(self, request, format=None):
+    def get(self, request):
 
         user = None
         if not request.user.is_anonymous:
@@ -30,3 +30,4 @@ class LibraryBaseView(APIView):
                 "user": user}
 
         return Response(data=data, status=200)
+

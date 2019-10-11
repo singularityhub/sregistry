@@ -14,7 +14,8 @@ from shub.apps.logs.managers import PrefetchUserManager
 
 @python_2_unicode_compatible
 class BaseAPIRequestLog(models.Model):
-    '''Log an API request based on user, view, etc.'''
+    '''Log an API request based on user, view, etc.
+    '''
     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
                              null=True, blank=True, 
                              on_delete=models.CASCADE)
@@ -48,7 +49,8 @@ class APIRequestLog(BaseAPIRequestLog):
 
 class APIRequestCount(models.Model):
     ''' Keep track of a count of requests based on path and
-    view type, for quick querying later'''
+        view type, for quick querying later
+    '''
     from shub.apps.main.models import Collection
 
     # When the collection is deleted, the count is deleted too
@@ -76,7 +78,11 @@ def finalize_request(sender, instance, **kwargs):
        method, and path
     '''
     from shub.apps.logs.utils import get_request_collection
-    collection = get_request_collection(instance)
+
+    try:
+        collection = get_request_collection(instance)
+    except:
+        collection = None    
 
     if collection is not None:    
         counter, _ = APIRequestCount.objects.get_or_create(path=instance.view,

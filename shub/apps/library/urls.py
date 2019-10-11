@@ -12,17 +12,28 @@ from shub.apps.library import views
 urlpatterns = [
 
 
-    url(r'^images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
-    url(r'^imagefile/(?P<name>.+?)/?$', views.DownloadImageView.as_view()),
-    url(r'^token-status$', views.TokenStatusView.as_view()),
-    url(r'^collections/(?P<username>.+?)/(?P<name>.+?)$', views.GetNamedCollectionView.as_view()),
-    url(r'^collections$', views.CollectionsView.as_view()),
-    url(r'^entities/(?P<username>.+?)/?$', views.GetNamedEntityView.as_view()),
-    url(r'^entities/?$', views.GetEntitiesView.as_view()),
- 
-    # TODO: the endpoint here should exist to create the container
-    #/v1/containers/vsoch/dinosaur-collection/container
+    # /v1/images/vsoch/dinosaur-collection/another:sha256.b80bddda1d84d827ea135eb890f969a83ccba2a7a2152e15567d114857280120
+    url(r'^v1/images/(?P<username>.+?)/(?P<collection>.+?)/(?P<name>.+?):(?P<version>.+?)$', views.PushImageView.as_view()),
 
-    url(r'^$', views.LibraryBaseView.as_view())
-#    url(r'^', include(router.urls)),
+    url(r'^v1/images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
+
+    url(r'^v2/imagefile/(?P<container_id>.+?)/?$', views.PushImageFileView.as_view()), # push image, post only
+    url(r'^v1/imagefile/(?P<name>.+?)/?$', views.DownloadImageView.as_view()), # not sure this is used
+
+    url(r'^v1/token-status$', views.TokenStatusView.as_view()),
+
+    url(r'^v1/collections/(?P<username>.+?)/(?P<name>.+?)$', views.GetNamedCollectionView.as_view()),  # collection with username
+    url(r'^v1/collections$', views.CollectionsView.as_view()),
+
+    url(r'^v1/containers/(?P<username>.+?)/(?P<name>.+?)/(?P<container>.+?)$', views.GetNamedContainerView.as_view()), # and container
+    url(r'^v1/containers$', views.ContainersView.as_view()),
+
+    url(r'^v1/entities/(?P<username>.+?)/?$', views.GetNamedEntityView.as_view()),
+    url(r'^v1/entities/?$', views.GetEntitiesView.as_view()),
+
+    url(r'^v1/$', views.LibraryBaseView.as_view())
+
 ]
+
+
+#singularity push -U --library http://127.0.0.1 busybox_latest.sif library://vsoch/dinosaur-collection/container:tag

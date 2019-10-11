@@ -105,8 +105,6 @@ $ singularity push -U busybox_latest.sif library://vsoch/collection/container:ta
 
 We use `-U` for unsigned.
 
-# VERSION SHOULD RETURN
-# {'data': {'version': 'v1.0.4-0-g24d3b74', 'apiVersion': '2.0.0-alpha.2'}}
 
 # Singularity Registry Client
 

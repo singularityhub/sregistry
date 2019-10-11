@@ -9,6 +9,7 @@ from .assets import (
 
 from .main import (
     index_view,
+    VersionView,
     about_view,
     terms_view,
     tools_view

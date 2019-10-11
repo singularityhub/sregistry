@@ -12,6 +12,10 @@ from django.shortcuts import render
  
 from ratelimit.decorators import ratelimit
 
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from shub.settings import (
     VIEW_RATE_LIMIT as rl_rate, 
     VIEW_RATE_LIMIT_BLOCK as rl_block
@@ -33,3 +37,15 @@ def tools_view(request):
 @ratelimit(key='ip', rate=rl_rate, block=rl_block)
 def terms_view(request):
     return render(request, 'terms/usage_agreement.html')
+
+class VersionView(APIView):
+    '''{'data': {'version': 'v1.0.4-0-g24d3b74', 'apiVersion': '2.0.0-alpha.2'}}    
+    '''
+    renderer_classes = (JSONRenderer,)
+    def get(self, request):
+
+        data = {"version":"v1.0.0",
+                "apiVersion":"2.0.0-alpha.1"}
+
+        return Response(data={"data":data}, status=200)
+

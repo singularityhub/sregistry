@@ -44,7 +44,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(base_urls)),
     url(r'^api/', include(api_urls)),
-    url(r'^v1/', include(library_urls)),  # Sylabs library API
+    url(r'^', include(library_urls)),  # Sylabs library API - includes v1 and v2 (damn)
     url(r'^api/schema/$', schema_view),
     url(r'^api/docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION)),
     url(r'^', include(main_urls)),
