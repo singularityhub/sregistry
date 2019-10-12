@@ -1,10 +1,10 @@
 ---
-title: sregistry client
+title: Singularity Clients
 pdf: true
 toc: false
 ---
 
-# Clients
+# Singularity
 
 ## Singularity Pull
 
@@ -149,6 +149,9 @@ INFO:    [latest]
 ```
 
 Of course, do this at your own risk! That is a *CHONKER*!
+
+<hr>
+<br>
 
 # Singularity Registry Client
 
