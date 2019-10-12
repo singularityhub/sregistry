@@ -46,6 +46,10 @@ GOOGLE_ANALYTICS = None # "UA-XXXXXXXXX"
 
 # Permissions and Views
 
+# Set this to be some size in MB to limit uploads. 
+# Uploads > 2.5GB will not use memory, but the filesystem
+DATA_UPLOAD_MAX_MEMORY_SIZE=None
+
 # Allow users to create public collections
 USER_COLLECTIONS = True
 

@@ -92,19 +92,63 @@ The easiest thing to do is now to set your remote to be DinosaurCloud (or whatev
 you called it) so you don't need to specify the push command with `--library`:
 
 ```bash
-singularity use remote DinosaurCloud
+singularity remote use DinosaurCloud
 ```
 
 Now that we have a token, let's try a push! For security purposes, the collection
-should already exist, and be owned by you.
+should already exist, and be owned by you. Collaborators are not allowed to push.
 
 ```bash 
                                          # library://user/collection/container[:tag]
-$ singularity push -U busybox_latest.sif library://vsoch/collection/container:tag
+$ singularity push -U busybox_latest.sif library://vsoch/dinosaur-collection/another:latest
+```
+
+If you don't do "remote use" then you can specify the library on the fly:
+
+```bash
+$ singularity push -U --library http://127.0.0.1 busybox_latest.sif library://vsoch/dinosaur-collection/another:latest
+WARNING: Skipping container verifying
+INFO:    http://127.0.0.1
+INFO:    0a4cb168d3dabc3c21a15476be7f4a90396bc2c1
+INFO:    library://vsoch/dinosaur-collection/another:latest
+INFO:    [latest]
+ 656.93 KiB / 656.93 KiB [===================================================================] 100.00% 15.36 MiB/s 0s
 ```
 
 We use `-U` for unsigned.
 
+### Push Logic
+
+ - If you push an existing tag, if the container is unfrozen, it will be replaced
+ - If you push an existing tag and the container is frozen (akin to protected) you'll get permission denied.
+ - If you push a new tag, it will be added.
+ - If you push a new image, it will also be added.
+
+Unlike the Sylabs API, when the GET endpoint is made to `v1/containers` and the image doesn't exist,
+we return a response for the collection (and not 404). In other words, [this response](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L140) is always returned. We do this because
+the Sylabs library client has a strange logic where it doesn't tag images until after the fact,
+and doesn't send the user's requested tag to any of the get or creation endpoints. This means
+that we are forced on the registry to create a dummy holder tag (that is guaranteed to be unique)
+and then to find the container at the end to [set tags](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L187) based on the id of the image
+that is created with the [upload request](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L174). I didn't see a logical way to create the container using the POST endpoint to
+"v1/containers" given that we do not know the tag or version, and would need to know the exact container id
+to return later when the container push is requested.
+
+### Push Size
+
+The push (as of this version) can now handle large images! Here is the largest that I've tested:
+
+```bash
+$ singularity push -U rustarok_latest.sif library://vsoch/dinosaur-collection/rustarok:latest
+WARNING: Skipping container verifying
+INFO:    http://127.0.0.1
+INFO:    0a4cb168d3dabc3c21a15476be7f4a90396bc2c1
+INFO:    library://vsoch/dinosaur-collection/rustarok:latest
+INFO:    [latest]
+ 8.09 GiB / 8.09 GiB [====================================================================] 100.00% 91.31 MiB/s 1m30s
+```
+
+Of course, do this at your own risk! That is a *CHONKER*!
 
 # Singularity Registry Client
 

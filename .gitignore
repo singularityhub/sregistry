@@ -1,5 +1,7 @@
 # Compiled pyc #
 ################
+*.pkl
+*.sif
 *.pyc
 .*
 !/.gitignore

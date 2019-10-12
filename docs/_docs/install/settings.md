@@ -166,6 +166,16 @@ the callback url here should be `http://[your-domain]/complete/twitter`.
 
 In the [config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) you need to define the following:
 
+### Google Analytics
+
+If you want to add a Google analytics code, you can do this in the settings/config.py:
+
+```python
+GOOGLE_ANALYTICS = "UA-XXXXXXXXX"
+```
+
+The default is set to None, and doesn't add analytics to the registry.
+
 
 ### Domain Name
 A Singularity Registry Server should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is change the `DOMAIN_NAME_*` variables in your settings [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py#L30).

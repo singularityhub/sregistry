@@ -29,11 +29,15 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import MultiPartParser, FileUploadParser
 
-from .parsers import OctetStreamParser
+from .parsers import (
+    OctetStreamParser,
+    EmptyParser
+)
+
 from .helpers import (
     formatString,
+    generate_collection_tags,
     generate_collections_list,
     generate_collection_details, # includes containers
     generate_collection_metadata,
@@ -44,25 +48,30 @@ from .helpers import (
 )
 
 import django_rq
+import json
 import uuid
 import os
 
+
+# Image Files
+
 class CompletePushImageFileView(RatelimitMixin, GenericAPIView):
-    '''After creating the container, push the image file. Still check
-       all credentials!
+    '''This view (UploadImageCompleteRequest) isn't currently useful,
+       but should exist as it is used for Singularity.
     '''
     ratelimit_key = 'ip'
     ratelimit_rate = settings.VIEW_RATE_LIMIT 
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = 'GET'
+    ratelimit_method = 'PUT'
     renderer_classes = (JSONRenderer,)
+    parser_classes = (EmptyParser,)
 
-    def get(self, request, container_id, format=None):
+    def put(self, request, container_id, format=None):
 
-        # TODO: need to figure out what this view does
-        print("GET CompletePushImageFileView")
+        print("PUT CompletePushImageFileView")
         print(request.META)
         print(request.data)
+        print(request.query_params)
         return Response(status=200)
 
 
@@ -79,6 +88,7 @@ class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
     def post(self, request, container_id, format=None):
 
         print("POST RequestPushImageFileView")
+        print(request.query_params)
 
         if not validate_token(request):
             print("Token not valid")
@@ -92,14 +102,14 @@ class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
 
         # check user permission
         token = get_token(request)
-        if token.user not in container.collection.owners():
+        if token.user not in container.collection.owners.all():
             return Response(status=403)
 
         push_secret = str(uuid.uuid4())
         container.metadata['pushSecret'] = push_secret
         container.save()
 
-        # TODO this could check for Google Build, and return signed upload URL
+        # TODO this could check for Google Build, and return signed upload URL, or S3 signed URL
         url = settings.DOMAIN_NAME + reverse('PushImageFileView', args=[str(container_id), push_secret])
 
         data = {"uploadURL": url}
@@ -142,7 +152,7 @@ class PushImageFileView(RatelimitMixin, GenericAPIView):
     
         # Write the file to location
         from shub.apps.api.models import ImageFile
-        container_path = os.path.join(image_home, "%s:%s.sif" % (container.name, container.version))
+        container_path = os.path.join(image_home, "%s-%s.sif" % (container.name, container.version))
         file_obj = request.data['file']
 
         with default_storage.open(container_path, 'wb+') as destination:
@@ -161,6 +171,7 @@ class PushImageFileView(RatelimitMixin, GenericAPIView):
         container.save()
 
         return Response(status=200) 
+
 
 class PushImageView(RatelimitMixin, GenericAPIView):
     '''Given a collection and container name, return the associated metadata.
@@ -193,10 +204,12 @@ class PushImageView(RatelimitMixin, GenericAPIView):
             return Response(status=403)  
 
         # We have to generate a temporary tag, or it will overwrite latest
-        tag = str(uuid.uuid4())
+        tag = "DUMMY-%s" % str(uuid.uuid4())
 
+        # The container will always be created, and it needs to be handled later
         container, created = Container.objects.get_or_create(collection=collection,
                                                              name=name,
+                                                             frozen=False,
                                                              tag=tag,
                                                              version=version)
         print(container)
@@ -319,7 +332,6 @@ class CollectionsView(RatelimitMixin, GenericAPIView):
     '''Return a simple list of collections
        GET /v1/collections
     '''
-    renderer_classes = (JSONRenderer,)
     ratelimit_key = 'ip'
     ratelimit_rate = settings.VIEW_RATE_LIMIT 
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
@@ -339,6 +351,90 @@ class CollectionsView(RatelimitMixin, GenericAPIView):
         collections = generate_collections_list(token.user)
         return Response(data=collections, status=200)
 
+
+class GetCollectionTagsView(RatelimitMixin, GenericAPIView):
+    '''Return a simple list of tags in the collection, and the
+       containers associated with. Since we can only return one container
+       per tag, we take the most recently created. This means that
+       not all container ids will be returned for any given tag.
+       GET /v1/tags/<collection_id>
+    '''
+    ratelimit_key = 'ip'
+    ratelimit_rate = settings.VIEW_RATE_LIMIT 
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = ('GET', 'POST',)
+    renderer_classes = (JSONRenderer,)
+    parser_classes = (EmptyParser,)
+
+    def get(self, request, collection_id):
+
+        print("GET CollectionTagsView")
+        print(request.query_params)
+        print(request.data)
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+
+        try:
+            collection = Collection.objects.get(id=collection_id)
+        except:
+            return Response(status=404)
+
+        tags = generate_collection_tags(collection)
+        return Response(data={"data": tags}, status=200)
+
+    def post(self, request, collection_id):
+
+        print("POST ContainerTagView")
+
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+
+        # {'Tag': 'latest', 'ImageID': '60'}
+        params = json.loads(request.data.decode('utf-8'))
+
+        # We can only get the image name based on the container here
+        try:
+             container = Container.objects.get(id=params['ImageID'])
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        selected = None
+
+        try:
+            # First try - get container with already existing tag
+            existing = Container.objects.get(name=container.name,
+                                             tag=params['Tag'])
+
+        except Container.DoesNotExist:
+            existing = None
+
+        # If the container is existing and frozen, no go.
+        if existing is not None:
+
+            # Case 1: the tag exists, and it's frozen
+            if existing.frozen:
+
+                # We can't create this new container with the tag
+                container.delete()
+                return Response({"message": "This tag exists, and is frozen."}, status=400)
+
+            # Case 2: Exists and not frozen (replace)
+            container.delete()
+            selected = existing
+
+        # Not existing, our container is selected for the tag
+        else:
+            selected = container
+ 
+        # Apply the tag and save!                     
+        selected.tag = params['Tag']
+        selected.save()
+        return Response(status=200)
+
+
+# Containers
 
 class ContainersView(RatelimitMixin, GenericAPIView):
     '''Return a simple list of containers
@@ -418,7 +514,6 @@ class GetNamedContainerView(RatelimitMixin, GenericAPIView):
 
         print("GET GetNamedContainerView")
 
-        # WHERE IS THE TAG?
         print(request.query_params)
         print(username)
         print(name)
@@ -443,9 +538,9 @@ class GetNamedContainerView(RatelimitMixin, GenericAPIView):
 
         # We don't need to create the specific container here
         containers = collection.containers.filter(name=container) or []
- 
-        if not containers:
-            return Response(status=404)
+
+        # Even if the container doesn't exist, we return response that it does,
+        # And it's created in the next view.
 
         data = generate_collection_details(collection, containers, token.user)
         return Response(data={"data": data}, status=200)

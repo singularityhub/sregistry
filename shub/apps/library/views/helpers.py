@@ -18,6 +18,9 @@ import re
 # shared date time format string
 formatString = '%Y-%m-%dT%X.%fZ'
 
+# regular expression for temporary dummy tag
+uuid_regex = "[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+tag_regex = "DUMMY-%s" % uuid_regex
 
 # Tokens 
 
@@ -152,6 +155,26 @@ def generate_collection_metadata(collection, user=None):
     return data
 
 
+def generate_collection_tags(collection):
+    '''return a lookup of tags, with container ids that are associated.
+       How do we do this?
+       1. Filter down to unique tags
+       2. Return newest for each
+
+       If two containers are named differently, we still return the
+       latest. Technically, collections should be namespaced
+       consistently, and we assume this.
+    '''
+    unique_tags = set([c.tag for c in collection.containers.all() 
+                      if not re.search(tag_regex, c.tag)])
+    tags = {}
+
+    for tag in unique_tags:
+        tags[tag] = str(collection.containers.filter(tag=tag).last().id)
+
+    return tags
+
+
 def generate_collection_details(collection, containers, user=None):
     '''given a collection, generate complete metadata for it, including
        a list of all associated tags. For Sylabs Cloud, although the
@@ -170,9 +193,10 @@ def generate_collection_details(collection, containers, user=None):
     name = ""
     for container in containers:
         name = container.name
-        tags[container.tag] = str(container.id)
+        if not re.search(tag_regex, container.tag):
+            tags[container.tag] = str(container.id)
 
-    images = [c.version for c in containers]
+    images = [c.version for c in containers if not re.search(tag_regex, container.tag)]
     data = generate_collection_metadata(collection, user)
 
     updates = {'archTags': {'amd64': tags },
@@ -196,7 +220,8 @@ def generate_container_metadata(container):
     '''given a container, return a metadata object
     '''
     # Get other tags
-    tags = [c.tag for c in container.collection.containers.all()]
+    tags = [c.tag for c in container.collection.containers.all() 
+            if not re.search(tag_regex, c.tag)]
 
     # Downloads
     downloads = get_container_downloads(container)
@@ -210,6 +235,8 @@ def generate_container_metadata(container):
     if "/" in collection_name:
         collection_name = collection_name.split("/")[0]
 
+    arch = container.metadata.get('arch', 'amd64')
+
     data = {"deleted": False,                        # 2019-03-15T19:02:24.015Z
             "createdAt": container.add_date.strftime(formatString), # No idea what their format is...
             "createdBy": str(container.collection.owners.first().id),
@@ -220,7 +247,7 @@ def generate_container_metadata(container):
             "hash": container.version,
             "description": "%s Collection" % container.collection.name.capitalize(),
             "container": container.version,
-            "arch": "amd64",
+            "arch": arch,
             "fingerprints": [],
             "customData": "",
             "size": container.metadata.get('size_mb'),
@@ -251,9 +278,13 @@ def get_container(names):
     collection = get_collection(names['url'])
     print(collection)
 
+    print(names)
+
     # If we have a collection, next look for the tag or version
     if collection is not None:
-        container = collection.containers.filter(tag=names['tag']).first()
+        containers = collection.containers.filter(name=names['image'])
+        if containers:
+            container = containers.filter(tag=names['tag']).first()
         if container is None:
             container = collection.containers.filter(version=names['version']).first()
 

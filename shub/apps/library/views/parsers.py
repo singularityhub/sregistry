@@ -13,55 +13,52 @@ from rest_framework.parsers import (
     BaseParser,
     DataAndFiles
 )
-from django.http.multipartparser import MultiPartParserError, parse_header
+from django.http.multipartparser import (
+    MultiPartParserError, 
+    parse_header
+)
 
-import codecs
-from urllib import parse
-
-from django.conf import settings
 from django.core.files.uploadhandler import StopFutureHandlers
 from django.http import QueryDict
 from django.http.multipartparser import ChunkIter
-from django.http.multipartparser import \
-    MultiPartParser as DjangoMultiPartParser
-from django.http.multipartparser import MultiPartParserError, parse_header
-from django.utils.encoding import force_str
 
-from rest_framework import renderers
 from rest_framework.exceptions import ParseError
-from rest_framework.settings import api_settings
-from rest_framework.utils import json
 
-
-import os
 import uuid
+
+class EmptyParser(BaseParser):
+    '''Parser for empty stream for unused PUT endpoint.
+    '''
+    media_type = ''
+
+    def parse(self, stream, media_type=None, parser_context=None):
+        '''Returns the read stream, which should be empty.
+        '''
+        return stream.read()
 
 
 class OctetStreamParser(BaseParser):
-    """
-    Parser for file upload data.
-    """
+    '''Parser for sif octet-stream) file upload data.
+    '''
     media_type = 'application/octet-stream'
     errors = {
         'unhandled': 'FileUpload parse error - none of upload handlers can handle the stream',
     }
 
     def parse(self, stream, media_type=None, parser_context=None):
-        """
-        Treats the incoming bytestream as a raw file upload and returns
+        '''Treats the incoming bytestream as a raw file upload and returns
         a `DataAndFiles` object.
         `.data` will be None (we expect request body to be a file content).
         `.files` will be a `QueryDict` containing one 'file' element.
-        """
+        '''
         parser_context = parser_context or {}
         request = parser_context['request']
         encoding = parser_context.get('encoding', settings.DEFAULT_CHARSET)
         meta = request.META
         upload_handlers = request.upload_handlers
 
-        print("WE ARE IN THE PARSER")
         filename = "%s.sif" %(str(uuid.uuid4()))
-        print(filename)
+        print("Filename for parser %s" % filename)
 
         # Note that this code is extracted from Django's handling of
         # file uploads in MultiPartParser.
