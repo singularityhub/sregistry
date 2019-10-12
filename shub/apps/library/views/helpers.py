@@ -276,9 +276,6 @@ def get_container(names):
             names['url'] = re.sub('^%s/' % names['registry'], '', names['url'])
 
     collection = get_collection(names['url'])
-    print(collection)
-
-    print(names)
 
     # If we have a collection, next look for the tag or version
     if collection is not None:

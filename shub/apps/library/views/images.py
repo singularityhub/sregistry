@@ -265,10 +265,6 @@ class DownloadImageView(RatelimitMixin, GenericAPIView):
 
         return redirect(self.get_download_url(container))
 
-#TODO need to enforce create rate limits here on containers
-#TODO can we get arch or fingerprint from push?
-#TODO need to check how generating download counts (not working)
-
 
 class GetImageView(RatelimitMixin, GenericAPIView):
     '''redirect to the url to download a container.
@@ -285,17 +281,16 @@ class GetImageView(RatelimitMixin, GenericAPIView):
         # The request specifies ?arch=amd64 but that's all we got
         print("GET GetImageView")
 
-        print(name)
         names = parse_image_name(name)
-        print(names)
 
         # The user can specify an arch, currently only support amd64
-        arch = request.query_params.get('arch')
-        if arch:
-            if arch != "amd64":
-                return Response(status=404)
-    
+        arch = request.query_params.get('arch', 'amd64')
         container = get_container(names)
+
+        # If an arch is defined, ensure it matches the request
+        if arch:
+            if container.metadata.get('arch', 'amd64') != "amd64":
+                return Response(status=404)
 
         # If no container, regardles of permissions, 404
         if container is None:
