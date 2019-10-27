@@ -9,9 +9,13 @@ toc: false
 ## Singularity Pull
 
 Singularity Registry Server implements a basic version of the Sylabs Library API, 
-meaning that you can pull a container with Singularity directly. For example,
-let's say that I have a collection with a container called `collection/container:tag`.
-and my registry is served at `containers.page`. I could pull it as follows:
+meaning that you can pull a container with Singularity directly. 
+
+**Important** you must be using Singularity 3.3.0 or greater for this to work! 
+If not, you should use [Singularity Registry Client](#singularity-registry-client)
+ (which also has examples below of using the `shub://` endpoint with singularity).
+
+For example, let's say that I have a collection with a container called `collection/container:tag`. and my registry is served at `containers.page`. I could pull it as follows:
 
 ```bash
 $ singularity pull --library https://containers.page collection/container:tag
