@@ -77,7 +77,9 @@ FATAL:   while verifying token: error response from server: Invalid Token
 ```
 
 In case you are wondering, the token is kept in plaintext at `/home/vanessa/.singularity/remote.yaml`
-so once you specify to use an endpoint, it knows the token.
+so once you specify to use an endpoint, it knows the token. If you are having
+issues copy pasting the token into your terminal (I had some when I wanted to
+re-create it) you can also just open up this file and edit the text manually:
 
 ```
 $ cat /home/vanessa/.singularity/remote.yaml Active: DinosaurCloud
