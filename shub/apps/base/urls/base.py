@@ -13,8 +13,13 @@ from django.conf.urls import url
 import shub.apps.base.views as views
 
 urlpatterns = [
+  
+    # Assets, e.g., /assets/config/config.prod.json
+    url(r'^assets/config/config.prod.json$', views.config_prod_json, name="config.prod.json"),
+  
     url(r'^$', views.index_view, name="index"),
     url(r'^about$', views.about_view, name="about"),
+    url(r'^version$', views.VersionView.as_view(), name="version"),
     url(r'^tools$', views.tools_view, name="tools"),
     url(r'^terms$', views.terms_view, name="terms"),
     url(r'^robots\.txt/$', TemplateView.as_view(template_name='base/robots.txt', 

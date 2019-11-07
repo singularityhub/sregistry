@@ -41,6 +41,7 @@ def move_upload_to_storage(collection, upload_id):
     instance.save()
     return instance
 
+
 def generate_nginx_storage_path(collection, source, dest):
     '''generate the path to move a source to its destination 
        so that we can check length limits, etc., before trying to do the move.

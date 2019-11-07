@@ -12,14 +12,24 @@
     <div class="row" style='padding-bottom:30px'>
         <div class="col-md-12">
         <h2>API Token</h2>
-        <p><small>push to the Registry</small></p>
+        <p><small>to push to the Registry</small>
+        <a style="float:right" href="{% url 'update_token' %}"><button class="btn btn-secondary btn-sm">Regenerate Token</button></a></p>
         </div>
     </div>
 
     <div class="row">
+    <div style="padding-top:20px" class="alert alert-info" role="alert">This is the standalone token for providing to the Singularity client.</div>
+       <div class="col-md-1" style='padding-top:10px'>
+           <button id="just_token" 
+                   class="btn copyme" 
+                   data-clipboard-target="#just_token">
+                   <i class="fa fa-copy"></i></button>
+       </div>
+       <div style="padding-top:20px;" class="well col-md-12" id="just_token_well" role="alert">{{ request.user.token }}</div>
+    </div>
 
+    <div class="row">
     <div style="padding-top:20px" class="alert alert-info" role="alert">Store this at <strong>$HOME</strong>/.sregistry, keep private, and do not include in github repos.</div>
-
 
        <div class="col-md-1" style='padding-top:10px'>
            <button id="token" 
@@ -27,7 +37,7 @@
                    data-clipboard-target="#token">
                    <i class="fa fa-copy"></i></button>
        </div>
-       <div style="padding-top:20px; overflow:scroll;" class="well col-md-11" id="token_well" role="alert">
+       <div style="padding-top:20px;" class="well col-md-12" id="token_well" role="alert">
             { "registry":
                {
                 "token": 

@@ -8,6 +8,8 @@ https://github.com/aschn/drf-tracking
 import re
 from django.utils.timezone import now
 from shub.apps.logs.models import APIRequestLog
+from shub.apps.logs.utils import clean_data
+from rest_framework.authtoken.models import Token
 import traceback
 
 
@@ -42,7 +44,7 @@ class BaseLoggingMixin(object):
             view_method = method.lower()
 
         try:
-            params = _clean_data(request.query_params.dict())
+            params = clean_data(request.query_params.dict())
         except:
             params = {}
 
@@ -63,8 +65,19 @@ class BaseLoggingMixin(object):
 
         # add user to log after auth
         user = request.user
+
         if user.is_anonymous:
             user = None
+
+        # Get a user, if auth token is provided
+        auth_header = request.META.get("HTTP_AUTHORIZATION")
+        if auth_header:
+            try:
+                token = Token.objects.get(key=auth_header.replace("BEARER", "").strip())
+                user = token.user
+            except Token.DoesNotExist:
+                pass
+
         self.request.log.user = user
 
         # get data dict
@@ -73,9 +86,9 @@ class BaseLoggingMixin(object):
             # ParseError and UnsupportedMediaType exceptions. It's important not to swallow these,
             # as (depending on implementation details) they may only get raised this once, and
             # DRF logic needs them to be raised by the view for error handling to work correctly.
-            self.request.log.data = _clean_data(self.request.data.dict())
+            self.request.log.data = clean_data(self.request.data.dict())
         except AttributeError:  # if already a dict, can't dictify
-            self.request.log.data = _clean_data(self.request.data)
+            self.request.log.data = clean_data(self.request.data)
 
     def handle_exception(self, exc):
         # basic handling
@@ -122,26 +135,6 @@ class LoggingMixin(BaseLoggingMixin):
 
 
 class LoggingErrorsMixin(BaseLoggingMixin):
-    """
-    Log only errors
-    """
+    '''Log only errors'''
     def _should_log(self, request, response):
         return response.status_code >= 400
-
-
-def _clean_data(data):
-    """
-    Clean a dictionary of data of potentially sensitive info before
-    sending to the database.
-    Function based on the "_clean_credentials" function of django
-    (django/django/contrib/auth/__init__.py)
-    """
-    if data is None:
-        return ''
-
-    SENSITIVE_DATA = re.compile('api|token|key|secret|password|signature', re.I)
-    CLEANSED_SUBSTITUTE = '********************'
-    for key in data:
-        if SENSITIVE_DATA.search(key):
-            data[key] = CLEANSED_SUBSTITUTE
-    return data

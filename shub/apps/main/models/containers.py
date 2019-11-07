@@ -99,7 +99,7 @@ class Container(models.Model):
                             self.name,
                             self.tag)
 
-    def get_uri(self): # shub://username/reponame:branch@tag
+    def get_uri(self, include_version=True): # shub://username/reponame:branch@tag
         if not self.frozen:
             return self.get_short_uri()
 

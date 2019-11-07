@@ -1,0 +1,29 @@
+{
+  "env": {
+    "name": "prod"
+  },
+  "logging": {
+    "console": true
+  },
+  "libraryAPI": {
+    "uri": "{{ domain }}"
+  },
+  "keystoreAPI": {
+    "uri": "{{ domain }}"
+  },
+  "tokenAPI": {
+    "uri": "{{ domain }}"
+  },
+  {% if GOOGLE_ANALYTICS %}"googleAnalytics": {
+    "googleAnalyticsId": "{{ GOOGLE_ANALYTICS }}"
+  },{% endif %}
+  "auth": {
+    "issuer": "{{ domain }}",
+    "requireHttps": false,
+    "redirectUri": "{{ DOMAIN_NAMED }}",
+    "clientId": "services-frontend",
+    "scope": "openid email profile",
+    "silentRenew": false,
+    "silentRenewUrl": ""
+  }
+}

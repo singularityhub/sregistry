@@ -114,7 +114,6 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
 # Container Views: custom views for specific containers
 ################################################################################
 
-
 class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIView):
     '''Retrieve a container instance based on it's name
     '''
