@@ -50,7 +50,7 @@ DinosaurCloud  cloud.dinosaur.io        NO
 and re-compile Singularity to set the url to have http. The example above is a hypothetical "cloud.dinosaur.io" however in actual development, I used 127.0.0.1 (and you'll see it 
 in various spots below). This is how I developed this set of endpoints.
 
-Once you add the remote, then you'll first need to get your token at the /token endpoint, for example:
+Once you add the remote, then you'll first need to login and get your token at the /token endpoint, for example:
 
 ```bash
 1eb5bc1daeca0f5a215ec242c9690209ca0b3d71
