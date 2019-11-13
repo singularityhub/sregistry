@@ -16,14 +16,14 @@ a real person that can push from some CI service, you'll need to do the followin
 
 First, enter the uwsgi container (the name of your container may be different)
 
-```
+```bash
 docker exec -it sregistry_uwsgi_1 bash
 python manage.py shell
 ```
 
 Find your robot user, and your collection:
 
-```
+```python
 from shub.apps.users.models import User
 from shub.apps.main.models import Collection
 user = User.objects.get(username="myuser")
@@ -37,5 +37,18 @@ collection.owners.add(user)
 collection.save()
 ```
 
-That's it! Likely you can also do this addition in the admin interface, but
-it's easy to do programmatically too.
+As an alternative, if you intend to add this robot user to more than one collection,
+you can create a [Team]({{ site.url }}{{ site.baseurl }}/docs/setup/teams) in the interface, 
+add the robot user to it also via the console:
+
+```python
+from shub.apps.users.models import Team, User
+team = Team.objects.get(name="myteam")
+user = User.objects.get(username="myuser")
+team.members.add(user)
+```
+
+And then in any collection interface where you can see the team, you can add
+the robot user directly as an owner.
+
+And that's it!
