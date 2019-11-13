@@ -25,7 +25,7 @@ Find your robot user, and your team (replace `gitlab-ci` with the name of your u
 
 ```
 from shub.apps.users.models import User, Team
-user = User.objects.get(username="gitlab-ci")
+user = User.objects.get(username="myuser")
 team = Team.objects.get(name="myteam")
 ```
 
