@@ -80,13 +80,21 @@ def generate_user_data(user):
     # Owned collections
     collections = Collection.objects.filter(owners=user)
 
+    # Robot users don't have updatedAt or createdAt
+    createdAt = ''
+    updatedAt = ''
+    if user.date_joined is not None:
+        createdAt = user.date_joined.strftime(formatString)
+    if user.last_login is not None:
+        updatedAt = user.last_login.strftime(formatString)
+
     # Generate dummy data about user
     data = {'collections': [str(c.id) for c in collections],
             'deleted': not user.active,
             'createdBy': '',
-            'createdAt': user.date_joined.strftime(formatString),
+            'createdAt': createdAt,
             'updatedBy': '',
-            'updatedAt': user.last_login.strftime(formatString),
+            'updatedAt': updatedAt,
             'deletedAt': '0001-01-01T00:00:00Z',
             'id': str(user.id),
             'name': user.username,

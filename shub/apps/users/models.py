@@ -97,7 +97,7 @@ class User(AbstractUser):
     def has_create_permission(self):
         '''has create permission determines if the user (globally) can create
            new collections. By default, superusers and admin can, along with
-           regular users if UER_COLLECTIONS is Ture. Otherwise, not.
+           regular users if USER_COLLECTIONS is True. Otherwise, not.
         '''
         if self.is_superuser is True or self.is_staff is True:
             return True
