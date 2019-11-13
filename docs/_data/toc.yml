@@ -53,8 +53,14 @@
       url: docs/setup/teams
     - title: Registration
       url: docs/setup/registration
-- title: Accounts and Credentials
-  url: docs/accounts/credentials
+- title: Accounts
+  url: docs/accounts
+  children:
+    - title: Credentials
+      url: docs/accounts/credentials
+    - title: Robot Users
+      url: docs/accounts/robots
+
 - title: Plugins
   url: docs/plugins
   children:
