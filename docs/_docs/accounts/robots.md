@@ -4,7 +4,7 @@ pdf: true
 toc: false
 ---
 
-## How to Generate a Robot User
+# How to Generate a Robot User
 
 In the case that you want to generate a robot user, or an account not associated with
 a real person that can push from some CI service, you'll need to do the following.
