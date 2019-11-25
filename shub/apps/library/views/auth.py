@@ -24,7 +24,6 @@ class TokenStatusView(APIView):
     '''
     renderer_classes = (JSONRenderer,)
     def get(self, request, format=None):
-
         if validate_token(request):
             return Response(status=200)
         return Response(status=404)

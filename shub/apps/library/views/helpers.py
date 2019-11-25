@@ -29,10 +29,10 @@ def validate_token(request):
        True. Otherwise return False
     '''
     token = request.META.get("HTTP_AUTHORIZATION")
-
     if token:
         try:
-            Token.objects.get(key=token.replace("BEARER", "").strip())
+            token = token.split(" ")[-1] # Get rid of BEARER or Bearer <token>
+            Token.objects.get(key=token.strip())
             return True
         except Token.DoesNotExist:
             pass
