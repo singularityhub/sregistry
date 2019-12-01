@@ -1,9 +1,9 @@
 name: pull-request-sourcecred
 
-on: [pull_request]
-#  schedule:
-#    # Weekly on Sunday
-#    - cron: 0 0 * * 0
+on:
+  schedule:
+    # Monthly
+    - cron: 0 0 1 * *
 
 jobs:
   GenerateSourcecred:
