@@ -5,6 +5,10 @@
 
 - [Documentation](https://singularityhub.github.io/sregistry)
 
+## Contributors
+
+![contributors.svg](./contributors.svg)
+
 ## What is Singularity Registry
 Singularity Registry Server is a server to provide management and storage of 
 Singularity images for an institution or user to deploy locally. 
