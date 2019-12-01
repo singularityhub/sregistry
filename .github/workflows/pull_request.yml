@@ -1,0 +1,52 @@
+name: pull-request-sourcecred
+
+on: [pull_request]
+#  schedule:
+#    # Weekly on Sunday
+#    - cron: 0 0 * * 0
+
+jobs:
+  GenerateSourcecred:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v1
+    - name: Cache Data
+      id: cache-data
+      uses: actions/cache@v1
+      with:
+        path: sourcecred_data
+        key: ${{ runner.os }}-sourcecred_data
+    - name: Build the Docker image
+      env:
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mkdir -p sourcecred_data
+        SOURCECRED_GITHUB_TOKEN=${TOKEN} docker run -i -v $PWD/sourcecred_data:/data -e SOURCECRED_GITHUB_TOKEN sourcecred/sourcecred:dev load ${GITHUB_REPOSITORY}
+        SOURCECRED_GITHUB_TOKEN=${TOKEN} docker run -i -v $PWD/sourcecred_data:/data sourcecred/sourcecred:dev scores ${GITHUB_REPOSITORY} > scores.json
+        SOURCECRED_GITHUB_TOKEN=${TOKEN} docker run -i -e SOURCECRED_GITHUB_TOKEN sourcecred/widgets < scores.json > contributors.svg
+        cat contributors.svg
+    - name: Checkout New Branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "GitHub Actor: ${GITHUB_ACTOR}"
+        git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        git branch
+        git checkout -b update/sourcecred-$(date '+%Y-%m-%d')
+        git branch
+
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@users.noreply.github.com"
+
+        git add contributors.svg
+        git commit -m "Automated deployment to update contributors.svg $(date '+%Y-%m-%d')" --allow-empty
+        git push origin update/sourcecred-$(date '+%Y-%m-%d')
+    - name: Open pull request
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH_AGAINST: "master"
+      run: |
+          export BRANCH_FROM="update/sourcecred-$(date '+%Y-%m-%d')"
+          chmod +x .github/workflows/pull_request.sh
+          /bin/bash .github/workflows/pull_request.sh
