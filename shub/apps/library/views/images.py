@@ -130,9 +130,6 @@ class PushImageFileView(RatelimitMixin, GenericAPIView):
     def put(self, request, container_id, secret, format=None):
 
         print("PUT PushImageFileView")
-        print(container_id)
-        print(request.META)
-        print(secret)
 
         # Look up the container
         try:
@@ -155,22 +152,25 @@ class PushImageFileView(RatelimitMixin, GenericAPIView):
         container_path = os.path.join(image_home, "%s-%s.sif" % (container.name, container.version))
         file_obj = request.data['file']
 
+        # If the container exists, delete here
+        if os.path.exists(container_path):
+            os.remove(container_path)
+
         with default_storage.open(container_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
-        # Save newly uploaded file to model
+        # Save newly uploaded file to model       
         reopen = open(container_path, "rb")
         django_file = File(reopen)
 
-        print(container_path)
         imagefile = ImageFile(collection=container.collection.name,
                               name=container_path)
         imagefile.datafile.save(container_path, django_file, save=True)
         container.image = imagefile
         container.save()
 
-        return Response(status=200) 
+        return Response(status=200)
 
 
 class PushImageView(RatelimitMixin, GenericAPIView):

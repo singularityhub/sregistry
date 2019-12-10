@@ -87,8 +87,7 @@ class ImageUpload(models.Model):
         based off of django-chunked-uploads BaseChunkedUpload model
     '''
 
-    upload_id = models.CharField(max_length=32, unique=True, editable=False,
-                                 default=uuid.uuid4().hex)
+    upload_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     file = models.FileField(max_length=255, upload_to=get_upload_to)
     filename = models.CharField(max_length=255)
     offset = models.BigIntegerField(default=0)

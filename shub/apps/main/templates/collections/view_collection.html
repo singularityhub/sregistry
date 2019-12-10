@@ -117,7 +117,7 @@
                        <form method="POST" action="#" id="container-table">
                            {% csrf_token %}
                            <tbody>
-                           {% for container in containers %}<tr>
+                           {% for container in containers %}{% if "DUMMY" not in container.tag %}<tr>
                                <td style="width:80px">
                                {% if edit_permission %}<a title="delete container" 
                                   class="delete_container btn-sm btn btn-control btn-light" 
@@ -166,7 +166,7 @@
                            </td>                                
 
                            </tr>
-                           {% endfor %}
+                           {% endif %}{% endfor %}
                        </tbody>
                        </form>    
 
