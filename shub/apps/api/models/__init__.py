@@ -22,7 +22,7 @@ import os
 ################################################################################
 
 def get_upload_to(instance, filename):
-    filename = os.path.join(settings.UPLOAD_PATH, instance.upload_id + '.simg')
+    filename = os.path.join(settings.UPLOAD_PATH, instance.upload_id + '.sif')
     return time.strftime(filename)
 
 def get_upload_folder(instance, filename):
@@ -65,8 +65,7 @@ class ImageFile(models.Model):
     name = models.CharField(max_length=200, null=False)
     owner_id = models.CharField(max_length=200, null=True)
     datafile = models.FileField(upload_to=get_upload_folder,
-                                max_length=255,
-                                storage=OverwriteStorage())
+                                max_length=255)
 
     def get_label(self):
         return "imagefile"
@@ -86,8 +85,8 @@ class ImageUpload(models.Model):
     ''' a base image upload to hold a file temporarily during upload
         based off of django-chunked-uploads BaseChunkedUpload model
     '''
-
-    upload_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    upload_id = models.CharField(max_length=32, unique=True, editable=False, default=uuid.uuid4().hex)
+    #upload_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     file = models.FileField(max_length=255, upload_to=get_upload_to)
     filename = models.CharField(max_length=255)
     offset = models.BigIntegerField(default=0)

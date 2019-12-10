@@ -48,6 +48,8 @@ from .helpers import (
 )
 
 import django_rq
+import shutil
+import tempfile
 import json
 import uuid
 import os
@@ -69,10 +71,13 @@ class CompletePushImageFileView(RatelimitMixin, GenericAPIView):
     def put(self, request, container_id, format=None):
 
         print("PUT CompletePushImageFileView")
-        print(request.META)
-        print(request.data)
-        print(request.query_params)
-        return Response(status=200)
+
+        try:
+            container = Container.objects.get(id=container_id)
+            print(container.tag)
+            return Response(status=200)
+        except Container.DoesNotExist:
+            return Response(status=404)
 
 
 class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
@@ -88,7 +93,6 @@ class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
     def post(self, request, container_id, format=None):
 
         print("POST RequestPushImageFileView")
-        print(request.query_params)
 
         if not validate_token(request):
             print("Token not valid")
@@ -149,27 +153,35 @@ class PushImageFileView(RatelimitMixin, GenericAPIView):
     
         # Write the file to location
         from shub.apps.api.models import ImageFile
-        container_path = os.path.join(image_home, "%s-%s.sif" % (container.name, container.version))
+        suffix = next(tempfile._get_candidate_names())
+        container_path = os.path.join(image_home, "%s-%s-%s.sif" % (container.name, container.version, suffix))
+        final_container_path = os.path.join(image_home, "%s-%s.sif" % (container.name, container.version))
         file_obj = request.data['file']
-
-        # If the container exists, delete here
-        if os.path.exists(container_path):
-            os.remove(container_path)
 
         with default_storage.open(container_path, 'wb+') as destination:
             for chunk in file_obj.chunks():
                 destination.write(chunk)
 
-        # Save newly uploaded file to model       
+        # Save newly uploaded file to model
         reopen = open(container_path, "rb")
         django_file = File(reopen)
 
-        imagefile = ImageFile(collection=container.collection.name,
-                              name=container_path)
-        imagefile.datafile.save(container_path, django_file, save=True)
+        # If the final path exists, remove it
+        if os.path.exists(final_container_path):
+            os.remove(final_container_path)
+
+        # If there is a container file already existing, use it
+        try:
+            imagefile = ImageFile.objects.get(collection=container.collection.name,
+                                              name=container_path)
+        except ImageFile.DoesNotExist:
+            imagefile = ImageFile.objects.create(collection=container.collection.name,
+                                                 name=container_path)
+
+        imagefile.datafile.save(final_container_path, django_file, save=True)
+        shutil.move(container_path, final_container_path)
         container.image = imagefile
         container.save()
-
         return Response(status=200)
 
 
@@ -212,9 +224,6 @@ class PushImageView(RatelimitMixin, GenericAPIView):
                                                              frozen=False,
                                                              tag=tag,
                                                              version=version)
-        print(container)
-        print(created)
-
         arch = request.query_params.get('arch')
         if arch:
             container.metadata['arch'] = arch
@@ -246,7 +255,6 @@ class DownloadImageView(RatelimitMixin, GenericAPIView):
 
     def get(self, request, name):
         print("GET DownloadImageView")
-        print(request.query_params)
         names = parse_image_name(name)
         container = get_container(names)
 
@@ -280,15 +288,16 @@ class GetImageView(RatelimitMixin, GenericAPIView):
 
         # The request specifies ?arch=amd64 but that's all we got
         print("GET GetImageView")
-
         names = parse_image_name(name)
 
-        # The user can specify an arch, currently only support amd64
+        # If an arch is not specified, redirect to push view
         arch = request.query_params.get('arch', 'amd64')
+
         container = get_container(names)
 
         # If an arch is defined, ensure it matches the request
-        if arch:
+        arch = "amd64"
+        if arch and container is not None:
             if container.metadata.get('arch', 'amd64') != "amd64":
                 return Response(status=404)
 
@@ -336,8 +345,6 @@ class CollectionsView(RatelimitMixin, GenericAPIView):
     def get(self, request):
 
         print("GET CollectionsView")
-        print(request.query_params)
-        print(request.data)
         if not validate_token(request):
             print("Token not valid")
             return Response(status=404)
@@ -364,8 +371,6 @@ class GetCollectionTagsView(RatelimitMixin, GenericAPIView):
     def get(self, request, collection_id):
 
         print("GET CollectionTagsView")
-        print(request.query_params)
-        print(request.data)
         if not validate_token(request):
             print("Token not valid")
             return Response(status=404)
@@ -375,6 +380,7 @@ class GetCollectionTagsView(RatelimitMixin, GenericAPIView):
         except:
             return Response(status=404)
 
+        # Always return empty so it hits the container tag generation endpoint
         tags = generate_collection_tags(collection)
         return Response(data={"data": tags}, status=200)
 
@@ -411,11 +417,15 @@ class GetCollectionTagsView(RatelimitMixin, GenericAPIView):
             # Case 1: the tag exists, and it's frozen
             if existing.frozen:
 
-                # We can't create this new container with the tag
+                # We can't create this new container with the tag, delete it
+                container.image = None
+                container.save()
                 container.delete()
                 return Response({"message": "This tag exists, and is frozen."}, status=400)
 
             # Case 2: Exists and not frozen (replace)
+            container.image = None
+            container.save()
             container.delete()
             selected = existing
 
@@ -508,11 +518,6 @@ class GetNamedContainerView(RatelimitMixin, GenericAPIView):
     def get(self, request, username, name, container):
 
         print("GET GetNamedContainerView")
-
-        print(request.query_params)
-        print(username)
-        print(name)
-        print(container)
 
         if not validate_token(request):
             print("Token not valid")

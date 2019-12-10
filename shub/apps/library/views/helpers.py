@@ -285,13 +285,18 @@ def get_container(names):
 
     collection = get_collection(names['url'])
 
+    # A hash can be given to the API too
+    if names["tag"].startswith("sha256"):
+        names['version'] = names['tag']
+        names['tag'] = None
+
     # If we have a collection, next look for the tag or version
     if collection is not None:
         containers = collection.containers.filter(name=names['image'])
-        if containers:
+        if containers and names['version'] is not None:
+            container = containers.filter(version=names['version']).first()
+        elif containers and names['tag'] is not None:
             container = containers.filter(tag=names['tag']).first()
-        if container is None:
-            container = collection.containers.filter(version=names['version']).first()
 
     return container
 
