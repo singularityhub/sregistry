@@ -15,6 +15,7 @@ from django.db import IntegrityError
 import django_rq
 import shutil
 import os
+import uuid
 
 
 def move_upload_to_storage(collection, upload_id):
@@ -138,11 +139,11 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
             # If name is too long, will return OSError on move to storage
             new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
-            instance = ImageUpload.objects.create(file=new_path)
+            instance = ImageUpload.objects.create(
+                file=new_path, upload_id=str(uuid.uuid4())
+            )
         else:
             instance = move_upload_to_storage(collection, upload_id)
-
-        print(names)
 
         # A collection name can have a slash (or not)
         container_uri = names["uri"]
