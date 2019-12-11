@@ -12,7 +12,7 @@ from shub.apps.api.models import ImageFile
 from shub.settings import CONTAINER_WEEKLY_GET_LIMIT
 from django.urls import reverse
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_delete
 
 from django.contrib.postgres.fields import JSONField
 from taggit.managers import TaggableManager
@@ -41,7 +41,9 @@ ACTIVE_CHOICES = ((True, 'Active'),
 def delete_imagefile(sender, instance, **kwargs):
     if instance.image not in ['', None]:
         if hasattr(instance.image, 'datafile'):
-            instance.image.datafile.delete()
+            count = Container.objects.filter(image__datafile=instance.image.datafile).count()
+            if count == 0:
+                instance.image.datafile.delete()
 
 ################################################################################
 # Containers ###################################################################
@@ -171,5 +173,4 @@ class Container(models.Model):
                                    instance=self.collection)
 
 
-
-pre_delete.connect(delete_imagefile, sender=Container)
+post_delete.connect(delete_imagefile, sender=Container)

@@ -89,6 +89,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN echo "0 0 * * * /usr/bin/python /code/manage.py generate_tree" >> /code/cronjob
 RUN echo "0 * * * Mon /usr/bin/python /code/manage.py reset_container_limits" >> /code/cronjob
 RUN echo "0 1 * * * /bin/bash /code/scripts/backup_db.sh" >> /code/cronjob
+RUN echo "0 2 * * * /usr/bin/python /code/manage.py cleanup_dummy" >> /code/cronjob
 RUN crontab /code/cronjob
 RUN rm /code/cronjob
 

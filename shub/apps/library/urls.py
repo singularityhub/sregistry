@@ -5,8 +5,11 @@ from shub.apps.library import views
 
 urlpatterns = [
 
+    #url(r'^v1/images/(?P<username>.+?)/(?P<collection>.+?)/(?P<name>.+?):(?P<version>.+?)$', views.PushImageView.as_view()),
+    #url(r'^v1/images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
 
-    url(r'^v1/images/(?P<username>.+?)/(?P<collection>.+?)/(?P<name>.+?):(?P<version>.+?)$', views.PushImageView.as_view()),
+    url(r'^v1/images/(?P<username>.+?)/(?P<collection>.+?)/(?P<name>.+?):sha256[.](?P<version>.+?)$', views.PushImageView.as_view(), name="library_push_image"),
+    #url(r'^v1/images/(?P<username>.+?)/(?P<collection>.+?)/(?P<name>.+?)$', views.PushImageView.as_view()),
     url(r'^v1/images/(?P<name>.+?)/?$', views.GetImageView.as_view()),
 
     url(r'^v1/imagefile/(?P<name>.+?)/?$', views.DownloadImageView.as_view()), # not sure this is used
@@ -34,5 +37,3 @@ urlpatterns = [
 
 
 # singularity push -U --library http://127.0.0.1 busybox_latest.sif library://vsoch/dinosaur-collection/container:tag
-
-
