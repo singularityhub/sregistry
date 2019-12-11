@@ -1,26 +1,20 @@
-'''
+"""
 
-Copyright (C) 2017-2019 Vanessa Sochat.
+Copyright (C) 2017-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
 from shub.apps.main.models import Label
 from django.http.response import Http404
 from django.contrib import messages
 from django.db.models import Count
-from django.shortcuts import (
-    render, 
-    redirect
-)
+from django.shortcuts import render, redirect
 
-from shub.settings import (
-    VIEW_RATE_LIMIT as rl_rate, 
-    VIEW_RATE_LIMIT_BLOCK as rl_block
-)
+from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
 
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -30,13 +24,14 @@ from ratelimit.decorators import ratelimit
 
 #### GETS #############################################################
 
+
 def get_label(key=None, value=None):
 
     keyargs = dict()
     if key is not None:
-        keyargs['key'] = key
+        keyargs["key"] = key
     if value is not None:
-        keyargs['value'] = value
+        keyargs["value"] = value
 
     try:
         label = Label.objects.get(**keyargs)
@@ -46,62 +41,63 @@ def get_label(key=None, value=None):
         return label
 
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def all_labels(request):
     # Generate queryset of labels annotated with count based on key, eg {'key': 'maintainer', 'id__count': 1}
-    labels = Label.objects.values('key').annotate(Count("id")).order_by()
+    labels = Label.objects.values("key").annotate(Count("id")).order_by()
     context = {"labels": labels}
-    return render(request, 'labels/all_labels.html', context)
+    return render(request, "labels/all_labels.html", context)
 
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_label(request, lid):
-    '''view containers with a specific, exact key/pair'''
+    """view containers with a specific, exact key/pair"""
     try:
         label = Label.objects.get(id=lid)
     except:
         messages.info(request, "This label does not exist.")
-        return redirect('all_labels')
+        return redirect("all_labels")
 
     context = {"label": label}
 
-    return render(request, 'labels/view_label.html', context)
+    return render(request, "labels/view_label.html", context)
 
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_label_keyval(request, key, value):
-    '''view containers with a specific, exact key/pair'''
+    """view containers with a specific, exact key/pair"""
     try:
         label = Label.objects.get(key=key, value=value)
     except:
         messages.info(request, "This label does not exist.")
-        return redirect('all_labels')
+        return redirect("all_labels")
 
-    url = reverse('view_label_id', kwargs={'lid': label.id})
+    url = reverse("view_label_id", kwargs={"lid": label.id})
     return HttpResponseRedirect(url)
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_label_key(request, key):
-    '''view all labels with a shared key'''
+    """view all labels with a shared key"""
     labels = Label.objects.filter(key=key)
     context = {"labels": labels, "key": key}
-    return render(request, 'labels/view_label_key.html', context)
+    return render(request, "labels/view_label_key.html", context)
 
-@ratelimit(key='ip', rate=rl_rate, block=rl_block)
+
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def update_container_labels(container, labels):
     for name, value in labels.items():
         if isinstance(value, str):
             value = value.lower()
 
-        label, _ = Label.objects.get_or_create(key=name.lower(),
-                                               value=value)
+        label, _ = Label.objects.get_or_create(key=name.lower(), value=value)
 
         label.save()
-        
+
         # Does the container have the label with a different value?
         oldies = Label.objects.filter(
-                         Q(containers=container) &
-                         Q(key=name.lower)).exclude(value=value)
+            Q(containers=container) & Q(key=name.lower)
+        ).exclude(value=value)
 
         for oldie in oldies:
             oldie.containers.remove(container)

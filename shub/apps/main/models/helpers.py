@@ -1,24 +1,25 @@
-'''
+"""
 
-Copyright (C) 2017-2019 Vanessa Sochat.
+Copyright (C) 2017-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
 from itertools import chain
 from django.http import HttpRequest
 
+
 def has_edit_permission(instance, request):
-    '''can the user of the request edit the collection or container?
+    """can the user of the request edit the collection or container?
 
        Parameters
        ==========
        instance: the container or collection to check
        request: the request with the user object OR the user object
-    '''
+    """
     from .containers import Container
 
     if isinstance(instance, Container):
@@ -46,7 +47,7 @@ def has_edit_permission(instance, request):
 
 
 def has_view_permission(instance, request):
-    '''can the user of the request view the collection or container? This
+    """can the user of the request view the collection or container? This
        permission corresponds with being a contributor, and being able to
        pull
 
@@ -55,7 +56,7 @@ def has_view_permission(instance, request):
        instance: the container or collection to check
        request: the request with the user object
 
-    '''
+    """
     from .containers import Container
 
     if isinstance(instance, Container):
@@ -72,7 +73,7 @@ def has_view_permission(instance, request):
     # At this point we have a private collection
     if not user.is_authenticated:
         return False
-        
+
     # Global Admins and Superusers
     if user.is_staff or user.is_superuser:
         return True
@@ -86,14 +87,15 @@ def has_view_permission(instance, request):
 
 
 def get_collection_users(instance):
-    '''get_collection_users will return a list of all owners and contributors
+    """get_collection_users will return a list of all owners and contributors
         for a collection. The input instance can be a collection or container.
 
         Parameters
         ==========
         instance: the collection or container object to use
-    '''
+    """
     from .containers import Container
+
     collection = instance
     if isinstance(collection, Container):
         collection = collection.collection

@@ -1,0 +1,23 @@
+name: sregistry-ci
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches_ignore: []
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup black linter
+        run: conda create --quiet --name black black
+
+      - name: Lint python code
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate black
+          black --check shub

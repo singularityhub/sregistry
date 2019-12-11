@@ -1,24 +1,22 @@
-'''
+"""
 
-Copyright (C) 2017-2019 Vanessa Sochat.
+Copyright (C) 2017-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
-from shub.settings import (
-    USER_COLLECTIONS,
-    USER_COLLECTION_LIMIT
-)
+from shub.settings import USER_COLLECTIONS, USER_COLLECTION_LIMIT
+
 
 def has_create_permission(request):
-    ''' determine if a user can create a team.
+    """ determine if a user can create a team.
   
         1. superusers and admin (global) can.
         2. If user collections is True, users can create teams
-    '''
+    """
     if request.user.is_superuser or request.user.is_staff:
         return True
 
@@ -26,7 +24,10 @@ def has_create_permission(request):
 
         # Does the registry have a user collection limit?
         if USER_COLLECTION_LIMIT is not None:
-            if request.user.container_collection_owners.count() >= USER_COLLECTION_LIMIT:
+            if (
+                request.user.container_collection_owners.count()
+                >= USER_COLLECTION_LIMIT
+            ):
                 return False
         return True
 
@@ -34,7 +35,7 @@ def has_create_permission(request):
 
 
 def is_invite_valid(team, code):
-    '''determine if a user can be added to a team meaning
+    """determine if a user can be added to a team meaning
        he or she has an invite, and the invite corresponds to the
        code generated for it. a status (True or False)
 
@@ -43,9 +44,9 @@ def is_invite_valid(team, code):
        team: the team to add to
        code: the code from the user
        
-    '''
+    """
     invitation = team.get_invite(code)
-  
+
     # The invitation doesn't exist, period
     if invitation is None:
         return False
