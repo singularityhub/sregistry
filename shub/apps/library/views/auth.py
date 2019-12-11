@@ -1,28 +1,27 @@
-'''
+"""
 
-Copyright (C) 2019 Vanessa Sochat.
+Copyright (C) 2019-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from shub.apps.users.models import User
 
-from .helpers import (
-    validate_token,
-    generate_user_data,
-    get_token
-)
+from .helpers import validate_token, generate_user_data, get_token
+
 
 class TokenStatusView(APIView):
-    '''Given a GET request with a token, return if valid.
-    '''
+    """Given a GET request with a token, return if valid.
+    """
+
     renderer_classes = (JSONRenderer,)
+
     def get(self, request, format=None):
         if validate_token(request):
             return Response(status=200)
@@ -30,8 +29,9 @@ class TokenStatusView(APIView):
 
 
 class GetNamedEntityView(APIView):
-    '''Given a request for an entity, return the response
-    '''
+    """Given a request for an entity, return the response
+    """
+
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, username):
@@ -51,7 +51,7 @@ class GetNamedEntityView(APIView):
 
             # Verify that the token belongs to the user
             token = get_token(request)
-  
+
             if token.user != user:
                 return Response(status=404)
 
@@ -63,9 +63,11 @@ class GetNamedEntityView(APIView):
 
 
 class GetEntitiesView(APIView):
-    '''I'm not sure the purpose of this endpoint.
-    '''
+    """I'm not sure the purpose of this endpoint.
+    """
+
     renderer_classes = (JSONRenderer,)
+
     def get(self, request, format=None):
 
         print("GET GetEntitiesView")

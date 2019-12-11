@@ -1,12 +1,12 @@
-'''
+"""
 
-Copyright (C) 2017-2019 Vanessa Sochat.
+Copyright (C) 2017-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
 from shub.settings import MEDIA_ROOT
 from shub.logger import bot
@@ -16,47 +16,48 @@ import django_rq
 import shutil
 import os
 
+
 def move_upload_to_storage(collection, upload_id):
-    '''moving an uploaded *UploadImage* to storage means:
+    """moving an uploaded *UploadImage* to storage means:
          1. create a folder for the collection, if doesn't exist
          2. an image in storage. It will be moved here from
        the temporary upload and renamed
-    '''
+    """
     from shub.apps.api.models import ImageUpload
 
     # Get ImageFile instance, rename the file
     instance = ImageUpload.objects.get(upload_id=upload_id)
 
     # Create collection root, if it doesn't exist
-    image_home = "%s/%s" %(MEDIA_ROOT, collection.name)
+    image_home = "%s/%s" % (MEDIA_ROOT, collection.name)
     if not os.path.exists(image_home):
         os.mkdir(image_home)
-    
+
     # Rename the file, moving from ImageUpload to Storage
     filename = os.path.basename(instance.file.path)
-    new_path = os.path.join(image_home, filename.replace('.part', '.sif'))
+    new_path = os.path.join(image_home, filename.replace(".part", ".sif"))
     shutil.move(instance.file.path, new_path)
-    print('%s --> %s' %(instance.file.path, new_path))
+    print("%s --> %s" % (instance.file.path, new_path))
     instance.file.name = new_path
     instance.save()
     return instance
 
 
 def generate_nginx_storage_path(collection, source, dest):
-    '''generate the path to move a source to its destination 
+    """generate the path to move a source to its destination 
        so that we can check length limits, etc., before trying to do the move.
          Parameters
          ==========
          collection: the collection the image will belong to
          source: the source file (under /var/www/images/_upload/{0-9}
          dest: the destination filename
-    '''
+    """
     image_home = os.path.join(MEDIA_ROOT, collection.name)
     return os.path.join(image_home, os.path.basename(dest))
 
 
 def move_nginx_upload_to_storage(collection, source, dest):
-    '''moving an uploaded file (from nginx module) to storage means.
+    """moving an uploaded file (from nginx module) to storage means.
          1. create a folder for the collection, if doesn't exist
          2. an image in storage pointing to the moved file
 
@@ -65,23 +66,25 @@ def move_nginx_upload_to_storage(collection, source, dest):
          collection: the collection the image will belong to
          source: the source file (under /var/www/images/_upload/{0-9}
          dest: the destination filename
-    '''
+    """
     # Create collection root, if it doesn't exist
     image_home = os.path.join(MEDIA_ROOT, collection.name)
     if not os.path.exists(image_home):
         os.makedirs(image_home)
-    
+
     new_path = os.path.join(image_home, os.path.basename(dest))
     shutil.move(source, new_path)
     return new_path
 
+
 def calculate_version(cid):
-    '''calculate version is run as a separate task after a container upload.
+    """calculate version is run as a separate task after a container upload.
        Instead of using md5 provided by nginx we calculate sha256 sum and
        then include as the version variable.
-    '''
+    """
     from shub.apps.main.views import get_container
     from sregistry.utils import get_file_hash
+
     print("Calculating version for upload.")
     container = get_container(cid)
     version = "sha256.%s" % get_file_hash(container.image.datafile.path, "sha256")
@@ -90,7 +93,7 @@ def calculate_version(cid):
 
 
 def upload_container(cid, user, name, version, upload_id, size=None):
-    '''save an uploaded container, usually coming from an ImageUpload
+    """save an uploaded container, usually coming from an ImageUpload
 
        Parameters
        ==========
@@ -107,10 +110,11 @@ def upload_container(cid, user, name, version, upload_id, size=None):
                 a decision because it's purely intended to show to the user,
                 if the function is used otherwise we would want these to be
                 error / success codes.
-    '''
+    """
 
-    from shub.apps.main.models import (Container, Collection)
-    from shub.apps.api.models import (ImageUpload, ImageFile)
+    from shub.apps.main.models import Container, Collection
+    from shub.apps.api.models import ImageUpload, ImageFile
+
     collection = Collection.objects.get(id=cid)
 
     # Only continue if user is an owner
@@ -118,14 +122,14 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
         # parse the image name, get the datafile
         names = parse_image_name(name, version=version)
-        storage = os.path.basename(names['storage'])
+        storage = os.path.basename(names["storage"])
 
         # Catch the data error before trying to create it
         new_path = generate_nginx_storage_path(collection, upload_id, storage)
 
         # Return an error to the user if the file is too big
         if len(new_path) > 255:
-            message = 'Filename too long!\nMust be less than 255 characters'
+            message = "Filename too long!\nMust be less than 255 characters"
             bot.error(message)
             return message
 
@@ -141,25 +145,32 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         print(names)
 
         # A collection name can have a slash (or not)
-        container_uri = names['uri']
-        container_name = names['image']
+        container_uri = names["uri"]
+        container_name = names["image"]
         if "/" in collection.name:
-            container_uri = "%s:%s" %(collection.name, names['tag'])
-            if names['version']:
-                container_uri = "%s:%s@%s" %(collection.name, names['tag'], names['version'])
+            container_uri = "%s:%s" % (collection.name, names["tag"])
+            if names["version"]:
+                container_uri = "%s:%s@%s" % (
+                    collection.name,
+                    names["tag"],
+                    names["version"],
+                )
             container_name = collection.name
 
-        image = ImageFile.objects.create(collection=collection,
-                                         tag=names['tag'],
-                                         name=container_uri,
-                                         owner_id=user.id,
-                                         datafile=instance.file)
+        image = ImageFile.objects.create(
+            collection=collection,
+            tag=names["tag"],
+            name=container_uri,
+            owner_id=user.id,
+            datafile=instance.file,
+        )
 
         # Get a container, if it exists (and the user is re-using a name)
         # Filter by negative id so we get the more recent container first.
         collection_set = collection.containers
-        containers = collection_set.filter(tag=names['tag'],
-                                           name=container_name).order_by('-id')
+        containers = collection_set.filter(
+            tag=names["tag"], name=container_name
+        ).order_by("-id")
 
         # If one exists, we check if it's frozen
         create_new = True
@@ -173,19 +184,21 @@ def upload_container(cid, user, name, version, upload_id, size=None):
             if container.frozen is False:
                 container.delete()
                 create_new = False
-         
+
         # Container doesn't already exist / or old version isn't frozen
         if create_new is True:
             try:
-                container = Container.objects.create(collection=collection,
-                                                     name=container_name,
-                                                     tag=names['tag'],
-                                                     image=image,
-                                                     version=names['version'])
+                container = Container.objects.create(
+                    collection=collection,
+                    name=container_name,
+                    tag=names["tag"],
+                    image=image,
+                    version=names["version"],
+                )
 
             # Catches when container is frozen, and version already exists
             except IntegrityError:
-                message = '%s already exists.' % container_uri
+                message = "%s already exists." % container_uri
                 bot.error(message)
                 delete_file_instance(instance)
                 return message
@@ -193,14 +206,14 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         # Otherwise, use the same container object, but update version
         else:
             container.image = image
-            container.version = names['version']
-       
+            container.version = names["version"]
+
         container.save()
 
         # Save the size
         if size is None:
             size = os.path.getsize(instance.file.path) >> 20
-        container.metadata['size_mb'] = size
+        container.metadata["size_mb"] = size
 
         # Once the container is saved, delete the intermediate file object
         delete_file_instance(instance)
@@ -210,9 +223,9 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
 
 def delete_file_instance(instance):
-    '''a helper function to remove the file assocation, and delete the instance
+    """a helper function to remove the file assocation, and delete the instance
        if needed outside of this module can be added to models
-    '''
-    instance.file = None # remove the association
+    """
+    instance.file = None  # remove the association
     instance.save()
     instance.delete()

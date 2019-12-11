@@ -1,9 +1,9 @@
-'''
+"""
 
 Adopted from drf-tracking
 https://github.com/aschn/drf-tracking
 
-'''
+"""
 
 import re
 from django.utils.timezone import now
@@ -14,9 +14,10 @@ import traceback
 
 
 class BaseLoggingMixin(object):
-    logging_methods = '__all__'
+    logging_methods = "__all__"
 
-    '''Mixin to log requests'''
+    """Mixin to log requests"""
+
     def initial(self, request, *args, **kwargs):
 
         ipaddr = request.META.get("HTTP_X_FORWARDED_FOR", None)
@@ -28,18 +29,21 @@ class BaseLoggingMixin(object):
             ipaddr = request.META.get("REMOTE_ADDR", "")
 
         # get view
-        view_name = ''
+        view_name = ""
         try:
             method = request.method.lower()
             attributes = getattr(self, method)
-            view_name = (type(attributes.__self__).__module__ + '.' +
-                         type(attributes.__self__).__name__)
+            view_name = (
+                type(attributes.__self__).__module__
+                + "."
+                + type(attributes.__self__).__name__
+            )
         except:
             pass
 
         # get the method of the view
-        if hasattr(self, 'action'):
-            view_method = self.action if self.action else ''
+        if hasattr(self, "action"):
+            view_method = self.action if self.action else ""
         else:
             view_method = method.lower()
 
@@ -95,7 +99,7 @@ class BaseLoggingMixin(object):
         response = super(BaseLoggingMixin, self).handle_exception(exc)
 
         # log error
-        if hasattr(self.request, 'log'):
+        if hasattr(self.request, "log"):
             self.request.log.errors = traceback.format_exc()
 
         # return
@@ -103,10 +107,12 @@ class BaseLoggingMixin(object):
 
     def finalize_response(self, request, response, *args, **kwargs):
         # regular finalize response
-        response = super(BaseLoggingMixin, self).finalize_response(request, response, *args, **kwargs)
+        response = super(BaseLoggingMixin, self).finalize_response(
+            request, response, *args, **kwargs
+        )
 
         # check if request is being logged
-        if not hasattr(self.request, 'log'):
+        if not hasattr(self.request, "log"):
             return response
 
         # compute response time
@@ -127,7 +133,9 @@ class BaseLoggingMixin(object):
         Method that should return True if this request should be logged.
         By default, check if the request method is in logging_methods.
         """
-        return self.logging_methods == '__all__' or request.method in self.logging_methods
+        return (
+            self.logging_methods == "__all__" or request.method in self.logging_methods
+        )
 
 
 class LoggingMixin(BaseLoggingMixin):
@@ -135,6 +143,7 @@ class LoggingMixin(BaseLoggingMixin):
 
 
 class LoggingErrorsMixin(BaseLoggingMixin):
-    '''Log only errors'''
+    """Log only errors"""
+
     def _should_log(self, request, response):
         return response.status_code >= 400

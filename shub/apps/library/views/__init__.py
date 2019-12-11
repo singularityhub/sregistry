@@ -1,9 +1,7 @@
-from .base import (
-    LibraryBaseView
-)
+from .base import LibraryBaseView
 from .images import (
     GetCollectionTagsView,
-    GetImageView, 
+    GetImageView,
     PushImageView,
     PushImageFileView,
     CompletePushImageFileView,
@@ -12,10 +10,6 @@ from .images import (
     CollectionsView,
     ContainersView,
     GetNamedCollectionView,
-    GetNamedContainerView
+    GetNamedContainerView,
 )
-from .auth import (
-    TokenStatusView,
-    GetNamedEntityView,
-    GetEntitiesView,
-)
+from .auth import TokenStatusView, GetNamedEntityView, GetEntitiesView

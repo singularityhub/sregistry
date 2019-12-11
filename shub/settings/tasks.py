@@ -1,26 +1,19 @@
-'''
+"""
 
-Copyright (C) 2017-2019 Vanessa Sochat.
+Copyright (C) 2017-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
 from .config import PLUGINS_ENABLED
 import os
 
-RQ_QUEUES = {
-    'default': {
-        'URL': os.getenv('REDIS_URL', 'redis://redis/0'),
-    }
-}
+RQ_QUEUES = {"default": {"URL": os.getenv("REDIS_URL", "redis://redis/0")}}
 
-RQ = {
-    'host': 'redis',
-    'db': 0,
-}
+RQ = {"host": "redis", "db": 0}
 
 
 # background tasks

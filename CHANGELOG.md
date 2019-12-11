@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - black linting and removing default upload_id (0.1.14)
  - push/pull fixes for library API (0.1.13)
  - bug fix with parsing valid token (0.1.12)
  - support for robot users (0.1.11)

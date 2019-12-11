@@ -1,44 +1,46 @@
-'''
+"""
 
-Copyright (C) 2017-2019 Vanessa Sochat.
+Copyright (C) 2017-2020 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-'''
+"""
 
 from rest_framework.authtoken.models import Token
 from django.utils.timezone import now
 import json
 import re
 
+
 def get_request_collection(instance):
-    '''obtain the collection from a request
+    """obtain the collection from a request
 
     Parameters
     ==========
     instance: should be an APIRequestLog object, with a response
               and path to parse
-    '''
+    """
     import pickle
-    pickle.dump(instance, open('instance.pkl', 'wb'))
+
+    pickle.dump(instance, open("instance.pkl", "wb"))
     from sregistry.utils import parse_image_name
-    from shub.apps.main.models import Collection 
-    
-    try: 
-        response = json.loads(instance.response)   
-        name = response['collection']
+    from shub.apps.main.models import Collection
+
+    try:
+        response = json.loads(instance.response)
+        name = response["collection"]
     except:
 
         # Case 1: library endpoint
         if "/v1/images" in instance.path:
-            collection_name = instance.path.replace('/v1/images/','')
+            collection_name = instance.path.replace("/v1/images/", "")
 
         # Case 2: shub endpoint
         else:
-            collection_name = instance.path.replace('/api/container/', '')
-        name = parse_image_name(collection_name)['collection']
+            collection_name = instance.path.replace("/api/container/", "")
+        name = parse_image_name(collection_name)["collection"]
 
     try:
         collection = Collection.objects.get(name=name)
@@ -48,10 +50,20 @@ def get_request_collection(instance):
     return collection
 
 
-def generate_log(view_name, ipaddr, remote_addr, params, request_path, host, request_data, auth_header, method):
-    '''a helper function to generate a log from a request, intended when
+def generate_log(
+    view_name,
+    ipaddr,
+    remote_addr,
+    params,
+    request_path,
+    host,
+    request_data,
+    auth_header,
+    method,
+):
+    """a helper function to generate a log from a request, intended when
        we want the same functionality but not as a mixin.
-    '''
+    """
     from shub.apps.logs.models import APIRequestLog
 
     if ipaddr:
@@ -65,14 +77,14 @@ def generate_log(view_name, ipaddr, remote_addr, params, request_path, host, req
 
     # create log
     log = APIRequestLog(
-            requested_at=now(),
-            path=request_path,
-            view=view_name,
-            view_method=view_method,
-            remote_addr=ipaddr,
-            host=host,
-            method=request_method,
-            query_params=params,
+        requested_at=now(),
+        path=request_path,
+        view=view_name,
+        view_method=view_method,
+        remote_addr=ipaddr,
+        host=host,
+        method=request_method,
+        query_params=params,
     )
 
     # Get a user, if auth token is provided
@@ -93,17 +105,18 @@ def generate_log(view_name, ipaddr, remote_addr, params, request_path, host, req
 
     log.save()
 
+
 def clean_data(data):
-    '''Clean a dictionary of data of potentially sensitive info before
+    """Clean a dictionary of data of potentially sensitive info before
        sending to the database.
        Function based on the "_clean_credentials" function of django
        (django/django/contrib/auth/__init__.py)
-    '''
+    """
     if data is None:
-        return ''
+        return ""
 
-    SENSITIVE_DATA = re.compile('api|token|key|secret|password|signature', re.I)
-    CLEANSED_SUBSTITUTE = '********************'
+    SENSITIVE_DATA = re.compile("api|token|key|secret|password|signature", re.I)
+    CLEANSED_SUBSTITUTE = "********************"
     for key in data:
         if SENSITIVE_DATA.search(key):
             data[key] = CLEANSED_SUBSTITUTE

@@ -17,11 +17,9 @@ all your interactions with the project members and users.
 1. Bug fix PRs should be sent to both the master and development branches.
    Feature enhancements should only be submitted against the development
    branch.
-2. Follow the existing code style precedent. This does not need to be strictly
-   defined as there are many thousands of lines of examples. Note the lack
-   of tabs anywhere in the project, parentheses and spacing, documentation
-   style, source code layout, variable scoping, and follow the project's
-   standards.
+2. Follow the existing code style precedent. We use black for linting, and you
+   can install it `pip install black` and then run `make lint` to format the code.
+   This will be tested.
 3. Test your PR locally, and provide the steps necessary to test for the
    reviewers.
 4. The project's default copyright and header have been included in any new
