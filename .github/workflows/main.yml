@@ -1,4 +1,4 @@
-name: oci-python-ci
+name: sregistry-ci
 
 on:
   push:
