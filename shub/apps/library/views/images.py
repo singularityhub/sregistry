@@ -223,7 +223,7 @@ class PushImageView(RatelimitMixin, GenericAPIView):
                                                              name=name,
                                                              frozen=False,
                                                              tag=tag,
-                                                             version=version)
+                                                             version="sha256." + version)
         arch = request.query_params.get('arch')
         if arch:
             container.metadata['arch'] = arch
