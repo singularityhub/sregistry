@@ -86,10 +86,9 @@ RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install crontab to setup jobs
-RUN echo "0 0 * * * /usr/bin/python /code/manage.py generate_tree" >> /code/cronjob
-RUN echo "0 * * * Mon /usr/bin/python /code/manage.py reset_container_limits" >> /code/cronjob
-RUN echo "0 1 * * * /bin/bash /code/scripts/backup_db.sh" >> /code/cronjob
-RUN echo "0 2 * * * /usr/bin/python /code/manage.py cleanup_dummy" >> /code/cronjob
+RUN echo "0 0 * * * /usr/local/bin/python /code/manage.py reset_container_limits > /var/log/reset_container_limits.log 2>&1 " >> /code/cronjob
+RUN echo "0 1 * * * /bin/bash /code/scripts/backup_db.sh > /var/log/backup_db.log 2>&1 " >> /code/cronjob
+RUN echo "0 2 * * * /usr/local/bin/python /code/manage.py cleanup_dummy > /var/log/cleanup_dummy.log 2>&1 " >> /code/cronjob
 RUN crontab /code/cronjob
 RUN rm /code/cronjob
 

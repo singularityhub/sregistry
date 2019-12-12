@@ -9,7 +9,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from django.core.management.base import BaseCommand
-from shub.apps.main.models import Container
+from shub.apps.main.models import Container, Collection
+
 import json
 
 

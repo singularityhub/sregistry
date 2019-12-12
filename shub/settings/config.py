@@ -123,8 +123,8 @@ VIEW_RATE_LIMIT = (
     "50/1d"
 )  # The rate limit for each view, django-ratelimit, "50 per day per ipaddress)
 VIEW_RATE_LIMIT_BLOCK = (
-    True
-)  # Given that someone goes over, are they blocked for the period?
+    True  # Given that someone goes over, are they blocked for the period?
+)
 
 # Plugins
 # Add the name of a plugin under shub.plugins here to enable it
