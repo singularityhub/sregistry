@@ -37,11 +37,7 @@ from .containers import (
     delete_container,
 )
 
-from .compare import (
-    collections_treemap,
-    container_size_data,
-    collection_size_data,
-)
+from .compare import collections_treemap, container_size_data, collection_size_data
 
 from .labels import (
     view_label,
