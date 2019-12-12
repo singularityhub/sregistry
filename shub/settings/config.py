@@ -105,12 +105,6 @@ DATABASES = {
 }
 
 
-# Visualizations
-
-# After how many single containers should we switch to showing collections
-# only? >= 1000
-VISUALIZATION_TREEMAP_COLLECTION_SWITCH = 1000
-
 # Logging
 
 # Do you want to save complete response metadata per each pull?

@@ -14,13 +14,8 @@ import shub.apps.main.views as views
 
 urlpatterns = [
     url(
-        r"^tools/sizes/?$", views.containers_treemap, name="containers_treemap"
+        r"^tools/sizes/?$", views.collections_treemap, name="containers_treemap"
     ),  # also redirects to collections_treemap view
-    url(
-        r"^tools/collection/(?P<cid>\d+)/sizes/?$",
-        views.collection_treemap,
-        name="collection_treemap",
-    ),  # containers in single collection
     url(
         r"^data/containers/sizes/csv/?$",
         views.container_size_data,
@@ -30,10 +25,5 @@ urlpatterns = [
         r"^data/collections/sizes/csv/?$",
         views.collection_size_data,
         name="collections_size_data",
-    ),
-    url(
-        r"^data/collections/(?P<cid>\d+)/sizes/csv/?$",
-        views.single_collection_size_data,
-        name="collection_size_data",
     ),
 ]
