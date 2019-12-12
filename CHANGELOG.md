@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - adding logs for cron jobs and fix their execution (0.1.15)
  - black linting and removing default upload_id (0.1.14)
  - push/pull fixes for library API (0.1.13)
  - bug fix with parsing valid token (0.1.12)
