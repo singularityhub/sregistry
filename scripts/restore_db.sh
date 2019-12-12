@@ -10,5 +10,5 @@
 for db in "users" "api" "main" "logs" 
   do
     echo "Loading table $db"
-    python /code/manage.py loaddata /code/backup/$db.json
+    /usr/local/bin/python /code/manage.py loaddata /code/backup/$db.json
 done
