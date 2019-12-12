@@ -75,9 +75,13 @@ def is_valid_packets(packets):
     pubkey = 0  # (1 <= pubkey) / One Public-Key packet
     revsig = 0  # (0 <= revsig) / Zero or more revocation signatures
     userid = 0  # (1 <= userid) / One or more User ID packets
-    pubsig = 0  # (0 <= pubsig) / After each User ID packet, zero or more Signature packets (certifications)
+    pubsig = (
+        0
+    )  # (0 <= pubsig) / After each User ID packet, zero or more Signature packets (certifications)
     usratt = 0  # (0 <= usratt) / Zero or more User Attribute packets
-    attsig = 0  # (0 <= attsig) / After each User Attribute packet, zero or more Signature packets (certifications)
+    attsig = (
+        0
+    )  # (0 <= attsig) / After each User Attribute packet, zero or more Signature packets (certifications)
     subkey = 0  # (0 <= subkey) / Zero or more Subkey packets
     subsig = 0  # (0 <= subsig) / After each Subkey packet, one Signature packet,
     aftrev = 0  # plus optionally a revocation
