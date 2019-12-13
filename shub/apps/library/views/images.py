@@ -19,7 +19,6 @@ from shub.apps.main.models import Collection, Container
 
 from ratelimit.mixins import RatelimitMixin
 
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
@@ -49,7 +48,7 @@ import os
 # Image Files
 
 
-class CompletePushImageFileView(RatelimitMixin, GenericAPIView):
+class CompletePushImageFileView(RatelimitMixin, APIView):
     """This view (UploadImageCompleteRequest) isn't currently useful,
        but should exist as it is used for Singularity.
     """
@@ -73,7 +72,7 @@ class CompletePushImageFileView(RatelimitMixin, GenericAPIView):
             return Response(status=404)
 
 
-class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
+class RequestPushImageFileView(RatelimitMixin, APIView):
     """After creating the container, push the image file. Still check
        all credentials!
     """
@@ -116,7 +115,7 @@ class RequestPushImageFileView(RatelimitMixin, GenericAPIView):
         return Response(data={"data": data}, status=200)
 
 
-class PushImageFileView(RatelimitMixin, GenericAPIView):
+class PushImageFileView(RatelimitMixin, APIView):
     """After creating the container, push the image file. Still check
        all credentials!
     """
@@ -189,7 +188,7 @@ class PushImageFileView(RatelimitMixin, GenericAPIView):
         return Response(status=200)
 
 
-class PushImageView(RatelimitMixin, GenericAPIView):
+class PushImageView(RatelimitMixin, APIView):
     """Given a collection and container name, return the associated metadata.
        GET /v1/containers/vsoch/dinosaur-collection/container
     """
@@ -239,7 +238,7 @@ class PushImageView(RatelimitMixin, GenericAPIView):
         return Response(data={"data": data}, status=200)
 
 
-class DownloadImageView(RatelimitMixin, GenericAPIView):
+class DownloadImageView(RatelimitMixin, APIView):
     """redirect to the url to download a container.
        https://library.sylabs.io/v1/imagefile/busybox:latest
        I'm not actually sure if this view is being used anymore.
@@ -285,7 +284,7 @@ class DownloadImageView(RatelimitMixin, GenericAPIView):
         return redirect(self.get_download_url(container))
 
 
-class GetImageView(RatelimitMixin, GenericAPIView):
+class GetImageView(RatelimitMixin, APIView):
     """redirect to the url to download a container.
        https://library.sylabs.io/v1/imagefile/busybox:latest
     """
@@ -350,7 +349,7 @@ class GetImageView(RatelimitMixin, GenericAPIView):
 # Collections
 
 
-class CollectionsView(RatelimitMixin, GenericAPIView):
+class CollectionsView(RatelimitMixin, APIView):
     """Return a simple list of collections
        GET /v1/collections
     """
@@ -373,7 +372,7 @@ class CollectionsView(RatelimitMixin, GenericAPIView):
         return Response(data=collections, status=200)
 
 
-class GetCollectionTagsView(RatelimitMixin, GenericAPIView):
+class GetCollectionTagsView(RatelimitMixin, APIView):
     """Return a simple list of tags in the collection, and the
        containers associated with. Since we can only return one container
        per tag, we take the most recently created. This means that
@@ -463,7 +462,7 @@ class GetCollectionTagsView(RatelimitMixin, GenericAPIView):
 # Containers
 
 
-class ContainersView(RatelimitMixin, GenericAPIView):
+class ContainersView(RatelimitMixin, APIView):
     """Return a simple list of containers
        GET /v1/containers
     """
@@ -489,7 +488,7 @@ class ContainersView(RatelimitMixin, GenericAPIView):
         return Response(data={}, status=200)
 
 
-class GetNamedCollectionView(RatelimitMixin, GenericAPIView):
+class GetNamedCollectionView(RatelimitMixin, APIView):
     """Given a collection, return the associated metadata.
        We don't care about the username, but Singularity push requires it.
        GET /v1/collections/<username>/<name>
@@ -528,7 +527,7 @@ class GetNamedCollectionView(RatelimitMixin, GenericAPIView):
 # Containers
 
 
-class GetNamedContainerView(RatelimitMixin, GenericAPIView):
+class GetNamedContainerView(RatelimitMixin, APIView):
     """Given a collection and container name, return the associated metadata.
        GET /v1/containers/vsoch/dinosaur-collection/container
     """
