@@ -33,7 +33,7 @@ rect {
 {% block content %}
 <div class="row">
     <div class="col-md-4">
-        <h3 style="margin-bottom:0px">Collection Mean Sizes (MB)</h3>
+        <h3 style="margin-bottom:0px">Collection Sizes (Containers)</h3>
         <small>{{ generation_date }}</small>
         <a id="save_as_svg" 
            value="" 
@@ -79,7 +79,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
   var data = [];
 
   // uid: is the container id
-  // size: is the size in MB
+  // size: used to be the size in MBs, now is containers count 
   // id: is the container name
   var lookup = Object();
 
@@ -115,7 +115,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
       .style("fill", function(d) { return color(sum += d.value); })
       .on('click', function(d){
           var collection_id = lookup[d.id].uid
-          document.location = "{{ domain }}/tools/collection/"+ collection_id + "/sizes";
+          document.location = "{{ domain }}/collections/"+ collection_id + "/";
        })
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
@@ -131,7 +131,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
       .data(function(d) { 
            var cname = d.id.split('.').slice(-1)
            cname.push(d.data.n)
-           return cname.join(' n=').split(/(?=[A-Z][^A-Z])/g).concat(format(d.value) + " MB");
+           return cname.join(' n=').split(/(?=[A-Z][^A-Z])/g).concat(format(d.value) + " containers");
     })
     .enter().append("tspan")
       .attr("x", 4)
@@ -140,7 +140,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
 
   cell.append("title")
       .text(function(d) { 
-           return d.id + "\n" + format(d.value) + " MB"; });
+           return d.id + "\n" + format(d.value) + " containers"; });
        });
 
 

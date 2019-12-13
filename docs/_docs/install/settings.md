@@ -335,23 +335,6 @@ DATABASES = {
 }
 ```
 
-### Visualizations
-We show a nice treemap as one of the registry tools:
-
-![../../assets/img/container_treemap.png](../../assets/img/container_treemap.png)
-
-Also in this file you have the option to "tweak" this threshold of when we go from showing all containers (eg, specific tags) to just containers under collections. If this second approach is still too detailed, we may also make the fallback to just show collections.
-
-```python
-########################################################################
-# Visualizations
-########################################################################
-
-# After how many single containers should we switch to showing collections
-# only? >= 1000
-VISUALIZATION_TREEMAP_COLLECTION_SWITCH=1000
-```
-
 ### Logging
 By default, Singularity Registry keeps track of all requests to pull containers, and you have control over the level of detail that is kept. If you want to save complete metadata (meaning the full json response for each call) then you should set `LOGGING_SAVE_RESPONSES` to True. If you expect heavy use and want to save the minimal (keep track of which collections are pulled how many times) the reccomendation is to set this to False. 
 

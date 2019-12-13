@@ -18,6 +18,10 @@ server {
     alias /var/www/images;
   }
 
+  location ~* \.(php|aspx|myadmin|asp)$ {
+    deny all;
+  }
+
   # Upload form should be submitted to this location
   location /upload {
 
@@ -83,6 +87,10 @@ server {
 
     location /static {
         alias /var/www/static;
+    }
+
+    location ~* \.(php|aspx|myadmin|asp)$ {
+      deny all;
     }
 
     # Upload form should be submitted to this location
