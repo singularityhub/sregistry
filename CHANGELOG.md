@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - broken API and documentation links (0.1.17)
  - refactored collections treemap to only show collection container counts (0.1.16)
  - adding logs for cron jobs and fix their execution (0.1.15)
  - black linting and removing default upload_id (0.1.14)
