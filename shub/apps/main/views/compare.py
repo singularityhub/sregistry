@@ -11,11 +11,13 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from shub.apps.main.models import Container, Collection
 from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
 
+from django.db.models import Q
 from django.conf import settings
 from django.shortcuts import render, redirect
 
 from django.contrib import messages
 from ratelimit.decorators import ratelimit
+
 import datetime
 
 
@@ -67,14 +69,13 @@ def get_filtered_collections(request):
     """return all collections or only public, given user accessing
        this function will return all collections based on a permission level
     """
-    private = True
-    if not request.user.is_anonymous:
-        if request.user.is_superuser or request.user.is_staff is True:
-            private = True
-
-    if not private:
-        return Collection.objects.all()
-    return Collection.objects.filter(private=False)
+    if request.user.is_superuser or request.user.is_staff:
+        collections = Collection.objects.all()
+    else:
+        collections = Collection.objects.filter(
+            Q(owners=request.user) | Q(contributors=request.user) | Q(private=False)
+        )
+    return collections
 
 
 ### Treemap Views and Context
