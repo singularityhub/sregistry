@@ -18,8 +18,8 @@ django-rq
 django-taggit
 django-taggit-templatetags
 django-user-agents
-django>=1.11.18
-djangorestframework
+django==2.2.7
+djangorestframework==3.10.3
 google
 google-api-python-client
 h5py
