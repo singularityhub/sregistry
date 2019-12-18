@@ -1,0 +1,81 @@
+upstream websocket {
+    ip_hash;
+    server 172.17.0.6:3032 fail_timeout=0;
+}
+
+server {
+  listen                *:80;
+  server_name           localhost;
+
+  client_max_body_size 10024M;
+  client_body_buffer_size 10024M;
+  client_body_timeout 120;
+
+  add_header X-Clacks-Overhead "GNU Terry Pratchett";
+  add_header X-Clacks-Overhead "GNU Terry Pratchet";
+  add_header Access-Control-Allow-Origin *;
+  add_header 'Access-Control-Allow-Credentials' 'true';
+  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+  add_header 'Access-Control-Allow-Headers' 'Authorization,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+
+  location /images {
+    alias /var/www/images;
+  }
+
+  location ~* \.(php|aspx|myadmin|asp)$ {
+    deny all;
+  }
+
+  location / {
+    include /etc/nginx/uwsgi_params.par;
+    uwsgi_pass uwsgi:3031;
+    uwsgi_max_temp_file_size 10024m;
+  }
+
+  location /static {
+    alias /var/www/static;
+  }
+
+  # Upload form should be submitted to this location
+  location /upload {
+
+        # Pass altered request body to this location
+        upload_pass   /api/uploads/complete/;
+
+        # Store files to this directory
+        # The directory is hashed, subdirectories 0 1 2 3 4 5 6 7 8 9 should exist
+        upload_store /var/www/images/_upload 1;        
+        upload_store_access user:rw group:rw all:rw;
+
+        # Set specified fields in request body
+        upload_set_form_field $upload_field_name.name "$upload_file_name";
+        upload_set_form_field $upload_field_name.content_type "$upload_content_type";
+        upload_set_form_field $upload_field_name.path "$upload_tmp_path";
+
+        # Inform backend about hash and size of a file
+        upload_aggregate_form_field "$upload_field_name.md5" "$upload_file_md5";
+        upload_aggregate_form_field "$upload_field_name.size" "$upload_file_size";
+
+        upload_pass_form_field "^submit$|^description$";
+        upload_pass_form_field "^SREGISTRY_EVENT$";
+        upload_pass_form_field "^collection$";
+        upload_pass_form_field "^name$";
+        upload_pass_form_field "^tag$";
+        upload_cleanup 400-599;
+
+    }
+
+    location /v1/build-ws/ {
+        proxy_pass http://websocket; # daphne (ASGI) listening on port 3032
+        proxy_http_version 1.1;
+        proxy_read_timeout 86400;
+        proxy_redirect     off;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $server_name;
+   }
+}

@@ -54,6 +54,8 @@ urlpatterns = [
     url(r"^v1/entities/?$", views.GetEntitiesView.as_view()),
     url(r"^v1/tags/(?P<collection_id>.+?)/?$", views.GetCollectionTagsView.as_view()),
     url(r"^v1/$", views.LibraryBaseView.as_view()),
+    url(r'^v1/build$', views.BuildContainersView.as_view()), # build containers
+    url(r'^v1/build/(?P<buildid>.+?)$', views.BuildContainersView.as_view()), # build containers
 ]
 
 

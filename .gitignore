@@ -22,6 +22,7 @@ OLD
 secrets.py
 local_settings.py
 cronjob
+lib/unmarshal.so
 
 # Static #
 ##########

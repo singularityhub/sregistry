@@ -11,5 +11,6 @@ from .images import (
     ContainersView,
     GetNamedCollectionView,
     GetNamedContainerView,
+    BuildContainersView,
 )
 from .auth import TokenStatusView, GetNamedEntityView, GetEntitiesView

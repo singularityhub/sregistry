@@ -43,6 +43,20 @@ import tempfile
 import json
 import uuid
 import os
+import random
+import string
+
+# regarding remote build singularity spec is send to library as binary.
+# So we need go unmarshal to it
+from ctypes import *
+
+lib = cdll.LoadLibrary("/code/lib/unmarshal.so")
+
+class GoString(Structure):
+    _fields_ = [("p", c_char_p), ("n", c_longlong)]
+
+lib.Unmarshal.argtypes = [GoString, GoString]
+lib.Unmarshal.restype = int
 
 
 # Image Files
@@ -567,4 +581,178 @@ class GetNamedContainerView(RatelimitMixin, APIView):
         # And it's created in the next view.
 
         data = generate_collection_details(collection, containers, token.user)
+        return Response(data={"data": data}, status=200)
+
+
+class BuildContainersView(RatelimitMixin, APIView):
+    """Return a simple list of containers
+       POST /v1/build
+       GET /v1/build/
+       PUT /v1/build/.+/_cancel
+    """
+    renderer_classes = (JSONRenderer,)
+    ratelimit_key = 'ip'
+    ratelimit_rate = settings.VIEW_RATE_LIMIT
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = ('GET', 'POST',)
+    renderer_classes = (JSONRenderer,)
+
+    def post(self, request, format=None):
+
+        print("POST BuildContainersView")
+        raw=request.data.get('definitionRaw').encode()
+        print(request.query_params)
+
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+        token = get_token(request)
+        user = token.user
+        key = ''.join([random.choice(string.ascii_lowercase
+                    + string.digits) for n in range(24)])
+        filename = "/tmp/.{}.spec".format(key).encode()
+        ret = lib.Unmarshal(GoString(raw,len(raw)),GoString(filename,len(filename)))
+        data = {"id": key,"libraryRef": "{0}/remote-builds/rb-{1}".format(user,key)}
+        return Response(data={"data": data}, status=200)
+
+    def push_get(self, request, username, collection, name, version):
+
+        print("BUILD PushNamedContainer")
+
+        token = get_token(request)
+
+        # Look up the collection
+        try:
+            collection = Collection.objects.get(name=collection)
+        except Collection.DoesNotExist:
+            return Response(status=404)
+
+        if token.user not in collection.owners.all():
+            return Response(status=403)
+
+        # We have to generate a temporary tag, or it will overwrite latest
+#        tag = "DUMMY-%s" % str(uuid.uuid4())
+        tag = "latest"
+
+        # The container will always be created, and it needs to be handled later
+        container, created = Container.objects.get_or_create(
+            collection=collection,
+            name=name,
+            frozen=False,
+            tag=tag,
+            version="sha256." + version,
+        )
+
+        arch = request.query_params.get('arch')
+        if arch:
+            container.metadata['arch'] = arch
+
+        data = generate_container_metadata(container)
+#        print("BUILD PUSH DATA: {}".format(data))
+        return data
+
+    def push_put(self, request, container_id, secret, filename, format=None):
+
+        print("BUILD PUSH PUT: PushImageFileView")
+        print(container_id)
+        print(secret)
+
+        # Look up the container
+        try:
+            container = Container.objects.get(id=container_id)
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        # The secret must match the one just generated for the URL
+        if container.metadata.get('pushSecret', 'nope') != secret:
+            return Response(status=403)
+        del container.metadata['pushSecret']
+
+        # Create collection root, if it doesn't exist
+        image_home = "%s/%s" %(settings.MEDIA_ROOT, container.collection.name)
+        if not os.path.exists(image_home):
+            os.mkdir(image_home)
+
+        # Write the file to location
+        from shub.apps.api.models import ImageFile
+        container_path = os.path.join(image_home, "%s-%s.sif" % (container.name, container.version))
+        shutil.move(filename, container_path)
+
+#        file_obj = request.data['file']
+#
+#        with default_storage.open(container_path, 'wb+') as destination:
+#            for chunk in file_obj.chunks():
+#                destination.write(chunk)
+
+        # Save newly uploaded file to model
+        reopen = open(container_path, "rb")
+        django_file = File(reopen)
+
+        imagefile = ImageFile(collection=container.collection.name,
+                              name=container_path)
+        imagefile.datafile.save(container_path, django_file, save=True)
+        container.image = imagefile
+        container.save()
+
+    def push_post(self, request, container_id):
+
+        # Look up the container to set a temporary upload secret
+        try:
+            container = Container.objects.get(id=container_id)
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        # check user permission
+        token = get_token(request)
+        if token.user not in container.collection.owners.all():
+            return Response(status=403)
+
+        push_secret = str(uuid.uuid4())
+        container.metadata['pushSecret'] = push_secret
+        container.save()
+
+        # TODO this could check for Google Build, and return signed upload URL, or S3 signed URL
+        url = settings.DOMAIN_NAME + reverse(
+            "PushImageFileView", args=[str(container_id), push_secret]
+        )
+
+        data = {"uploadURL": url}
+        return data
+
+    def get(self, request, buildid, *args, **kwargs):
+
+        print("GET BuildContainersView")
+        print(request.data)
+        print(request.query_params)
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+
+        token = get_token(request)
+        user = token.user
+
+        libraryRef = "{0}/remote-builds/rb-{1}".format(user,buildid)
+        libraryURL = settings.DOMAIN_NAME
+#
+        collection = "remote-builds"
+        name = "rb-{}".format(buildid)
+        data = self.push_get(request, user, collection, name, "latest")
+        container_id = data['id']
+#
+#        return RequestPushImageFileView.as_view()(request, container_id, *args)
+        data = self.push_post(request, container_id)
+        secret = data['uploadURL'].split('/')[-1]
+#
+        filename = "/tmp/.{}.img".format(buildid)
+        try:
+            imageSize = os.path.getsize(filename)
+        except FileNotFoundError:
+            return Response(status=404)
+
+        self.push_put(request, container_id, secret, filename)
+#
+# To be modify accordingly to real complete status
+        isComplete = True
+        data = {'imageSize': imageSize, 'isComplete': isComplete, 'libraryRef': libraryRef, 'libraryURL': libraryURL}
+        print("data: {0}".format(data))
         return Response(data={"data": data}, status=200)
