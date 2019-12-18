@@ -22,4 +22,6 @@ fi
 # Make sure directories that are shared are created
 mkdir -p /var/www/images/_upload/{0..9} && chmod 777 -R /var/www/images/_upload
 
-uwsgi uwsgi.ini
+# Add support to websocket server, Daphne, throught django channels 
+uwsgi uwsgi.ini & \
+daphne --root-path "/v1/build-ws" -b 0.0.0.0 -p 3032 --proxy-headers shub.asgi:application
