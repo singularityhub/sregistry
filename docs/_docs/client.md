@@ -165,6 +165,15 @@ This is a first effort to provide support to `remote build`.
 Freshly build image on application server (aka `worker`) is then pushed on library...
 So we need [singularity client](https://sylabs.io) installed on application server.
 
+### Motivation
+
+Remote build provide user without local compute resource (for instance), 
+to build remotely and retrieved locally container image on their desktop.
+
+It's also a way to share quickly conitainer image.
+
+You can proceed through [googlebuild](https://singularityhub.github.io/sregistry/docs/plugins/google-build) plugin,
+but it's not everyone that have the opportunity to access google cloud, for security reason for instance...
 
 ### In the nutshell
 
@@ -178,7 +187,7 @@ This is the same than for [Singularity Push](#singularity-push)
 
 ### Install
 
-You need to build new lovally image, withe new argument ENABLE_REMOTEBUILD set to true:
+You need to build new locally image, with new argument ENABLE_REMOTEBUILD set to true:
 
 ```
 docker build --build-arg ENABLE_REMOTEBUILD=true -t quay.io/quay.io/vanessa/sregistry .
@@ -204,6 +213,7 @@ singularity build --builder https://127.0.0.1 --detached <spec file>
 
 - [X] build on remote library
 - [X] retrieve locally build
+- [ ] implement `WYSIWYG` via web interface through popular [django-ace](https://github.com/django-ace/django-ace)
 
 ### TODO :boom:
 
