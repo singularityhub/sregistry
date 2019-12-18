@@ -162,7 +162,7 @@ Of course, do this at your own risk! That is a *CHONKER*!
 ## Singularity Remote Build
 
 This is a first effort to provide support to `remote build`.
-Freshly build image on application server (aka `worker`) is the push on library...
+Freshly build image on application server (aka `worker`) is then pushed on library...
 So we need [singularity client](https://sylabs.io) installed on application server.
 
 
@@ -202,8 +202,8 @@ singularity build --builder https://127.0.0.1 --detached <spec file>
 
 ### Features
 
-- [X] 
-- [ ] 
+- [X] build on remote library
+- [X] retrieve locally build
 
 ### TODO :boom:
 
@@ -211,12 +211,12 @@ singularity build --builder https://127.0.0.1 --detached <spec file>
 - [ ] Re-use Django Push View in Build View
 - [ ] Optimize channels consumer `BuildConsumer`
 - [ ] Extend collection spacename to username
+- [ ] Dedicated worker for build
 
 
 ### Issues :sweat_drops:
 
 - [ ] Need to manually create collection `remote-builds`
-- [ ] Dedicated worker for build
 
 # Singularity Registry Client
 
