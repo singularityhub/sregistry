@@ -7,6 +7,7 @@ ARG ENABLE_LDAP=false
 ARG ENABLE_PAM=false
 ARG ENABLE_PGP=false
 ARG ENABLE_GOOGLEBUILD=false
+ARG ENABLE_REMOTEBUILD=false
 ARG ENABLE_GLOBUS=false
 ARG ENABLE_SAML=false
 
@@ -64,6 +65,9 @@ RUN if $ENABLE_PGP; then pip install pgpdump>=1.4; fi;
 # Ensure Google Build Installed
 RUN if $ENABLE_GOOGLEBUILD; then pip install sregistry[google-build] ; fi;
 ENV SREGISTRY_GOOGLE_STORAGE_PRIVATE=true
+
+# Install websocket requisite for remote build
+RUN if $ENABLE_REMOTEBUILD; then pip install channels channels_redis ; fi;
 
 # Install Globus (uncomment if wanted)
 RUN if $ENABLE_GLOBUS; then /bin/bash /code/scripts/globus/globus-install.sh ; fi;
