@@ -159,6 +159,65 @@ Of course, do this at your own risk! That is a *CHONKER*!
 <hr>
 <br>
 
+## Singularity Remote Build
+
+This is a first effort to provide support to `remote build`.
+Freshly build image on application server (aka `worker`) is the push on library...
+So we need [singularity client](https://sylabs.io) installed on application server.
+
+
+### In the nutshell
+
+This basic implementation of the Sylabs Library API use django
+[channels](https://channels.readthedocs.io/en/latest/) Websocket Server
+[Daphne](https://github.com/django/daphne/) and [ASGI](https://channels.readthedocs.io/en/latest/asgi.html)
+
+### Requisite
+
+This is the same than for [Singularity Push](#singularity-push)
+
+### Install
+
+You need to build new lovally image, withe new argument ENABLE_REMOTEBUILD set to true:
+
+```
+docker build --build-arg ENABLE_REMOTEBUILD=true -t quay.io/quay.io/vanessa/sregistry .
+```
+
+### Utilisation
+
+To build remotely image on [sregistry](https://singularityhub.github.io/sregistry):
+
+```
+singularity build --builder https://127.0.0.1 --remote <image name> <spec file>
+```
+
+Container image `<image name>` will then be generate locally and on remote library.
+
+To generate image only remotely, use:
+
+```
+singularity build --builder https://127.0.0.1 --detached <spec file>
+```
+
+### Features
+
+- [X] 
+- [ ] 
+
+### TODO :boom:
+
+- [ ] Automatically create collection `remote-builds`
+- [ ] Re-use Django Push View in Build View
+- [ ] Optimize channels consumer `BuildConsumer`
+- [ ] Extend collection spacename to username
+
+
+### Issues :sweat_drops:
+
+- [ ] Need to manually create collection `remote-builds`
+- [ ] Dedicated worker for build
+
 # Singularity Registry Client
 
 Singularity Registry Global Client, or [sregistry-cli](https://github.com/singularityhub/sregistry-cli),
