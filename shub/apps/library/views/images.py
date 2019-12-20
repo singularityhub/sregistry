@@ -45,19 +45,10 @@ import uuid
 import os
 import random
 import string
+import base64
 
 # regarding remote build singularity spec is send to library as binary.
 # So we need go unmarshal to it
-from ctypes import *
-
-lib = cdll.LoadLibrary("/code/lib/unmarshal.so")
-
-class GoString(Structure):
-    _fields_ = [("p", c_char_p), ("n", c_longlong)]
-
-lib.Unmarshal.argtypes = [GoString, GoString]
-lib.Unmarshal.restype = int
-
 
 # Image Files
 
@@ -600,7 +591,8 @@ class BuildContainersView(RatelimitMixin, APIView):
     def post(self, request, format=None):
 
         print("POST BuildContainersView")
-        raw=request.data.get('definitionRaw').encode()
+        raw=base64.b64decode(request.data.get('definitionRaw')).decode()
+#        print("definitionRaw: {}\n".format(raw))
         print(request.query_params)
 
         if not validate_token(request):
@@ -611,7 +603,9 @@ class BuildContainersView(RatelimitMixin, APIView):
         key = ''.join([random.choice(string.ascii_lowercase
                     + string.digits) for n in range(24)])
         filename = "/tmp/.{}.spec".format(key).encode()
-        ret = lib.Unmarshal(GoString(raw,len(raw)),GoString(filename,len(filename)))
+        destname = open(filename, 'w')
+        destname.write(raw)
+        destname.close()
         data = {"id": key,"libraryRef": "{0}/remote-builds/rb-{1}".format(user,key)}
         return Response(data={"data": data}, status=200)
 
