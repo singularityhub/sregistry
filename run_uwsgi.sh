@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 python manage.py makemigrations users
 python manage.py makemigrations api
@@ -21,14 +21,6 @@ fi
 
 # Make sure directories that are shared are created
 mkdir -p /var/www/images/_upload/{0..9} && chmod 777 -R /var/www/images/_upload
-
-# to decode singularity spec file send by client POST
-# as it's Go Marshal have been used, we need to call 
-# Go Unmarshal in Python! 
-[ -d /code/lib ] || mkdir -p /code/lib
-[ -d /code/lib ] && 
-    (cd /code/lib; [ -f unmarshal.go -a -x /usr/local/go/bin/go ] && 
-    /usr/local/go/bin/go build -o unmarshal.so -buildmode=c-shared unmarshal.go)
 
 # grep -Fxq seems not working...
 [ $(awk 'BEGIN{ok=0}/PLUGINS_ENABLED/,/]/{if (!/#/&&/remote_build/) ok=1}END{print ok}' \
