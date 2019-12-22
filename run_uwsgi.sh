@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 python manage.py makemigrations users
 python manage.py makemigrations api
@@ -30,6 +30,9 @@ mkdir -p /var/www/images/_upload/{0..9} && chmod 777 -R /var/www/images/_upload
     (cd /code/lib; [ -f unmarshal.go -a -x /usr/local/go/bin/go ] && 
     /usr/local/go/bin/go build -o unmarshal.so -buildmode=c-shared unmarshal.go)
 
+# grep -Fxq seems not working...
+[ $(awk 'BEGIN{ok=0}/PLUGINS_ENABLED/,/]/{if (!/#/&&/remote_build/) ok=1}END{print ok}' \
+/code/shub/settings/config.py) -eq 0 ] && uwsgi uwsgi.ini ||
 # Add support to websocket server, Daphne, throught django channels 
 uwsgi uwsgi.ini & \
-daphne --root-path "/v1/build-ws" -b 0.0.0.0 -p 3032 --proxy-headers shub.asgi:application
+    daphne --root-path "/v1/build-ws" -b 0.0.0.0 -p 3032 --proxy-headers shub.plugins.remote_build.asgi:application
