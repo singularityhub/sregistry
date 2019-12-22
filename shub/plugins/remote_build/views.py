@@ -27,22 +27,16 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 
 from shub.apps.library.views.helpers import (
-    formatString,
-    generate_collection_tags,
-    generate_collections_list,
-    generate_collection_details,  # includes containers
-    generate_collection_metadata,
     generate_container_metadata,
     get_token,
-    get_container,
     validate_token,
 )
 
 from shub.apps.library.views.images import (
-    PushImageView, #get(self, request, username, collection, name, version)
-    RequestPushImageFileView, #post(self, request, container_id, format=None)
-    PushImageFileView, #put(self, request, container_id, secret, format=None)
-    CompletePushImageFileView, #put(self, request, container_id, format=None)
+    PushImageView,
+    RequestPushImageFileView,
+    PushImageFileView,
+    CompletePushImageFileView,
 )
 
 import django_rq
@@ -55,33 +49,8 @@ import random
 import string
 import base64
 
-class FileUploadView(RatelimitMixin, APIView):
-    parser_classes = ( MultiPartParser, FileUploadParser)
-    renderer_classes = (JSONRenderer,)
-    ratelimit_key = 'ip'
-    ratelimit_rate = settings.VIEW_RATE_LIMIT
-    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = 'POST'
-
-
-    def post(self, request, filename, format=None):
-        print("POST FileUploadView")
-#        if 'file' not in request.data:
-#            raise ParseError("Empty content")
-#
-#        file_obj = request.data['file']
-
-#        mymodel.my_file_field.save(f.name, f, save=True)
-#        file_obj = request.data['file']
-        # to access files
-        print(request.FILES)
-        # to access data
-        print(request.data)
-        print("request data file {}".format(request.files))
-        return Response({'data': request.data}, status=204)
-
 class BuildContainersView(RatelimitMixin, APIView):
-    """Return a simple list of containers
+    """Build Containers
        POST /v1/build
        GET /v1/build/
        PUT /v1/build/.+/_cancel
