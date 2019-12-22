@@ -14,6 +14,12 @@ from .tasks import *
 if "pam_auth" in PLUGINS_ENABLED:
     INSTALLED_APPS += ["django_pam"]
 
+if "remote_build" in PLUGINS_ENABLED:
+    INSTALLED_APPS += ["channels"]
+# ASGI_APPLICATION should be set to your outermost router
+    ASGI_APPLICATION = 'shub.plugins.remote_build.routing.application'
+
+
 # If google_build in use, we are required to include GitHub
 if "google_build" in PLUGINS_ENABLED:
 
