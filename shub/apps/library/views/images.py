@@ -127,7 +127,7 @@ class PushImageFileView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
     parser_classes = (OctetStreamParser,)
 
-    def put(self, request, container_id, secret, format=None):
+    def put(self, request, container_id, secret, filename=None, format=None):
 
         print("PUT PushImageFileView")
 
@@ -157,11 +157,14 @@ class PushImageFileView(RatelimitMixin, APIView):
         final_container_path = os.path.join(
             image_home, "%s-%s.sif" % (container.name, container.version)
         )
-        file_obj = request.data["file"]
+        if filename:
+            shutil.move(filename, container_path)
+        else:
+            file_obj = request.data["file"]
 
-        with default_storage.open(container_path, "wb+") as destination:
-            for chunk in file_obj.chunks():
-                destination.write(chunk)
+            with default_storage.open(container_path, "wb+") as destination:
+                for chunk in file_obj.chunks():
+                    destination.write(chunk)
 
         # Save newly uploaded file to model
         reopen = open(container_path, "rb")
@@ -221,6 +224,7 @@ class PushImageView(RatelimitMixin, APIView):
 
         # We have to generate a temporary tag, or it will overwrite latest
         tag = "DUMMY-%s" % str(uuid.uuid4())
+        tag = "latest"
 
         # The container will always be created, and it needs to be handled later
         container, created = Container.objects.get_or_create(
