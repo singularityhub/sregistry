@@ -19,6 +19,20 @@ if "remote_build" in PLUGINS_ENABLED:
 # ASGI_APPLICATION should be set to your outermost router
     ASGI_APPLICATION = 'shub.plugins.remote_build.routing.application'
 
+# Channel layer definitions
+# http://channels.readthedocs.io/en/latest/topics/channel_layers.html
+
+#    redis_host = os.environ.get('REDIS_HOST', '172.16.0.8')
+#
+#     CHANNEL_LAYERS = {
+#         "default": {
+#             # This example app uses the Redis channel layer implementation channels_redis
+#             "BACKEND": "channels_redis.core.RedisChannelLayer",
+#            "CONFIG": {
+#                 "hosts": [(redis_host, 6379)],
+#             },
+#         },
+#    }
 
 # If google_build in use, we are required to include GitHub
 if "google_build" in PLUGINS_ENABLED:

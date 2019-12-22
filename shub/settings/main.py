@@ -58,22 +58,6 @@ TEMPLATES = [
 TEMPLATES[0]["OPTIONS"]["debug"] = True
 WSGI_APPLICATION = "shub.wsgi.application"
 
-# Channel layer definitions
-# http://channels.readthedocs.io/en/latest/topics/channel_layers.html
-
-#redis_host = os.environ.get('REDIS_HOST', '172.16.0.8')
-#
-#CHANNEL_LAYERS = {
-#    "default": {
-#        # This example app uses the Redis channel layer implementation channels_redis
-#        "BACKEND": "channels_redis.core.RedisChannelLayer",
-#        "CONFIG": {
-#            "hosts": [(redis_host, 6379)],
-#        },
-#    },
-#}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
