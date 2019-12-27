@@ -48,6 +48,7 @@ import os
 import random
 import string
 import base64
+import requests
 
 class BuildContainersView(RatelimitMixin, APIView):
     """Build Containers
@@ -55,7 +56,6 @@ class BuildContainersView(RatelimitMixin, APIView):
        GET /v1/build/
        PUT /v1/build/.+/_cancel
     """
-    renderer_classes = (JSONRenderer,)
     ratelimit_key = 'ip'
     ratelimit_rate = settings.VIEW_RATE_LIMIT
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
@@ -66,14 +66,15 @@ class BuildContainersView(RatelimitMixin, APIView):
 
         print("POST BuildContainersView")
         raw=base64.b64decode(request.data.get('definitionRaw')).decode()
-        print("definitionRaw: {}\n".format(raw))
         print(request.query_params)
 
         if not validate_token(request):
             print("Token not valid")
             return Response(status=404)
+
         token = get_token(request)
         user = token.user
+        # Define randomly container image name...
         key = ''.join([random.choice(string.ascii_lowercase
                     + string.digits) for n in range(24)])
         filename = "/tmp/.{}.spec".format(key).encode()
@@ -91,7 +92,6 @@ class BuildContainersView(RatelimitMixin, APIView):
     def get(self, request, buildid):
 
         print("GET BuildContainersView")
-        print(request.data)
         print(request.query_params)
         if not validate_token(request):
             print("Token not valid")
@@ -101,17 +101,29 @@ class BuildContainersView(RatelimitMixin, APIView):
         user = token.user
 
         tag = "latest"
-        libraryRef = "{}/remote-builds/rb-{}:{}".format(user,buildid,tag)
-        libraryURL = settings.DOMAIN_NAME
-#
         collection = "remote-builds"
         name = "rb-{}".format(buildid)
+        libraryURL = settings.DOMAIN_NAME
+        filename = "/tmp/.{}.img".format(buildid)
+
+        from sregistry.utils import get_file_hash
+        version = get_file_hash(filename, "sha256")
+        libraryRef = "{}/remote-builds/rb-{}:sha256.{}".format(user,buildid,version)
+
+        try:
+            print("Retrieve file {} size...".format(filename))
+            imageSize = os.path.getsize(filename)
+        except FileNotFoundError:
+            print("Failed to retrieve file {} size!".format(filename))
+            return Response(status=404)
+
+#
         try:
             data = PushImageView.as_view()(request._request,
             username=user,
             collection=collection,
             name=name,
-            version="latest"
+            version=version
             ).data['data']
             container_id = data['id']
             print("PushNamedContainerView data {}".format(data))
@@ -124,30 +136,15 @@ class BuildContainersView(RatelimitMixin, APIView):
             data = RequestPushImageFileView.as_view()(request._request,
             container_id=container_id
             ).data['data']
-            secret = data['uploadURL'].split('/')[-1]
-            print("container_id {} secret: {}".format(container_id,secret))
+            url = data['uploadURL']
+            secret = url.split('/')[-1]
         except:
             print("Failed to POST RequestPushImageFileView!")
             return Response(status=404)
 
-        filename = "/tmp/.{}.img".format(buildid)
-        try:
-            print("Retrieve file {} size...".format(filename))
-            imageSize = os.path.getsize(filename)
-        except FileNotFoundError:
-            print("Failed to retrieve file {} size!".format(filename))
-            return Response(status=404)
-
-        try:
-            request._request.method = 'PUT'
-            data = PushImageFileView.as_view()(request._request,
-            container_id=container_id,
-            secret=secret,
-            filename=filename
-            )
-        except:
-            print("Failed to PUT PushImageFileView!")
-            return Response(status=404)
+        data = open(filename, 'rb')
+        headers = {'Content-type': 'application/octet-stream','Authorization': request.META.get("HTTP_AUTHORIZATION")}
+        r = requests.put(url, data=data, headers=headers)
 #
         try:
             request._request.method = 'PUT'
@@ -158,10 +155,8 @@ class BuildContainersView(RatelimitMixin, APIView):
             print("Failed to PUT CompletePushImageFileView!")
             return Response(status=404)
 
-##
 ## To be modify accordingly to real complete status
         isComplete = True
         data = {'imageSize': imageSize, 'isComplete': isComplete, 'libraryRef': libraryRef, 'libraryURL': libraryURL}
-        print("data: {0}".format(data))
         request._request.method = 'GET'
         return Response(data={"data": data}, status=200)
