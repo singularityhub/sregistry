@@ -61,7 +61,7 @@ class BuildContainersView(RatelimitMixin, APIView):
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
     ratelimit_method = ('GET', 'POST',)
     renderer_classes = (JSONRenderer,)
-    parser_classes = (FileUploadParser,)
+#    parser_classes = (FileUploadParser,)
 
     def post(self, request, format=None):
 
