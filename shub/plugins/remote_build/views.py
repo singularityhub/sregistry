@@ -89,9 +89,20 @@ class BuildContainersView(RatelimitMixin, APIView):
         data = {"id": key,"libraryRef": "{0}/remote-builds/rb-{1}".format(user,key)}
         return Response(data={"data": data}, status=200)
 
+class PushContainersView(RatelimitMixin, APIView):
+    """Push Container image
+       POST /v1/push
+       GET /v1/push/<buildid>
+    """
+    ratelimit_key = 'ip'
+    ratelimit_rate = settings.VIEW_RATE_LIMIT
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = ('GET', 'POST',)
+    renderer_classes = (JSONRenderer,)
+
     def get(self, request, buildid):
 
-        print("GET BuildContainersView")
+        print("GET PushContainersView")
         print(request.query_params)
         if not validate_token(request):
             print("Token not valid")
