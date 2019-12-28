@@ -1,5 +1,5 @@
 ---
-title: "Plugin: Custom Builder and Storage"
+title: "Plugin: Remote Builder and REST API endpoints"
 pdf: true
 toc: true
 permalink: docs/plugins/remote-build
