@@ -51,19 +51,20 @@ Remote build activity can also be raised through API REST endpoint call.
 Two endpoints have been added :  `/v1/push` and  `/v1/build`.
 Indeed, build process can be split in two phases :
 
-```
+```bash
 singularity build <image name> <spec file>  # Local resources consumption
 singularity push <image name> library://<image uri> # Push to remote library
 ```
 
 Both phases will be handled right now with only one command invocation:
 
-```
+```bash
 singularity build --remote <image name> <spec file> # No consumption of local resources
 ```
 
 Or soon (work still in progress):
-```
+
+```bash
 http POST https://<library uri>/v1/build Authorization:"BEARER <TOKEN>"  Content-Disposition:"inline;filename=<image name>" @<image name>
 ```
 
@@ -71,7 +72,7 @@ http POST https://<library uri>/v1/build Authorization:"BEARER <TOKEN>"  Content
 
 Work right now, `PUSH` endpoint:
 
-```
+```bash
 curl -XPOST https://<library uri>/v1/push -H 'Authorization:BEARER <TOKEN>' --upload-file '<image name>' -H 'Content-Disposition:inline; filename=<image name>'
 ```
 
@@ -93,7 +94,7 @@ Apply the same requisites as is used for [Pushing Singularity image](https://sin
 
 You need to build new locally image, with new argument ENABLE_REMOTEBUILD set to true:
 
-```
+```bash
 docker build --build-arg ENABLE_REMOTEBUILD=true -t quay.io/quay.io/vanessa/sregistry .
 ```
 
@@ -101,7 +102,7 @@ docker build --build-arg ENABLE_REMOTEBUILD=true -t quay.io/quay.io/vanessa/sreg
 
 To build remotely image on [sregistry](https://singularityhub.github.io/sregistry):
 
-```
+```bash
 singularity build --builder https://<library uri> --remote <image name> <spec file>
 ```
 
@@ -109,7 +110,7 @@ Container image `<image name>` will then be generate locally and on remote libra
 
 To generate image only remotely, use:
 
-```
+```bash
 singularity build --builder https://<library uri> --detached <spec file>
 ```
 
