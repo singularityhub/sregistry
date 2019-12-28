@@ -99,6 +99,7 @@ class PushContainersView(RatelimitMixin, APIView):
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
     ratelimit_method = ('GET', 'POST',)
     renderer_classes = (JSONRenderer,)
+    parser_classes = (FileUploadParser,)
 
     def get(self, request, buildid):
 
@@ -111,7 +112,6 @@ class PushContainersView(RatelimitMixin, APIView):
         token = get_token(request)
         user = token.user
 
-        tag = "latest"
         collection = "remote-builds"
         name = "rb-{}".format(buildid)
         libraryURL = settings.DOMAIN_NAME
@@ -171,3 +171,40 @@ class PushContainersView(RatelimitMixin, APIView):
         data = {'imageSize': imageSize, 'isComplete': isComplete, 'libraryRef': libraryRef, 'libraryURL': libraryURL}
         request._request.method = 'GET'
         return Response(data={"data": data}, status=200)
+
+    def post(self, request, format=None):
+
+        print("POST PushContainersView")
+
+        if 'file' in request.data:
+            file_obj = request.data['file']
+        else:
+            msg = "singularity image must be updated"
+            return Response({'error':msg}, status=404)
+
+        print(request.query_params)
+
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=404)
+
+        token = get_token(request)
+        user = token.user
+        # Define randomly container image name...
+        buildid = ''.join([random.choice(string.ascii_lowercase
+                    + string.digits) for n in range(24)])
+
+        filename = "/tmp/.{}.img".format(buildid).encode()
+
+        try:
+            print("Writing spec file in {}...".format(filename))
+            file_obj = request.data['file']
+            with open(filename, "wb+") as destname:
+                for chunk in file_obj.chunks():
+                    destname.write(chunk)
+        except:
+            print("Failed to write spec to file {}".format(filename))
+            return Response(status=404)
+
+        request._request.method = 'GET'
+        return self.get(request, buildid)
