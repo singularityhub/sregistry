@@ -61,11 +61,23 @@ class BuildContainersView(RatelimitMixin, APIView):
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
     ratelimit_method = ('GET', 'POST',)
     renderer_classes = (JSONRenderer,)
+    parser_classes = (FileUploadParser,)
 
     def post(self, request, format=None):
 
         print("POST BuildContainersView")
-        raw=base64.b64decode(request.data.get('definitionRaw')).decode()
+
+        definitionRaw = request.data.get('definitionRaw')
+
+        if definitionRaw:
+        # deserialized recipe raw data
+            raw=base64.b64decode(definitionRaw).decode()
+        elif 'file' in request.data:
+            file_obj = request.data['file']
+        else:
+            msg = "singularity recipe must be provide as raw data"
+            return Response({'error':msg}, status=404)
+
         print(request.query_params)
 
         if not validate_token(request):
@@ -75,18 +87,36 @@ class BuildContainersView(RatelimitMixin, APIView):
         token = get_token(request)
         user = token.user
         # Define randomly container image name...
-        key = ''.join([random.choice(string.ascii_lowercase
+
+        buildid = ''.join([random.choice(string.ascii_lowercase
                     + string.digits) for n in range(24)])
-        filename = "/tmp/.{}.spec".format(key).encode()
+
+        filename = "/tmp/.{}.spec".format(buildid).encode()
+
         try:
             print("Writing spec file in {}...".format(filename))
-            destname = open(filename, 'w')
-            destname.write(raw)
-            destname.close()
+            if 'file' in request.data:
+                file_obj = request.data['file']
+                with open(filename, "wb+") as destname:
+                    for chunk in file_obj.chunks():
+                        destname.write(chunk)
+            else:
+                destname = open(filename, 'w')
+                destname.write(raw)
+                destname.close()
         except:
             print("Failed to write spec to file {}".format(filename))
             return Response(status=404)
-        data = {"id": key,"libraryRef": "{0}/remote-builds/rb-{1}".format(user,key)}
+
+        libraryRef = "{0}/remote-builds/rb-{1}".format(user,buildid)
+
+#  To be implemented : websocket part...
+#       if 'file' in request.data:
+#           import websocket
+#            ws = websocket.WebSocket()
+#            ws.connect("wss://{}/v1/build-ws/{}".format(settings.DOMAIN_NAME, buildid))
+
+        data = {"id": buildid, "libraryRef": libraryRef}
         return Response(data={"data": data}, status=200)
 
 class PushContainersView(RatelimitMixin, APIView):
