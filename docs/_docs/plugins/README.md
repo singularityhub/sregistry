@@ -25,7 +25,7 @@ your registries' local `shub/settings/secrets.py` file.
  - [SAML](saml): Authentication with SAML
  - [Google Build](google-build) provides build and storage on Google Cloud.
  - [Keystore](pgp) provides a standard keystore for signing containers
- - [Remote Build](google-build) provides remote build library as per Sylabs API
+ - [Remote Build](remote-build) provides a library endpoint to remotely build container
 
 The Dockerfile has some build arguments to build the Docker image according to the plugins software requirements. These variables are set to false by default:
 
