@@ -10,7 +10,7 @@
 
 ![contributors.svg](./contributors.svg)
 
-Do you like the graphic? It's done thanks to [sourcecred-action](https://github.com/sourcecred/sourcred-action).
+Do you like the graphic? It's done thanks to [sourcecred-action](https://github.com/sourcecred/sourcecred-action).
 
 ## What is Singularity Registry
 Singularity Registry Server is a server to provide management and storage of 
