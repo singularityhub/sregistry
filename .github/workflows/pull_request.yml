@@ -48,5 +48,6 @@ jobs:
         BRANCH_AGAINST: "master"
       run: |
           export BRANCH_FROM="update/sourcecred-$(date '+%Y-%m-%d')"
-          chmod +x .github/workflows/pull_request.sh
-          /bin/bash .github/workflows/pull_request.sh
+          wget https://github.com/singularityhub/sregistry/blob/a78fa4127d0970a318fd2539ac5eb4974516b661/.github/workflows/pull_request.sh
+          chmod +x pull_request.sh
+          /bin/bash pull_request.sh
