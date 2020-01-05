@@ -9,9 +9,9 @@ permalink: docs/plugins/remote-build
 
 ## Configure sregistry
 
-By default, remote build is disabled. To configure Singularity Registry Server to 
-build remotely container image, in settings/config.py, you must enable this plugin by 
-uncommenting it from the list here:
+By default, remote build is disabled. To configure Singularity Registry Server
+to build remotely container image, in settings/config.py, you must enable this
+plugin by uncommenting it from the list here:
 
 ```bash
 PLUGINS_ENABLED = [
@@ -23,7 +23,8 @@ PLUGINS_ENABLED = [
      'remote_build'
 ]
 ```
-This plugin need a dedicated docker build image. So you will need to build locally this image locally: 
+This plugin need a dedicated docker build image. So you will need to build
+locally this image locally: 
 
 ```bash
 $ docker build -f builder/Dockerfile -t quay.io/quay.io/vanessa/sregistry_builder .
@@ -43,9 +44,8 @@ Google Application Credentials.
 ## Singularity Remote Build
 
 This is a first effort to provide support to `remote build`.
-Freshly build image on application server (aka `worker`) is then pushed on library...
-So we need [singularity client](https://sylabs.io) installed on application server.
-Work is in progress to dedicate this build to some worker.
+Freshly build image on application builder is then pushed on library...
+So we need [singularity client](https://sylabs.io) installed.
 
 ### Motivation
 
@@ -86,7 +86,8 @@ curl -XPOST https://<library uri>/v1/push -H 'Authorization:BEARER <TOKEN>' \
 Using curl this time, but `httpie` work too...
 
 Of cours, you can proceed through existing plugin : [google-build](https://singularityhub.github.io/sregistry/docs/plugins/google-build),
-but it's not everyone that have the opportunity to access google cloud, for security reason for instance...
+but it's not everyone who
+have the opportunity to access google cloud, for security reason for instance...
 
 ### In the nutshell
 
