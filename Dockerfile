@@ -7,7 +7,6 @@ ARG ENABLE_LDAP=false
 ARG ENABLE_PAM=false
 ARG ENABLE_PGP=false
 ARG ENABLE_GOOGLEBUILD=false
-ARG ENABLE_REMOTEBUILD=true
 ARG ENABLE_GLOBUS=false
 ARG ENABLE_SAML=false
 
@@ -65,26 +64,6 @@ RUN if $ENABLE_PGP; then pip install pgpdump>=1.4; fi;
 # Ensure Google Build Installed
 RUN if $ENABLE_GOOGLEBUILD; then pip install sregistry[google-build] ; fi;
 ENV SREGISTRY_GOOGLE_STORAGE_PRIVATE=true
-
-# Install websocket requisite for remote build
-RUN if $ENABLE_REMOTEBUILD; then \
-apt-get update && apt-get install -y \
-    cryptsetup \
-    debootstrap \
-    yum ; \
-pip install channels channels_redis ; \
-export VERSION=1.13.4 OS=linux ARCH=amd64 && \
-  wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz && \
-  tar -C /usr/local -xzvf go$VERSION.$OS-$ARCH.tar.gz && \
-  rm go$VERSION.$OS-$ARCH.tar.gz; \
-export VERSION=3.5.0 && \
-    wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
-    tar -xzf singularity-${VERSION}.tar.gz -C /tmp && \
-        rm singularity-${VERSION}.tar.gz; \
-cd /tmp/singularity && export  PATH=/usr/local/go/bin:$PATH && ./mconfig && \
-    make -C builddir && \
-    make -C builddir install; \
-fi;
 
 # Install Globus (uncomment if wanted)
 RUN if $ENABLE_GLOBUS; then /bin/bash /code/scripts/globus/globus-install.sh ; fi;

@@ -4,6 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV MESSAGELEVEL QUIET
 
 ARG ENABLE_REMOTEBUILD=true
+ARG ENABLE_PAM=true
 
 ################################################################################
 # CORE
@@ -29,7 +30,7 @@ RUN export VERSION=1.13.4 OS=linux ARCH=amd64 && \
   wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz && \
   tar -C /usr/local -xzvf go$VERSION.$OS-$ARCH.tar.gz && \
   rm go$VERSION.$OS-$ARCH.tar.gz; \
-export VERSION=3.5.1 && \
+export VERSION=3.5.0 && \
     wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
     tar -xzf singularity-${VERSION}.tar.gz -C /tmp && \
         rm singularity-${VERSION}.tar.gz; \
@@ -37,8 +38,12 @@ cd /tmp/singularity && export  PATH=/usr/local/go/bin:$PATH && ./mconfig && \
     make -C builddir && \
     make -C builddir install
 
+# Install Python requirements out of /tmp so not triggered if other contents of /code change
+ADD builder/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
-RUN pip install django==2.2.8 djangorestframework==3.10.3 channels channels_redis 
+RUN pip install -r /tmp/requirements.txt
+# Install PAM Authentication (uncomment if wanted)
+RUN if $ENABLE_PAM; then pip install django-pam ; fi;
 
 ADD . /code/
 
