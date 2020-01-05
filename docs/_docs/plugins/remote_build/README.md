@@ -1,7 +1,7 @@
 ---
 title: "Plugin: Remote Builder and REST API endpoints"
-pdf: true
-toc: true
+pdf: false
+toc: false
 permalink: docs/plugins/remote-build
 ---
 
@@ -17,15 +17,20 @@ uncommenting it from the list here:
 PLUGINS_ENABLED = [
 #    'ldap_auth',
 #    'saml_auth',
+#    'pam_auth',
 #    'globus',
 #     'google_build',
      'remote_build'
 ]
 ```
-You will need to build the image locally with, at least, the build argument ENABLE_REMOTEBUILD set to true:
+This plugin need a dedicated docker build image. So you will need to build locally this image locally: 
 
 ```bash
-$ docker build --build-arg ENABLE_REMOTEBUILD=true -t quay.io/quay.io/vanessa/sregistry .
+$ docker build -f builder/Dockerfile -t quay.io/quay.io/vanessa/sregistry_builder .
+$ cp builder/docker-compose.yml .
+$ cp builder/nginx.conf.wss nging.conf # if use https
+# cp builder/nginx.conf.wss nging.conf # or if use http
+
 ```
 
 ## Secrets
@@ -95,7 +100,10 @@ Apply the same requisites as is used for [Pushing Singularity image](https://sin
 You need to build new locally image, with new argument ENABLE_REMOTEBUILD set to true:
 
 ```bash
-docker build --build-arg ENABLE_REMOTEBUILD=true -t quay.io/quay.io/vanessa/sregistry .
+$ docker build -f builder/Dockerfile -t quay.io/quay.io/vanessa/sregistry_builder .
+$ cp builder/docker-compose.yml .
+$ cp builder/nginx.conf.wss nging.conf # if use https
+# cp builder/nginx.conf.wss nging.conf # or if use http
 ```
 
 ### Utilisation
@@ -118,13 +126,9 @@ singularity build --builder https://<library uri> --detached <spec file>
 
 - [X] build on remote library
 - [X] retrieve locally build
-- [ ] implement `WYSIWYG` via web interface through popular [django-ace](https://github.com/django-ace/django-ace)
+- [ ] API REST endpoints to manipulate singularity images [WIP]
 
 ### TODO :boom:
 
-- [ ] Automatically create collection `remote-builds`
-- [X] Re-use Django Push View in Build View
 - [X] Optimize channels consumer `BuildConsumer`
 - [ ] Extend collection spacename to username
-- [ ] Dedicated worker for build (Is In progress...)
-
