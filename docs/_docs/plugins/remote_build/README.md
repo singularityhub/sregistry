@@ -70,7 +70,8 @@ singularity build --remote <image name> <spec file> # No consumption of local re
 Or soon (work still in progress):
 
 ```bash
-http POST https://<library uri>/v1/build Authorization:"BEARER <TOKEN>"  Content-Disposition:"inline;filename=<image name>" @<image name>
+http POST https://<library uri>/v1/build Authorization:"BEARER <TOKEN>"  \
+Content-Disposition:"inline;filename=<image name>" @<image name>
 ```
 
 `http` stand for popular [HTTP client](https://httpie.org/)
@@ -78,7 +79,8 @@ http POST https://<library uri>/v1/build Authorization:"BEARER <TOKEN>"  Content
 Work right now, `PUSH` endpoint:
 
 ```bash
-curl -XPOST https://<library uri>/v1/push -H 'Authorization:BEARER <TOKEN>' --upload-file '<image name>' -H 'Content-Disposition:inline; filename=<image name>'
+curl -XPOST https://<library uri>/v1/push -H 'Authorization:BEARER <TOKEN>' \
+--upload-file '<image name>' -H 'Content-Disposition:inline; filename=<image name>'
 ```
 
 Using curl this time, but `httpie` work too...
