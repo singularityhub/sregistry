@@ -1,6 +1,6 @@
 upstream websocket {
     ip_hash;
-    server 172.17.0.6:3032 fail_timeout=0;
+    server builder:3032 fail_timeout=0;
 }
 
 server {

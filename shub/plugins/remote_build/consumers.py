@@ -1,8 +1,10 @@
+from django.conf import settings
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import AsyncConsumer
 from channels.exceptions import StopConsumer
 
 import asyncio
+import os
 
 class BuildConsumer(AsyncConsumer):
     async def websocket_connect(self, message):
@@ -50,10 +52,12 @@ class BuildConsumer(AsyncConsumer):
         """
         self.buildid = self.scope["url_route"]["kwargs"]["buildid"]
         self.specfile = '/tmp/.{}.spec'.format(self.buildid)
-        self.image = '/tmp/.{}.img'.format(self.buildid)
-#        cmd = 'singularity build -F {} {}'.format(self.image,self.specfile)
-        cmd = 'dd if=/dev/zero of={} bs=1k count=10'.format(self.image)
-        text_data,err = await self.run(cmd)
+        self.specfile = os.path.join(settings.UPLOAD_PATH, self.buildid + ".spec")
+        self.filename = os.path.join(settings.UPLOAD_PATH, self.buildid + ".sif")
+
+        cmd = 'singularity build -F {} {}'.format(self.filename, self.specfile)
+#        cmd = 'dd if=/dev/zero of={} bs=1k count=10'.format(self.filename)
+        text_data, err = await self.run(cmd)
         await self.send({
             "type": "websocket.send",
             "text": text_data

@@ -16,6 +16,8 @@ from sregistry.utils import parse_image_name
 
 from shub.apps.logs.utils import generate_log
 from shub.apps.main.models import Collection, Container
+from shub.apps.main.utils import format_collection_name
+
 
 from ratelimit.mixins import RatelimitMixin
 
@@ -36,7 +38,6 @@ from shub.apps.library.views.images import (
     PushImageView,
     RequestPushImageFileView,
     PushImageFileView,
-    CompletePushImageFileView,
 )
 
 import django_rq
@@ -91,7 +92,7 @@ class BuildContainersView(RatelimitMixin, APIView):
         buildid = ''.join([random.choice(string.ascii_lowercase
                     + string.digits) for n in range(24)])
 
-        filename = "/tmp/.{}.spec".format(buildid).encode()
+        filename = os.path.join(settings.UPLOAD_PATH, buildid + ".spec")
 
         try:
             print("Writing spec file in {}...".format(filename))
@@ -142,22 +143,52 @@ class PushContainersView(RatelimitMixin, APIView):
         token = get_token(request)
         user = token.user
 
+        name = "remote-builds"
+#
+        # Look up the collection
+
+        data = {"name": name}
+        url = "{}/collections/new/".format(settings.DOMAIN_NAME)
+        _token = request.META.get("HTTP_AUTHORIZATION").replace("BEARER", "").strip()
+        headers = {'Authorization': _token, 'X-CSRFToken': _token, 'Referer': url}
+#        r = requests.put(url, data=data, headers=headers)
+#        print(r.text)
+#
+# Dont work fine! Use temporaly bellow replacement...
+        try:
+            collection = Collection.objects.get(name=name)
+        except Collection.DoesNotExist:
+            # No special characters allowed
+            name = format_collection_name(name)
+            collection = Collection(name=name, secret=str(uuid.uuid4()))
+            collection.save()
+            collection.owners.add(user)
+            collection.save()
+
+        try:
+            collection = Collection.objects.get(name=name)
+        except Collection.DoesNotExist:
+            data="Collection %s don't exist!" % name
+            print(data)
+            return Response(data={"data": data}, status=404)
+
         collection = "remote-builds"
         name = "rb-{}".format(buildid)
         libraryURL = settings.DOMAIN_NAME
-        filename = "/tmp/.{}.img".format(buildid)
+        filename = os.path.join(settings.UPLOAD_PATH, buildid + ".sif")
 
-        from sregistry.utils import get_file_hash
-        version = get_file_hash(filename, "sha256")
-        libraryRef = "{}/remote-builds/rb-{}:sha256.{}".format(user,buildid,version)
+        if os.path.exists(filename):
+            from sregistry.utils import get_file_hash
+            print("Retrieve sha256 hash of {} ...".format(filename))
+            version = get_file_hash(filename, "sha256")
 
-        try:
             print("Retrieve file {} size...".format(filename))
             imageSize = os.path.getsize(filename)
-        except FileNotFoundError:
-            print("Failed to retrieve file {} size!".format(filename))
+        else:
+            print("File {} don't exist!".format(filename))
             return Response(status=404)
 
+        libraryRef = "{}/remote-builds/rb-{}:sha256.{}".format(user,buildid,version)
 #
         try:
             data = PushImageView.as_view()(request._request,
@@ -189,11 +220,20 @@ class PushContainersView(RatelimitMixin, APIView):
 #
         try:
             request._request.method = 'PUT'
-            data = CompletePushImageFileView.as_view()(request._request,
+            data = CompleteBuildImageFileView.as_view()(request._request,
             container_id=container_id
             )
         except:
-            print("Failed to PUT CompletePushImageFileView!")
+            print("Failed to PUT CompleteBuildImageFileView!")
+            return Response(status=404)
+
+        try:
+            print("Cleanup spec and images files...")
+            specfile = os.path.join(settings.UPLOAD_PATH, buildid + ".spec")
+            os.remove(filename)
+            os.remove(specfile)
+        except:
+            print("Failed to cleanup spec and images files")
             return Response(status=404)
 
 ## To be modify accordingly to real complete status
@@ -224,7 +264,7 @@ class PushContainersView(RatelimitMixin, APIView):
         buildid = ''.join([random.choice(string.ascii_lowercase
                     + string.digits) for n in range(24)])
 
-        filename = "/tmp/.{}.img".format(buildid).encode()
+        filename = os.path.join(settings.UPLOAD_PATH, buildid + ".sif")
 
         try:
             print("Writing spec file in {}...".format(filename))
@@ -238,3 +278,28 @@ class PushContainersView(RatelimitMixin, APIView):
 
         request._request.method = 'GET'
         return self.get(request, buildid)
+
+class CompleteBuildImageFileView(RatelimitMixin, APIView):
+    """This view (UploadImageCompleteRequest) isn't currently useful,
+       but should exist as it is used for Singularity.
+    """
+
+    ratelimit_key = "ip"
+    ratelimit_rate = settings.VIEW_RATE_LIMIT
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = "PUT"
+    renderer_classes = (JSONRenderer,)
+
+    def put(self, request, container_id, format=None):
+
+        print("PUT CompleteBuildImageFileView")
+
+        try:
+            container = Container.objects.get(id=container_id)
+            tag = container.tag
+            name = container.name
+            Container.objects.filter(tag__startswith="DUMMY-", name=name, tag=tag).update(tag="latest")
+            print("Suppress DUMMY tag {} on container {}...".format(tag,name))
+            return Response(status=200)
+        except Container.DoesNotExist:
+            return Response(status=404)
