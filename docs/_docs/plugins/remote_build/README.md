@@ -87,6 +87,7 @@ Using curl this time, but `httpie` work too...
 
 Of cours, you can proceed through existing plugin : [google-build](https://singularityhub.github.io/sregistry/docs/plugins/google-build),
 but it's not everyone who
+
 have the opportunity to access google cloud, for security reason for instance...
 
 ### In the nutshell
