@@ -45,6 +45,8 @@
   children:
     - title: Overview
       url: docs/setup
+    - title: Backup
+      url: docs/setup/backup
     - title: Interaction
       url: docs/setup/interact
     - title: User Roles
