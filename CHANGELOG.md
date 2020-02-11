@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - bumping django version to fix two CVEs (1.1.19)
  - pinning verison of Django to not yet upgrade (1.1.18)
  - broken API and documentation links (1.1.17)
  - refactored collections treemap to only show collection container counts (1.1.16)
