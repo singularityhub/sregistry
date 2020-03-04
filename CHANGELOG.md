@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - adding POSTGRES_HOST_AUTH_METHOD trust to account for changes postgres 9.6.17 (1.1.20)
  - bumping django version to fix two CVEs (1.1.19)
  - pinning verison of Django to not yet upgrade (1.1.18)
  - broken API and documentation links (1.1.17)
