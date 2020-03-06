@@ -12,7 +12,8 @@ a real person that can push from some CI service, you'll need to do the followin
 {% include alert.html type="info" title="Important!" content="You must be an admin of the server to generate a robot user." %}
 
  1. Use the Django Administration site to add this user and a token for this user will be automatically created. If you need to refresh the token, you can do so here.
- 2. Since the collection must already exist and you cannot log in as the robot user, you should create the collection with your user account, and then you can add the robot user as an owner (shown below). Only owners are allowed to push to collections. 
+ 2. Update the 'last login' field for this user in the Django Administration site to some value, e.g. to the current time.
+ 3. Since the collection must already exist and you cannot log in as the robot user, you should create the collection with your user account, and then you can add the robot user as an owner (shown below). Only owners are allowed to push to collections.
 
 First, enter the uwsgi container (the name of your container may be different)
 
