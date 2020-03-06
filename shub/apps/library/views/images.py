@@ -172,15 +172,21 @@ class PushImageFileView(RatelimitMixin, APIView):
             os.remove(final_container_path)
 
         # If there is a container file already existing, use it
-        try:
-            imagefile = ImageFile.objects.get(
-                collection=container.collection.name, name=container_path
-            )
-        except ImageFile.DoesNotExist:
-            imagefile = ImageFile.objects.create(
-                collection=container.collection.name, name=container_path
-            )
+        if container.image != None:
+            imagefile = container.image
 
+        else:
+            try:
+                imagefile = ImageFile.objects.get(
+                    collection=container.collection.name, name=final_container_path
+                )
+            except ImageFile.DoesNotExist:
+                imagefile = ImageFile.objects.create(
+                    collection=container.collection.name, name=final_container_path
+                )
+
+        # If the final image path is different from the imagefile path, this means
+        # it's potentially no longer used. Cache the name to prepare for delete
         imagefile.datafile.save(final_container_path, django_file, save=True)
         shutil.move(container_path, final_container_path)
         container.image = imagefile
@@ -436,18 +442,14 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
             if existing.frozen:
 
                 # We can't create this new container with the tag, delete it
-                container.image = None
-                container.save()
                 container.delete()
                 return Response(
                     {"message": "This tag exists, and is frozen."}, status=400
                 )
 
             # Case 2: Exists and not frozen (replace)
-            container.image = None
-            container.save()
-            container.delete()
-            selected = existing
+            existing.delete()
+            selected = container
 
         # Not existing, our container is selected for the tag
         else:

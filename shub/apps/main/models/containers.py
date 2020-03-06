@@ -39,6 +39,7 @@ def delete_imagefile(sender, instance, **kwargs):
                 image__datafile=instance.image.datafile
             ).count()
             if count == 0:
+                print("Deleting %s, no longer used." % instance.image.datafile)
                 instance.image.datafile.delete()
 
 
