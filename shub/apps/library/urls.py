@@ -31,6 +31,11 @@ urlpatterns = [
         views.CompletePushImageFileView.as_view(),
     ),
     url(
+        r"^v2/imagefile/(?P<container_id>.+?)/_multipart?$",
+        views.RequestMultiPartPushImageFileView.as_view(),
+    ),  # added to scs-library-client Feb 2020, needs to
+    # return 404 so default to old push endpoint
+    url(
         r"^v2/imagefile/(?P<container_id>.+?)/?$",
         views.RequestPushImageFileView.as_view(),
     ),  # return push url
