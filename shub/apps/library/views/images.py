@@ -72,6 +72,23 @@ class CompletePushImageFileView(RatelimitMixin, APIView):
             return Response(status=404)
 
 
+class RequestMultiPartPushImageFileView(RatelimitMixin, APIView):
+    """Currently this view returns 404 to default to v2 RequestPushImageFileView
+       see https://github.com/singularityhub/sregistry/issues/282
+    """
+
+    ratelimit_key = "ip"
+    ratelimit_rate = settings.VIEW_RATE_LIMIT
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = "POST"
+    renderer_classes = (JSONRenderer,)
+
+    def post(self, request, container_id, format=None):
+
+        print("POST RequestMultiPartPushImageFileView")
+        return Response(status=404)
+
+
 class RequestPushImageFileView(RatelimitMixin, APIView):
     """After creating the container, push the image file. Still check
        all credentials!
