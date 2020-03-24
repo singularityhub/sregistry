@@ -18,7 +18,8 @@ from django.contrib.auth.decorators import login_required
 
 from ratelimit.decorators import ratelimit
 from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
-
+from social_core.backends.github import GithubOAuth2
+from six.moves.urllib.parse import urljoin
 
 ################################################################################
 # AUTHENTICATION
@@ -123,6 +124,19 @@ def redirect_if_no_refresh_token(backend, response, social, *args, **kwargs):
         and social.extra_data.get("refresh_token") is None
     ):
         return redirect("/login/google-oauth2?approval_prompt=force")
+
+
+# Update headers to use token
+# https://github.com/python-social-auth/social-core/pull/428/files
+class ShubGithubOAuth2(GithubOAuth2):
+
+    # copied from https://github.com/python-social-auth/social-core/pull/428
+    # and must be removed once we've got a newer social-auth-core
+    def _user_data(self, access_token, path=None):
+        url = urljoin(self.api_url(), "user{0}".format(path or ""))
+        return self.get_json(
+            url, headers={"Authorization": "token {0}".format(access_token)}
+        )
 
 
 ## Ensure equivalent email across accounts
