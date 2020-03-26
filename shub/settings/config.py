@@ -48,11 +48,11 @@ GOOGLE_ANALYTICS = None  # "UA-XXXXXXXXX"
 # Set this to be some size in bytes to limit uploads.
 # Uploads > 2.5GB will not use memory, but the filesystem
 # https://docs.djangoproject.com/en/3.0/ref/settings/#data-upload-max-memory-size
-DATA_UPLOAD_MAX_MEMORY_SIZE = None
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
 
 # The same is the case for streaming to the filesystem
 # https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-FILE_UPLOAD_MAX_MEMORY_SIZE
-FILE_UPLOAD_MAX_MEMORY_SIZE = None
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
 
 # Allow users to create public collections
 USER_COLLECTIONS = True
