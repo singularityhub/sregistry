@@ -16,6 +16,11 @@ from sregistry.utils import parse_image_name
 
 from shub.apps.logs.utils import generate_log
 from shub.apps.main.models import Collection, Container
+from shub.settings import (
+    MINIO_BUCKET,
+    MINIO_SIGNED_URL_EXPIRE_MINUTES,
+    MINIO_EXTERNAL_SERVER,
+)
 
 from ratelimit.mixins import RatelimitMixin
 
@@ -25,6 +30,7 @@ from rest_framework.renderers import JSONRenderer
 
 from .parsers import OctetStreamParser, EmptyParser
 
+from .minio import minioClient, minioExternalClient
 from .helpers import (
     formatString,
     generate_collection_tags,
@@ -37,13 +43,14 @@ from .helpers import (
     validate_token,
 )
 
+from datetime import timedelta
 import django_rq
 import shutil
 import tempfile
 import json
 import uuid
 import os
-
+import re
 
 # Image Files
 
@@ -123,92 +130,17 @@ class RequestPushImageFileView(RatelimitMixin, APIView):
         container.metadata["pushSecret"] = push_secret
         container.save()
 
-        # TODO this could check for Google Build, and return signed upload URL, or S3 signed URL
-        url = settings.DOMAIN_NAME + reverse(
-            "PushImageFileView", args=[str(container_id), push_secret]
+        # Get the container name and generate signed url
+        storage = container.get_storage()
+        url = minioExternalClient.presigned_put_object(
+            MINIO_BUCKET,
+            storage,
+            expires=timedelta(minutes=MINIO_SIGNED_URL_EXPIRE_MINUTES),
         )
 
+        # The external client is different from internal
         data = {"uploadURL": url}
         return Response(data={"data": data}, status=200)
-
-
-class PushImageFileView(RatelimitMixin, APIView):
-    """After creating the container, push the image file. Still check
-       all credentials!
-    """
-
-    ratelimit_key = "ip"
-    ratelimit_rate = settings.VIEW_RATE_LIMIT
-    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = "PUT"
-    renderer_classes = (JSONRenderer,)
-    parser_classes = (OctetStreamParser,)
-
-    def put(self, request, container_id, secret, format=None):
-
-        print("PUT PushImageFileView")
-
-        # Look up the container
-        try:
-            container = Container.objects.get(id=container_id)
-        except Container.DoesNotExist:
-            return Response(status=404)
-
-        # The secret must match the one just generated for the URL
-        if container.metadata.get("pushSecret", "nope") != secret:
-            return Response(status=403)
-        del container.metadata["pushSecret"]
-
-        # Create collection root, if it doesn't exist
-        image_home = "%s/%s" % (settings.MEDIA_ROOT, container.collection.name)
-        if not os.path.exists(image_home):
-            os.mkdir(image_home)
-
-        # Write the file to location
-        from shub.apps.api.models import ImageFile
-
-        suffix = next(tempfile._get_candidate_names())
-        container_path = os.path.join(
-            image_home, "%s-%s-%s.sif" % (container.name, container.version, suffix)
-        )
-        final_container_path = os.path.join(
-            image_home, "%s-%s.sif" % (container.name, container.version)
-        )
-        file_obj = request.data["file"]
-
-        with default_storage.open(container_path, "wb+") as destination:
-            for chunk in file_obj.chunks():
-                destination.write(chunk)
-
-        # Save newly uploaded file to model
-        reopen = open(container_path, "rb")
-        django_file = File(reopen)
-
-        # If the final path exists, remove it
-        if os.path.exists(final_container_path):
-            os.remove(final_container_path)
-
-        # If there is a container file already existing, use it
-        if container.image != None:
-            imagefile = container.image
-
-        else:
-            try:
-                imagefile = ImageFile.objects.get(
-                    collection=container.collection.name, name=final_container_path
-                )
-            except ImageFile.DoesNotExist:
-                imagefile = ImageFile.objects.create(
-                    collection=container.collection.name, name=final_container_path
-                )
-
-        # If the final image path is different from the imagefile path, this means
-        # it's potentially no longer used. Cache the name to prepare for delete
-        imagefile.datafile.save(final_container_path, django_file, save=True)
-        shutil.move(container_path, final_container_path)
-        container.image = imagefile
-        container.save()
-        return Response(status=200)
 
 
 class PushImageView(RatelimitMixin, APIView):
@@ -304,7 +236,14 @@ class DownloadImageView(RatelimitMixin, APIView):
             ):
                 return Response(status=404)
 
-        return redirect(self.get_download_url(container))
+        # Retrieve the url for minio
+        storage = container.get_storage()
+        url = minioExternalClient.presigned_get_object(
+            MINIO_BUCKET,
+            storage,
+            expires=timedelta(minutes=MINIO_SIGNED_URL_EXPIRE_MINUTES),
+        )
+        return redirect(url)
 
 
 class GetImageView(RatelimitMixin, APIView):

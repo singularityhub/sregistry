@@ -90,24 +90,92 @@ We will discuss setting up https in a later section.
 
 ## Storage
 
-By default, the containers that you upload to your registry will be stored "inside" the Docker container, specifically at the location `/var/www/images`. While it would not be reasonable to upload to Singularity Registry and then to a custom Storage, we have recently added
-[custom builders]({{ site.url }}/install-builders) that can be used to push a recipe to Singularity Registry Server, and then trigger a cloud build that will be saved in some matching cloud storage.
+For Singularity versions prior to 1.1.24, containers that were uploaded to your registry
+were stored on the filesystem, specifically at `/var/www/images` that was bound to the host
+at `images`. We did this by way of using a custom nginx image with the nginx upload module
+enabled (see [this post](https://vsoch.github.io/2018/django-nginx-upload/) for an example).
 
-If you choose the file system default storage, we map this location to the host in the base directory of `sregistry` in a folder called `images`. Equally, we map static web files to a folder named `static`. If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
+There is also the other option to use [custom builders]({{ site.url }}/install-builders) 
+that can be used to push a recipe to Singularity Registry Server, and then trigger a 
+cloud build that will be saved in some matching cloud storage.
 
+### Default
 
-```yaml
-    - ./static:/var/www/static
-    - ./images:/var/www/images
+However for versions 1.1.24 and later, to better handle the Singularity `library://`
+client that uses Amazon S3, we added a [Minio Storage](https://docs.min.io/docs/python-client-api-reference.html#presigned_get_object) 
+backend, or another container (minio) that is deployed alongside Singularity Registry server.
+If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
+
+```
+minio:
+  image: minio/minio
+  volumes:
+    - ./minio-images:/images
+  env_file:
+   - ./.minio-env
+  ports:
+   - "9000:9000"  
+  command: ["server", "images"]
 ```
 
-The line reads specifically "map `./images` (the folder "images" in the base directory sregistry on the host) to (`:`) the folder `/var/www/images` (inside the container). This means a few important things:
 
- - if you container goes away and dies, your image files do not. If the folder wasn't mapped, this wouldn't be the case.
- - when the container is running, since Docker is run as sudo, you won't be able to interact with the files without sudo either.
+At the time of develpoment we are using this version of minio:
 
-Thus, you are free to test different configurations of mounting this folder. If you find a more reasonable default than is set, please [let us know!](https://www.github.com/singularityhub/sregistry/issues).
+```
+/ # minio --version
+minio version RELEASE.2020-04-02T21-34-49Z
+```
 
+which you can set in the docker-compose.yml file to pin it. Notice that we bind the
+folder "minio-images" in the present working directory to /images in the container,
+which is where we are telling minio to write images to the filesystem. This means
+that if your container goes away, the image files will still be present on the host.
+For example, after pushing two images, I can see them organized by bucket, collection,
+then container name with hash.
+
+```
+$ tree minio-images/
+minio-images/
+└── sregistry
+    └── test
+        ├── big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874
+        └── container:sha256.c8dea5eb23dec3c53130fabea451703609478d7d75a8aec0fec238770fd5be6e
+```
+
+### Configuration
+For secrets (the access and secret key that are used to create the container) 
+we are reading in environment variables for the server in `.minio-env`
+that looks like this:
+
+```bash
+MINIO_ACCESS_KEY=minio
+MINIO_SECRET_KEY=minio123
+```
+
+**You should obviously change the access key and secret in the minio-env file!**
+This is also bound to the uwsgi container, so that the generation of the minio
+storage can be authenticated by the uwsgi container, which is the interface between
+the Singularity client and minio. For variables that aren't secrets, you can look
+in `shub/settings/config.py` and look for the "Storage" section with various
+minio variables:
+
+```python
+MINIO_SERVER = "minio:9000"  # Internal to sregistry
+MINIO_EXTERNAL_SERVER = (
+    "127.0.0.1:9000"  # minio server for Singularity to interact with
+)
+MINIO_BUCKET = "sregistry"
+MINIO_SSL = False  # use SSL for minio
+MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
+MINIO_REGION = "us-east-1"
+```
+
+Since the container networking space is different from what the external
+Singularity client interacts with, we define them both here. If you deploy
+a minio server external to the docker-compose.yml, you can update both of
+these URLs to be the url to access it. The number of minutes for the signed
+url to expire applies to both PUT (upload) and GET (download) requests.
+Note that SSL instructions are not written yet for minio.
 
 ## SSL
 

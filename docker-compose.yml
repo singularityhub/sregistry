@@ -6,6 +6,8 @@ db:
 uwsgi:
   restart: always
   image: quay.io/vanessa/sregistry
+  env_file:
+    - ./.minio-env
   volumes:
     - .:/code
     - ./static:/var/www/static
@@ -14,6 +16,7 @@ uwsgi:
     #- /etc/passwd:/etc/passwd 
     #- /etc/shadow:/etc/shadow
   links:
+    - minio
     - redis
     - db
 
@@ -43,6 +46,7 @@ scheduler:
   volumes_from:
     - uwsgi
   links:
+    - minio
     - redis
     - db
 
@@ -54,5 +58,16 @@ worker:
   volumes_from:
     - uwsgi
   links:
+    - minio
     - redis
     - db
+
+minio:
+  image: minio/minio
+  volumes:
+    - ./minio-images:/images
+  env_file:
+   - ./.minio-env
+  ports:
+   - "9000:9000"  
+  command: ["server", "images"]

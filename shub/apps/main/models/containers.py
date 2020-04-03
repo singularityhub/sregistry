@@ -110,12 +110,14 @@ class Container(models.Model):
     def get_uri(self, include_version=True):  # shub://username/reponame:branch@tag
         if not self.frozen:
             return self.get_short_uri()
+        return self.get_storage()
 
-        # An automated build means a collection has a common namespace
-        version = "%s@%s" % (self.tag, self.version)
+    def get_storage(self):
+        """Return the full storage path, which includes the version string
+        """
         if "/" in self.name:
-            return "%s:%s" % (self.name, version)
-        return "%s/%s:%s" % (self.collection.name, self.name, version)
+            return "%s:%s" % (self.name, self.version)
+        return "%s/%s:%s" % (self.collection.name, self.name, self.version)
 
     def update_secret(self, save=True):
         """secret exists to make brute force download not possible"""

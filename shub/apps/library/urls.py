@@ -39,11 +39,6 @@ urlpatterns = [
         r"^v2/imagefile/(?P<container_id>.+?)/?$",
         views.RequestPushImageFileView.as_view(),
     ),  # return push url
-    url(
-        r"^v2/push/imagefile/(?P<container_id>.+?)/(?P<secret>.+?)?$",
-        views.PushImageFileView.as_view(),
-        name="PushImageFileView",
-    ),  # push image
     url(r"^v1/token-status$", views.TokenStatusView.as_view()),
     url(
         r"^v1/collections/(?P<username>.+?)/(?P<name>.+?)$",

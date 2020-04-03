@@ -3,7 +3,6 @@ from .images import (
     GetCollectionTagsView,
     GetImageView,
     PushImageView,
-    PushImageFileView,
     CompletePushImageFileView,
     RequestPushImageFileView,
     RequestMultiPartPushImageFileView,
