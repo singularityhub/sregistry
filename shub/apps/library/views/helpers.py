@@ -12,6 +12,7 @@ from shub.apps.logs.models import APIRequestCount
 from rest_framework.authtoken.models import Token
 from shub.apps.users.models import User
 from shub.apps.main.models import Collection
+from shub.apps.main.utils import format_container_name
 
 import re
 
@@ -313,6 +314,7 @@ def get_container(names):
 
     # If we have a collection, next look for the tag or version
     if collection is not None:
+        names["image"] = format_container_name(names["image"])
         containers = collection.containers.filter(name=names["image"])
         if containers and names["version"] is not None:
             container = containers.filter(version=names["version"]).first()
