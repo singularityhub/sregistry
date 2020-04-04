@@ -153,7 +153,7 @@ MINIO_SECRET_KEY=minio123
 ```
 
 **You should obviously change the access key and secret in the minio-env file!**
-This is also bound to the uwsgi container, so that the generation of the minio
+The `.minio-env` file is also bound to the uwsgi container, so that the generation of the minio
 storage can be authenticated by the uwsgi container, which is the interface between
 the Singularity client and minio. For variables that aren't secrets, you can look
 in `shub/settings/config.py` and look for the "Storage" section with various
@@ -175,7 +175,99 @@ Singularity client interacts with, we define them both here. If you deploy
 a minio server external to the docker-compose.yml, you can update both of
 these URLs to be the url to access it. The number of minutes for the signed
 url to expire applies to both PUT (upload) and GET (download) requests.
-Note that SSL instructions are not written yet for minio.
+Finally, the logs that you see with `docker-compose logs minio` are fairly limited,
+it's recommended to install the client [mc](https://docs.minio.io/docs/minio-client-quickstart-guide)
+to better inspect:
+
+```bash
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+./mc --help
+```
+
+You'll still need to add the host manually:
+
+```bash
+./mc config host add myminio http://127.0.0.1:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
+Added `myminio` successfully.
+```
+
+You can then list the hosts that are known as follows (and make sure yours appears)
+
+```bash
+/ # ./mc config host ls
+gcs  
+  URL       : https://storage.googleapis.com
+  AccessKey : YOUR-ACCESS-KEY-HERE
+  SecretKey : YOUR-SECRET-KEY-HERE
+  API       : S3v2
+  Lookup    : dns
+
+local
+  URL       : http://localhost:9000
+  AccessKey : 
+  SecretKey : 
+  API       : 
+  Lookup    : auto
+
+myminio
+  URL       : https://127.0.0.1:9000
+  AccessKey : YOUR-ACCESS-KEY-HERE
+  SecretKey : YOUR-SECRET-KEY-HERE
+  API       : S3v4
+  Lookup    : auto
+
+
+play 
+  URL       : https://play.min.io
+  AccessKey : YOUR-ACCESS-KEY-HERE
+  SecretKey : YOUR-SECRET-KEY-HERE
+  API       : S3v4
+  Lookup    : auto
+
+s3   
+  URL       : https://s3.amazonaws.com
+  AccessKey : YOUR-ACCESS-KEY-HERE
+  SecretKey : YOUR-SECRET-KEY-HERE
+  API       : S3v4
+  Lookup    : dns
+```
+
+And then getting logs like this:
+
+```bash
+./mc admin trace -v -e myminio
+```
+
+When the trace is running, you should be able to do some operation and see output.
+This is really helpful for debugging!
+
+```bash
+127.0.0.1 [REQUEST s3.PutObjectPart] 22:59:38.025
+127.0.0.1 PUT /sregistry/test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874?uploadId=a1071852-3407-4c2b-9444-6790cfafae51&partNumber=1&Expires=1586041182&Signature=2dN0tY%2F0esPKVDDD%2B%2F1584I0qqQ%3D&AWSAccessKeyId=minio
+127.0.0.1 Host: 127.0.0.1:9000
+127.0.0.1 Content-Length: 928
+127.0.0.1 User-Agent: Go-http-client/1.1
+127.0.0.1 X-Amz-Content-Sha256: 2fc597b42f249400d24a12904033454931eb3624e8c048fe825c360d9c1e61bf
+127.0.0.1 Accept-Encoding: gzip
+127.0.0.1 <BODY>
+127.0.0.1 [RESPONSE] [22:59:38.025] [ Duration 670µs  ↑ 68 B  ↓ 806 B ]
+127.0.0.1 403 Forbidden
+127.0.0.1 X-Xss-Protection: 1; mode=block
+127.0.0.1 Accept-Ranges: bytes
+127.0.0.1 Content-Length: 549
+127.0.0.1 Content-Security-Policy: block-all-mixed-content
+127.0.0.1 Content-Type: application/xml
+127.0.0.1 Server: MinIO/RELEASE.2020-04-02T21-34-49Z
+127.0.0.1 Vary: Origin
+127.0.0.1 X-Amz-Request-Id: 1602C00C5749AF1F
+127.0.0.1 <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>SignatureDoesNotMatch</Code><Message>The request signature we calculated does not match the signature you provided. Check your key and signing method.</Message><Key>test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874</Key><BucketName>sregistry</BucketName><Resource>/sregistry/test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874</Resource><RequestId>1602C00C5749AF1F</RequestId><HostId>e9ba6dec-55a9-4add-a56b-dd42a817edf2</HostId></Error>
+127.0.0.1 
+```
+
+
+in the console there. Note that SSL instructions are not written yet for minio.
 
 ## SSL
 

@@ -8,6 +8,10 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+from boto3 import Session
+import boto3
+from botocore.client import Config
+
 from shub.settings import (
     MINIO_SERVER,
     MINIO_EXTERNAL_SERVER,
@@ -18,6 +22,8 @@ from shub.settings import (
 from minio import Minio
 
 import os
+
+MINIO_HTTP_PREFIX = "https://" if MINIO_SSL else "http://"
 
 minioClient = Minio(
     MINIO_SERVER,
@@ -37,3 +43,25 @@ minioExternalClient = Minio(
 
 if not minioClient.bucket_exists(MINIO_BUCKET):
     minioClient.make_bucket(MINIO_BUCKET)
+
+session = Session(
+    aws_access_key_id=os.environ.get("MINIO_ACCESS_KEY"),
+    aws_secret_access_key=os.environ.get("MINIO_SECRET_KEY"),
+    region_name=MINIO_REGION,
+)
+
+# https://github.com/boto/boto3/blob/develop/boto3/session.py#L185
+s3 = session.client(
+    "s3",
+    use_ssl=MINIO_SSL,
+    endpoint_url=MINIO_HTTP_PREFIX + MINIO_SERVER,
+    region_name=MINIO_REGION,
+)
+
+s3_external = session.client(
+    "s3",
+    use_ssl=MINIO_SSL,
+    region_name=MINIO_REGION,
+    endpoint_url=MINIO_HTTP_PREFIX + MINIO_EXTERNAL_SERVER,
+    verify=False,
+)

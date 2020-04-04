@@ -114,6 +114,7 @@ MINIO_BUCKET = "sregistry"
 MINIO_SSL = False  # use SSL for minio
 MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
 MINIO_REGION = "us-east-1"
+MINIO_MULTIPART_UPLOAD = True
 
 # Logging
 

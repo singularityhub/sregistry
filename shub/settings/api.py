@@ -28,4 +28,5 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
 }
 
+
 API_VERSION = "v1"
