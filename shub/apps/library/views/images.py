@@ -242,6 +242,22 @@ class RequestMultiPartPushImageFileView(RatelimitMixin, APIView):
             )
             urls[part_number] = signed_url
 
+        # s3_dest_client.upload_part(
+        #                        Body=chunkdata,
+        #                        Bucket=DesBucket,
+        #                        Key=prefix_and_key,
+        #                        PartNumber=partnumber,
+        #                        UploadId=uploadId,
+        #                        ContentMD5=base64.b64encode(chunkdata_md5.digest()).decode('utf-8')
+        #                    )
+
+        #      <input type="hidden" name="key" value="VALUE" />
+        #      <input type="hidden" name="AWSAccessKeyId" value="VALUE" />
+        #      <input type="hidden" name="policy" value="VALUE" />
+        #      <input type="hidden" name="signature" value="VALUE" />
+
+        # default_client_config = self.get_default_client_config()
+
         #    parts = []
         #    with target_file.open('rb') as fin:
         #        for num, url in enumerate(urls):

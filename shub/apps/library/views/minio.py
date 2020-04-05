@@ -50,18 +50,28 @@ session = Session(
     region_name=MINIO_REGION,
 )
 
+
 # https://github.com/boto/boto3/blob/develop/boto3/session.py#L185
 s3 = session.client(
     "s3",
+    verify=False,
     use_ssl=MINIO_SSL,
     endpoint_url=MINIO_HTTP_PREFIX + MINIO_SERVER,
     region_name=MINIO_REGION,
+    config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
 )
 
+# signature_versions
+# https://github.com/boto/botocore/blob/master/botocore/auth.py#L846
 s3_external = session.client(
     "s3",
     use_ssl=MINIO_SSL,
     region_name=MINIO_REGION,
     endpoint_url=MINIO_HTTP_PREFIX + MINIO_EXTERNAL_SERVER,
     verify=False,
+    config=Config(signature_version="s2", s3={"addressing_style": "path"}),
 )
+
+# THINGS TO TRY
+# change algorithm to not include host header (but then
+# try to set host header to something else

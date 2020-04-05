@@ -116,6 +116,20 @@ MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
 MINIO_REGION = "us-east-1"
 MINIO_MULTIPART_UPLOAD = True
 
+# THIS ONE DOES NOT
+# http://127.0.0.1:9000/sregistry/test/busybox%3Asha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874?partNumber=1&uploadId=8ae1018b-a3f4-422a-8c0e-8aaff4569f8b&Signature=e0hqn6V9NxMw2TV3ctY1SkCUfJo%3D&AWSAccessKeyId=minio&Expires=1586035466
+
+# http://127.0.0.1:9000/sregistry/test/busybox:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio/20200404/us-east-1/s3/aws4_request&X-Amz-Date=20200404T212826Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=d447a51a7607c0a4b50f4cd9b8dbb962efe5de795f6a22e99c0a50fdab5760a9
+
+# THIS URL WORKS
+# http://127.0.0.1:9000/sregistry/test/busybox%3Asha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200404%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200404T212826Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=d447a51a7607c0a4b50f4cd9b8dbb962efe5de795f6a22e99c0a50fdab5760a9
+
+
+# {'Bucket': 'sregistry', 'Key': 'test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874', 'UploadId': '595cc1c1-abc8-4ddc-ae68-3b11de4af8b3', 'ResponseMetadata': {'HostId': '', 'RequestId': '1602BCE4A4D899FF', 'RetryAttempts': 0, 'HTTPHeaders': {'vary': 'Origin', 'content-length': '324', 'x-amz-request-id': '1602BCE4A4D899FF', 'content-security-policy': 'block-all-mixed-content', 'server': 'MinIO/RELEASE.2020-04-02T21-34-49Z', 'accept-ranges': 'bytes', 'date': 'Sat, 04 Apr 2020 22:01:48 GMT', 'x-xss-protection': '1; mode=block', 'content-type': 'application/xml'}, 'HTTPStatusCode': 200}}
+
+# http://127.0.0.1:9000/sregistry/test/big%3Asha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874?partNumber=1&uploadId=595cc1c1-abc8-4ddc-ae68-3b11de4af8b3&Signature=0NOGqySKu%2FCtVyNv4CEWVvDezo8%3D&AWSAccessKeyId=minio&Expires=1586037713
+
+
 # Logging
 
 # Do you want to save complete response metadata per each pull?

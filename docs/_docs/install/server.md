@@ -240,6 +240,7 @@ And then getting logs like this:
 ```
 
 When the trace is running, you should be able to do some operation and see output.
+(It will just hang there open while it's waiting for you to try a push).
 This is really helpful for debugging!
 
 ```bash
@@ -266,6 +267,8 @@ This is really helpful for debugging!
 127.0.0.1 
 ```
 
+The above shows an error - the signature is somehow wrong. It came down to not specifying the signature type in a config
+when I instantiated the client (bug still persists). 
 
 in the console there. Note that SSL instructions are not written yet for minio.
 
