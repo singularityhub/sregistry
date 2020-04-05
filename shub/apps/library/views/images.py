@@ -205,7 +205,7 @@ class RequestMultiPartPushImageFileView(RatelimitMixin, APIView):
         storage = container.get_storage()
 
         # Create the multipart upload
-        res = s3.create_multipart_upload(Bucket=MINIO_BUCKET, Key=storage)
+        res = s3.create_multipart_upload(Bucket=MINIO_BUCKET, Key=storage, HostID=MINIO_EXTERNAL_SERVER)
         print(res)
         # {'Bucket': 'sregistry',
         #  'Key': 'test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874',
