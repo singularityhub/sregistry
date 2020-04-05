@@ -69,7 +69,7 @@ s3_external = session.client(
     region_name=MINIO_REGION,
     endpoint_url=MINIO_HTTP_PREFIX + MINIO_EXTERNAL_SERVER,
     verify=False,
-    config=Config(signature_version="s2", s3={"addressing_style": "path"}),
+    config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
 )
 
 # THINGS TO TRY

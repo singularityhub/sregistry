@@ -45,6 +45,7 @@ from .helpers import (
     validate_token,
 )
 
+from urllib.parse import quote
 from datetime import timedelta
 import django_rq
 import shutil
@@ -201,13 +202,11 @@ class RequestMultiPartPushImageFileView(RatelimitMixin, APIView):
         max_size = 5 * 1024 * 1024
         upload_by = int(filesize / max_size) + 1
 
-        # Key is the path in storage
-        storage = container.get_storage()
+        # Key is the path in storage, MUST be encoded and quoted!
+        storage = quote(container.get_storage().encode("utf-8"))
 
         # Create the multipart upload
-        res = s3.create_multipart_upload(
-            Bucket=MINIO_BUCKET, Key=storage, HostID=MINIO_EXTERNAL_SERVER
-        )
+        res = s3.create_multipart_upload(Bucket=MINIO_BUCKET, Key=storage)
         print(res)
         # {'Bucket': 'sregistry',
         #  'Key': 'test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874',
