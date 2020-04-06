@@ -266,9 +266,9 @@ This is really helpful for debugging!
 <Error><Code>SignatureDoesNotMatch</Code><Message>The request signature we calculated does not match the signature you provided. Check your key and signing method.</Message><Key>test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874</Key><BucketName>sregistry</BucketName><Resource>/sregistry/test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874</Resource><RequestId>1602C00C5749AF1F</RequestId><HostId>e9ba6dec-55a9-4add-a56b-dd42a817edf2</HostId></Error>
 127.0.0.1 
 ```
-
 The above shows an error - the signature is somehow wrong. It came down to not specifying the signature type in a config
-when I instantiated the client (bug still persists). 
+when I instantiated the client, and also needing to customize the `presign_v4` function to allowing
+sending along the sha256sum from the scs-library-client (it was using an unsigned hash). 
 
 in the console there. Note that SSL instructions are not written yet for minio.
 

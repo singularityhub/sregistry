@@ -154,7 +154,6 @@ class RequestMultiPartCompleteView(RatelimitMixin, APIView):
             {"ETag": x["token"].strip('"'), "PartNumber": x["partNumber"]}
             for x in body["completedParts"]
         ]
-        print(parts)  # should this be ordered 1..N?
 
         try:
             container = Container.objects.get(id=upload_id)
@@ -162,7 +161,6 @@ class RequestMultiPartCompleteView(RatelimitMixin, APIView):
             return Response(status=404)
 
         # Complete the multipart upload
-        # BUG this is erroring that a part is too small
         res = s3.complete_multipart_upload(
             Bucket=MINIO_BUCKET,
             Key=container.get_storage(),
@@ -319,11 +317,11 @@ class RequestMultiPartPushImageFileView(APIView):
         container.metadata["upload_total_parts"] = total_parts
         container.save()
 
-        # Start a multipart upload
+        # Start a multipart upload, telling Singularity how many parts and the size
         data = {
             "uploadID": upload_id,
             "totalParts": total_parts,
-            "partSize": upload_by,
+            "partSize": max_size,
         }
         return Response(data={"data": data}, status=200)
 
