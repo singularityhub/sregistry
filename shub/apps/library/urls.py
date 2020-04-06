@@ -39,6 +39,10 @@ urlpatterns = [
         views.RequestMultiPartAbortView.as_view(),
     ),
     url(
+        r"^v2/imagefile/(?P<upload_id>.+?)/_multipart_complete?$",
+        views.RequestMultiPartCompleteView.as_view(),
+    ),
+    url(
         r"^v2/imagefile/(?P<container_id>.+?)/?$",
         views.RequestPushImageFileView.as_view(),
     ),  # return push url

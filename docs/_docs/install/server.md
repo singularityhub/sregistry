@@ -236,7 +236,7 @@ s3
 And then getting logs like this:
 
 ```bash
-./mc admin trace -v -e myminio
+./mc admin trace -v myminio
 ```
 
 When the trace is running, you should be able to do some operation and see output.
