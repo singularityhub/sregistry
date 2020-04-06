@@ -154,7 +154,7 @@ class RequestMultiPartCompleteView(RatelimitMixin, APIView):
             {"ETag": x["token"].strip('"'), "PartNumber": x["partNumber"]}
             for x in body["completedParts"]
         ]
-        print(parts) # should this be ordered 1..N?
+        print(parts)  # should this be ordered 1..N?
 
         try:
             container = Container.objects.get(id=upload_id)
