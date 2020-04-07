@@ -148,11 +148,24 @@ we are reading in environment variables for the server in `.minio-env`
 that looks like this:
 
 ```bash
-MINIO_ACCESS_KEY=minio
-MINIO_SECRET_KEY=minio123
+# Credentials (change the first two)
+MINIO_ACCESS_KEY=newminio
+MINIO_SECRET_KEY=newminio123
+MINIO_ACCESS_KEY_OLD=minio
+MINIO_SECRET_KEY_OLD=minio123
+
+# Turn on/off the Minio browser at 127.0.0.1:9000?
+MINIO_BROWSER=on
 ```
 
-**You should obviously change the access key and secret in the minio-env file!**
+If you [read about how minio is configured](https://github.com/minio/minio/tree/master/docs/config)
+you will notice that since the container was built previously with the default credentials,
+to change them we are required to define the same variables with `*_OLD` suffix. This
+means that you should be able to keep the last two lines (minio and minio123, respectively)
+and change the first two to your new access key and secret. And if it's not clear:
+
+> **You should obviously change the access key and secret in the minio-env file!**
+
 The `.minio-env` file is also bound to the uwsgi container, so that the generation of the minio
 storage can be authenticated by the uwsgi container, which is the interface between
 the Singularity client and minio. For variables that aren't secrets, you can look
@@ -168,13 +181,14 @@ MINIO_BUCKET = "sregistry"
 MINIO_SSL = False  # use SSL for minio
 MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
 MINIO_REGION = "us-east-1"
+MINIO_MULTIPART_UPLOAD = True
 ```
 
 Since the container networking space is different from what the external
 Singularity client interacts with, we define them both here. If you deploy
 a minio server external to the docker-compose.yml, you can update both of
 these URLs to be the url to access it. The number of minutes for the signed
-url to expire applies to both PUT (upload) and GET (download) requests.
+url to expire applies to single PUT (upload), GET (download), and upload Part (PUT) requests.
 Finally, the logs that you see with `docker-compose logs minio` are fairly limited,
 it's recommended to install the client [mc](https://docs.minio.io/docs/minio-client-quickstart-guide)
 to better inspect:
@@ -268,11 +282,14 @@ This is really helpful for debugging!
 ```
 The above shows an error - the signature is somehow wrong. It came down to not specifying the signature type in a config
 when I instantiated the client, and also needing to customize the `presign_v4` function to allowing
-sending along the sha256sum from the scs-library-client (it was using an unsigned hash). 
-
-in the console there. Note that SSL instructions are not written yet for minio.
+sending along the sha256sum from the scs-library-client (it was using an unsigned hash).
+For other configuration settings (cache, region, notifications) you should consult
+the [configuration documentation](https://github.com/minio/minio/tree/master/docs/config).
+SSL instructions for minio are included in the next section.
 
 ## SSL
+
+### Server Certificates
 
 Getting https certificates is really annoying, and getting `dhparams.pem` takes forever. But after the domain is obtained, it's important to do. Again, remember that we are working on the host, and we have an nginx server running. You should follow the instructions (and I do this manually) in [generate_cert.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/generate_cert.sh). 
 
@@ -305,6 +322,12 @@ cp https/nginx.conf.https nginx.conf
 
 If you run into strange errors regarding any kind of authentication / server / nginx when you start the images, likely it has to do with not having moved these files, or a setting about https in the [settings](https://github.com/singularityhub/sregistry/tree/master/shub/settings). If you have trouble, please post an issue on the [issues board](https://www.github.com/singularityhub/sregistry/issues) and I'd be glad to help.
 
+### Minio
+
+Minio has detailed instructions for setting up https [here](https://github.com/minio/minio/tree/master/docs/tls),
+and you can use existing or self signed certificates. The docker-compose.yml in the https folder takes the
+strategy of binding the same SSL certs to `${HOME}/.minio/certs` in the container.
+Note that inside the certs directory, the private key must by named private.key and the public key must be named public.crt.
 
 ## Build the Image (Optional)
 If you want to try it, you can build the image. Note that this step isn't necessary as the image is provided on [Quay.io]({{ site.registry }}). This step is optional. However, if you are developing you likely want to build the image locally. You can do:
