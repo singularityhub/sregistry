@@ -104,6 +104,17 @@ DATABASES = {
     }
 }
 
+# STORAGE
+
+MINIO_SERVER = "minio:9000"  # Internal to sregistry
+MINIO_EXTERNAL_SERVER = (
+    "127.0.0.1:9000"  # minio server for Singularity to interact with
+)
+MINIO_BUCKET = "sregistry"
+MINIO_SSL = False  # use SSL for minio
+MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
+MINIO_REGION = "us-east-1"
+MINIO_MULTIPART_UPLOAD = True
 
 # Logging
 

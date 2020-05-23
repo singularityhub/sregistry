@@ -16,6 +16,13 @@ from sregistry.utils import parse_image_name
 
 from shub.apps.logs.utils import generate_log
 from shub.apps.main.models import Collection, Container
+from shub.settings import (
+    MINIO_BUCKET,
+    MINIO_EXTERNAL_SERVER,
+    MINIO_REGION,
+    MINIO_SIGNED_URL_EXPIRE_MINUTES,
+    MINIO_MULTIPART_UPLOAD,
+)
 
 from ratelimit.mixins import RatelimitMixin
 
@@ -24,7 +31,17 @@ from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 
 from .parsers import OctetStreamParser, EmptyParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
+from .minio import (
+    minioClient,
+    minioExternalClient,
+    s3,
+    s3_external,
+    MINIO_HTTP_PREFIX,
+    sregistry_presign_v4,
+)
+from minio.signer import presign_v4
 from .helpers import (
     formatString,
     generate_collection_tags,
@@ -37,13 +54,15 @@ from .helpers import (
     validate_token,
 )
 
+from urllib.parse import quote, urlparse
+from datetime import timedelta, datetime
 import django_rq
 import shutil
 import tempfile
 import json
 import uuid
 import os
-
+import re
 
 # Image Files
 
@@ -72,7 +91,7 @@ class CompletePushImageFileView(RatelimitMixin, APIView):
             return Response(status=404)
 
 
-class RequestMultiPartPushImageFileView(RatelimitMixin, APIView):
+class RequestMultiPartAbortView(RatelimitMixin, APIView):
     """Currently this view returns 404 to default to v2 RequestPushImageFileView
        see https://github.com/singularityhub/sregistry/issues/282
     """
@@ -80,13 +99,231 @@ class RequestMultiPartPushImageFileView(RatelimitMixin, APIView):
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = "POST"
+    ratelimit_method = "PUT"
     renderer_classes = (JSONRenderer,)
+    allowed_methods = ("PUT",)
 
-    def post(self, request, container_id, format=None):
+    def put(self, request, upload_id):
+        """In a post, the upload_id will be the container id.
+        """
+        print("PUT RequestMultiPartAbortView")
+
+        # Handle authorization
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=403)
+
+        # Look up the container to set a temporary upload secret
+        try:
+            container = Container.objects.get(id=upload_id)
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        container.delete()
+        return Response(status=200)
+
+
+class RequestMultiPartCompleteView(RatelimitMixin, APIView):
+    """Complete the multipart upload.
+    """
+
+    ratelimit_key = "ip"
+    ratelimit_rate = settings.VIEW_RATE_LIMIT
+    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
+    ratelimit_method = "PUT"
+    renderer_classes = (JSONRenderer,)
+    allowed_methods = ("PUT",)
+
+    def put(self, request, upload_id):
+        """A put is done to complete the upload, providing the image id and number parts
+           https://github.com/sylabs/scs-library-client/blob/30f9b6086f9764e0132935bcdb363cc872ac639d/client/push.go#L537
+        """
+        print("PUT RequestMultiPartCompleteView")
+
+        # Handle authorization
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=403)
+
+        # body has {'uploadID': 'xxx', 'completedParts': []} each completed part has a token which is the Etag
+        # {"partNumber":2,"token":'"684929e7fe8b996d495e7b152d34ae37-1"'}
+        body = json.loads(request.body.decode("utf-8"))
+
+        # Assemble list of parts as they are expected for Python client
+        parts = [
+            {"ETag": x["token"].strip('"'), "PartNumber": x["partNumber"]}
+            for x in body["completedParts"]
+        ]
+
+        try:
+            container = Container.objects.get(id=upload_id)
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        # Complete the multipart upload
+        res = s3.complete_multipart_upload(
+            Bucket=MINIO_BUCKET,
+            Key=container.get_storage(),
+            MultipartUpload={"Parts": parts},
+            UploadId=body.get("uploadID"),
+            # RequestPayer='requester'
+        )
+
+        print(res)
+        # Currently this response data is empty
+        # https://github.com/sylabs/scs-library-client/blob/master/client/response.go#L97
+        return Response(status=200, data={})
+
+
+class RequestMultiPartPushImageFileView(APIView):
+    """This POST view will returns 404 to default to v2 RequestPushImageFileView
+       if MINIO_MULTIPART_UPLOAD is set to False. The PUT view handles generation
+       of each multipart upload url.
+       see https://github.com/singularityhub/sregistry/issues/282
+    """
+
+    renderer_classes = (JSONRenderer,)
+    allowed_methods = (
+        "POST",
+        "PUT",
+    )
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
+
+    def put(self, request, upload_id):
+        """After starting the multipart upload continue the process
+        """
+        print("PUT RequestMultiPartPushImageFileView")
+
+        # Check Authorization
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=403)
+
+        # Get the container
+        try:
+            container = Container.objects.get(id=upload_id)
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        # Get the request body
+        body = json.loads(request.body.decode("utf-8"))
+        upload_id = body.get("uploadID")
+        storage = container.get_storage()
+        sha256 = body.get("sha256sum")
+        content_size = body.get("partSize")
+
+        # partSize: int64
+        # uploadID: string
+        # partNumber: int
+        # sha256sum: string
+
+        # Validate the uploadID
+        if upload_id != container.metadata.get("upload_id"):
+            return Response(status=404)
+
+        # The part number gets the presigned url
+        part_number = int(body.get("partNumber"))
+
+        # Generate pre-signed URLS for external client (lookup by part number)
+        # We don't technically need this function, but it's preserved here in
+        # case a future implementation can support providing a sha256sum to be included
+        signed_url = s3_external.generate_presigned_url(
+            ClientMethod="upload_part",
+            HttpMethod="PUT",
+            Params={
+                "Bucket": MINIO_BUCKET,
+                "Key": storage,
+                "UploadId": upload_id,
+                "PartNumber": part_number,
+                "ContentLength": content_size,
+            },
+            ExpiresIn=timedelta(minutes=MINIO_SIGNED_URL_EXPIRE_MINUTES).seconds,
+        )
+
+        # Split the url to only include UploadID and PartNumber parameters
+        parsed = urlparse(signed_url)
+        params = {
+            x.split("=")[0]: x.split("=")[1]
+            for x in parsed.query.split("&")
+            if not x.startswith("X-Amz")
+        }
+        new_url = parsed.scheme + "://" + parsed.netloc + parsed.path
+
+        # Derive headers in the same way that Minio does, but include the sha256sum
+        signed_url = sregistry_presign_v4(
+            "PUT",
+            new_url,
+            region=MINIO_REGION,
+            content_hash_hex=sha256,
+            credentials=minioExternalClient._credentials,
+            expires=str(timedelta(minutes=MINIO_SIGNED_URL_EXPIRE_MINUTES).seconds),
+            headers={"X-Amz-Content-Sha256": sha256},
+            response_headers=params,
+        )
+
+        print(signed_url)
+
+        # Return the presigned url
+        data = {"presignedURL": signed_url}
+        return Response(data={"data": data}, status=200)
+
+    def post(self, request, upload_id):
+        """In a post, the upload_id will be the container id.
+        """
 
         print("POST RequestMultiPartPushImageFileView")
-        return Response(status=404)
+
+        # Handle authorization
+        if not validate_token(request):
+            print("Token not valid")
+            return Response(status=403)
+
+        # The admin can disable multipart uploads
+        if not MINIO_MULTIPART_UPLOAD:
+            return Response(status=404)
+
+        # Look up the container to set a temporary upload secret
+        try:
+            container = Container.objects.get(id=upload_id)
+        except Container.DoesNotExist:
+            return Response(status=404)
+
+        # The body provides a filesize
+        body = json.loads(request.body.decode("utf-8"))
+        if "filesize" not in body:
+            return Response(status=400)
+
+        # Filesize in bytes to calculate how to upload by (max size ~0.5 GB)
+        filesize = body.get("filesize")
+        max_size = 500 * 1024 * 1024
+        upload_by = int(filesize / max_size) + 1
+
+        # Key is the path in storage, MUST be encoded and quoted!
+        storage = container.get_storage()
+
+        # Create the multipart upload
+        res = s3.create_multipart_upload(Bucket=MINIO_BUCKET, Key=storage)
+        upload_id = res["UploadId"]
+        print("Start multipart upload %s" % upload_id)
+
+        # Calculate the total number of parts needed
+        total_parts = len(range(1, upload_by + 1))
+
+        # Save parameters with container
+        container.metadata["upload_id"] = upload_id
+        container.metadata["upload_filesize"] = filesize
+        container.metadata["upload_max_size"] = max_size
+        container.metadata["upload_by"] = upload_by
+        container.metadata["upload_total_parts"] = total_parts
+        container.save()
+
+        # Start a multipart upload, telling Singularity how many parts and the size
+        data = {
+            "uploadID": upload_id,
+            "totalParts": total_parts,
+            "partSize": max_size,
+        }
+        return Response(data={"data": data}, status=200)
 
 
 class RequestPushImageFileView(RatelimitMixin, APIView):
@@ -106,7 +343,7 @@ class RequestPushImageFileView(RatelimitMixin, APIView):
 
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         # Look up the container to set a temporary upload secret
         try:
@@ -123,92 +360,17 @@ class RequestPushImageFileView(RatelimitMixin, APIView):
         container.metadata["pushSecret"] = push_secret
         container.save()
 
-        # TODO this could check for Google Build, and return signed upload URL, or S3 signed URL
-        url = settings.DOMAIN_NAME + reverse(
-            "PushImageFileView", args=[str(container_id), push_secret]
+        # Get the container name and generate signed url
+        storage = container.get_storage()
+        url = minioExternalClient.presigned_put_object(
+            MINIO_BUCKET,
+            storage,
+            expires=timedelta(minutes=MINIO_SIGNED_URL_EXPIRE_MINUTES),
         )
 
+        # The external client is different from internal
         data = {"uploadURL": url}
         return Response(data={"data": data}, status=200)
-
-
-class PushImageFileView(RatelimitMixin, APIView):
-    """After creating the container, push the image file. Still check
-       all credentials!
-    """
-
-    ratelimit_key = "ip"
-    ratelimit_rate = settings.VIEW_RATE_LIMIT
-    ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = "PUT"
-    renderer_classes = (JSONRenderer,)
-    parser_classes = (OctetStreamParser,)
-
-    def put(self, request, container_id, secret, format=None):
-
-        print("PUT PushImageFileView")
-
-        # Look up the container
-        try:
-            container = Container.objects.get(id=container_id)
-        except Container.DoesNotExist:
-            return Response(status=404)
-
-        # The secret must match the one just generated for the URL
-        if container.metadata.get("pushSecret", "nope") != secret:
-            return Response(status=403)
-        del container.metadata["pushSecret"]
-
-        # Create collection root, if it doesn't exist
-        image_home = "%s/%s" % (settings.MEDIA_ROOT, container.collection.name)
-        if not os.path.exists(image_home):
-            os.mkdir(image_home)
-
-        # Write the file to location
-        from shub.apps.api.models import ImageFile
-
-        suffix = next(tempfile._get_candidate_names())
-        container_path = os.path.join(
-            image_home, "%s-%s-%s.sif" % (container.name, container.version, suffix)
-        )
-        final_container_path = os.path.join(
-            image_home, "%s-%s.sif" % (container.name, container.version)
-        )
-        file_obj = request.data["file"]
-
-        with default_storage.open(container_path, "wb+") as destination:
-            for chunk in file_obj.chunks():
-                destination.write(chunk)
-
-        # Save newly uploaded file to model
-        reopen = open(container_path, "rb")
-        django_file = File(reopen)
-
-        # If the final path exists, remove it
-        if os.path.exists(final_container_path):
-            os.remove(final_container_path)
-
-        # If there is a container file already existing, use it
-        if container.image != None:
-            imagefile = container.image
-
-        else:
-            try:
-                imagefile = ImageFile.objects.get(
-                    collection=container.collection.name, name=final_container_path
-                )
-            except ImageFile.DoesNotExist:
-                imagefile = ImageFile.objects.create(
-                    collection=container.collection.name, name=final_container_path
-                )
-
-        # If the final image path is different from the imagefile path, this means
-        # it's potentially no longer used. Cache the name to prepare for delete
-        imagefile.datafile.save(final_container_path, django_file, save=True)
-        shutil.move(container_path, final_container_path)
-        container.image = imagefile
-        container.save()
-        return Response(status=200)
 
 
 class PushImageView(RatelimitMixin, APIView):
@@ -229,7 +391,7 @@ class PushImageView(RatelimitMixin, APIView):
 
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         token = get_token(request)
 
@@ -304,7 +466,14 @@ class DownloadImageView(RatelimitMixin, APIView):
             ):
                 return Response(status=404)
 
-        return redirect(self.get_download_url(container))
+        # Retrieve the url for minio
+        storage = container.get_storage()
+        url = minioExternalClient.presigned_get_object(
+            MINIO_BUCKET,
+            storage,
+            expires=timedelta(minutes=MINIO_SIGNED_URL_EXPIRE_MINUTES),
+        )
+        return redirect(url)
 
 
 class GetImageView(RatelimitMixin, APIView):
@@ -388,7 +557,7 @@ class CollectionsView(RatelimitMixin, APIView):
         print("GET CollectionsView")
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         token = get_token(request)
         collections = generate_collections_list(token.user)
@@ -415,7 +584,7 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
         print("GET CollectionTagsView")
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         try:
             collection = Collection.objects.get(id=collection_id)
@@ -432,7 +601,7 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         # {'Tag': 'latest', 'ImageID': '60'}
         params = json.loads(request.data.decode("utf-8"))
@@ -500,7 +669,7 @@ class ContainersView(RatelimitMixin, APIView):
         print(request.query_params)
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         token = get_token(request)
         # collections = generate_collections_list(token.user)
@@ -526,7 +695,7 @@ class GetNamedCollectionView(RatelimitMixin, APIView):
 
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         # The user is associated with the token
         token = get_token(request)
@@ -564,7 +733,7 @@ class GetNamedContainerView(RatelimitMixin, APIView):
 
         if not validate_token(request):
             print("Token not valid")
-            return Response(status=404)
+            return Response(status=403)
 
         # The user is associated with the token
         token = get_token(request)

@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - Adding minio backend for library endpoint (1.1.24)
  - GitHub API is deprecating use of GET parameters, must provide token in header (1.1.23)
  - multipart upload added to scs-library-client, needs to return 404 (1.1.22)
  - fixed bug push of new container (for same tag) does not update binary (1.1.21)
