@@ -7,57 +7,6 @@ pdf: true
 
 Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
 
-## Nginx
-
-This section is mostly for your FYI. The nginx container that we use is a custom compiled
-nginx that includes the [nginx uploads module](https://www.nginx.com/resources/wiki/modules/upload/).
-This allows us to define a server block that will accept multipart form data directly, and 
-allow uploads directly to the server without needing to stress the uwsgi application. The uploads
-are a ton faster! You shouldn't need to do anything special when you bring up the container, but
-keep in mind that if you are deploying this without docker containers (e.g., using your own
-web server) you will need to equivalently compile nginx with the module enabled. A standard
-server without this module will no longer work. Currently, we use an image provided on Docker Hub,
-[quay.io/vanessa/sregistry_nginx](https://hub.docker.com/r/quay.io/vanessa/sregistry_nginx). If you want to build this image
-on your own, you can change the section in the `docker-compose.yml` file to `build` instead of use an
-`image`.  See [this issue](https://github.com/singularityhub/sregistry/issues/140) for the rationale for
-having the pre-built image. To build, change this section:
-
-```bash
-nginx:
-  restart: always
-  image: quay.io/vanessa/sregistry_nginx
-  ports:
-    - "80:80"
-  volumes:
-    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
-  volumes_from:
-    - uwsgi
-  links:
-    - uwsgi
-    - db
-``` 
-
-to this
-
-```bash
-nginx:
-  restart: always
-  build: nginx
-  ports:
-    - "80:80"
-  volumes:
-    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
-  volumes_from:
-    - uwsgi
-  links:
-    - uwsgi
-    - db
-```
-
-the image will be built from the `nginx` folder provided in the repository.
-
 ## Under Maintenance Page
 
 If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.
@@ -90,7 +39,7 @@ We will discuss setting up https in a later section.
 
 ## Storage
 
-For Singularity versions prior to 1.1.24, containers that were uploaded to your registry
+For Singularity Registry versions prior to 1.1.24, containers that were uploaded to your registry
 were stored on the filesystem, specifically at `/var/www/images` that was bound to the host
 at `images`. We did this by way of using a custom nginx image with the nginx upload module
 enabled (see [this post](https://vsoch.github.io/2018/django-nginx-upload/) for an example).
@@ -336,6 +285,51 @@ If you want to try it, you can build the image. Note that this step isn't necess
 ```bash
 cd sregistry
 docker build -t quay.io/vanessa/sregistry .
+```
+
+## Nginx
+
+This section is mostly for your FYI. The nginx container that we used to rely on for uploads is a custom compiled
+nginx that included the [nginx uploads module](https://www.nginx.com/resources/wiki/modules/upload/).
+This allowed us to define a server block that would accept multipart form data directly, and 
+allowed uploads directly to the server without needing to stress the uwsgi application. 
+The previous image we used is still provided on Docker Hub at
+[quay.io/vanessa/sregistry_nginx](https://hub.docker.com/r/quay.io/vanessa/sregistry_nginx)
+While we don't use this for standard uploads, we still use it for the web interface upload,
+and thus have not removed it. To build this image on your own change this section:
+
+
+```bash
+nginx:
+  restart: always
+  image: quay.io/vanessa/sregistry_nginx
+  ports:
+    - "80:80"
+  volumes:
+    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
+  volumes_from:
+    - uwsgi
+  links:
+    - uwsgi
+    - db
+``` 
+to this, meaning that we will build from the nginx folder:
+
+```bash
+nginx:
+  restart: always
+  build: nginx
+  ports:
+    - "80:80"
+  volumes:
+    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
+  volumes_from:
+    - uwsgi
+  links:
+    - uwsgi
+    - db
 ```
 
 Next, why don't you [start Docker containers](containers) to get your own registry going.
