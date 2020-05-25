@@ -46,6 +46,8 @@ scheduler:
     - .:/code
   volumes_from:
     - uwsgi
+  env_file:
+    - ./.minio-env
   links:
     - minio
     - redis
@@ -58,6 +60,8 @@ worker:
     - .:/code
   volumes_from:
     - uwsgi
+  env_file:
+    - ./.minio-env
   links:
     - minio
     - redis
