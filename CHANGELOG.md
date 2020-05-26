@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - Minio environment needs to be added to scheduler and worker (1.1.25)
  - Adding minio backend for library endpoint (1.1.24)
  - GitHub API is deprecating use of GET parameters, must provide token in header (1.1.23)
  - multipart upload added to scs-library-client, needs to return 404 (1.1.22)
