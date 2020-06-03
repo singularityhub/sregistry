@@ -134,7 +134,7 @@ VIEW_RATE_LIMIT_BLOCK = (
 
 # Available Plugins:
 
-# - ldap_auth: Allows sregistry to authenitcate against an LDAP directory
+# - ldap_auth: Allows sregistry to authenticate against an LDAP directory
 # - google_build: a custom storage with that uses Google Cloud Build + Storage
 # - pam_auth: Allow users from (docker) host to log in
 # - globus: allows connection from sregistry to endpoints
