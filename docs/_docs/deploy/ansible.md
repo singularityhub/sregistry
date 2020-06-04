@@ -6,6 +6,8 @@ toc: true
 
 # Installation using Ansible
 
+{% include alert.html type="info" title="Important!" content="Important: this deployment works for Singularity Registry Server v1.1.23 and earlier, before Minio was added" %}
+
 It is possible to automate the deployment of your Singularity Registry by using Ansible. There is an  Ansible role that can be used for deploying your own Singularity Registry Server and installing [sregistry-cli](https://github.com/singularityhub/sregistry-cli). This role is available [here](https://galaxy.ansible.com/grycap/singularity_registry). The complete documentation can be found [here](https://github.com/grycap/ansible-role-singularity-registry).
 
 For example, if you want to install [sregistry](https://github.com/singularityhub/sregistry) with GitHub and PAM authentication, and also the client [sregistry-cli](https://github.com/singularityhub/sregistry-cli), you can create the following ansible playbook:
