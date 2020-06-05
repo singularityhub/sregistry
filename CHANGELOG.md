@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - Django various updates, version bump 2.2.10 to 2.2.13 (1.1.26)
  - Minio environment needs to be added to scheduler and worker (1.1.25)
  - Adding minio backend for library endpoint (1.1.24)
  - GitHub API is deprecating use of GET parameters, must provide token in header (1.1.23)
