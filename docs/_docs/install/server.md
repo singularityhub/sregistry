@@ -68,7 +68,7 @@ minio:
 ```
 
 
-At the time of develpoment we are using this version of minio:
+At the time of development we are using this version of minio:
 
 ```
 / # minio --version
