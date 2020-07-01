@@ -1,0 +1,142 @@
+{
+    "projectName": "sregistry",
+    "projectOwner": "singularityhub",
+    "repoType": "github",
+    "repoHost": "https://github.com",
+    "files": [
+        "README.md"
+    ],
+    "imageSize": 100,
+    "commit": true,
+    "commitConvention": "none",
+    "contributors": [
+        {
+            "login": "vsoch",
+            "name": "Vanessasaurus",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/814322?v=4",
+            "profile": "https://vsoch.github.io",
+            "contributions": [
+                "doc",
+                "code"
+            ]
+        },
+        {
+            "login": "tschoonj",
+            "name": "Tom Schoonjans",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/65736?v=4",
+            "profile": "tschoonj.github.io",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "Aneoshun",
+            "name": "Antoine Cully",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/6448924?v=4",
+            "profile": "antoinecully.com",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "dctrud",
+            "name": "David Trudgian",
+            "avatar_url": "https://avatars1.githubusercontent.com/u/4522799?v=4",
+            "profile": "https://dctrud.sdf.org",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "serlophug",
+            "name": "Sergio L\u00f3pez Huguet",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/20574493?v=4",
+            "profile": "https://github.com/serlophug",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "jbd",
+            "name": "jbd",
+            "avatar_url": "https://avatars2.githubusercontent.com/u/169483?v=4",
+            "profile": "https://github.com/jbd",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "alhirzel",
+            "name": "Alex Hirzel",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/324152?v=4",
+            "profile": "http://alex.hirzel.us/",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "smoe",
+            "name": "Steffen M\u00f6ller",
+            "avatar_url": "https://avatars0.githubusercontent.com/u/207407?v=4",
+            "profile": "http://tangiblecomputationalbiology.blogspot.com",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "yarikoptic",
+            "name": "Yaroslav Halchenko",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/39889?v=4",
+            "profile": "www.onerussian.com",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "victorsndvg",
+            "name": "victorsndvg",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/6474985?v=4",
+            "profile": "http://sourceforge.net/u/victorsndvg/profile/",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "arfon",
+            "name": "Arfon Smith",
+            "avatar_url": "https://avatars1.githubusercontent.com/u/4483?v=4",
+            "profile": "arfon.org",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "bbbbbrie",
+            "name": "Brie Carranza",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/9367754?v=4",
+            "profile": "https://ransomwareroundup.com",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "dfornika",
+            "name": "Dan Fornika",
+            "avatar_url": "https://avatars1.githubusercontent.com/u/145659?v=4",
+            "profile": "https://orcid.org/0000-0002-6178-3585",
+            "contributions": [
+                "doc"
+            ]
+        },
+        {
+            "login": "RonaldEnsing",
+            "name": "Ronald Ensing",
+            "avatar_url": "https://avatars2.githubusercontent.com/u/8299064?v=4",
+            "profile": "https://github.com/RonaldEnsing",
+            "contributions": [
+                "doc"
+            ]
+        }
+    ],
+    "contributorsPerLine": 7
+}
