@@ -1,0 +1,77 @@
+{
+    "vsoch": {
+        "name": "Vanessasaurus",
+        "bio": "I'm the Vanessasaurus!",
+        "blog": "https://vsoch.github.io"
+    },
+    "tschoonj": {
+        "name": "Tom Schoonjans",
+        "bio": "I'm a research software engineer working @rosalindfranklininstitute, and am passionate about developing quality open source software.",
+        "blog": "tschoonj.github.io",
+        "orcid": "0000-0002-3919-3546"
+    },
+    "Aneoshun": {
+        "name": "Antoine Cully",
+        "blog": "antoinecully.com",
+        "orcid": "0000-0002-3190-7073"
+    },
+    "dctrud": {
+        "name": "David Trudgian",
+        "bio": "Work and collaborations.\r\n\r\nPersonal code at https://git.randomroad.net",
+        "blog": "https://dctrud.sdf.org",
+        "orcid": "0000-0002-7084-6787"
+    },
+    "serlophug": {
+        "name": "Sergio L\u00f3pez Huguet",
+        "bio": "Ph.D Student ",
+        "blog": "https://github.com/serlophug"
+    },
+    "jbd": {
+        "name": "jbd",
+        "bio": "jbdenis.net",
+        "blog": "https://github.com/jbd"
+    },
+    "alhirzel": {
+        "name": "Alex Hirzel",
+        "bio": "easygoing thinker/tinkerer type",
+        "blog": "http://alex.hirzel.us/"
+    },
+    "smoe": {
+        "name": "Steffen M\u00f6ller",
+        "blog": "http://tangiblecomputationalbiology.blogspot.com",
+        "orcid": "0000-0002-7187-4683"
+    },
+    "yarikoptic": {
+        "name": "Yaroslav Halchenko",
+        "bio": "Cheers!",
+        "blog": "www.onerussian.com",
+        "orcid": "0000-0003-3456-2493"
+    },
+    "victorsndvg": {
+        "name": "victorsndvg",
+        "bio": "Scientific software engineer",
+        "blog": "http://sourceforge.net/u/victorsndvg/profile/"
+    },
+    "arfon": {
+        "name": "Arfon Smith",
+        "bio": "Head of Data Science Mission Office @spacetelescope. Ex GitHubber. @zooniverse co-founder. Editor-in-chief of the Journal of Open Source Software.",
+        "blog": "arfon.org",
+        "orcid": "0000-0002-3957-2474"
+    },
+    "bbbbbrie": {
+        "name": "Brie Carranza",
+        "bio": "I like Linux, reading, writing in Python or Go, containers and automation, music, broccoli, math, pizza, documentation, grammar and cute animals!",
+        "blog": "https://ransomwareroundup.com",
+        "orcid": "0000-0002-4889-4555"
+    },
+    "dfornika": {
+        "name": "Dan Fornika",
+        "bio": "Genomics Specialist\r\n",
+        "blog": "https://orcid.org/0000-0002-6178-3585",
+        "orcid": "0000-0002-6178-3585"
+    },
+    "RonaldEnsing": {
+        "name": "Ronald Ensing",
+        "blog": "https://github.com/RonaldEnsing"
+    }
+}

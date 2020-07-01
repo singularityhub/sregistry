@@ -4,13 +4,42 @@
 [![GitHub actions status](https://github.com/singularityhub/sregistry/workflows/sregistry-ci/badge.svg?branch=master)](https://github.com/singularityhub/sregistry/actions?query=branch%3Amaster+workflow%3Asregistry-ci)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1012531.svg)](https://doi.org/10.5281/zenodo.1012531)
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 - [Documentation](https://singularityhub.github.io/sregistry)
 
 ## Contributors
 
-![contributors.svg](./contributors.svg)
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://vsoch.github.io"><img src="https://avatars0.githubusercontent.com/u/814322?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vanessasaurus</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=vsoch" title="Documentation">📖</a> <a href="https://github.com/singularityhub/sregistry/commits?author=vsoch" title="Code">💻</a></td>
+    <td align="center"><a href="tschoonj.github.io"><img src="https://avatars0.githubusercontent.com/u/65736?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tom Schoonjans</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=tschoonj" title="Documentation">📖</a></td>
+    <td align="center"><a href="antoinecully.com"><img src="https://avatars3.githubusercontent.com/u/6448924?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Antoine Cully</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=Aneoshun" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://dctrud.sdf.org"><img src="https://avatars1.githubusercontent.com/u/4522799?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David Trudgian</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=dctrud" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/serlophug"><img src="https://avatars3.githubusercontent.com/u/20574493?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sergio López Huguet</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=serlophug" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/jbd"><img src="https://avatars2.githubusercontent.com/u/169483?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jbd</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=jbd" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://alex.hirzel.us/"><img src="https://avatars3.githubusercontent.com/u/324152?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Hirzel</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=alhirzel" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://tangiblecomputationalbiology.blogspot.com"><img src="https://avatars0.githubusercontent.com/u/207407?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Steffen Möller</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=smoe" title="Documentation">📖</a></td>
+    <td align="center"><a href="www.onerussian.com"><img src="https://avatars3.githubusercontent.com/u/39889?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yaroslav Halchenko</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=yarikoptic" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://sourceforge.net/u/victorsndvg/profile/"><img src="https://avatars3.githubusercontent.com/u/6474985?v=4?s=100" width="100px;" alt=""/><br /><sub><b>victorsndvg</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=victorsndvg" title="Documentation">📖</a></td>
+    <td align="center"><a href="arfon.org"><img src="https://avatars1.githubusercontent.com/u/4483?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Arfon Smith</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=arfon" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://ransomwareroundup.com"><img src="https://avatars3.githubusercontent.com/u/9367754?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Brie Carranza</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=bbbbbrie" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://orcid.org/0000-0002-6178-3585"><img src="https://avatars1.githubusercontent.com/u/145659?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dan Fornika</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=dfornika" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/RonaldEnsing"><img src="https://avatars2.githubusercontent.com/u/8299064?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ronald Ensing</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=RonaldEnsing" title="Documentation">📖</a></td>
+  </tr>
+</table>
 
-Do you like the graphic? It's done thanks to [sourcecred-action](https://github.com/sourcecred/sourcecred-action).
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 
 ## What is Singularity Registry
 Singularity Registry Server is a server to provide management and storage of 
