@@ -27,7 +27,7 @@ jobs:
           log_level: DEBUG
 
           # Doc only
-          allcontrib-type: doc
+          allcontrib_type: doc
 
           # If files already exist and an init is done, force overwrite
           force: true
