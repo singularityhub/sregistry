@@ -8,10 +8,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from urllib.parse import unquote
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
-import json
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView

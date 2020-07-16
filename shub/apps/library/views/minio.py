@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from datetime import datetime
 from boto3 import Session
-import boto3
 from botocore.client import Config
 
 from shub.settings import (
@@ -20,6 +19,8 @@ from shub.settings import (
     MINIO_REGION,
     MINIO_SSL,
 )
+
+from minio.error import InvalidArgumentError
 from minio import Minio
 from minio.compat import urlsplit, queryencode
 from minio.signer import (

@@ -14,8 +14,6 @@ Commit: 763c2708c16bf58064f741ceb2e2ab752dea3663 (no LICENSE)
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from shub.plugins.pgp import models
-
 
 class KeyServerAddForm(forms.Form):
     """form used for validation of adding a key

@@ -12,6 +12,7 @@ from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
 from django.conf import settings
 from shub.logger import bot
+from shub.settings import ADMINS
 from random import choice
 from datetime import datetime
 import os

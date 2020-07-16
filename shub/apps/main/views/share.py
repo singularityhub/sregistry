@@ -33,6 +33,8 @@ def generate_share(request, cid):
        ==========
        cid: the container to generate a share link for
     """
+    from shub.apps.main.models import Share
+
     container = get_container(cid)
     edit_permission = container.has_edit_permission(request)
 

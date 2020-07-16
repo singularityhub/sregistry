@@ -14,17 +14,9 @@ Commit: 763c2708c16bf58064f741ceb2e2ab752dea3663 (no LICENSE)
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.http.response import Http404
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
 import pgpdump
-from pgpdump.packet import (
-    PublicKeyPacket,
-    PublicSubkeyPacket,
-    SignaturePacket,
-    UserIDPacket,
-    UserAttributePacket,
-)
 
 from shub.plugins.pgp import forms, models, utils
 

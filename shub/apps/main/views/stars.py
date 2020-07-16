@@ -13,7 +13,6 @@ from shub.apps.main.models import Collection, Star
 from django.http.response import Http404
 from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
 
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models.aggregates import Count
 from django.http import JsonResponse
@@ -26,10 +25,10 @@ from .collections import get_collection
 ################################################################################
 
 
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_stars(request):
     """This is a "favorite" view of collections ordered based on number of stars.
     """
-
     # Favorites based on stars
     collections = (
         Collection.objects.filter(private=False)
@@ -41,10 +40,10 @@ def collection_stars(request):
     return render(request, "stars/collection_stars.html", context)
 
 
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_downloads(request):
     """This is a "favorite" view of collections ordered based on number of downloads.
     """
-
     from shub.apps.logs.models import APIRequestCount
 
     favorites = APIRequestCount.objects.filter(

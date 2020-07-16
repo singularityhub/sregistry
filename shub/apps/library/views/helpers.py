@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from shub.apps.logs.models import APIRequestCount
 from rest_framework.authtoken.models import Token
-from shub.apps.users.models import User
 from shub.apps.main.models import Collection
 
 import re
@@ -208,9 +207,7 @@ def generate_collection_details(collection, containers, user=None):
         user = collection.owners.first()
 
     tags = {}
-    name = ""
     for container in containers:
-        name = container.name
         if not re.search(tag_regex, container.tag):
             tags[container.tag] = str(container.id)
 

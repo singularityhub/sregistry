@@ -297,7 +297,7 @@ def create_webhook(user, repo, secret):
 
     # Create webhook
     response = POST(url, headers=headers, data=params)
-    if response.status_code is not 201:
+    if response.status_code != 201:
         headers.update(get_auth(user, idx=1))
         response = POST(url, headers=headers, data=params)
 
@@ -476,9 +476,7 @@ def verify_payload(request, collection):
 
         return JsonResponseMessage(message=message, status_message="Permission Denied")
 
-    res = django_rq.enqueue(
-        parse_hook, cid=collection.id, branch=branch, commits=commits
-    )
+    django_rq.enqueue(parse_hook, cid=collection.id, branch=branch, commits=commits)
 
     return JsonResponseMessage(
         message="Hook received and parsing.", status=200, status_message="Received"

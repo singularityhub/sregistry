@@ -12,11 +12,9 @@ Commit: 763c2708c16bf58064f741ceb2e2ab752dea3663 (no LICENSE)
 """
 
 import os
-import re
 import base64
 import uuid
 
-from django import forms
 from django.conf import settings
 
 from django.core.files.base import ContentFile
