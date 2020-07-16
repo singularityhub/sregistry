@@ -83,9 +83,6 @@ CONTAINER_SIGNED_URL_EXPIRE_SECONDS = 10
 # A global setting to disable all webhooks / interaction with Github
 DISABLE_GITHUB = False
 
-# A global setting to disable all building
-DISABLE_BUILDING = False
-
 # prevent responses from being received from Google Cloud Build
 DISABLE_BUILD_RECEIVE = False
 
