@@ -626,9 +626,17 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
             storage = existing.get_storage()
             if storage != container.get_storage() and not DISABLE_MINIO_CLEANUP:
 
-                # only delete from Minio not same filename
-                print("Deleting no longer referenced container %s from Minio" % storage)
-                minioClient.remove_object(MINIO_BUCKET, storage)
+                # Ensure that we don't have the container referenced by another collection
+                # The verison would be the same, regardless of the collection/container name
+                count = Container.objects.filter(version=container.version).count()
+
+                # only delete from Minio not same filename, and if there is only one count
+                if count == 1:
+                    print(
+                        "Deleting no longer referenced container %s from Minio"
+                        % storage
+                    )
+                    minioClient.remove_object(MINIO_BUCKET, storage)
 
             # Now delete the container object
             existing.delete()
