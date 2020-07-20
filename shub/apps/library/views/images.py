@@ -19,7 +19,6 @@ from shub.settings import (
     MINIO_REGION,
     MINIO_SIGNED_URL_EXPIRE_MINUTES,
     MINIO_MULTIPART_UPLOAD,
-    DISABLE_MINIO_CLEANUP,
 )
 
 from ratelimit.mixins import RatelimitMixin
@@ -32,7 +31,7 @@ from .parsers import EmptyParser
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from .minio import (
-    minioClient,
+    delete_minio_container,
     minioExternalClient,
     s3,
     s3_external,
@@ -624,19 +623,8 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
             # Case 2: Exists and not frozen (replace)
             storage = existing.get_storage()
-            if storage != container.get_storage() and not DISABLE_MINIO_CLEANUP:
-
-                # Ensure that we don't have the container referenced by another collection
-                # The verison would be the same, regardless of the collection/container name
-                count = Container.objects.filter(version=container.version).count()
-
-                # only delete from Minio not same filename, and if there is only one count
-                if count == 1:
-                    print(
-                        "Deleting no longer referenced container %s from Minio"
-                        % storage
-                    )
-                    minioClient.remove_object(MINIO_BUCKET, storage)
+            if storage != container.get_storage():
+                delete_minio_container(existing)
 
             # Now delete the container object
             existing.delete()
