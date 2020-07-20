@@ -8,7 +8,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.conf import settings
 from dateutil.parser import parse
 import django_rq
 import os

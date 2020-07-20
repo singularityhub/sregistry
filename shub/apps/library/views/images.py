@@ -9,8 +9,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from django.conf import settings
-from django.core.files import File
-from django.core.files.storage import default_storage
 from django.shortcuts import redirect, reverse
 from sregistry.utils import parse_image_name
 
@@ -18,7 +16,6 @@ from shub.apps.logs.utils import generate_log
 from shub.apps.main.models import Collection, Container
 from shub.settings import (
     MINIO_BUCKET,
-    MINIO_EXTERNAL_SERVER,
     MINIO_REGION,
     MINIO_SIGNED_URL_EXPIRE_MINUTES,
     MINIO_MULTIPART_UPLOAD,
@@ -30,20 +27,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 
-from .parsers import OctetStreamParser, EmptyParser
+from .parsers import EmptyParser
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from .minio import (
-    minioClient,
+    delete_minio_container,
     minioExternalClient,
     s3,
     s3_external,
-    MINIO_HTTP_PREFIX,
     sregistry_presign_v4,
 )
-from minio.signer import presign_v4
 from .helpers import (
-    formatString,
     generate_collection_tags,
     generate_collections_list,
     generate_collection_details,  # includes containers
@@ -54,15 +48,11 @@ from .helpers import (
     validate_token,
 )
 
-from urllib.parse import quote, urlparse
-from datetime import timedelta, datetime
+from urllib.parse import urlparse
+from datetime import timedelta
 import django_rq
-import shutil
-import tempfile
 import json
 import uuid
-import os
-import re
 
 # Image Files
 
@@ -260,8 +250,6 @@ class RequestMultiPartPushImageFileView(APIView):
             headers={"X-Amz-Content-Sha256": sha256},
             response_headers=params,
         )
-
-        print(signed_url)
 
         # Return the presigned url
         data = {"presignedURL": signed_url}
@@ -634,6 +622,11 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
                 )
 
             # Case 2: Exists and not frozen (replace)
+            storage = existing.get_storage()
+            if storage != container.get_storage():
+                delete_minio_container(existing)
+
+            # Now delete the container object
             existing.delete()
             selected = container
 
@@ -671,7 +664,7 @@ class ContainersView(RatelimitMixin, APIView):
             print("Token not valid")
             return Response(status=403)
 
-        token = get_token(request)
+        # token = get_token(request)
         # collections = generate_collections_list(token.user)
         return Response(data={}, status=200)
 

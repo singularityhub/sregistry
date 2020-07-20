@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
@@ -29,6 +28,7 @@ from shub.settings import (
     DISABLE_GITHUB,
     DISABLE_BUILDING,
     DISABLE_BUILD_RECEIVE,
+    SREGISTRY_GOOGLE_BUILD_LIMIT,
     VIEW_RATE_LIMIT as rl_rate,
     VIEW_RATE_LIMIT_BLOCK as rl_block,
 )

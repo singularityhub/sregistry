@@ -8,7 +8,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from .config import PLUGINS_ENABLED
 import os
 
 RQ_QUEUES = {"default": {"URL": os.getenv("REDIS_URL", "redis://redis/0")}}

@@ -12,10 +12,8 @@ from shub.apps.main.models import Container, Collection
 from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
 
 from django.db.models import Q
-from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
-from django.contrib import messages
 from ratelimit.decorators import ratelimit
 
 import datetime

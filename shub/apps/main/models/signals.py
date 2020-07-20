@@ -16,7 +16,6 @@ from .containers import Container
 @receiver(post_delete, sender=Container)
 def delete_imagefile(sender, instance, **kwargs):
     print("Delete imagefile signal running.")
-    print(instance.image)
     if instance.image not in ["", None]:
         if hasattr(instance.image, "datafile"):
             count = Container.objects.filter(

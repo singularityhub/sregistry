@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.conf.urls import url
 import shub.apps.main.views as views
-from shub.apps.main.query import collection_query
 
 urlpatterns = [
     url(r"^collections/?$", views.all_collections, name="collections"),

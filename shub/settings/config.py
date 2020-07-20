@@ -17,7 +17,7 @@ ENABLE_GITHUB_AUTH = True
 ENABLE_GITLAB_AUTH = False
 ENABLE_BITBUCKET_AUTH = False
 
-# NOTE you will need to set autehtication methods up.
+# NOTE you will need to set authentication methods up.
 # Configuration goes into secrets.py
 # see https://singularityhub.github.io/sregistry/install.html
 # secrets.py.example provides a template to work from
@@ -83,9 +83,6 @@ CONTAINER_SIGNED_URL_EXPIRE_SECONDS = 10
 # A global setting to disable all webhooks / interaction with Github
 DISABLE_GITHUB = False
 
-# A global setting to disable all building
-DISABLE_BUILDING = False
-
 # prevent responses from being received from Google Cloud Build
 DISABLE_BUILD_RECEIVE = False
 
@@ -115,6 +112,9 @@ MINIO_SSL = False  # use SSL for minio
 MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
 MINIO_REGION = "us-east-1"
 MINIO_MULTIPART_UPLOAD = True
+
+# Don't clean up images in Minio that are no longer referenced by sregistry
+DISABLE_MINIO_CLEANUP = False
 
 # Logging
 

@@ -11,7 +11,7 @@ Commit: 763c2708c16bf58064f741ceb2e2ab752dea3663 (no LICENSE)
 
 """
 
-from django.conf.urls import include, url
+from django.conf.urls import url
 from shub.plugins.pgp import views
 
 urlpatterns = [

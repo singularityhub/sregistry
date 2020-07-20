@@ -5,7 +5,6 @@ https://github.com/aschn/drf-tracking
 
 """
 
-import re
 from django.utils.timezone import now
 from shub.apps.logs.models import APIRequestLog
 from shub.apps.logs.utils import clean_data

@@ -12,7 +12,6 @@ from shub.apps.api.models import ImageFile
 from shub.settings import CONTAINER_WEEKLY_GET_LIMIT
 from django.urls import reverse
 from django.db import models
-from django.db.models.signals import post_delete
 
 from django.contrib.postgres.fields import JSONField
 from taggit.managers import TaggableManager
@@ -30,17 +29,6 @@ from .helpers import has_view_permission, has_edit_permission, get_collection_us
 FROZEN_CHOICES = ((True, "Frozen"), (False, "Not Frozen"))
 
 ACTIVE_CHOICES = ((True, "Active"), (False, "Disabled"))
-
-
-def delete_imagefile(sender, instance, **kwargs):
-    if instance.image not in ["", None]:
-        if hasattr(instance.image, "datafile"):
-            count = Container.objects.filter(
-                image__datafile=instance.image.datafile
-            ).count()
-            if count == 0:
-                print("Deleting %s, no longer used." % instance.image.datafile)
-                instance.image.datafile.delete()
 
 
 ################################################################################
@@ -174,6 +162,3 @@ class Container(models.Model):
 
     def has_view_permission(self, request):
         return has_view_permission(request=request, instance=self.collection)
-
-
-post_delete.connect(delete_imagefile, sender=Container)

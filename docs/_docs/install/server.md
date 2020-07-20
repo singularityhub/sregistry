@@ -105,6 +105,9 @@ MINIO_SECRET_KEY_OLD=minio123
 
 # Turn on/off the Minio browser at 127.0.0.1:9000?
 MINIO_BROWSER=on
+
+# Don't clean up images in Minio that are no longer referenced by sregistry
+DISABLE_MINIO_CLEANUP = False
 ```
 
 If you [read about how minio is configured](https://github.com/minio/minio/tree/master/docs/config)

@@ -10,16 +10,19 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from datetime import datetime
 from boto3 import Session
-import boto3
 from botocore.client import Config
 
+from shub.apps.main.models import Container
 from shub.settings import (
+    DISABLE_MINIO_CLEANUP,
     MINIO_SERVER,
     MINIO_EXTERNAL_SERVER,
     MINIO_BUCKET,
     MINIO_REGION,
     MINIO_SSL,
 )
+
+from minio.error import InvalidArgumentError
 from minio import Minio
 from minio.compat import urlsplit, queryencode
 from minio.signer import (
@@ -197,3 +200,25 @@ def remove_default_port(parsed_url):
     else:
         host = parsed_url.netloc
     return host
+
+
+def delete_minio_container(container):
+    """A helper function to delete a container in Minio based on not finding
+       more than one count for it (indicating that it is not in use by other
+       container collections).
+
+       Parameters
+       ==========
+       container: the container object to get Minio storage from.
+    """
+    # Ensure that we don't have the container referenced by another collection
+    # The verison would be the same, regardless of the collection/container name
+    count = Container.objects.filter(version=container.version).count()
+    storage = container.get_storage()
+
+    # only delete from Minio not same filename, and if there is only one count
+    if count == 1 and not DISABLE_MINIO_CLEANUP:
+        print("Deleting no longer referenced container %s from Minio" % storage)
+        minioClient.remove_object(MINIO_BUCKET, storage)
+        return True
+    return False

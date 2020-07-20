@@ -23,9 +23,7 @@ import json
 import jwt
 import binascii
 import collections
-import hashlib
 import re
-import sys
 import requests
 from urllib.parse import unquote
 from six.moves.urllib.parse import quote
@@ -265,7 +263,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
 
     # The blob must exist
     try:
-        blob = service.objects().get(bucket=bucket["id"], object=object_name).execute()
+        service.objects().get(bucket=bucket["id"], object=object_name).execute()
     except:  # HttpError:
         return None
 

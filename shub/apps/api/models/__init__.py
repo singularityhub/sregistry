@@ -8,10 +8,8 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.db import models
-from .storage import OverwriteStorage
 import uuid
 import time
 import hashlib

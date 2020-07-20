@@ -1,6 +1,4 @@
 from importlib import import_module
-import os
-import sys
 
 from .applications import *
 from .config import *

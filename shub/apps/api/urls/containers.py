@@ -172,6 +172,7 @@ class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIVie
 
     def delete(self, request, collection, name, tag=None, version=None):
         from shub.apps.api.actions import delete_container
+        from shub.apps.library.views.minio import delete_minio_container
 
         container = self.get_object(
             collection=collection, name=name, tag=tag, version=version
@@ -189,6 +190,7 @@ class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIVie
 
         # This only deletes container object, not remote builds.
         if delete_container(request, container):
+            delete_minio_container(container)
             container.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 

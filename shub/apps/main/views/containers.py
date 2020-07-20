@@ -9,6 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from shub.apps.main.models import Container, Label
+from shub.apps.library.views.minio import delete_minio_container
 
 from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
 
@@ -92,6 +93,7 @@ def delete_container(request, cid):
         messages.info(request, "This action is not permitted.")
         return redirect("collections")
 
+    delete_minio_container(container)
     container.delete()
     messages.info(request, "Container successfully deleted.")
     return redirect(container.collection.get_absolute_url())
