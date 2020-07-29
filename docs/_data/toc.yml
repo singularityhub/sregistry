@@ -40,6 +40,8 @@
   children:
     - title: Ansible
       url: docs/deploy/ansible
+    - title: Minio with SSL
+      url: docs/deploy/minio-ssl
 - title: Setup
   url: docs/setup
   children:

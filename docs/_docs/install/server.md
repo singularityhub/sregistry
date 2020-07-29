@@ -237,7 +237,8 @@ when I instantiated the client, and also needing to customize the `presign_v4` f
 sending along the sha256sum from the scs-library-client (it was using an unsigned hash).
 For other configuration settings (cache, region, notifications) you should consult
 the [configuration documentation](https://github.com/minio/minio/tree/master/docs/config).
-SSL instructions for minio are included in the next section.
+SSL instructions for minio are included in the next section. You can also reference
+the [Minio SSL Example]({{ site.baseurl }}/docs/deploy/minio-ssl) deployment in the documentation here.
 
 ## SSL
 
