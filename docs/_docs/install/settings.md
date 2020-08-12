@@ -49,11 +49,11 @@ integration with Google Cloud Build, then you must use GitHub.
 
 ## Plugins
 
-Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/plugins/) for details on how to configure these. You should also now look here to see which plugins you will
+Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/docs/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/docs/plugins/) for details on how to configure these. You should also now look here to see which plugins you will
 want to set up (and then build into your container).
 
 For authentication plugins, we will walk through the setup of each in detail here. 
-For other plugins, you should look at the [plugins](https://singularityhub.github.io/sregistry/plugins/) documentation now before proceeding. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Github is now the only one that worked reliably without an actual domain for me.
+For other plugins, you should look at the [plugins](https://singularityhub.github.io/sregistry/docs/plugins/) documentation now before proceeding. For all of the below, you should put the content in your `secrets.py` under settings. Note that if you are deploying locally, you will need to put localhost (127.0.0.1) as your domain, and Github is now the only one that worked reliably without an actual domain for me.
 
 ### Google OAuth2
 
