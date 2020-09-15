@@ -16,11 +16,11 @@ import os
 
 
 def get_user(uid):
-    """ get a user based on id
+    """get a user based on id
 
-       Parameters
-       ==========
-       uid: the id of the user
+    Parameters
+    ==========
+    uid: the id of the user
     """
     from shub.apps.users.models import User
 
@@ -71,12 +71,12 @@ def create_code_challenge():
 
 def basic_auth_header(username, password):
     """return a base64 encoded header object to
-       generate a token
+    generate a token
 
-       Parameters
-       ==========
-       username: the username
-       password: the password
+    Parameters
+    ==========
+    username: the username
+    password: the password
     """
     s = "%s:%s" % (username, password)
     if sys.version_info[0] >= 3:

@@ -15,8 +15,7 @@ import globus_sdk
 
 
 def get_endpoints(user, client=None):
-    """use a transfer client to list endpoints for the logged in user
-    """
+    """use a transfer client to list endpoints for the logged in user"""
     endpoints = []
     if client is None:
         client = get_transfer_client(user)
@@ -29,8 +28,7 @@ def get_endpoints(user, client=None):
 
 
 def search_endpoints(term, user, client=None):
-    """use a transfer client to search endpoints based on a terms
-    """
+    """use a transfer client to search endpoints based on a terms"""
     endpoints = []
     if client is None:
         client = get_transfer_client(user)

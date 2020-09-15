@@ -64,8 +64,7 @@ import uuid
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def connect_github(request):
-    """create a new container collection based on connecting GitHub.
-    """
+    """create a new container collection based on connecting GitHub."""
     if DISABLE_GITHUB:
         messages.info(request, "Making new collections is currently disabled")
         return redirect("collections")
@@ -91,8 +90,7 @@ def connect_github(request):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def save_collection(request):
-    """save the newly selected collection by the user.
-    """
+    """save the newly selected collection by the user."""
     if DISABLE_GITHUB:
         messages.info(request, "Making new collections is currently disabled")
         return redirect("collections")
@@ -178,8 +176,7 @@ class RecipePushSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RecipePushViewSet(ModelViewSet):
-    """pushing a recipe coincides with doing a remote build.
-    """
+    """pushing a recipe coincides with doing a remote build."""
 
     queryset = RecipeFile.objects.all()
     serializer_class = RecipePushSerializer
@@ -279,8 +276,8 @@ class RecipePushViewSet(ModelViewSet):
 @csrf_exempt
 def receive_build(request, cid):
     """receive_build will receive the post from Google Cloud Build.
-       we check the response header against the jwt token to authenticate,
-       and then check other metadata and permissions in complete_build.
+    we check the response header against the jwt token to authenticate,
+    and then check other metadata and permissions in complete_build.
     """
     print(request.body)
     print(cid)
@@ -319,7 +316,7 @@ def receive_build(request, cid):
 @login_required
 def delete_container(request, cid):
     """delete a container, including it's corresponding files
-       that are stored in Google Build (if they exist)
+    that are stored in Google Build (if they exist)
     """
     container = get_container(cid)
 
@@ -338,9 +335,9 @@ def delete_container(request, cid):
 def delete_collection(request, cid):
     """delete a container collection that has Google Builds
 
-       Parameters
-       ==========
-       cid: the collection id to delete
+    Parameters
+    ==========
+    cid: the collection id to delete
     """
     if not _delete_collection(request, cid):
         messages.info(request, "This action is not permitted.")
@@ -352,11 +349,11 @@ def delete_collection(request, cid):
 
 def _delete_collection(request, cid):
     """the underlying function to delete a collection, returns True/False
-       if done to the calling view.
+    if done to the calling view.
 
-       Parameters
-       ==========
-       cid: the collection id to delete
+    Parameters
+    ==========
+    cid: the collection id to delete
     """
     collection = get_collection(cid)
 
@@ -373,8 +370,8 @@ def _delete_collection(request, cid):
 
 @csrf_exempt
 def receive_hook(request):
-    """receive_hook will forward a hook to the correct receiver depending on 
-       the header information. If it cannot be determined, it is ignored.
+    """receive_hook will forward a hook to the correct receiver depending on
+    the header information. If it cannot be determined, it is ignored.
     """
     if request.method == "POST":
 

@@ -36,8 +36,7 @@ import os
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @csrf_exempt
 def upload_complete(request):
-    """view called on /api/upload/complete after nginx upload module finishes.
-    """
+    """view called on /api/upload/complete after nginx upload module finishes."""
     from shub.apps.api.actions.create import upload_container
 
     if request.method == "POST":

@@ -14,7 +14,7 @@ from django.contrib import messages
 
 def has_globus_association(function):
     """ensure that a user has globus before continuing. If not, redirect
-       to profile where the user can connect the account.
+    to profile where the user can connect the account.
     """
 
     def wrap(request, *args, **kwargs):

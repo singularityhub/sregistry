@@ -13,8 +13,7 @@ from shub.apps.main.models import Container
 
 
 class Command(BaseCommand):
-    """scheduled to run nightly to clean up dummy containers (control+c).
-    """
+    """scheduled to run nightly to clean up dummy containers (control+c)."""
 
     help = "clean up dummy containers"
 

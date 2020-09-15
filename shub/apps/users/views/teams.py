@@ -25,13 +25,13 @@ import uuid
 
 
 def get_team(tid):
-    """ get a team based on its primary id
+    """get a team based on its primary id
 
-       Parameters
-       ==========
-       tid: the id of the team to look up
+    Parameters
+    ==========
+    tid: the id of the team to look up
 
-   """
+    """
     keyargs = {"id": tid}
     try:
         team = Team.objects.get(**keyargs)
@@ -51,9 +51,9 @@ def get_team(tid):
 def edit_team(request, tid=None):
     """edit_team is the view to edit an existing team, or create a new team.
 
-       Parameters
-       ==========
-       tid: the team id to edit or create. If none, indicates a new team
+    Parameters
+    ==========
+    tid: the team id to edit or create. If none, indicates a new team
     """
     if tid:
         team = get_team(tid)
@@ -145,13 +145,13 @@ def view_team(request, tid, code=None):
 @login_required
 def join_team(request, tid, code=None):
     """add a user to a new team. If the team is open, he/she can join without
-       needing a code. If is invite only, the code must be checked.
+    needing a code. If is invite only, the code must be checked.
 
-       Parameters
-       ==========
-       tid: the team id to edit or create. If none, indicates a new team
-       code: if the user is accessing an invite link, the code is checked
-             against the generated request.
+    Parameters
+    ==========
+    tid: the team id to edit or create. If none, indicates a new team
+    code: if the user is accessing an invite link, the code is checked
+          against the generated request.
     """
 
     team = get_team(tid)
@@ -187,11 +187,11 @@ def join_team(request, tid, code=None):
 @login_required
 def leave_team(request, tid):
     """leave team is the view for a user to leave his or her team. A user
-       doesn't need permission to remove him or herself.
+    doesn't need permission to remove him or herself.
 
-       Parameters
-       ==========
-       team: the team to remove the individual from
+    Parameters
+    ==========
+    team: the team to remove the individual from
     """
     team = get_team(tid)
 
@@ -203,11 +203,11 @@ def leave_team(request, tid):
 
 def _remove_member(team, user):
     """remove a member from a team if they are a part of it.
-   
-       Parameters
-       ==========
-       team: the team to remove the individual from
-       user: the user to remove
+
+    Parameters
+    ==========
+    team: the team to remove the individual from
+    user: the user to remove
     """
     if user in team.members.all():
         team.members.remove(user)
@@ -217,12 +217,12 @@ def _remove_member(team, user):
 
 def _remove_owner(team, user):
     """remove an owner from a team, if they are part of it, and there
-       is at least one other owner remaining.
-   
-       Parameters
-       ==========
-       team: the team to remove the individual from
-       user: the user to remove
+    is at least one other owner remaining.
+
+    Parameters
+    ==========
+    team: the team to remove the individual from
+    user: the user to remove
     """
     if team.owners.count() > 1 and user in team.owners.all():
         team.owners.remove(user)
@@ -235,11 +235,11 @@ def _remove_owner(team, user):
 @login_required
 def remove_member(request, tid, uid):
     """remove a member from a team.
- 
-       Parameters
-       ==========
-       team: the team to remove the individual from
-       user: the user to remove
+
+    Parameters
+    ==========
+    team: the team to remove the individual from
+    user: the user to remove
     """
 
     team = get_team(tid)
@@ -257,11 +257,11 @@ def remove_member(request, tid, uid):
 @login_required
 def remove_owner(request, tid, uid):
     """remove a member from a team.
- 
-       Parameters
-       ==========
-       tid: the team id to remove the individual from
-       uid: the user id to remove
+
+    Parameters
+    ==========
+    tid: the team id to remove the individual from
+    uid: the user id to remove
     """
 
     team = get_team(tid)
@@ -279,11 +279,11 @@ def remove_owner(request, tid, uid):
 @login_required
 def add_owner(request, tid, uid):
     """promote a user to be owner of a team
- 
-       Parameters
-       ==========
-       tid: the team id to remove the individual from
-       uid: the user id to remove
+
+    Parameters
+    ==========
+    tid: the team id to remove the individual from
+    uid: the user id to remove
     """
 
     team = get_team(tid)
@@ -303,9 +303,9 @@ def add_owner(request, tid, uid):
 def delete_team(request, tid):
     """delete a team entirely, must be an owner
 
-       Parameters
-       ==========
-       tid: the team id
+    Parameters
+    ==========
+    tid: the team id
 
     """
     team = get_team(tid)
@@ -323,7 +323,7 @@ def delete_team(request, tid):
 @login_required
 def generate_team_invite(request, tid):
     """generate an invitation for a user, return to view.
-       The invitation is valid for a day.
+    The invitation is valid for a day.
     """
     team = get_team(tid)
     if request.user in team.owners.all():

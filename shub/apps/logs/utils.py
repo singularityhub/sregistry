@@ -62,7 +62,7 @@ def generate_log(
     method,
 ):
     """a helper function to generate a log from a request, intended when
-       we want the same functionality but not as a mixin.
+    we want the same functionality but not as a mixin.
     """
     from shub.apps.logs.models import APIRequestLog
 
@@ -108,9 +108,9 @@ def generate_log(
 
 def clean_data(data):
     """Clean a dictionary of data of potentially sensitive info before
-       sending to the database.
-       Function based on the "_clean_credentials" function of django
-       (django/django/contrib/auth/__init__.py)
+    sending to the database.
+    Function based on the "_clean_credentials" function of django
+    (django/django/contrib/auth/__init__.py)
     """
     if data is None:
         return ""

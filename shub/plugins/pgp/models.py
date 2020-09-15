@@ -126,8 +126,7 @@ class PGPKeyModelManager(models.Manager):
                     )
 
     def post_delete(self, sender, instance, **kwargs):
-        """\sa: self.post_save()
-        """
+        """\sa: self.post_save()"""
         instance.file.delete(False)
 
     def save_to_storage(self, user, data):

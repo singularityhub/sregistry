@@ -33,9 +33,9 @@ import uuid
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @csrf_exempt
 def collection_auth_check(request):
-    """ check permissions and 
-        return a collection id (cid) if a collection exists and the user
-        has permission to upload. If not, a permission denied is returned.
+    """check permissions and
+    return a collection id (cid) if a collection exists and the user
+    has permission to upload. If not, a permission denied is returned.
     """
     if DISABLE_BUILDING:
         raise PermissionDenied(detail="Push is disabled.")

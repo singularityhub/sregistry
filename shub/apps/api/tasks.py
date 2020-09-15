@@ -13,11 +13,11 @@ from shub.logger import bot
 
 def expire_share(sid):
     """expire a share based on its id, meaning deleting it so that
-       it can no longer be used.
+    it can no longer be used.
 
-       Parameters
-       ==========
-       sid: the share id to expire
+    Parameters
+    ==========
+    sid: the share id to expire
     """
     from shub.apps.main.models import Share
 

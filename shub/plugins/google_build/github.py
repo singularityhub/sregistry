@@ -48,11 +48,11 @@ api_base = "https://api.github.com"
 
 def get_auth(user, headers=None, idx=0):
     """get_auth will return the authentication header for a user
-       the default headers (without auth) are returned if provider not github
+    the default headers (without auth) are returned if provider not github
 
-       Parameters
-       ==========
-       user: a user object
+    Parameters
+    ==========
+    user: a user object
     """
     if headers is None:
         headers = get_default_headers()
@@ -75,9 +75,9 @@ def get_auth(user, headers=None, idx=0):
 def get_auth_token(user, idx=0):
     """get_auth_token will return the auth token for a user.
 
-       Parameters
-       ==========
-       user: a user object
+    Parameters
+    ==========
+    user: a user object
     """
     # 1. Github private first priority
     auth = [x for x in user.social_auth.all() if x.provider == "github-private"]
@@ -94,13 +94,13 @@ def get_auth_token(user, idx=0):
 
 def get_repo(user, reponame, username, headers=None):
     """get_repo will return a single repo, username/reponame
-       given authentication with user
+    given authentication with user
 
-       Parameters
-       ==========
-       user: the user to get github credentials for
-       reponame: the name of the repo to retrieve
-       username: the username of the repo (owner)
+    Parameters
+    ==========
+    user: the user to get github credentials for
+    reponame: the name of the repo to retrieve
+    username: the username of the repo (owner)
     """
     # Case 1, the user just has one auth or just public
     if headers is None:
@@ -121,10 +121,10 @@ def get_repo(user, reponame, username, headers=None):
 def list_repos(user, headers=None):
     """list_repos will list the public repos for a user
 
-       Parameters
-       ==========
-       user: a user object to list
-       headers: headers to replace default
+    Parameters
+    ==========
+    user: a user object to list
+    headers: headers to replace default
     """
     if headers is None:
         headers = get_auth(user)
@@ -141,11 +141,11 @@ def list_repos(user, headers=None):
 def get_commits(user, uri, headers=None, sha=None, limit=None):
     """list_repos will list the public repos for a user
 
-       Parameters
-       ==========
-       user: the user that owns the repository
-       uri: the username/repo
-       page: the page of results to return, if none, paginates
+    Parameters
+    ==========
+    user: the user that owns the repository
+    uri: the username/repo
+    page: the page of results to return, if none, paginates
     """
     if not headers:
         headers = get_auth(user)
@@ -172,8 +172,7 @@ def get_commits(user, uri, headers=None, sha=None, limit=None):
 
 
 def get_branch_commits(user, uri, branch):
-    """get all commits for a particular branch
-    """
+    """get all commits for a particular branch"""
     headers = get_auth(user)
     headers["Accept"] = "application/vnd.github.cryptographer-preview"
     url = "%s/repos/%s/commits?sha=%s" % (api_base, uri, branch)
@@ -194,7 +193,7 @@ def get_commit_date(commit):
 
 def get_commits_since(commits, since):
     """from a list of commits, return those in a list that occured since
-       a provided date (since)
+    a provided date (since)
     """
     updates = []
     seen = []
@@ -217,14 +216,14 @@ def get_commits_since(commits, since):
 
 def get_commit_details(collection, since=None, headers=None, limit=None):
     """get changed files will find changed files since a particular date.
-       If since is not defined, we take the following logic:
-        
-       1. First compare the commits date against the repo pushed_date. If 
-          commits are found, differences are determined between those ranges.
-       2. If the webhook was created without a new commit/push, then fall back
-          to comparing commits to the webhook creation date
-       3. If still no passing ranges, parse entire result for changed files,
-          and return the most recent of each.
+    If since is not defined, we take the following logic:
+
+    1. First compare the commits date against the repo pushed_date. If
+       commits are found, differences are determined between those ranges.
+    2. If the webhook was created without a new commit/push, then fall back
+       to comparing commits to the webhook creation date
+    3. If still no passing ranges, parse entire result for changed files,
+       and return the most recent of each.
     """
     if since is None:
         since = collection.metadata["github"]["pushed_at"]
@@ -270,15 +269,15 @@ def get_commit_details(collection, since=None, headers=None, limit=None):
 
 def create_webhook(user, repo, secret):
     """create_webhook will create a webhook for a repo to send back
-       to singularity hub on push
+    to singularity hub on push
 
-       Parameters
-       ==========
-       user: user: should be a singularity hub user. This is used to get
-                   the Github authentication
-       repo: should be a complete repo object, including username and reponame
-       secret: should be a randomly generated string, created when repo connected,
-               to validate future pushes
+    Parameters
+    ==========
+    user: user: should be a singularity hub user. This is used to get
+                the Github authentication
+    repo: should be a complete repo object, including username and reponame
+    secret: should be a randomly generated string, created when repo connected,
+            to validate future pushes
     """
     headers = get_auth(user)
 
@@ -320,11 +319,11 @@ def create_webhook(user, repo, secret):
 
 def update_webhook_metadata(repo):
     """based on a repository field from a webhook payload, return an
-       updated data structure with fields that we care about.
+    updated data structure with fields that we care about.
 
-       Parameters
-       ==========
-       repo: the repository object to get fields from
+    Parameters
+    ==========
+    repo: the repository object to get fields from
     """
     return {
         "repo": repo["clone_url"],
@@ -343,14 +342,14 @@ def update_webhook_metadata(repo):
 
 def delete_webhook(user, repo, hook_id):
     """delete_webhook will delete a webhook, done when a user deletes a collection.
-       https://developer.github.com/v3/repos/hooks/#delete-a-hook
-       DELETE /repos/:owner/:repo/hooks/:hook_id
+    https://developer.github.com/v3/repos/hooks/#delete-a-hook
+    DELETE /repos/:owner/:repo/hooks/:hook_id
 
-       Parameters
-       ==========
-       user: should be a singularity hub user. This is used to get
-             the Github authentication
-       repo: should be a complete repo object, including username and reponame
+    Parameters
+    ==========
+    user: should be a singularity hub user. This is used to get
+          the Github authentication
+    repo: should be a complete repo object, including username and reponame
     """
     headers = get_auth(user)
 
@@ -372,14 +371,14 @@ def delete_webhook(user, repo, hook_id):
 
 @csrf_exempt
 def receive_github_hook(request):
-    """receive_hook will receive a Github webhook, generate a new Container 
-       for the collection, and then send the image to the build queue. For now,
-       we accept just collection builds
+    """receive_hook will receive a Github webhook, generate a new Container
+     for the collection, and then send the image to the build queue. For now,
+     we accept just collection builds
 
-      :: notes
-      - The container collection (repo) is looked up via the repo's Github name
-      - The user must be the owner of the container collection, associated with 
-        the Github account
+    :: notes
+    - The container collection (repo) is looked up via the repo's Github name
+    - The user must be the owner of the container collection, associated with
+      the Github account
     """
     # We do these checks again for sanity
     if request.method == "POST":

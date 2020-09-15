@@ -40,8 +40,7 @@ from .containers import get_container
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def download_recipe(request, cid):
-    """download a container recipe
-    """
+    """download a container recipe"""
     container = get_container(cid)
 
     if "deffile" in container.metadata:
@@ -58,8 +57,7 @@ def download_recipe(request, cid):
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def download_share(request, cid, secret):
-    """download a custom share for a container
-    """
+    """download a custom share for a container"""
     container = get_container(cid)
 
     # Is the container secret valid?
@@ -82,8 +80,7 @@ def download_share(request, cid, secret):
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def download_container(request, cid, secret):
-    """download a container
-    """
+    """download a container"""
     container = get_container(cid)
 
     # The secret must be up to date
@@ -95,14 +92,14 @@ def download_container(request, cid, secret):
 
 def _download_container(container, request):
     """
-       download_container is the shared function between downloading a share
-       or a direct container download. For each, we create a FileResponse
-       with content type application/img, and stream it to the container's
-       download name. A FileResponse is returned.
+    download_container is the shared function between downloading a share
+    or a direct container download. For each, we create a FileResponse
+    with content type application/img, and stream it to the container's
+    download name. A FileResponse is returned.
 
-       Parameters
-       ==========
-       container: the container to download
+    Parameters
+    ==========
+    container: the container to download
 
     """
     if container.image is not None:

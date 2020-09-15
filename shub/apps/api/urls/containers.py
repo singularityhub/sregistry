@@ -116,8 +116,7 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
-    """View all containers
-    """
+    """View all containers"""
 
     def get_queryset(self):
         return Container.objects.filter(collection__private=False)
@@ -131,8 +130,7 @@ class ContainerViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIView):
-    """Retrieve a container instance based on it's name
-    """
+    """Retrieve a container instance based on it's name"""
 
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
@@ -209,12 +207,12 @@ class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIVie
 
 def _container_get(request, container, name=None, tag=None):
     """container get is the shared function for getting a container based
-       on a name or an id. It validates the request and returns a response.
-       
-       Parameters
-       ==========
-       request: the request from the view with the user
-       container: the container object to check
+    on a name or an id. It validates the request and returns a response.
+
+    Parameters
+    ==========
+    request: the request from the view with the user
+    container: the container object to check
     """
     if container is None:
         raise NotFound
@@ -269,8 +267,7 @@ def _container_get(request, container, name=None, tag=None):
 
 
 class ContainerSearch(APIView):
-    """search for a list of containers depending on a query
-    """
+    """search for a list of containers depending on a query"""
 
     def get_object(self, name, collection, tag):
         from shub.apps.main.query import specific_container_query

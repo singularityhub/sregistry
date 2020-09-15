@@ -16,8 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class KeyServerAddForm(forms.Form):
-    """form used for validation of adding a key
-    """
+    """form used for validation of adding a key"""
 
     keytext = forms.CharField(widget=forms.Textarea)
     options = forms.CharField(
@@ -26,8 +25,7 @@ class KeyServerAddForm(forms.Form):
 
 
 class KeyServerLookupForm(forms.Form):
-    """form used for validation of looking up a key
-    """
+    """form used for validation of looking up a key"""
 
     op = forms.RegexField(
         r"(?i)(get|index|vindex|x-.+|)",

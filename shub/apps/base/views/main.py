@@ -40,8 +40,7 @@ def terms_view(request):
 
 
 class VersionView(APIView):
-    """{'data': {'version': 'v1.0.4-0-g24d3b74', 'apiVersion': '2.0.0-alpha.2'}}    
-    """
+    """{'data': {'version': 'v1.0.4-0-g24d3b74', 'apiVersion': '2.0.0-alpha.2'}}"""
 
     renderer_classes = (JSONRenderer,)
 

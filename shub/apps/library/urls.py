@@ -24,8 +24,10 @@ urlpatterns = [
     # url(r'^v1/images/(?P<username>.+?)/(?P<collection>.+?)/(?P<name>.+?)$', views.PushImageView.as_view()),
     url(r"^v1/images/(?P<name>.+?)/?$", views.GetImageView.as_view()),
     url(
-        r"^v1/imagefile/(?P<name>.+?)/?$", views.DownloadImageView.as_view()
-    ),  # not sure this is used
+        r"^v1/imagefile/(?P<name>.+?)/?$",
+        views.DownloadImageView.as_view(),
+        name="library_manual_download",
+    ),  # used for manual download in interface
     url(
         r"^v2/imagefile/(?P<container_id>.+?)/_complete?$",
         views.CompletePushImageFileView.as_view(),

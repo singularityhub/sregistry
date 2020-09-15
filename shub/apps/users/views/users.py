@@ -26,10 +26,10 @@ from rest_framework.authtoken.models import Token
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def view_token(request):
-    """ tokens are valid for pushing (creating collections) and only available
-        to superusers or staff, unless USER_COLLECTIONS is set to True. If
-        user's are allowed to create collections, they can push to those for
-        which they are an owner or contributor. 
+    """tokens are valid for pushing (creating collections) and only available
+    to superusers or staff, unless USER_COLLECTIONS is set to True. If
+    user's are allowed to create collections, they can push to those for
+    which they are an owner or contributor.
     """
     return render(request, "users/token.html")
 
@@ -37,8 +37,7 @@ def view_token(request):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def update_token(request):
-    """a user is allowed to change/update their current token
-    """
+    """a user is allowed to change/update their current token"""
     try:
         token = Token.objects.get(user=request.user)
         token.delete()
@@ -53,8 +52,7 @@ def update_token(request):
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_profile(request, username=None):
-    """view a user's profile, including collections and download counts
-    """
+    """view a user's profile, including collections and download counts"""
 
     message = "You must select a user or be logged in to view a profile."
     if not username:

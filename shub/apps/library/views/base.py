@@ -16,8 +16,8 @@ from rest_framework.views import APIView
 class LibraryBaseView(APIView):
     """The base /v2/ api response, is expected to function as follows:
 
-      GET of /v2 returned 200 OK response
-      GET of /v2 has header "Docker-Distribution-API-Version":"registry/2.0"
+    GET of /v2 returned 200 OK response
+    GET of /v2 has header "Docker-Distribution-API-Version":"registry/2.0"
     """
 
     renderer_classes = (JSONRenderer,)

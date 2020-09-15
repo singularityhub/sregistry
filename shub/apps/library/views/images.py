@@ -59,7 +59,7 @@ import uuid
 
 class CompletePushImageFileView(RatelimitMixin, APIView):
     """This view (UploadImageCompleteRequest) isn't currently useful,
-       but should exist as it is used for Singularity.
+    but should exist as it is used for Singularity.
     """
 
     ratelimit_key = "ip"
@@ -83,7 +83,7 @@ class CompletePushImageFileView(RatelimitMixin, APIView):
 
 class RequestMultiPartAbortView(RatelimitMixin, APIView):
     """Currently this view returns 404 to default to v2 RequestPushImageFileView
-       see https://github.com/singularityhub/sregistry/issues/282
+    see https://github.com/singularityhub/sregistry/issues/282
     """
 
     ratelimit_key = "ip"
@@ -94,8 +94,7 @@ class RequestMultiPartAbortView(RatelimitMixin, APIView):
     allowed_methods = ("PUT",)
 
     def put(self, request, upload_id):
-        """In a post, the upload_id will be the container id.
-        """
+        """In a post, the upload_id will be the container id."""
         print("PUT RequestMultiPartAbortView")
 
         # Handle authorization
@@ -114,8 +113,7 @@ class RequestMultiPartAbortView(RatelimitMixin, APIView):
 
 
 class RequestMultiPartCompleteView(RatelimitMixin, APIView):
-    """Complete the multipart upload.
-    """
+    """Complete the multipart upload."""
 
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
@@ -126,7 +124,7 @@ class RequestMultiPartCompleteView(RatelimitMixin, APIView):
 
     def put(self, request, upload_id):
         """A put is done to complete the upload, providing the image id and number parts
-           https://github.com/sylabs/scs-library-client/blob/30f9b6086f9764e0132935bcdb363cc872ac639d/client/push.go#L537
+        https://github.com/sylabs/scs-library-client/blob/30f9b6086f9764e0132935bcdb363cc872ac639d/client/push.go#L537
         """
         print("PUT RequestMultiPartCompleteView")
 
@@ -167,9 +165,9 @@ class RequestMultiPartCompleteView(RatelimitMixin, APIView):
 
 class RequestMultiPartPushImageFileView(APIView):
     """This POST view will returns 404 to default to v2 RequestPushImageFileView
-       if MINIO_MULTIPART_UPLOAD is set to False. The PUT view handles generation
-       of each multipart upload url.
-       see https://github.com/singularityhub/sregistry/issues/282
+    if MINIO_MULTIPART_UPLOAD is set to False. The PUT view handles generation
+    of each multipart upload url.
+    see https://github.com/singularityhub/sregistry/issues/282
     """
 
     renderer_classes = (JSONRenderer,)
@@ -180,8 +178,7 @@ class RequestMultiPartPushImageFileView(APIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def put(self, request, upload_id):
-        """After starting the multipart upload continue the process
-        """
+        """After starting the multipart upload continue the process"""
         print("PUT RequestMultiPartPushImageFileView")
 
         # Check Authorization
@@ -256,8 +253,7 @@ class RequestMultiPartPushImageFileView(APIView):
         return Response(data={"data": data}, status=200)
 
     def post(self, request, upload_id):
-        """In a post, the upload_id will be the container id.
-        """
+        """In a post, the upload_id will be the container id."""
 
         print("POST RequestMultiPartPushImageFileView")
 
@@ -316,7 +312,7 @@ class RequestMultiPartPushImageFileView(APIView):
 
 class RequestPushImageFileView(RatelimitMixin, APIView):
     """After creating the container, push the image file. Still check
-       all credentials!
+    all credentials!
     """
 
     ratelimit_key = "ip"
@@ -363,7 +359,7 @@ class RequestPushImageFileView(RatelimitMixin, APIView):
 
 class PushImageView(RatelimitMixin, APIView):
     """Given a collection and container name, return the associated metadata.
-       GET /v1/containers/vsoch/dinosaur-collection/container
+    GET /v1/containers/vsoch/dinosaur-collection/container
     """
 
     renderer_classes = (JSONRenderer,)
@@ -413,8 +409,8 @@ class PushImageView(RatelimitMixin, APIView):
 
 class DownloadImageView(RatelimitMixin, APIView):
     """redirect to the url to download a container.
-       https://library.sylabs.io/v1/imagefile/busybox:latest
-       I'm not actually sure if this view is being used anymore.
+    https://library.sylabs.io/v1/imagefile/busybox:latest
+    This view is used for manual download in the interface.
     """
 
     ratelimit_key = "ip"
@@ -466,7 +462,7 @@ class DownloadImageView(RatelimitMixin, APIView):
 
 class GetImageView(RatelimitMixin, APIView):
     """redirect to the url to download a container.
-       https://library.sylabs.io/v1/imagefile/busybox:latest
+    https://library.sylabs.io/v1/imagefile/busybox:latest
     """
 
     renderer_classes = (JSONRenderer,)
@@ -531,7 +527,7 @@ class GetImageView(RatelimitMixin, APIView):
 
 class CollectionsView(RatelimitMixin, APIView):
     """Return a simple list of collections
-       GET /v1/collections
+    GET /v1/collections
     """
 
     ratelimit_key = "ip"
@@ -554,10 +550,10 @@ class CollectionsView(RatelimitMixin, APIView):
 
 class GetCollectionTagsView(RatelimitMixin, APIView):
     """Return a simple list of tags in the collection, and the
-       containers associated with. Since we can only return one container
-       per tag, we take the most recently created. This means that
-       not all container ids will be returned for any given tag.
-       GET /v1/tags/<collection_id>
+    containers associated with. Since we can only return one container
+    per tag, we take the most recently created. This means that
+    not all container ids will be returned for any given tag.
+    GET /v1/tags/<collection_id>
     """
 
     ratelimit_key = "ip"
@@ -645,7 +641,7 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
 class ContainersView(RatelimitMixin, APIView):
     """Return a simple list of containers
-       GET /v1/containers
+    GET /v1/containers
     """
 
     renderer_classes = (JSONRenderer,)
@@ -671,8 +667,8 @@ class ContainersView(RatelimitMixin, APIView):
 
 class GetNamedCollectionView(RatelimitMixin, APIView):
     """Given a collection, return the associated metadata.
-       We don't care about the username, but Singularity push requires it.
-       GET /v1/collections/<username>/<name>
+    We don't care about the username, but Singularity push requires it.
+    GET /v1/collections/<username>/<name>
     """
 
     renderer_classes = (JSONRenderer,)
@@ -710,7 +706,7 @@ class GetNamedCollectionView(RatelimitMixin, APIView):
 
 class GetNamedContainerView(RatelimitMixin, APIView):
     """Given a collection and container name, return the associated metadata.
-       GET /v1/containers/vsoch/dinosaur-collection/container
+    GET /v1/containers/vsoch/dinosaur-collection/container
     """
 
     renderer_classes = (JSONRenderer,)
