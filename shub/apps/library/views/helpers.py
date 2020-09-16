@@ -43,11 +43,19 @@ def get_token(request):
     """The same as validate_token, but return the token object to check the
     associated user.
     """
+    # Coming from HTTP, look for authorization as bearer token
     token = request.META.get("HTTP_AUTHORIZATION")
 
     if token:
         try:
             return Token.objects.get(key=token.replace("BEARER", "").strip())
+        except Token.DoesNotExist:
+            pass
+
+    # Next attempt - try to get token via user session
+    elif request.user.is_authenticated and not request.user.is_anonymous:
+        try:
+            return Token.objects.get(user=request.user)
         except Token.DoesNotExist:
             pass
 

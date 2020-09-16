@@ -442,6 +442,10 @@ class DownloadImageView(RatelimitMixin, APIView):
         if container.collection.private:
             token = get_token(request)
 
+            # The user is not authenticated
+            if not token:
+                return Response(status=404)
+
             # Only owners and contributors can pull
             collection = container.collection
             if (
