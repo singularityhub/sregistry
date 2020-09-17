@@ -15,7 +15,7 @@ from shub.logger import bot
 
 
 class Command(BaseCommand):
-    """add superuser will add admin and manager privs singularity 
+    """add superuser will add admin and manager privs singularity
     registry. The super user is an admin that can build, delete,
     and manage images
     """

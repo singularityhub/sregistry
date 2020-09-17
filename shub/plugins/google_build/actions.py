@@ -30,14 +30,14 @@ import django_rq
 
 def trigger_build(sender, instance, **kwargs):
     """Trigger build will send a recipe directly to Google Cloud Build,
-       and create a container that will send a curl response back to
-       an endpoint here to signal that the build is complete. 
-       Triggered by RecipePushSerializer.
+    and create a container that will send a curl response back to
+    an endpoint here to signal that the build is complete.
+    Triggered by RecipePushSerializer.
 
-       Parameters
-       ==========
-       sender: should be the sending model, which is an RecipeFile instance
-       instance: is the instance of the RecipeFile
+    Parameters
+    ==========
+    sender: should be the sending model, which is an RecipeFile instance
+    instance: is the instance of the RecipeFile
     """
     collection = Collection.objects.get(name=instance.collection)
     context = get_build_context()
@@ -107,13 +107,13 @@ def trigger_build(sender, instance, **kwargs):
 
 def receive_build(collection, recipes, branch):
     """receive_build will receive a build from GitHub, and then trigger
-       the same Google Cloud Build but using a GitHub repository (recommended).
+    the same Google Cloud Build but using a GitHub repository (recommended).
 
-       Parameters
-       ==========
-       collection: the collection
-       recipes: a dictionary of modified recipe files to build
-       branch: the repository branch (kept as metadata)
+    Parameters
+    ==========
+    collection: the collection
+    recipes: a dictionary of modified recipe files to build
+    branch: the repository branch (kept as metadata)
     """
     from .github import get_auth_token
 
@@ -198,7 +198,7 @@ def receive_build(collection, recipes, branch):
 
 def get_build_context():
     """get shared build context between recipe build (push of a recipe) and
-       GitHub triggered build. This function takes no arguments.
+    GitHub triggered build. This function takes no arguments.
     """
     # We checked that the setting is defined, here ensure exists
     if not os.path.exists(settings.GOOGLE_APPLICATION_CREDENTIALS):
@@ -228,12 +228,12 @@ def get_build_context():
 
 def delete_build(cid, client=None):
     """Delete artifacts for a container build, if they exist, along
-       with the container object. This is called
-       as a django-rq task for a worker to do from views.py
+    with the container object. This is called
+    as a django-rq task for a worker to do from views.py
 
-       Parameters
-       ==========
-       cid: the container id to finish the build for, expected to have an id
+    Parameters
+    ==========
+    cid: the container id to finish the build for, expected to have an id
     """
     from shub.apps.main.views import get_container
 
@@ -266,13 +266,13 @@ def delete_build(cid, client=None):
 
 def delete_container_collection(cid, uid):
     """Delete artifacts for a container build, if they exist, and then
-       the entire collection. This is called
-       as a django-rq task for a worker to do from views.py
+    the entire collection. This is called
+    as a django-rq task for a worker to do from views.py
 
-       Parameters
-       ==========
-       cid: the collection id to delete.
-       uid: the user id requesting permission
+    Parameters
+    ==========
+    cid: the collection id to delete.
+    uid: the user id requesting permission
     """
     from shub.apps.main.views import get_collection
     from .github import delete_webhook
@@ -306,13 +306,13 @@ def delete_container_collection(cid, uid):
 
 def is_over_limit(limit=None):
     """check if we are over the limit for active builds. Returns a boolean to
-       indicate yes or no, based on filtering the number of total builds
-       by those with status "QUEUED" or "WORKING."
+    indicate yes or no, based on filtering the number of total builds
+    by those with status "QUEUED" or "WORKING."
 
-       Parameters
-       ==========
-       limit: an integer limit for the maximum concurrent waiting or active
-              builds. If not set, we use the default in settings.
+    Parameters
+    ==========
+    limit: an integer limit for the maximum concurrent waiting or active
+           builds. If not set, we use the default in settings.
     """
     # Allow the function to set a custom limit
     limit = limit or settings.SREGISTRY_GOOGLE_BUILD_LIMIT
@@ -333,15 +333,15 @@ def is_over_limit(limit=None):
 
 def complete_build(cid, params, check_again_seconds=10):
     """finish a build, meaning obtaining the original build_id for the container
-       and checking for completion.
+    and checking for completion.
 
-       Parameters
-       ==========
-       cid: the container id to finish the build for, expected to have an id
-       params: the parameters from the build. They must have matching build it.
-       check_again_seconds: if the build is still working, check again in this
-                            many seconds. By default, we multiply by 2 each time
-                            (exponential backoff).
+    Parameters
+    ==========
+    cid: the container id to finish the build for, expected to have an id
+    params: the parameters from the build. They must have matching build it.
+    check_again_seconds: if the build is still working, check again in this
+                         many seconds. By default, we multiply by 2 each time
+                         (exponential backoff).
     """
     from shub.apps.main.views import get_container
 

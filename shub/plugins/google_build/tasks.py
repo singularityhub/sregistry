@@ -17,11 +17,11 @@ import re
 def prepare_build_task(cid, recipes, branch):
     """wrapper to prepare build, to run as a task
 
-       Parameters
-       ==========
-       cid: the collection id to retrieve the collection
-       recipes: a dictionary of modified recipe files to build
-       branch: the repository branch (kept as metadata)
+    Parameters
+    ==========
+    cid: the collection id to retrieve the collection
+    recipes: a dictionary of modified recipe files to build
+    branch: the repository branch (kept as metadata)
     """
     print("RUNNING PREPARE BUILD TASK WITH RECIPES %s" % recipes)
     from .actions import receive_build
@@ -33,9 +33,9 @@ def prepare_build_task(cid, recipes, branch):
 
 def parse_hook(cid, branch="master", commits=None):
 
-    """parse hook will take a request and an associated user collection, 
-       and finish parsing. This means generating the new container, 
-       and submitting a job to run on Google Cloud Build.
+    """parse hook will take a request and an associated user collection,
+    and finish parsing. This means generating the new container,
+    and submitting a job to run on Google Cloud Build.
     """
     from shub.apps.main.views import get_collection
 
@@ -50,12 +50,12 @@ def parse_hook(cid, branch="master", commits=None):
 
 def build_commits(collection, commits, branch):
     """build commits that come directly from a ping. For this version, we get
-       a data structure with a list of added, removed, and modified files.
+    a data structure with a list of added, removed, and modified files.
 
-       Parameters
-       ==========
-       collection: The collection to get details for.
-       commits: the commits to build.
+    Parameters
+    ==========
+    collection: The collection to get details for.
+    commits: the commits to build.
     """
     modified = dict()
     removed = []
@@ -116,12 +116,12 @@ def build_commits(collection, commits, branch):
 
 def build_previous_commits(collection, branch):
     """the result we get when we get commit details (from the API)
-       versus an actual commit object is different. This function parses
-       the results from "get_commit_details"
+    versus an actual commit object is different. This function parses
+    the results from "get_commit_details"
 
-       Parameters
-       ==========
-       collection: The collection to get details for.
+    Parameters
+    ==========
+    collection: The collection to get details for.
     """
     from .github import get_commit_details
 

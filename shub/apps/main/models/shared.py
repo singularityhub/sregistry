@@ -42,8 +42,8 @@ def get_privacy_default():
 
 
 class Collection(models.Model):
-    """A container collection is a build (multiple versions of the same image) 
-       created by an owner, with other possible contributors
+    """A container collection is a build (multiple versions of the same image)
+    created by an owner, with other possible contributors
     """
 
     # Container Collection Descriptors
@@ -105,7 +105,7 @@ class Collection(models.Model):
 
     def sizes(self, container_name=None):
         """return list of sizes for containers across collection.
-           Optionally limited to container name"""
+        Optionally limited to container name"""
         if container_name is not None:
             queryset = self.containers.filter(name=container_name)
         else:
@@ -113,8 +113,7 @@ class Collection(models.Model):
         return [x.metadata["size_mb"] for x in queryset if "size_mb" in x.metadata]
 
     def members(self):
-        """a compiled list of members (contributors and owners)
-        """
+        """a compiled list of members (contributors and owners)"""
         return get_collection_users(self)
 
     def mean_size(self, container_name=None):
@@ -146,18 +145,16 @@ class Collection(models.Model):
     # Permissions
 
     def has_edit_permission(self, request):
-        """can the user of the request edit the collection
-        """
+        """can the user of the request edit the collection"""
         return has_edit_permission(request=request, instance=self)
 
     def has_view_permission(self, request):
-        """can the user of the request view the collection
-        """
+        """can the user of the request view the collection"""
         return has_view_permission(request=request, instance=self)
 
     def has_collection_star(self, request):
         """returns true or false to indicate
-           if a user has starred a collection
+        if a user has starred a collection
         """
         if request.user.is_authenticated:
             try:
@@ -182,8 +179,7 @@ class Collection(models.Model):
 
 
 class Star(models.Model):
-    """a user can star a particular collection
-    """
+    """a user can star a particular collection"""
 
     # When the user or Collection is deleted, also delete the Stars
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
@@ -198,8 +194,7 @@ class Star(models.Model):
 
 
 class Share(models.Model):
-    """a temporary share / link for a container
-    """
+    """a temporary share / link for a container"""
 
     # When the Container is deleted, also delete the share
     container = models.ForeignKey("main.Container", on_delete=models.CASCADE)
@@ -231,8 +226,7 @@ class Share(models.Model):
 
 
 class Label(models.Model):
-    """A label is extracted from the Singularity build specification to describe a container
-    """
+    """A label is extracted from the Singularity build specification to describe a container"""
 
     key = models.CharField(max_length=250, null=False, blank=False)
     value = models.CharField(max_length=250, null=False, blank=False)

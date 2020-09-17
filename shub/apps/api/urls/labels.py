@@ -43,8 +43,7 @@ class LabelSerializer(serializers.ModelSerializer):
 
 
 class LabelViewSet(viewsets.ReadOnlyModelViewSet):
-    """View all labels
-    """
+    """View all labels"""
 
     def get_queryset(self):
         return Label.objects.filter(container__collection__private=False)
@@ -58,8 +57,7 @@ class LabelViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class LabelDetail(APIView):
-    """Retrieve a container instance based on it's name
-    """
+    """Retrieve a container instance based on it's name"""
 
     def get_object(self, key, value):
         # If not specified, return all

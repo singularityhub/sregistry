@@ -124,7 +124,8 @@
                                    <a id="confirm_delete{{ container.id }}" 
 {% if container.metadata.builder.name == "google_build" %}href="{% url 'delete_google_container' container.id %}">
 {% else %}                          href="{% url 'delete_container' container.id %}">{% endif %}</a>
-                               {% endif %}                               
+                               {% endif %}<!-- container was pushed directly -->
+                               {% if container.get_storage and request.user.is_authenticated %}<a href="{% url 'library_manual_download' container.get_uri %}" target="_blank"><button class="btn-sm btn btn-control btn-light"><i class="fa fa-download"></i></button></a>{% endif %}
                                </td>
 
                                <td><a href="{% url 'container_details' container.id %}">
@@ -135,7 +136,7 @@
                                <td>{% if container.builder.deffile %}<a href="{{ container.builder.deffile }}" target="_blank">Singularity.{{ container.tag }}</a>{% else %}
                                <a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a>{% endif %}</td>
                                <td>
-                                   {% if container.image %}<!--Container was pushed directly-->
+                                   {% if container.image or container.get_storage %}<!--Container was pushed directly-->
                                        {% if edit_permission %}<a href="{% url 'change_freeze_status' container.id %}">{% endif %}
                                        {% if container.frozen %}
                                        <button title="a frozen tag is locked from being overwritten with a push."

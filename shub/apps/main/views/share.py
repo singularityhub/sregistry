@@ -29,9 +29,9 @@ from ratelimit.decorators import ratelimit
 def generate_share(request, cid):
     """generate a temporary share link for a container
 
-       Parameters
-       ==========
-       cid: the container to generate a share link for
+    Parameters
+    ==========
+    cid: the container to generate a share link for
     """
     from shub.apps.main.models import Share
 

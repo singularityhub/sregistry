@@ -32,8 +32,8 @@ def get_transfer_client(user):
 
 def list_tokens(tokens):
     """return a lookup of tokens organized by token and token type
-       This function is first used to populate the Globus social auth
-       extra_data field that holds the organized tokens
+    This function is first used to populate the Globus social auth
+    extra_data field that holds the organized tokens
     """
     lookup = dict()
     tokens = [tokens] + tokens["other_tokens"]
@@ -46,7 +46,7 @@ def list_tokens(tokens):
 
 
 def associate_user(user, client, code):
-    """ Here we do the following:
+    """Here we do the following:
 
     1. Find the user's Globus account based on email. If the
        association doesn't exist, we create it.

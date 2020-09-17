@@ -98,8 +98,8 @@ class User(AbstractUser):
 
     def has_create_permission(self):
         """has create permission determines if the user (globally) can create
-           new collections. By default, superusers and admin can, along with
-           regular users if USER_COLLECTIONS is True. Otherwise, not.
+        new collections. By default, superusers and admin can, along with
+        regular users if USER_COLLECTIONS is True. Otherwise, not.
         """
         if self.is_superuser is True or self.is_staff is True:
             return True
@@ -108,8 +108,8 @@ class User(AbstractUser):
         return False
 
     def is_team_member(self, collection):
-        """given a collection, determine if the user is member of any teams 
-           associated with the collection
+        """given a collection, determine if the user is member of any teams
+        associated with the collection
         """
         for owner in collection.owners.all():
             for team in owner.team_owners.all():
@@ -118,8 +118,8 @@ class User(AbstractUser):
         return False
 
     def is_team_owner(self, collection):
-        """given a collection, determine if the user is owner of any teams 
-           associated with the collection
+        """given a collection, determine if the user is owner of any teams
+        associated with the collection
         """
         for owner in collection.owners.all():
             for team in owner.team_owners.all():
@@ -141,8 +141,7 @@ class User(AbstractUser):
                     return credential.last()
 
     def get_providers(self):
-        """return a list of providers that the user has credentials for.
-        """
+        """return a list of providers that the user has credentials for."""
         return [x.provider for x in self.social_auth.all()]
 
     def get_label(self):
@@ -160,8 +159,8 @@ class User(AbstractUser):
 
 class Team(models.Model):
     """A team is a group of users with shared affiliation. One or more owners
-       can edit the team name, photo, etc. Each user can join one or more
-       teams.
+    can edit the team name, photo, etc. Each user can join one or more
+    teams.
     """
 
     name = models.CharField(max_length=50, unique=True, default=None)
@@ -197,17 +196,16 @@ class Team(models.Model):
     team_image = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
     def get_members(self):
-        """ get a list of unique members, including both contributors and owners
-        """
+        """get a list of unique members, including both contributors and owners"""
         members = chain(self.owners.all(), self.members.all())
         return list(set(list(members)))
 
     def get_invite(self, code):
-        """ get the invitation for a user, if it exists.
- 
-            Parameters
-            ==========
-            code: the code to validate the invitation
+        """get the invitation for a user, if it exists.
+
+        Parameters
+        ==========
+        code: the code to validate the invitation
         """
         keyargs = {"code": code, "team": self}
         try:
@@ -221,7 +219,7 @@ class Team(models.Model):
         """add a user to a team. If a code is provided,
         the invitation object is deleted.
 
-        Parameters 
+        Parameters
         ==========
         user: the user to add as a member
         code: if provided, ensure valid, then delete
@@ -238,11 +236,11 @@ class Team(models.Model):
         return self
 
     def has_edit_permission(self, request):
-        """ determine if a user has edit permission for a team.
+        """determine if a user has edit permission for a team.
 
-            1. A superuser has edit permission, always
-            2. A global admin has edit permission, always
-            3. A user has edit permission if is one of the owners
+        1. A superuser has edit permission, always
+        2. A global admin has edit permission, always
+        3. A user has edit permission if is one of the owners
 
         """
         # Global edit permission for superuser and staff
@@ -260,7 +258,7 @@ class Team(models.Model):
 
     def has_member(self, username):
         """return True if the username is either a member or owner for the team
-          
+
         Parameters
         ==========
         username: the username to check
@@ -285,8 +283,7 @@ class Team(models.Model):
 
 
 class MembershipInvite(models.Model):
-    """An invitation to join a team.
-    """
+    """An invitation to join a team."""
 
     code = models.CharField(max_length=200, null=False, blank=False)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -301,8 +298,7 @@ class MembershipInvite(models.Model):
         return "users"
 
     def get_url(self):
-        """return the reverse, invitation link for the user to follow
-        """
+        """return the reverse, invitation link for the user to follow"""
         return "%s%s" % (
             settings.DOMAIN_NAME,
             reverse("join_team", args=[self.team.id, self.code]),
@@ -328,14 +324,14 @@ def create_team_group(sender, instance, **kwargs):
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
-    """ Create a token for the user when the user is created (with oAuth2)
+    """Create a token for the user when the user is created (with oAuth2)
 
-        1. Assign user a token
-        2. Assign user to default group
+    1. Assign user a token
+    2. Assign user to default group
 
-        Create a Profile instance for all newly created User instances. We only
-        run on user creation to avoid having to check for existence on each call
-        to User.save.
+    Create a Profile instance for all newly created User instances. We only
+    run on user creation to avoid having to check for existence on each call
+    to User.save.
 
     """
     if created:

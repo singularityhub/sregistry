@@ -57,7 +57,7 @@ def container_query(q, across_collections=1):
 
 def specific_container_query(name, collection=None, tag=None):
     """single container query is intended to return a queryset when a specific collection and
-       container name is asked for.
+    container name is asked for.
     """
     if collection is not None:
         collection = collection.lower()

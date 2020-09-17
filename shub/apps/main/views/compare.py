@@ -26,20 +26,20 @@ import datetime
 
 def generate_size_data(collections):
     """generate a datastructure that can be rendered as:
-        id,value
-        flare,
-        flare.analytics,
-        flare.analytics.cluster,
-        flare.analytics.cluster.AgglomerativeCluster,3938,1
-        flare.analytics.cluster.CommunityStructure,3812,2
-        flare.analytics.cluster.HierarchicalCluster,6714,3
-        flare.analytics.cluster.MergeEdge,743,4
-        flare.analytics.graph,,5
-        flare.analytics.graph.BetweennessCentrality,3534,6
-        flare.analytics.graph.LinkDistance,5731,7
-        flare.analytics.graph.MaxFlowMinCut,7840,8
-        flare.analytics.graph.ShortestPaths,5914,9
-        flare.analytics.graph.SpanningTree,3416,10
+    id,value
+    flare,
+    flare.analytics,
+    flare.analytics.cluster,
+    flare.analytics.cluster.AgglomerativeCluster,3938,1
+    flare.analytics.cluster.CommunityStructure,3812,2
+    flare.analytics.cluster.HierarchicalCluster,6714,3
+    flare.analytics.cluster.MergeEdge,743,4
+    flare.analytics.graph,,5
+    flare.analytics.graph.BetweennessCentrality,3534,6
+    flare.analytics.graph.LinkDistance,5731,7
+    flare.analytics.graph.MaxFlowMinCut,7840,8
+    flare.analytics.graph.ShortestPaths,5914,9
+    flare.analytics.graph.SpanningTree,3416,10
     """
     data = dict()
     for collection in collections:
@@ -65,7 +65,7 @@ def generate_size_data(collections):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def get_filtered_collections(request):
     """return all collections or only public, given user accessing
-       this function will return all collections based on a permission level
+    this function will return all collections based on a permission level
     """
     if request.user.is_superuser or request.user.is_staff:
         collections = Collection.objects.all()
@@ -117,7 +117,6 @@ def container_size_data(request):
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_size_data(request):
-    """ generate container size data for all collections
-    """
+    """generate container size data for all collections"""
     context = base_size_data(request)
     return render(request, "singularity/collection_size_data.csv", context)

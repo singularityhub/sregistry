@@ -75,8 +75,7 @@ def view_tag(request, tid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def add_tag(request, cid):
-    """manually add a tag to the collection
-    """
+    """manually add a tag to the collection"""
     container = get_container(cid)
     edit_permission = container.collection.has_edit_permission(request)
 
@@ -94,8 +93,7 @@ def add_tag(request, cid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def remove_tag(request, cid):
-    """remove a tag from a collection
-    """
+    """remove a tag from a collection"""
     container = get_container(cid)
     edit_permission = container.collection.has_edit_permission(request)
 

@@ -30,7 +30,7 @@ from globus_sdk.exc import TransferAPIError
 @has_globus_association
 def globus_logout(request):
     """log the user out of globus - this is a complete disconnect meaning
-       that we revoke tokens and delete the social auth object.
+    that we revoke tokens and delete the social auth object.
     """
     client = get_client()
 
@@ -65,9 +65,9 @@ def globus_logout(request):
 @login_required
 def globus_login(request):
     """
-       Associate the logged in user with a globus account based on email.
-       If the association doesn't exist, create it. Redirect to transfer
-       page.
+    Associate the logged in user with a globus account based on email.
+    If the association doesn't exist, create it. Redirect to transfer
+    page.
     """
 
     redirect_uri = reverse("globus_login")
@@ -94,10 +94,10 @@ def globus_login(request):
 @login_required
 @has_globus_association
 def globus_transfer(request, cid=None, endpoints=None):
-    """ a main portal for working with globus. If the user has navigated
-        here with a container id, it is presented with option to do a 
-        transfer. If the method is a POST, we also do a custom search
-        for a set of containers.
+    """a main portal for working with globus. If the user has navigated
+    here with a container id, it is presented with option to do a
+    transfer. If the method is a POST, we also do a custom search
+    for a set of containers.
     """
     container = None
     if cid is not None:
@@ -131,8 +131,7 @@ def globus_transfer(request, cid=None, endpoints=None):
 @login_required
 @has_globus_association
 def globus_endpoint(request, endpoint_id=None, cid=None):
-    """ Show information for a single endpoint only.
-    """
+    """Show information for a single endpoint only."""
     container = None
     if cid is not None:
         container = get_container(cid)
@@ -160,7 +159,7 @@ def globus_endpoint(request, endpoint_id=None, cid=None):
 @has_globus_association
 def submit_transfer(request, endpoint, cid):
     """submit a transfer request for a container id to an endpoint, also
-       based on id
+    based on id
     """
 
     container = get_container(cid)

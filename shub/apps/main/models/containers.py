@@ -40,8 +40,7 @@ verbose_frozen_name = "is the container frozen, meaning builds will not be repla
 
 
 class Container(models.Model):
-    """A container is a base (singularity) container with a unique id and name
-    """
+    """A container is a base (singularity) container with a unique id and name"""
 
     add_date = models.DateTimeField("date container added", auto_now=True)
 
@@ -101,8 +100,7 @@ class Container(models.Model):
         return self.get_storage()
 
     def get_storage(self):
-        """Return the full storage path, which includes the version string
-        """
+        """Return the full storage path, which includes the version string"""
         if "/" in self.name:
             return "%s:%s" % (self.name, self.version)
         return "%s/%s:%s" % (self.collection.name, self.name, self.version)

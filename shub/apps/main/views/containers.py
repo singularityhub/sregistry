@@ -85,8 +85,7 @@ def container_details(request, cid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def delete_container(request, cid):
-    """delete a container, including it's corresponding files
-    """
+    """delete a container, including it's corresponding files"""
     container = get_container(cid)
 
     if not container.has_edit_permission(request):
@@ -122,9 +121,9 @@ def container_tags(request, cid):
 def change_freeze_status(request, cid):
     """freeze or unfreeze a container
 
-       Parameters
-       ==========
-       cid: the container to freeze or unfreeze
+    Parameters
+    ==========
+    cid: the container to freeze or unfreeze
     """
     container = get_container(cid)
     edit_permission = container.has_edit_permission(request)

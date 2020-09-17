@@ -15,10 +15,10 @@ from django.http import HttpRequest
 def has_edit_permission(instance, request):
     """can the user of the request edit the collection or container?
 
-       Parameters
-       ==========
-       instance: the container or collection to check
-       request: the request with the user object OR the user object
+    Parameters
+    ==========
+    instance: the container or collection to check
+    request: the request with the user object OR the user object
     """
     from .containers import Container
 
@@ -48,13 +48,13 @@ def has_edit_permission(instance, request):
 
 def has_view_permission(instance, request):
     """can the user of the request view the collection or container? This
-       permission corresponds with being a contributor, and being able to
-       pull
+    permission corresponds with being a contributor, and being able to
+    pull
 
-       Parameters
-       ==========
-       instance: the container or collection to check
-       request: the request with the user object
+    Parameters
+    ==========
+    instance: the container or collection to check
+    request: the request with the user object
 
     """
     from .containers import Container
@@ -88,11 +88,11 @@ def has_view_permission(instance, request):
 
 def get_collection_users(instance):
     """get_collection_users will return a list of all owners and contributors
-        for a collection. The input instance can be a collection or container.
+    for a collection. The input instance can be a collection or container.
 
-        Parameters
-        ==========
-        instance: the collection or container object to use
+    Parameters
+    ==========
+    instance: the collection or container object to use
     """
     from .containers import Container
 

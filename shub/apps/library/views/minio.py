@@ -204,12 +204,12 @@ def remove_default_port(parsed_url):
 
 def delete_minio_container(container):
     """A helper function to delete a container in Minio based on not finding
-       more than one count for it (indicating that it is not in use by other
-       container collections).
+    more than one count for it (indicating that it is not in use by other
+    container collections).
 
-       Parameters
-       ==========
-       container: the container object to get Minio storage from.
+    Parameters
+    ==========
+    container: the container object to get Minio storage from.
     """
     # Ensure that we don't have the container referenced by another collection
     # The verison would be the same, regardless of the collection/container name

@@ -20,8 +20,7 @@ def reset_limits():
 
 
 class Command(BaseCommand):
-    """scheduled to run once a week on Monday, reset get_count to 0.
-    """
+    """scheduled to run once a week on Monday, reset get_count to 0."""
 
     help = "Reset container get counts to 0"
 

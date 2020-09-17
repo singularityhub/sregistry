@@ -18,8 +18,7 @@ import os
 
 
 def get_upload_folder(instance, filename):
-    """a helper function to upload a recipe file to storage.
-    """
+    """a helper function to upload a recipe file to storage."""
     from shub.apps.main.models import Collection
 
     collection_name = instance.collection.lower()
@@ -45,8 +44,7 @@ def get_upload_folder(instance, filename):
 
 
 class RecipeFile(models.Model):
-    """a RecipeFile is a Singularity Recipe pushed to do a remote build.
-    """
+    """a RecipeFile is a Singularity Recipe pushed to do a remote build."""
 
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)

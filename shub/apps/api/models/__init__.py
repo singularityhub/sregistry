@@ -26,8 +26,7 @@ def get_upload_to(instance, filename):
 
 
 def get_upload_folder(instance, filename):
-    """a helper function to upload to storage
-    """
+    """a helper function to upload to storage"""
     from shub.apps.main.models import Collection
 
     collection_name = instance.collection.lower()
@@ -56,8 +55,7 @@ def get_upload_folder(instance, filename):
 
 
 class ImageFile(models.Model):
-    """an ImageFile is a Singularity container pushed directly.
-    """
+    """an ImageFile is a Singularity container pushed directly."""
 
     created = models.DateTimeField(auto_now_add=True)
     collection = models.CharField(max_length=200, null=False)
@@ -83,8 +81,8 @@ class ImageFile(models.Model):
 
 
 class ImageUpload(models.Model):
-    """ a base image upload to hold a file temporarily during upload
-        based off of django-chunked-uploads BaseChunkedUpload model
+    """a base image upload to hold a file temporarily during upload
+    based off of django-chunked-uploads BaseChunkedUpload model
     """
 
     upload_id = models.CharField(max_length=36, unique=True, editable=False)

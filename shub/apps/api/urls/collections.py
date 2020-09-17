@@ -52,8 +52,7 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
-    """View all collections
-    """
+    """View all collections"""
 
     queryset = Collection.objects.filter(private=False)
     serializer_class = CollectionSerializer
@@ -66,8 +65,7 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CollectionDetailByName(APIView):
-    """Retrieve a collection instance based on it's name
-    """
+    """Retrieve a collection instance based on it's name"""
 
     def get_object(self, collection_name):
         try:
@@ -94,7 +92,7 @@ class CollectionDetailByName(APIView):
 
 class CollectionSearch(APIView):
     """search for a list of collections depending on a query. This is
-       a general search to look across all fields for one term
+    a general search to look across all fields for one term
     """
 
     def get_object(self, query):

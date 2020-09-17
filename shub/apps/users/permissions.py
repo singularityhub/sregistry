@@ -12,10 +12,10 @@ from shub.settings import USER_COLLECTIONS, USER_COLLECTION_LIMIT
 
 
 def has_create_permission(request):
-    """ determine if a user can create a team.
-  
-        1. superusers and admin (global) can.
-        2. If user collections is True, users can create teams
+    """determine if a user can create a team.
+
+    1. superusers and admin (global) can.
+    2. If user collections is True, users can create teams
     """
     if request.user.is_superuser or request.user.is_staff:
         return True
@@ -36,14 +36,14 @@ def has_create_permission(request):
 
 def is_invite_valid(team, code):
     """determine if a user can be added to a team meaning
-       he or she has an invite, and the invite corresponds to the
-       code generated for it. a status (True or False)
+    he or she has an invite, and the invite corresponds to the
+    code generated for it. a status (True or False)
 
-       Parameters
-       ==========
-       team: the team to add to
-       code: the code from the user
-       
+    Parameters
+    ==========
+    team: the team to add to
+    code: the code from the user
+
     """
     invitation = team.get_invite(code)
 

@@ -22,9 +22,9 @@ import tempfile
 def get_nightly_comparisons(date=None):
     """load the latest nightly comparisons.
 
-       Parameters
-       ==========
-       date: if provided, will load specified date instead of latest.
+    Parameters
+    ==========
+    date: if provided, will load specified date instead of latest.
     """
     root = os.path.abspath(os.path.join(settings.MEDIA_ROOT, "trees", "nightly"))
     base_name = "%s/container-tree" % root
@@ -37,8 +37,7 @@ def get_nightly_comparisons(date=None):
 
 
 def write_tmpfile(memory_file):
-    """save tmp will extract a file to a temporary location
-    """
+    """save tmp will extract a file to a temporary location"""
     tmpdir = tempfile.mkdtemp()
     file_name = "%s/%s" % (tmpdir, memory_file.name)
     with open(file_name, "wb+") as dest:
@@ -55,8 +54,8 @@ def format_collection_name(collection_name):
 
 def format_container_name(name, special_characters=None):
     """format_container_name will take a name supplied by the user,
-       remove all special characters (except for those defined by "special-characters"
-       and return the new image name.
+    remove all special characters (except for those defined by "special-characters"
+    and return the new image name.
     """
     if special_characters is None:
         special_characters = []
@@ -66,14 +65,14 @@ def format_container_name(name, special_characters=None):
 def validate_share(share):
     """compare the share expiration date with the current date
 
-       Parameters
-       ==========
-       share: a shub.apps.main.models.Share object, holding a container,
-              and an expiration date.
+    Parameters
+    ==========
+    share: a shub.apps.main.models.Share object, holding a container,
+           and an expiration date.
 
-       Returns
-       =======
-       True if valid, False if not. If False, will delete share.
+    Returns
+    =======
+    True if valid, False if not. If False, will delete share.
     """
     today = timezone.now()
     if today <= share.expire_date:

@@ -15,9 +15,9 @@ from shub.logger import bot
 
 
 class Command(BaseCommand):
-    """remove admin will remove admin privs for a singularity 
-       registry. The super user is an admin that can build, delete,
-       and manage images
+    """remove admin will remove admin privs for a singularity
+    registry. The super user is an admin that can build, delete,
+    and manage images
     """
 
     def add_arguments(self, parser):

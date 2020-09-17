@@ -27,8 +27,7 @@ from .collections import get_collection
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_stars(request):
-    """This is a "favorite" view of collections ordered based on number of stars.
-    """
+    """This is a "favorite" view of collections ordered based on number of stars."""
     # Favorites based on stars
     collections = (
         Collection.objects.filter(private=False)
@@ -42,8 +41,7 @@ def collection_stars(request):
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_downloads(request):
-    """This is a "favorite" view of collections ordered based on number of downloads.
-    """
+    """This is a "favorite" view of collections ordered based on number of downloads."""
     from shub.apps.logs.models import APIRequestCount
 
     favorites = APIRequestCount.objects.filter(
@@ -61,7 +59,7 @@ def collection_downloads(request):
 
 def star_collection(request, cid):
     """change favorite status of collection. If it's favorited, unfavorite by deleting
-       the star. If not, then create it.
+    the star. If not, then create it.
     """
     if not request.user.is_authenticated:
         raise Http404

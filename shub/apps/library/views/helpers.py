@@ -26,7 +26,7 @@ tag_regex = "DUMMY-%s" % uuid_regex
 
 def validate_token(request):
     """validate a token from the request header. If valid, return
-       True. Otherwise return False
+    True. Otherwise return False
     """
     token = request.META.get("HTTP_AUTHORIZATION")
     if token:
@@ -41,8 +41,9 @@ def validate_token(request):
 
 def get_token(request):
     """The same as validate_token, but return the token object to check the
-       associated user.
+    associated user.
     """
+    # Coming from HTTP, look for authorization as bearer token
     token = request.META.get("HTTP_AUTHORIZATION")
 
     if token:
@@ -51,13 +52,19 @@ def get_token(request):
         except Token.DoesNotExist:
             pass
 
+    # Next attempt - try to get token via user session
+    elif request.user.is_authenticated and not request.user.is_anonymous:
+        try:
+            return Token.objects.get(user=request.user)
+        except Token.DoesNotExist:
+            pass
+
 
 # Downloads
 
 
 def get_collection_downloads(collection):
-    """get downloads for a collection (downloads for all containers within)
-    """
+    """get downloads for a collection (downloads for all containers within)"""
     downloads = 0
     for container in collection.containers.all():
         downloads += get_container_downloads(container)
@@ -65,8 +72,7 @@ def get_collection_downloads(collection):
 
 
 def get_container_downloads(container):
-    """return downloads for a container
-    """
+    """return downloads for a container"""
     path = "images/%s/%s:%s" % (
         container.collection.name,
         container.name,
@@ -79,8 +85,7 @@ def get_container_downloads(container):
 
 
 def generate_user_data(user):
-    """for the entity/entities endpoint, we send back dummy data about the user
-    """
+    """for the entity/entities endpoint, we send back dummy data about the user"""
     # Owned collections
     collections = Collection.objects.filter(owners=user)
 
@@ -118,8 +123,8 @@ def generate_user_data(user):
 
 def generate_collections_list(user):
     """generate a list of collections, only done if the user is authenticated.
-       we take the user as argument, and return private collections for him
-       or her.
+    we take the user as argument, and return private collections for him
+    or her.
     """
     collections = []
     for collection in Collection.objects.all():
@@ -131,8 +136,8 @@ def generate_collections_list(user):
 
 def generate_collection_metadata(collection, user=None):
     """given a collection, generate a metadata response for it. This does
-       not include metadata about container tag 
-       (see generate_collection_containers_metadata)
+    not include metadata about container tag
+    (see generate_collection_containers_metadata)
     """
     if not user:
         user = collection.owners.first()
@@ -173,13 +178,13 @@ def generate_collection_metadata(collection, user=None):
 
 def generate_collection_tags(collection):
     """return a lookup of tags, with container ids that are associated.
-       How do we do this?
-       1. Filter down to unique tags
-       2. Return newest for each
+    How do we do this?
+    1. Filter down to unique tags
+    2. Return newest for each
 
-       If two containers are named differently, we still return the
-       latest. Technically, collections should be namespaced
-       consistently, and we assume this.
+    If two containers are named differently, we still return the
+    latest. Technically, collections should be namespaced
+    consistently, and we assume this.
     """
     unique_tags = set(
         [c.tag for c in collection.containers.all() if not re.search(tag_regex, c.tag)]
@@ -194,14 +199,14 @@ def generate_collection_tags(collection):
 
 def generate_collection_details(collection, containers, user=None):
     """given a collection, generate complete metadata for it, including
-       a list of all associated tags. For Sylabs Cloud, although the
-       request may target a specific container:
+    a list of all associated tags. For Sylabs Cloud, although the
+    request may target a specific container:
 
-       https://library.sylabs.io/v1/containers/dtrudg/linux/ubuntu
+    https://library.sylabs.io/v1/containers/dtrudg/linux/ubuntu
 
-       For Singularity Registry server, this means filtering containers in
-       a collection (e.g., linux) down to a submit (e.g., ubuntu) and
-       then returning the corresponding tags (e.g., 14.04).
+    For Singularity Registry server, this means filtering containers in
+    a collection (e.g., linux) down to a submit (e.g., ubuntu) and
+    then returning the corresponding tags (e.g., 14.04).
     """
     if not user:
         user = collection.owners.first()
@@ -234,8 +239,7 @@ def generate_collection_details(collection, containers, user=None):
 
 
 def generate_container_metadata(container):
-    """given a container, return a metadata object
-    """
+    """given a container, return a metadata object"""
     # Get other tags
     tags = [
         c.tag
@@ -291,7 +295,7 @@ def generate_container_metadata(container):
 
 def get_container(names):
     """a helper function to take a parsed uri names, and return
-       an associated container
+    an associated container
     """
     container = None
 
@@ -321,11 +325,11 @@ def get_container(names):
 
 def get_collection(name, retry=True):
     """get a collection by name. First we try the collection name,
-       then we try splitting if the name includes /
+    then we try splitting if the name includes /
 
-       Parameters
-       ==========
-       name: the name of the collection to look up
+    Parameters
+    ==========
+    name: the name of the collection to look up
     """
     try:
         collection = Collection.objects.get(name=name)

@@ -17,8 +17,7 @@ from .helpers import validate_token, generate_user_data, get_token
 
 
 class TokenStatusView(APIView):
-    """Given a GET request with a token, return if valid.
-    """
+    """Given a GET request with a token, return if valid."""
 
     renderer_classes = (JSONRenderer,)
 
@@ -29,8 +28,7 @@ class TokenStatusView(APIView):
 
 
 class GetNamedEntityView(APIView):
-    """Given a request for an entity, return the response
-    """
+    """Given a request for an entity, return the response"""
 
     renderer_classes = (JSONRenderer,)
 
@@ -63,8 +61,7 @@ class GetNamedEntityView(APIView):
 
 
 class GetEntitiesView(APIView):
-    """I'm not sure the purpose of this endpoint.
-    """
+    """I'm not sure the purpose of this endpoint."""
 
     renderer_classes = (JSONRenderer,)
 

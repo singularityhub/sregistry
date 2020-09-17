@@ -23,8 +23,7 @@ from shub.plugins.pgp import forms, models, utils
 
 @csrf_exempt
 def add(request):
-    """add a key to the keyserver
-    """
+    """add a key to the keyserver"""
     if request.method != "POST":
         raise Http404
 

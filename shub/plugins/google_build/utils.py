@@ -36,16 +36,14 @@ import uuid
 
 
 def POST(url, headers, data=None, params=None):
-    """post_url will use the requests library to post to a url
-    """
+    """post_url will use the requests library to post to a url"""
     if data is not None:
         return requests.post(url, headers=headers, data=json.dumps(data))
     return requests.get(url, headers=headers)
 
 
 def DELETE(url, headers, data=None, params=None):
-    """issue a delete reqest, with or without data and params.
-    """
+    """issue a delete reqest, with or without data and params."""
     if data is not None:
         return requests.delete(url, headers=headers, data=json.dumps(data))
     return requests.delete(url, headers=headers)
@@ -54,10 +52,10 @@ def DELETE(url, headers, data=None, params=None):
 def format_params(url, params):
     """format_params will add a list of params (?key=value) to a url
 
-       Parameters
-       ==========
-       params: a dictionary of params to add
-       url: the url to add params to
+    Parameters
+    ==========
+    params: a dictionary of params to add
+    url: the url to add params to
     """
     # Always try to get 100 per page
     params["per_page"] = 100
@@ -73,12 +71,12 @@ def format_params(url, params):
 
 def paginate(url, headers, min_count=30, start_page=1, params=None, limit=None):
     """paginate will send posts to a url with post_url
-       until the results count is not exceeded
+    until the results count is not exceeded
 
-       Parameters
-       ========== 
-       min_count: the results count to go to
-       start_page: the starting page
+    Parameters
+    ==========
+    min_count: the results count to go to
+    start_page: the starting page
     """
     if params is None:
         params = dict()
@@ -108,16 +106,16 @@ def paginate(url, headers, min_count=30, start_page=1, params=None, limit=None):
 
 def validate_payload(collection, payload, request_signature):
     """validate_payload will retrieve a collection secret, use it
-       to create a hexdigest of the payload (request.body) and ensure
-       that it matches the signature in the header). This is what we use
-       for GitHub webhooks. The secret used is NOT the collection secret,
-       but a different one for GitHub.
+    to create a hexdigest of the payload (request.body) and ensure
+    that it matches the signature in the header). This is what we use
+    for GitHub webhooks. The secret used is NOT the collection secret,
+    but a different one for GitHub.
 
-       Parameters
-       ==========
-       collection: the collection object with the secret
-       payload: the request body sent by the service
-       request_signature: the signature to compare against
+    Parameters
+    ==========
+    collection: the collection object with the secret
+    payload: the request body sent by the service
+    request_signature: the signature to compare against
     """
     secret = collection.metadata["github"]["secret"].encode(
         "utf-8"
@@ -135,9 +133,9 @@ def validate_payload(collection, payload, request_signature):
 def get_container_payload(container):
     """a helper function to return a consistent container payload.
 
-       Parameters
-       ==========
-       container: a container object to get a payload for
+    Parameters
+    ==========
+    container: a container object to get a payload for
     """
     return {
         "collection": container.collection.id,
@@ -150,9 +148,9 @@ def get_container_payload(container):
 def create_container_payload(container):
     """a helper function to create a consistent container payload.
 
-       Parameters
-       ==========
-       container: a container object to create a payload for
+    Parameters
+    ==========
+    container: a container object to create a payload for
     """
     if "builder" not in container.metadata:
         container.metadata["builder"] = {}
@@ -168,12 +166,12 @@ def create_container_payload(container):
 
 def clear_container_payload(container):
     """after we receive the build response, we clear the payload metadata
-       so it cannot be used again. This function does not save, but returns
-       the container for the calling function to do so.
+    so it cannot be used again. This function does not save, but returns
+    the container for the calling function to do so.
 
-       Parameters
-       ==========
-       container: a container object to clear payload secrets for
+    Parameters
+    ==========
+    container: a container object to clear payload secrets for
     """
     if "builder" in container.metadata:
         if "robot_namer" in container.metadata["builder"]:
@@ -187,8 +185,8 @@ def clear_container_payload(container):
 
 def validate_jwt(container, params):
     """Given a container (with a build secret and other metadata) validate
-       a token (if it exists). If valid, return true. Otherwise, 
-       return False.
+    a token (if it exists). If valid, return true. Otherwise,
+    return False.
     """
     if "token" not in params:
         return False
@@ -220,13 +218,13 @@ def validate_jwt(container, params):
 
 def generate_jwt_token(secret, payload, algorithm="HS256"):
     """given a secret, an expiration in seconds, and an algorithm, generate
-       a jwt token to add as a header to the build response.
+    a jwt token to add as a header to the build response.
 
-       Parameters
-       ==========
-       secret: the container builder secret, only used once
-       payload: the payload to encode
-       algorithm: the algorithm to use.
+    Parameters
+    ==========
+    secret: the container builder secret, only used once
+    payload: the payload to encode
+    algorithm: the algorithm to use.
     """
     # Add an expiration of 8 hours to the payload
     expires_in = settings.SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
@@ -236,11 +234,11 @@ def generate_jwt_token(secret, payload, algorithm="HS256"):
 
 def generate_signed_url(storage_path, expiration=None, headers=None, http_method="GET"):
     """generate_signed_url will generate a signed url for a storage object,
-       given that it's allowance is less than the GET limit. The signed URL
-       ONLY needs to endure for the post request, so we limit it to 10 seconds.
-       https://cloud.google.com/storage/docs/access-control/signing-urls-manually.
+    given that it's allowance is less than the GET limit. The signed URL
+    ONLY needs to endure for the post request, so we limit it to 10 seconds.
+    https://cloud.google.com/storage/docs/access-control/signing-urls-manually.
 
-       # This function needs to be tested
+    # This function needs to be tested
     """
     # Can't get a signed URL for a container without image
     if storage_path is None:
@@ -350,7 +348,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
 
 def get_object_name(storage_path, bucket_name):
     """based on a storage bucket and path, return an object path
-       that can be used for a signed url.
+    that can be used for a signed url.
     """
     regexp = (
         "https://www.googleapis.com/download/storage/v[0-9]{1}/b/%s/o/(?P<path>.+)[?]"
@@ -366,7 +364,7 @@ def get_object_name(storage_path, bucket_name):
 
 def get_bucket_name(object_name):
     """get_bucket_name will return the default bucket name. We first try
-       to get from the client settings, otherwise we get from the object.
+    to get from the client settings, otherwise we get from the object.
     """
     # First default to what is defined with server
     if hasattr(settings, "SREGISTRY_GOOGLE_STORAGE_BUCKET"):
@@ -386,12 +384,12 @@ def get_bucket_name(object_name):
 
 def check_headers(request, headers):
     """check_headers will ensure that header keys are included in
-       a request. If one is missing, returns False
- 
-       Parameters
-       ==========
-       request: the request object
-       headers: the headers (keys) to check for
+    a request. If one is missing, returns False
+
+    Parameters
+    ==========
+    request: the request object
+    headers: the headers (keys) to check for
     """
     for header in headers:
         if header not in request.META:
@@ -400,8 +398,7 @@ def check_headers(request, headers):
 
 
 def get_default_headers():
-    """get_default_headers will return content-type json, etc.
-    """
+    """get_default_headers will return content-type json, etc."""
     headers = {"Content-Type": "application/json"}
     return headers
 
@@ -419,8 +416,7 @@ def JsonResponseMessage(status=500, message=None, status_message="error"):
 
 
 def convert_size(size_bytes, to, bsize=1024):
-    """A function to convert bytes to a human friendly string.
-    """
+    """A function to convert bytes to a human friendly string."""
     a = {"KB": 1, "MB": 2, "GB": 3, "TB": 4, "PB": 5, "EB": 6}
     r = float(size_bytes)
     for _ in range(a[to]):
@@ -429,8 +425,7 @@ def convert_size(size_bytes, to, bsize=1024):
 
 
 def load_body(request):
-    """load the body of a request.
-    """
+    """load the body of a request."""
     if isinstance(request.body, bytes):
         payload = json.loads(request.body.decode("utf-8"))
     else:

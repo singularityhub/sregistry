@@ -23,9 +23,9 @@ import re
 def _parse_header(auth):
     """parse a header and check for the correct digest.
 
-       Parameters
-       ==========
-       auth: the challenge from the header      
+    Parameters
+    ==========
+    auth: the challenge from the header
     """
 
     header, content = auth.split(" ")
@@ -41,11 +41,11 @@ def _parse_header(auth):
 
 def get_request_user(auth, user=None):
     """get the user for the request from an authorization object
-     
-       Parameters
-       ==========
-       auth: the authentication object
-       user: will return as None if not able to obtain from auth
+
+    Parameters
+    ==========
+    auth: the authentication object
+    user: will return as None if not able to obtain from auth
 
     """
     values = _parse_header(auth)
@@ -66,12 +66,12 @@ def get_request_user(auth, user=None):
 
 def has_push_permission(user, collection=None):
     """determine if the user has pull permission. This coincides with being
-       an owner of a collection, or a global admin or superuser.
-     
-       Parameters
-       ==========
-       user: the user to check
-       collection: the collection to check for
+    an owner of a collection, or a global admin or superuser.
+
+    Parameters
+    ==========
+    user: the user to check
+    collection: the collection to check for
 
     """
 
@@ -91,15 +91,15 @@ def has_push_permission(user, collection=None):
 
 def has_pull_permission(user, collection=None):
     """a simple function to parse an authentication challenge for the username,
-       and determine if the user has permission to perform the action.
-       The instance in question is a collection
-     
-       Parameters
-       ==========
-       auth: the challenge from the header
-       instance: the instance to check for
-       permission: the permission needed
-       pull_permission: if True, the user is asking to pull. If False, push
+    and determine if the user has permission to perform the action.
+    The instance in question is a collection
+
+    Parameters
+    ==========
+    auth: the challenge from the header
+    instance: the instance to check for
+    permission: the permission needed
+    pull_permission: if True, the user is asking to pull. If False, push
 
     """
     if user.is_superuser or user.is_staff:
@@ -116,14 +116,14 @@ def has_pull_permission(user, collection=None):
 
 def has_permission(auth, collection=None, pull_permission=True):
     """a simple function to parse an authentication challenge for the username,
-       and determine if the user has permission to perform the action.
-       The instance in question is a collection
-     
-       Parameters
-       ==========
-       auth: the challenge from the header
-       collection: the collection instance to check for
-       pull_permission: if True, the user is asking to pull. If False, push
+    and determine if the user has permission to perform the action.
+    The instance in question is a collection
+
+    Parameters
+    ==========
+    auth: the challenge from the header
+    collection: the collection instance to check for
+    pull_permission: if True, the user is asking to pull. If False, push
 
     """
     user = get_request_user(auth)
@@ -184,7 +184,7 @@ def validate_request(auth, payload, sender="push", timestamp=None, superuser=Tru
 
 
 def encode(item):
-    """ encode an item to bytes to work with hexdigest
+    """encode an item to bytes to work with hexdigest
 
     Parameters
     ==========
@@ -196,7 +196,7 @@ def encode(item):
 
 
 def validate_secret(secret, payload, request_signature):
-    """ use hmac digest to compare a request_signature to one generated
+    """use hmac digest to compare a request_signature to one generated
     using a server secret against a payload. Valid means matching.
 
     Parameters
@@ -208,7 +208,7 @@ def validate_secret(secret, payload, request_signature):
 
     Returns
     =======
-    True if secret + payload to generate signature matches 
+    True if secret + payload to generate signature matches
                        request signature
 
     """

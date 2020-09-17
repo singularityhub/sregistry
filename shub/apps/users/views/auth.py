@@ -28,12 +28,12 @@ from six.moves.urllib.parse import urljoin
 
 def validate_credentials(user, context=None):
     """validate_credentials will return a context object with "aok" for each credential
-       that exists, and "None" if it does not for a given user
- 
-       Parameters
-       ==========
-       user: the user to check, should have social_auth
-       context: an optional context object to append to
+    that exists, and "None" if it does not for a given user
+
+    Parameters
+    ==========
+    user: the user to check, should have social_auth
+    context: an optional context object to append to
     """
     if context is None:
         context = dict()
@@ -81,8 +81,8 @@ def agree_terms(request):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def login(request, message=None):
     """login will either show the user a button to login with github, and then a link
-       to their collections (given storage is set up) or a link to connect storage (if it 
-       isn't)
+    to their collections (given storage is set up) or a link to connect storage (if it
+    isn't)
     """
     if message is not None:
         messages.info(request, message)
@@ -98,7 +98,7 @@ def login(request, message=None):
 @login_required
 def logout(request):
     """log the user out, first trying to remove the user_id in the request session
-       skip if it doesn't exist
+    skip if it doesn't exist
     """
     try:
         del request.session["user_id"]
@@ -115,8 +115,7 @@ def logout(request):
 
 
 def redirect_if_no_refresh_token(backend, response, social, *args, **kwargs):
-    """http://python-social-auth.readthedocs.io/en/latest/use_cases.html#re-prompt-google-oauth2-users-to-refresh-the-refresh-token
-    """
+    """http://python-social-auth.readthedocs.io/en/latest/use_cases.html#re-prompt-google-oauth2-users-to-refresh-the-refresh-token"""
     if (
         backend.name == "google-oauth2"
         and social
@@ -144,7 +143,7 @@ class ShubGithubOAuth2(GithubOAuth2):
 
 def social_user(backend, uid, user=None, *args, **kwargs):
     """OVERRIDED: It will give the user an error message if the
-       account is already associated with a username."""
+    account is already associated with a username."""
     provider = backend.name
     social = backend.strategy.storage.user.get_social_auth(provider, uid)
 

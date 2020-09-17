@@ -31,13 +31,13 @@ import uuid
 
 
 def get_collection(cid):
-    """ get a collection based on its primary id, raise 404 not found
-        if... not found :)
+    """get a collection based on its primary id, raise 404 not found
+     if... not found :)
 
-       Parameters
-       ==========
-       cid: the id of the collection to look up
-   """
+    Parameters
+    ==========
+    cid: the id of the collection to look up
+    """
     keyargs = {"id": cid}
     try:
         collection = Collection.objects.get(**keyargs)
@@ -55,7 +55,7 @@ def get_collection(cid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def all_collections(request):
     """view all container collections. This only includes public collections,
-       and we add collections for which the user has permission.
+    and we add collections for which the user has permission.
 
     """
     limit = min(Collection.objects.count(), collection_count)
@@ -84,8 +84,7 @@ def all_collections(request):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def my_collections(request):
-    """this view will provide a list of collections for the logged in user
-    """
+    """this view will provide a list of collections for the logged in user"""
     user = request.user
     collections = Collection.objects.filter(
         Q(owners=user) | Q(contributors=user)
@@ -101,8 +100,7 @@ def my_collections(request):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def new_collection(request):
-    """new_container_collection will display a form to generate a new collection
-    """
+    """new_container_collection will display a form to generate a new collection"""
     if request.user.has_create_permission():
 
         if request.method == "POST":
@@ -132,13 +130,13 @@ def new_collection(request):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def view_named_collection(request, username, reponame):
     """View container build details (all container builds for a repo)
-       This is the same as view_collection but we look up the collection
-       by its full name.
+    This is the same as view_collection but we look up the collection
+    by its full name.
 
-       Parameters
-       ==========
-       username: the owner of the collection
-       reponame: the collection name
+    Parameters
+    ==========
+    username: the owner of the collection
+    reponame: the collection name
     """
     # First attempt, try looking up collection by username/reponame
     try:
@@ -156,8 +154,8 @@ def view_named_collection(request, username, reponame):
 
 def _view_collection(request, collection):
     """a shared function to finish up checking permissions for viewing
-       a collection, and returning to the user. Called by view_named_collection
-       and view_collection
+    a collection, and returning to the user. Called by view_named_collection
+    and view_collection
     """
     edit_permission = collection.has_edit_permission(request)
     view_permission = collection.has_view_permission(request)
@@ -184,10 +182,10 @@ def _view_collection(request, collection):
 def view_collection(request, cid):
     """View container build details (all container builds for a repo)
 
-       Parameters
-       ==========
-       cid: the collection id
- 
+    Parameters
+    ==========
+    cid: the collection id
+
     """
     collection = get_collection(cid)
     return _view_collection(request, collection)
@@ -196,14 +194,14 @@ def view_collection(request, cid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_settings(request, cid):
     """Collection settings is the entrypoint for editing the builder, branches,
-       and administrative actions like disabling and deleting collections. if 
-       active tab is defined, it means we are coming from a submit to change one
-       of these tabs, and it will return the user to the page with the correct
-       tab active.
-    
-       Parameters
-       ==========
-       cid: the id of the collection
+    and administrative actions like disabling and deleting collections. if
+    active tab is defined, it means we are coming from a submit to change one
+    of these tabs, and it will return the user to the page with the correct
+    tab active.
+
+    Parameters
+    ==========
+    cid: the id of the collection
     """
     from shub.apps.users.permissions import has_create_permission
     from shub.apps.users.models import Team
@@ -236,11 +234,11 @@ def collection_settings(request, cid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def edit_collection(request, cid):
     """edit collection will let the user specify a different image for
-       their builds, in the case that the provided isn't large enough, etc.
-   
-       Parameters
-       ==========
-       cid: the id of the collection
+    their builds, in the case that the provided isn't large enough, etc.
+
+    Parameters
+    ==========
+    cid: the id of the collection
 
     """
     collection = get_collection(cid)
@@ -271,11 +269,11 @@ def edit_collection(request, cid):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collection_commands(request, cid):
     """collection commands will show the user example commands for interacting
-       with a collection
+    with a collection
 
-       Parameters
-       ==========
-       cid: the collection id to view commands for
+    Parameters
+    ==========
+    cid: the collection id to view commands for
 
     """
 
@@ -294,9 +292,9 @@ def collection_commands(request, cid):
 def delete_collection(request, cid):
     """delete a container collection
 
-       Parameters
-       ==========
-       cid: the collection id to delete
+    Parameters
+    ==========
+    cid: the collection id to delete
 
     """
     if not _delete_collection(request, cid):
@@ -308,9 +306,9 @@ def delete_collection(request, cid):
 
 
 def _delete_collection(request, cid):
-    """ the underlying call for delete_collection, intended for use
-        also not directly from a view. Returns True or False if the
-        collection is deleted.
+    """the underlying call for delete_collection, intended for use
+    also not directly from a view. Returns True or False if the
+    collection is deleted.
     """
     collection = get_collection(cid)
 
@@ -333,15 +331,15 @@ def _delete_collection(request, cid):
 
 
 def _change_collection_privacy(request, collection, make_private=True):
-    """ the underlying driver for the view (and settings page) to change
-        the privacy for a collection. We check the ownership and permission,
-        make the change, and return the updated collection.
+    """the underlying driver for the view (and settings page) to change
+     the privacy for a collection. We check the ownership and permission,
+     make the change, and return the updated collection.
 
-       Parameters
-       ==========
-       request: the request object with user permissions, etc.
-       collection: the collection to make private
-       make_private: boolean, True indicates asking for private
+    Parameters
+    ==========
+    request: the request object with user permissions, etc.
+    collection: the collection to make private
+    make_private: boolean, True indicates asking for private
     """
     edit_permission = collection.has_edit_permission(request)
 
@@ -366,10 +364,10 @@ def _change_collection_privacy(request, collection, make_private=True):
 def change_collection_privacy(request, cid, make_private=True):
     """change collection privacy, if the user has permission
 
-       Parameters
-       ==========
-       cid: the collection id to make private/public
-       make_private: make the collection private (or not)
+    Parameters
+    ==========
+    cid: the collection id to make private/public
+    make_private: make the collection private (or not)
 
     """
     collection = get_collection(cid)
@@ -385,9 +383,9 @@ def change_collection_privacy(request, cid, make_private=True):
 def make_collection_private(request, cid):
     """make collection private will make a collection private
 
-       Parameters
-       ==========
-       cid: the collection id to make private
+    Parameters
+    ==========
+    cid: the collection id to make private
     """
     return change_collection_privacy(request, cid, make_private=True)
 
@@ -397,9 +395,9 @@ def make_collection_private(request, cid):
 def make_collection_public(request, cid):
     """make collection public will make a collection public
 
-       Parameters
-       ==========
-       cid: the collection id to make public
+    Parameters
+    ==========
+    cid: the collection id to make public
     """
     if PRIVATE_ONLY:
         messages.info(request, "This registry only allows private collections.")
@@ -414,13 +412,13 @@ def make_collection_public(request, cid):
 
 def _edit_contributors(userids, collection, add_user=True, level="contributor"):
     """a general function to add a single (or list) of users to a collection,
-       given that each user exists.
- 
-       Parameters
-       ==========
-       userids: a string list, or single string of a user id
-       add_user: if True, perform add on the collection. If False, remove.
-       level: one of contributor or owner.
+    given that each user exists.
+
+    Parameters
+    ==========
+    userids: a string list, or single string of a user id
+    add_user: if True, perform add on the collection. If False, remove.
+    level: one of contributor or owner.
     """
     from shub.apps.users.utils import get_user
 
@@ -450,9 +448,9 @@ def _edit_contributors(userids, collection, add_user=True, level="contributor"):
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 def edit_contributors(request, cid):
-    """edit_contributors is the submission to see, add, and delete contributors 
-       for a collection. Only owners are allowed to do this, and can only
-       see individuals in their teams.
+    """edit_contributors is the submission to see, add, and delete contributors
+    for a collection. Only owners are allowed to do this, and can only
+    see individuals in their teams.
     """
 
     collection = get_collection(cid)

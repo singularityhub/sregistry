@@ -43,8 +43,8 @@ class ShubMessage:
 
     def useColor(self):
         """useColor will determine if color should be added
-           to a print. Will check if being run in a terminal, and
-           if has support for ascii
+        to a print. Will check if being run in a terminal, and
+        if has support for ascii
         """
         COLORIZE = get_user_color_preference()
         if COLORIZE is not None:
@@ -59,7 +59,7 @@ class ShubMessage:
 
     def addColor(self, level, text):
         """addColor to the prompt (usually prefix) if terminal
-           supports, and specified to do so
+        supports, and specified to do so
         """
         if self.colorize:
             if level in self.colors:
@@ -90,21 +90,20 @@ class ShubMessage:
         return False
 
     def isEnabledFor(self, messageLevel):
-        """check if a messageLevel is enabled to emit a level
-        """
+        """check if a messageLevel is enabled to emit a level"""
         if messageLevel <= self.level:
             return True
         return False
 
     def emit(self, level, message, prefix=None):
         """emit is the main function to print the message
-           optionally with a prefix
-       
-           Parameters
-           ==========
-           level: the level of the message
-           message: the message to print
-           prefix: a prefix for the message
+        optionally with a prefix
+
+        Parameters
+        ==========
+        level: the level of the message
+        message: the message to print
+        prefix: a prefix for the message
         """
 
         if prefix is not None:
@@ -134,8 +133,8 @@ class ShubMessage:
         self.history.append(message)
 
     def write(self, stream, message):
-        """write will write a message to a stream, 
-           first checking the encoding
+        """write will write a message to a stream,
+        first checking the encoding
         """
         if isinstance(message, bytes):
             message = message.decode("utf-8")
@@ -143,7 +142,7 @@ class ShubMessage:
 
     def get_logs(self, join_newline=True):
         """'get_logs will return the complete history, joined by newline
-            (default) or as is.
+        (default) or as is.
         """
         if join_newline:
             return "\n".join(self.history)
@@ -161,12 +160,12 @@ class ShubMessage:
         symbol=None,
     ):
         """create a terminal progress bar, default bar shows for verbose+
-         
-           Parameters
-           ==========
-           iteration: current iteration (Int)
-           total: total iterations (Int)
-           length: character length of bar (Int)
+
+        Parameters
+        ==========
+        iteration: current iteration (Int)
+        total: total iterations (Int)
+        length: character length of bar (Int)
         """
         percent = 100 * (iteration / float(total))
         progress = int(length * iteration // total)
@@ -238,8 +237,7 @@ class ShubMessage:
         self.emit(DEBUG, message, "DEBUG")
 
     def is_quiet(self):
-        """is_quiet returns true if the level is under 1
-        """
+        """is_quiet returns true if the level is under 1"""
         if self.level < 1:
             return False
         return True
@@ -247,9 +245,9 @@ class ShubMessage:
 
 def get_logging_level():
     """get_logging_level will configure a logging to standard out based on the user's
-       selected level, which should be in an environment variable called
-       SREGISTRY_MESSAGELEVEL. if SOM_MESSAGELEVEL is not set, the maximum level
-       (5) is assumed (all messages).     
+    selected level, which should be in an environment variable called
+    SREGISTRY_MESSAGELEVEL. if SOM_MESSAGELEVEL is not set, the maximum level
+    (5) is assumed (all messages).
     """
     return int(os.environ.get("SREGISTRY_MESSAGELEVEL", 5))
 
@@ -264,7 +262,7 @@ def get_user_color_preference():
 
 def convert2boolean(arg):
     """convert2boolean is used for environmental variables that must be
-       returned as boolean
+    returned as boolean
     """
     if not isinstance(arg, bool):
         return arg.lower() in ("yes", "true", "t", "1", "y")

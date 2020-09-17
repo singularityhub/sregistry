@@ -20,9 +20,9 @@ import uuid
 
 def move_upload_to_storage(collection, upload_id):
     """moving an uploaded *UploadImage* to storage means:
-         1. create a folder for the collection, if doesn't exist
-         2. an image in storage. It will be moved here from
-       the temporary upload and renamed
+      1. create a folder for the collection, if doesn't exist
+      2. an image in storage. It will be moved here from
+    the temporary upload and renamed
     """
     from shub.apps.api.models import ImageUpload
 
@@ -45,13 +45,13 @@ def move_upload_to_storage(collection, upload_id):
 
 
 def generate_nginx_storage_path(collection, source, dest):
-    """generate the path to move a source to its destination 
-       so that we can check length limits, etc., before trying to do the move.
-         Parameters
-         ==========
-         collection: the collection the image will belong to
-         source: the source file (under /var/www/images/_upload/{0-9}
-         dest: the destination filename
+    """generate the path to move a source to its destination
+    so that we can check length limits, etc., before trying to do the move.
+      Parameters
+      ==========
+      collection: the collection the image will belong to
+      source: the source file (under /var/www/images/_upload/{0-9}
+      dest: the destination filename
     """
     image_home = os.path.join(MEDIA_ROOT, collection.name)
     return os.path.join(image_home, os.path.basename(dest))
@@ -59,14 +59,14 @@ def generate_nginx_storage_path(collection, source, dest):
 
 def move_nginx_upload_to_storage(collection, source, dest):
     """moving an uploaded file (from nginx module) to storage means.
-         1. create a folder for the collection, if doesn't exist
-         2. an image in storage pointing to the moved file
+    1. create a folder for the collection, if doesn't exist
+    2. an image in storage pointing to the moved file
 
-         Parameters
-         ==========
-         collection: the collection the image will belong to
-         source: the source file (under /var/www/images/_upload/{0-9}
-         dest: the destination filename
+    Parameters
+    ==========
+    collection: the collection the image will belong to
+    source: the source file (under /var/www/images/_upload/{0-9}
+    dest: the destination filename
     """
     # Create collection root, if it doesn't exist
     image_home = os.path.join(MEDIA_ROOT, collection.name)
@@ -80,8 +80,8 @@ def move_nginx_upload_to_storage(collection, source, dest):
 
 def calculate_version(cid):
     """calculate version is run as a separate task after a container upload.
-       Instead of using md5 provided by nginx we calculate sha256 sum and
-       then include as the version variable.
+    Instead of using md5 provided by nginx we calculate sha256 sum and
+    then include as the version variable.
     """
     from shub.apps.main.views import get_container
     from sregistry.utils import get_file_hash
@@ -96,21 +96,21 @@ def calculate_version(cid):
 def upload_container(cid, user, name, version, upload_id, size=None):
     """save an uploaded container, usually coming from an ImageUpload
 
-       Parameters
-       ==========
-       cid: the collection id to add the container to
-       user: the user that has requested the upload
-       upload_id: the upload_id to find the container (for web UI upload)
-                  if it exists as a file, an ImageUpload is created instead.
-       name: the requested name for the container
-       version: the md5 sum of the file
+    Parameters
+    ==========
+    cid: the collection id to add the container to
+    user: the user that has requested the upload
+    upload_id: the upload_id to find the container (for web UI upload)
+               if it exists as a file, an ImageUpload is created instead.
+    name: the requested name for the container
+    version: the md5 sum of the file
 
-       Returns
-       =======
-       message: None on successful upload, specific error message. This is 
-                a decision because it's purely intended to show to the user,
-                if the function is used otherwise we would want these to be
-                error / success codes.
+    Returns
+    =======
+    message: None on successful upload, specific error message. This is
+             a decision because it's purely intended to show to the user,
+             if the function is used otherwise we would want these to be
+             error / success codes.
     """
 
     from shub.apps.main.models import Container, Collection
@@ -225,7 +225,7 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
 def delete_file_instance(instance):
     """a helper function to remove the file assocation, and delete the instance
-       if needed outside of this module can be added to models
+    if needed outside of this module can be added to models
     """
     instance.file = None  # remove the association
     instance.save()
