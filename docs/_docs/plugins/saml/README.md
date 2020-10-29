@@ -12,7 +12,7 @@ The `saml_auth` plugin allows users to authentication with your [SAML provider](
 To enable SAML authentication you must:
 
   * Add `saml_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Add some configuration detials to `shub/settings/config.py`
+  * Add some configuration details to `shub/settings/config.py`
   * Configure the details of your SAML provider in in `shub/settings/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
   * Build the docker image with the build argument ENABLE_SAML set to true:
     ```bash
@@ -27,7 +27,6 @@ cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 ```
 
 
-  
 ## Quick Start
 This quick start is intended to demonstrate basic functionality of the SAML authentication. 
 
@@ -61,5 +60,5 @@ mv saml.crt /etc/ssl/certs
 mv saml.key /etc/ssl/private
 ```
 
-and then generate the `metadata.xml` by going to `http://localhost/saml.xml`. Usually institutions have different portals for submitting metadata / getting information about SAML, for Stanford the information is via the [SAML SP Service Provider Database](https://spdb.stanford.edu/).
+and then generate the `metadata.xml` by going to `http://localhost/saml_auth/saml.xml`. Usually institutions have different portals for submitting metadata / getting information about SAML, for Stanford the information is via the [SAML SP Service Provider Database](https://spdb.stanford.edu/).
 
