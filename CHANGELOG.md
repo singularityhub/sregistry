@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - enforcing usernames to be all lowercase (1.1.29)
  - Added ability to specify Minio direct download from interface (1.1.28)
  - Adding cleanup for Minio images no longer referenced in sregistry (1.1.27)
  - Django various updates, version bump 2.2.10 to 2.2.13 (1.1.26)

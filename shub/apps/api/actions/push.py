@@ -62,7 +62,6 @@ def collection_auth_check(request):
     payload = "push|%s|%s|%s|%s|" % (collection_name, timestamp, name, tag)
 
     # Validate Payload
-    print(payload)
     if not validate_request(auth, payload, "push", timestamp):
         raise PermissionDenied(detail="Unauthorized")
 
