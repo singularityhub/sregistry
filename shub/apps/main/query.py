@@ -17,9 +17,9 @@ from django.db.models import Q
 def collection_query(q):
     return Collection.objects.filter(
         Q(name__contains=q)
-        | Q(containers__name__contains=q)
-        | Q(containers__tags__name__contains=q)
-        | Q(containers__tag__contains=q)
+        | Q(containers__name__icontains=q)
+        | Q(containers__tags__name__icontains=q)
+        | Q(containers__tag__icontains=q)
     ).distinct()
 
 
@@ -35,7 +35,7 @@ def container_query(q, across_collections=1):
 
             # Query across collections for image name and tag
             return Container.objects.filter(
-                Q(name__contains=q["image"]) | Q(tag__contains=q["tag"])
+                Q(name__icontains=q["image"]) | Q(tag__icontains=q["tag"])
             ).distinct()
 
         # Query across collections for image name
@@ -44,14 +44,14 @@ def container_query(q, across_collections=1):
     # Query a particular collection for image name and tag
     if q["tag"] is not None:
         return Collection.objects.filter(
-            Q(name__contains=q["image"])
-            | Q(collection__name__contains=q["collection"])
-            | Q(containers_tags__contains=q["tag"])
+            Q(name__icontains=q["image"])
+            | Q(collection__name__icontains=q["collection"])
+            | Q(containers_tags__icontains=q["tag"])
         ).distinct()
 
     # Query a particular collection for image name
     return Collection.objects.filter(
-        Q(name__contains=q["image"]) | Q(collection__name__contains=q["collection"])
+        Q(name__icontains=q["image"]) | Q(collection__name__icontains=q["collection"])
     ).distinct()
 
 
