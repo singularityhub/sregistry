@@ -6,6 +6,8 @@ db:
 uwsgi:
   restart: always
   image: quay.io/vanessa/sregistry
+  env_file:
+    - ./.minio-env
   volumes:
     - .:/code
     - ./static:/var/www/static
