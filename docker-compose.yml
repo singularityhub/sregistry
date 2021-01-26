@@ -1,77 +1,72 @@
-db:
-  image: postgres
-  environment:
-   - POSTGRES_HOST_AUTH_METHOD=trust
+version: "3.7"
 
-uwsgi:
-  restart: always
-  image: quay.io/vanessa/sregistry
-  env_file:
-    - ./.minio-env
-  volumes:
-    - .:/code
-    - ./static:/var/www/static
-    - ./images:/var/www/images
-    # uncomment for PAM auth
-    #- /etc/passwd:/etc/passwd 
-    #- /etc/shadow:/etc/shadow
-  links:
-    - minio
-    - redis
-    - db
 
-nginx:
-  restart: always
-  image: quay.io/vanessa/sregistry_nginx
-  ports:
-    - "80:80"
-  volumes:
-    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
-  volumes_from:
-    - uwsgi
-  links:
-    - uwsgi
-    - db
+services:
 
-redis:
-  restart: always
-  image: redis:latest
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+  
+  uwsgi:
+    restart: always
+    image: quay.io/vanessa/sregistry
+    env_file:
+      - ./.minio-env
+    volumes:     
+      - .:/code
+      - ./images:/var/www/images
+      - ./static:/var/www/static
+  
+  nginx:
+    restart: always
+    image: quay.io/vanessa/sregistry_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./images:/var/www/images
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/var/www/static
+      - ./uwsgi_params.par:/etc/nginx/uwsgi_params.par:ro
+      - .:/code
+  
+  redis:
+    restart: always
+    image: redis:latest
+  
+  scheduler:
+    image: quay.io/vanessa/sregistry 
+    volumes:
+      - .:/code
+      - ./images:/var/www/images
+      - ./static:/var/www/static
+    env_file:
+      - ./.minio-env
+    command: python /code/manage.py rqscheduler
+  
+  worker:
+    image: quay.io/vanessa/sregistry 
+    depends_on:
+      - uwsgi
+    command: python /code/manage.py rqworker default
+    env_file:
+      - ./.minio-env
+    volumes:
+      - .:/code
+      - ./images:/var/www/images
+      - ./static:/var/www/static
+  
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_data:/images
+    env_file:
+      - ./.minio-env
+    ports:
+      - "9000:9000"  
+    command: ["server", "images"]
 
-scheduler:
-  image: quay.io/vanessa/sregistry
-  command: python /code/manage.py rqscheduler
-  volumes:
-    - .:/code
-  volumes_from:
-    - uwsgi
-  env_file:
-    - ./.minio-env
-  links:
-    - minio
-    - redis
-    - db
-
-worker:
-  image: quay.io/vanessa/sregistry
-  command: python /code/manage.py rqworker default
-  volumes:
-    - .:/code
-  volumes_from:
-    - uwsgi
-  env_file:
-    - ./.minio-env
-  links:
-    - minio
-    - redis
-    - db
-
-minio:
-  image: minio/minio
-  volumes:
-    - ./minio-images:/images
-  env_file:
-   - ./.minio-env
-  ports:
-   - "9000:9000"  
-  command: ["server", "images"]
+volumes:
+    images_data: {}
+    static_assets: {}
+    minio_data: {}
