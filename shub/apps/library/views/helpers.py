@@ -31,8 +31,9 @@ def validate_token(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     if token:
         try:
-            token = token.split(" ")[-1]  # Get rid of BEARER or Bearer <token>
-            Token.objects.get(key=token.strip())
+            Token.objects.get(
+                key=re.sub("bearer", "", token, flags=re.IGNORECASE).strip()
+            )
             return True
         except Token.DoesNotExist:
             pass
@@ -48,7 +49,9 @@ def get_token(request):
 
     if token:
         try:
-            return Token.objects.get(key=token.replace("BEARER", "").strip())
+            return Token.objects.get(
+                key=re.sub("bearer", "", token, flags=re.IGNORECASE).strip()
+            )
         except Token.DoesNotExist:
             pass
 
