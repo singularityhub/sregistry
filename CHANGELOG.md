@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - API endpoint to create a collection (1.1.32)
  - allowing for Bearer token to have any casing (1.1.31)
  - adding minio environment file to https docker-compose (1.1.3)
  - enforcing usernames to be all lowercase (1.1.29)
