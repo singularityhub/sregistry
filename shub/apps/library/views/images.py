@@ -532,11 +532,6 @@ class GetImageView(RatelimitMixin, APIView):
 
 
 class CollectionsView(RatelimitMixin, APIView):
-    """Return a simple list of collections
-    GET /v1/collections
-    Create a new collection
-    POST /v1/collections
-    """
 
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
@@ -545,6 +540,10 @@ class CollectionsView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request):
+        """Return a simple list of collections.
+
+        GET /v1/collections
+        """
 
         print("GET CollectionsView")
         if not validate_token(request):
@@ -556,6 +555,18 @@ class CollectionsView(RatelimitMixin, APIView):
         return Response(data=collections, status=200)
 
     def post(self, request):
+        """Create a new collection.
+
+        POST /v1/collections
+
+        Body parameters:
+        * entity: entity id (= user id)
+        * name: new collection name
+        * private: optional boolean (defaults to the configured default for
+          new collections
+
+        Return the newly created collection.
+        """
 
         print("POST CollectionsView")
         if not validate_token(request):
