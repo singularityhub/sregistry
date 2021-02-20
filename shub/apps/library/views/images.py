@@ -567,35 +567,36 @@ class CollectionsView(RatelimitMixin, APIView):
         # value set with get_privacy_default()
         # {"entity": "42", "name": "my_collection", "private": true}
         body = json.loads(request.body.decode("utf-8"))
-        if not ('entity' in body and 'name' in body):
+        if not ("entity" in body and "name" in body):
             print("Invalid payload")
             return Response(status=400)
 
         # does a collection with the same name exist already?
-        if not get_collection(body['name'], False) is None:
-            print("A collection named '{0}' exists already!".format(body['name']))
+        if not get_collection(body["name"], False) is None:
+            print("A collection named '{0}' exists already!".format(body["name"]))
             return Response(status=403)
 
         # check user permission
         token = get_token(request)
-        if str(token.user.id) != body['entity']:
-            print("Permission denied {0} {1}".format(token.user.id, body['entity']))
+        if str(token.user.id) != body["entity"]:
+            print("Permission denied {0} {1}".format(token.user.id, body["entity"]))
             return Response(status=403)
 
         # create the collection
-        name = format_collection_name(body['name'])
+        name = format_collection_name(body["name"])
         collection = Collection(name=name, secret=str(uuid.uuid4()))
         collection.save()
         collection.owners.add(token.user)
         collection.save()
 
         # set privacy if present
-        if 'private' in body:
-            collection.private = body['private']
+        if "private" in body:
+            collection.private = body["private"]
             collection.save()
 
         details = generate_collection_metadata(collection, token.user)
         return Response(data={"data": details}, status=200)
+
 
 class GetCollectionTagsView(RatelimitMixin, APIView):
     """Return a simple list of tags in the collection, and the
