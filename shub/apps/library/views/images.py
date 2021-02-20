@@ -582,28 +582,31 @@ class CollectionsView(RatelimitMixin, APIView):
             print("Invalid payload")
             return Response(status=400)
 
-        # does a collection with the same name exist already?
-        if not get_collection(body["name"], False) is None:
-            print("A collection named '{0}' exists already!".format(body["name"]))
-            return Response(status=403)
-
         # check user permission
         token = get_token(request)
         if str(token.user.id) != body["entity"]:
             print("Permission denied {0} {1}".format(token.user.id, body["entity"]))
             return Response(status=403)
 
-        # create the collection
+        # does a collection with the same name exist already?
         name = format_collection_name(body["name"])
-        collection = Collection(name=name, secret=str(uuid.uuid4()))
-        collection.save()
+        try:
+            collection = Collection.objects.get(name=name)
+            print("A collection named '{0}' exists already!".format(name))
+            return Response(status=403)
+        except Collection.DoesNotExist:
+            pass
+
+        # create the collection
+        collection = Collection.objects.create(name=name)
+        collection.secret = str(uuid.uuid4())
         collection.owners.add(token.user)
-        collection.save()
 
         # set privacy if present
         if "private" in body:
             collection.private = body["private"]
-            collection.save()
+
+        collection.save()
 
         details = generate_collection_metadata(collection, token.user)
         return Response(data={"data": details}, status=200)
