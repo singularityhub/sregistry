@@ -570,8 +570,8 @@ class CollectionsView(RatelimitMixin, APIView):
 
         print("POST CollectionsView")
         if not validate_token(request):
-            print("Token not valid")
-            return Response(status=403)
+            message = {"error": {"code": 403, "message": "Token not valid"}}
+            return Response(message, status=403)
 
         # body should have {'entity': entity_id, 'name': new_collection_name, 'private': bool}
         # 'private' is optional and defaults to Collection.private default
@@ -579,33 +579,37 @@ class CollectionsView(RatelimitMixin, APIView):
         # {"entity": "42", "name": "my_collection", "private": true}
         body = json.loads(request.body.decode("utf-8"))
         if not ("entity" in body and "name" in body):
-            print("Invalid payload")
-            return Response(status=400)
+            message = {"error": {"code": 400, "message": "Invalid payload."}}
+            return Response(message, status=400)
 
         # check user permission
         token = get_token(request)
         if str(token.user.id) != body["entity"]:
-            print("Permission denied {0} {1}".format(token.user.id, body["entity"]))
-            return Response(status=403)
+            message = {
+                "error": {
+                    "code": 403,
+                    "message": "Permission denied {0} {1}".format(
+                        token.user.id, body["entity"]
+                    ),
+                }
+            }
+            return Response(message, status=403)
 
         # does a collection with the same name exist already?
         name = format_collection_name(body["name"])
-        try:
-            collection = Collection.objects.get(name=name)
-            print("A collection named '{0}' exists already!".format(name))
-            return Response(status=403)
-        except Collection.DoesNotExist:
-            pass
+        collection, created = Collection.objects.get_or_create(name=name)
+        if not created:
+            message = {
+                "error": {
+                    "code": 403,
+                    "message": "A collection named '{0}' exists already!".format(name),
+                }
+            }
+            return Response(message, status=403)
 
-        # create the collection
-        collection = Collection.objects.create(name=name)
         collection.secret = str(uuid.uuid4())
         collection.owners.add(token.user)
-
-        # set privacy if present
-        if "private" in body:
-            collection.private = body["private"]
-
+        collection.private = body.get("private", False)
         collection.save()
 
         details = generate_collection_metadata(collection, token.user)
