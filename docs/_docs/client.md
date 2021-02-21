@@ -319,9 +319,6 @@ Authentication is done presenting the token in an `Authorization` header:
 $ curl -s -H 'Authorization: Bearer <token>' http://127.0.0.1/<api_endpoint>
 ```
 
-curl -s -H 'Authorization: Bearer 8799c0adc481b21186f2e24ab6037b6aace62cde' http://127.0.0.1/v1/entities/vsoch
-
-
 The token can be found in the navigation in the top right of the registry interface
 after you log in.
 
