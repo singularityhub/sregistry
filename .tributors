@@ -24,7 +24,8 @@
     "serlophug": {
         "name": "Sergio López Huguet",
         "bio": "Ph.D Student ",
-        "blog": "https://github.com/serlophug"
+        "blog": "https://github.com/serlophug",
+        "email": "sergio.lophug@gmail.com"
     },
     "jbd": {
         "name": "jbd",
@@ -39,18 +40,21 @@
     "smoe": {
         "name": "Steffen Möller",
         "blog": "http://tangiblecomputationalbiology.blogspot.com",
-        "orcid": "0000-0002-7187-4683"
+        "orcid": "0000-0002-7187-4683",
+        "email": "steffen_moeller@gmx.de"
     },
     "yarikoptic": {
         "name": "Yaroslav Halchenko",
         "bio": "Cheers!",
         "blog": "www.onerussian.com",
-        "orcid": "0000-0003-3456-2493"
+        "orcid": "0000-0003-3456-2493",
+        "email": "debian@onerussian.com"
     },
     "victorsndvg": {
         "name": "victorsndvg",
         "bio": "Scientific software engineer",
-        "blog": "http://sourceforge.net/u/victorsndvg/profile/"
+        "blog": "http://sourceforge.net/u/victorsndvg/profile/",
+        "email": "victorsv@gmail.com"
     },
     "arfon": {
         "name": "Arfon Smith",
@@ -68,10 +72,32 @@
         "name": "Dan Fornika",
         "bio": "Genomics Specialist\r\n",
         "blog": "https://orcid.org/0000-0002-6178-3585",
-        "orcid": "0000-0002-6178-3585"
+        "orcid": "0000-0002-6178-3585",
+        "email": "dfornika@gmail.com"
     },
     "RonaldEnsing": {
         "name": "Ronald Ensing",
         "blog": "https://github.com/RonaldEnsing"
+    },
+    "vladdoster": {
+        "name": "vlad doster",
+        "email": "mvdoster@gmail.com",
+        "bio": "Boldly falling down the Ethernet.",
+        "blog": "vdoster.com"
+    },
+    "dtrudg": {
+        "name": "David Trudgian",
+        "bio": "Work related & collaborative code. Personal stuff is elsewhere.",
+        "blog": "https://github.com/dtrudg",
+        "orcid": "0000-0002-7084-6787"
+    },
+    "pini-gh": {
+        "name": "pini-gh",
+        "bio": "@Debian Developer",
+        "blog": "https://github.com/pini-gh"
+    },
+    "0nebody": {
+        "name": "0nebody",
+        "blog": "https://github.com/0nebody"
     }
 }
