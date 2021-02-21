@@ -129,6 +129,7 @@ We use `-U` for unsigned.
  - If you push an existing tag and the container is frozen (akin to protected) you'll get permission denied.
  - If you push a new tag, it will be added.
  - If you push a new image, it will also be added.
+ - If you push an image to a non existing collection, the collection will be created first, then the image will be added (version `1.1.32`).
 
 Unlike the Sylabs API, when the GET endpoint is made to `v1/containers` and the image doesn't exist,
 we return a response for the collection (and not 404). In other words, [this response](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L140) is always returned. We do this because
@@ -328,3 +329,5 @@ Then issue a POST request to the endpoint `/v1/collections` and this json payloa
 ```
 
 The `private` key is optional. If not provided, it defaults to the servers's configured default for collection creation.
+
+In case of a `singularity push` to a non existing collection, the client triggers the collection creation first, using this endpoint, then pushes the image.
