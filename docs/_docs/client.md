@@ -129,6 +129,7 @@ We use `-U` for unsigned.
  - If you push an existing tag and the container is frozen (akin to protected) you'll get permission denied.
  - If you push a new tag, it will be added.
  - If you push a new image, it will also be added.
+ - If you push an image to a non existing collection, the collection will be created first, then the image will be added (version `1.1.32`).
 
 Unlike the Sylabs API, when the GET endpoint is made to `v1/containers` and the image doesn't exist,
 we return a response for the collection (and not 404). In other words, [this response](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L140) is always returned. We do this because
@@ -304,3 +305,94 @@ sregistry labels --value vanessasaur
 # A specific key and value
 sregistry labels --key maintainer --value vanessasaur
 ```
+
+# Curl
+
+Like with the Sylabs Library API, it is possible to interact with Singularity Registry Server 
+using Curl. You can browse the API schema via the `/api` path of your server.
+
+## Authentication
+
+Authentication is done presenting the token in an `Authorization` header:
+
+```bash
+$ curl -s -H 'Authorization: Bearer <token>' http://127.0.0.1/<api_endpoint>
+```
+
+The token can be found in the navigation in the top right of the registry interface
+after you log in.
+
+## Create a collection
+
+As of version `1.1.32` it is possible to create a new collection via the API. It requires authentication.
+First retrieve the numeric `id` associated with your username with a GET request to the endpoint `/v1/entities/<username>`.
+
+```bash
+$ curl -s -H 'Authorization: Bearer <token>' /v1/entities/<username>
+```
+Here is a response made pretty by piping into json_pp:
+```
+{
+   "data" : {
+      "collections" : [],
+      "createdAt" : "2021-02-21T05:20:18.454003Z",
+      "createdBy" : "",
+      "customData" : "",
+      "defaultPrivate" : false,
+      "deleted" : false,
+      "deletedAt" : "0001-01-01T00:00:00Z",
+      "description" : "vsoch",
+      "id" : "1",
+      "name" : "vsoch",
+      "quota" : 0,
+      "size" : 0,
+      "updatedAt" : "2021-02-21T05:20:18.479251Z",
+      "updatedBy" : ""
+   }
+}
+```
+
+Notice that the id is 1? Great! We will use this to create a collection. We next issue
+a POST request to the endpoint `/v1/collections` and this json payload:
+
+```
+{
+  "entity": "<user_numeric_id>"
+  "name": "<new_collection_name>"
+  "private": true|false
+}
+```
+
+Here is an example with our user id of 1:
+
+```bash
+$ curl -X POST -H 'Authorization: Bearer <token>' -H "Content-Type: application/json" --data '{"entity": 1, "name": "dinosaurs"}' http://127.0.0.1/v1/collections 
+```
+
+You can then see the response that the collection was created, and it will appear in the interface:
+
+```bash
+{
+   "data" : {
+      "containers" : [],
+      "createdAt" : "2021-02-21T05:35:36.491446Z",
+      "createdBy" : "1",
+      "customData" : "",
+      "deleted" : false,
+      "deletedAt" : "0001-01-01T00:00:00Z",
+      "description" : "Dinosaurs Collection",
+      "entity" : "1",
+      "entityName" : "vsoch",
+      "id" : "2",
+      "name" : "dinosaurs",
+      "owner" : "1",
+      "private" : false,
+      "size" : 0,
+      "updatedAt" : "2021-02-21T05:35:36.505902Z",
+      "updatedBy" : "1"
+   }
+}
+```
+
+The `private` key is optional. If not provided, it defaults to the servers's configured default for collection creation.
+In case of a `singularity push` to a non existing collection, the client triggers the collection creation first, using this endpoint, then pushes the image.

@@ -13,6 +13,7 @@ from django.shortcuts import redirect, reverse
 from sregistry.utils import parse_image_name
 
 from shub.apps.logs.utils import generate_log
+from shub.apps.main.utils import format_collection_name
 from shub.apps.main.models import Collection, Container
 from shub.settings import (
     MINIO_BUCKET,
@@ -45,6 +46,7 @@ from .helpers import (
     generate_container_metadata,
     get_token,
     get_container,
+    get_collection,
     validate_token,
 )
 
@@ -530,17 +532,18 @@ class GetImageView(RatelimitMixin, APIView):
 
 
 class CollectionsView(RatelimitMixin, APIView):
-    """Return a simple list of collections
-    GET /v1/collections
-    """
 
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = "GET"
+    ratelimit_method = ("GET", "POST")
     renderer_classes = (JSONRenderer,)
 
     def get(self, request):
+        """Return a simple list of collections.
+
+        GET /v1/collections
+        """
 
         print("GET CollectionsView")
         if not validate_token(request):
@@ -550,6 +553,67 @@ class CollectionsView(RatelimitMixin, APIView):
         token = get_token(request)
         collections = generate_collections_list(token.user)
         return Response(data=collections, status=200)
+
+    def post(self, request):
+        """Create a new collection.
+
+        POST /v1/collections
+
+        Body parameters:
+        * entity: entity id (= user id)
+        * name: new collection name
+        * private: optional boolean (defaults to the configured default for
+          new collections
+
+        Return the newly created collection.
+        """
+
+        print("POST CollectionsView")
+        if not validate_token(request):
+            message = {"error": {"code": 403, "message": "Token not valid"}}
+            return Response(message, status=403)
+
+        # body should have {'entity': entity_id, 'name': new_collection_name, 'private': bool}
+        # 'private' is optional and defaults to Collection.private default
+        # value set with get_privacy_default()
+        # {"entity": "42", "name": "my_collection", "private": true}
+        body = json.loads(request.body.decode("utf-8"))
+        if not ("entity" in body and "name" in body):
+            message = {"error": {"code": 400, "message": "Invalid payload."}}
+            return Response(message, status=400)
+
+        # check user permission
+        token = get_token(request)
+        if str(token.user.id) != str(body["entity"]):
+            message = {
+                "error": {
+                    "code": 403,
+                    "message": "Permission denied {0} {1}".format(
+                        token.user.id, body["entity"]
+                    ),
+                }
+            }
+            return Response(message, status=403)
+
+        # does a collection with the same name exist already?
+        name = format_collection_name(body["name"])
+        collection, created = Collection.objects.get_or_create(name=name)
+        if not created:
+            message = {
+                "error": {
+                    "code": 403,
+                    "message": "A collection named '{0}' exists already!".format(name),
+                }
+            }
+            return Response(message, status=403)
+
+        collection.secret = str(uuid.uuid4())
+        collection.owners.add(token.user)
+        collection.private = body.get("private", False)
+        collection.save()
+
+        details = generate_collection_metadata(collection, token.user)
+        return Response(data={"data": details}, status=200)
 
 
 class GetCollectionTagsView(RatelimitMixin, APIView):
