@@ -304,3 +304,27 @@ sregistry labels --value vanessasaur
 # A specific key and value
 sregistry labels --key maintainer --value vanessasaur
 ```
+
+# Curl
+Like with the Sylabs Library API, it is possible to interract with the Singularity Registry Server using Curl. You can browse the API schema via the `/api` path of your server.
+
+## Authentication
+Authentication is done presenting the token in an `Authorization` header:
+```
+$ curl -s -H 'Authorization: Bearer <token>' https://shub.example.com/<api_endpoint>
+```
+## Create a collection
+As of version `1.1.32` it is possible to create a new collection via the API. It requires authentication.
+
+First retrieve the numeric `id` associated with your username with a GET request to the endpoint `/v1/entities/<username>`.
+
+Then issue a POST request to the endpoint `/v1/collections` and this json payload:
+```
+{
+  "entity": "<user_numeric_id>"
+  "name": "<new_collection_name>"
+  "private": true|false
+}
+```
+
+The `private` key is optional. If not provided, it defaults to the servers's configured default for collection creation.
