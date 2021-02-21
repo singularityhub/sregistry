@@ -584,7 +584,7 @@ class CollectionsView(RatelimitMixin, APIView):
 
         # check user permission
         token = get_token(request)
-        if str(token.user.id) != body["entity"]:
+        if str(token.user.id) != str(body["entity"]):
             message = {
                 "error": {
                     "code": 403,
