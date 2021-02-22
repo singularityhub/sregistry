@@ -125,21 +125,14 @@ We use `-U` for unsigned.
 
 ### Push Logic
 
+ - If you push an image to a non existing collection, the collection will be created first (version `1.1.32`)
+ - If you push an image to a non existing container, the container will be created first (version `1.1.33`) (\*)
+ - If you push a new image, it will be added.
+ - If you push a new tag, it will be added.
  - If you push an existing tag, if the container is unfrozen, it will be replaced
  - If you push an existing tag and the container is frozen (akin to protected) you'll get permission denied.
- - If you push a new tag, it will be added.
- - If you push a new image, it will also be added.
- - If you push an image to a non existing collection, the collection will be created first, then the image will be added (version `1.1.32`).
 
-Unlike the Sylabs API, when the GET endpoint is made to `v1/containers` and the image doesn't exist,
-we return a response for the collection (and not 404). In other words, [this response](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L140) is always returned. We do this because
-the Sylabs library client has a strange logic where it doesn't tag images until after the fact,
-and doesn't send the user's requested tag to any of the get or creation endpoints. This means
-that we are forced on the registry to create a dummy holder tag (that is guaranteed to be unique)
-and then to find the container at the end to [set tags](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L187) based on the id of the image
-that is created with the [upload request](https://github.com/sylabs/scs-library-client/blob/acb520c8fe6456e4223af6fbece956449d790c79/client/push.go#L174). I didn't see a logical way to create the container using the POST endpoint to
-"v1/containers" given that we do not know the tag or version, and would need to know the exact container id
-to return later when the container push is requested.
+(\*) The Singularity Registry Server data model is different from this of Sylabs library. In the former, a container is created from an image. In the latter, containers are just placeholders for images with the same name, and can be empty. Hence Singularity Registry Server just [mimics the container creation without actually doing it](#mimic-empty-container-creation). The container is created afterwards at the upload step.
 
 ### Push Size
 
@@ -328,7 +321,7 @@ As of version `1.1.32` it is possible to create a new collection via the API. It
 First retrieve the numeric `id` associated with your username with a GET request to the endpoint `/v1/entities/<username>`.
 
 ```bash
-$ curl -s -H 'Authorization: Bearer <token>' /v1/entities/<username>
+$ curl -s -H 'Authorization: Bearer <token>' http://127.0.0.1/v1/entities/<username>
 ```
 Here is a response made pretty by piping into json_pp:
 ```
@@ -396,3 +389,94 @@ You can then see the response that the collection was created, and it will appea
 
 The `private` key is optional. If not provided, it defaults to the servers's configured default for collection creation.
 In case of a `singularity push` to a non existing collection, the client triggers the collection creation first, using this endpoint, then pushes the image.
+
+## Mimic empty container creation
+
+As of version `1.1.33` it is possible to mimic the Sylabs library endpoint for new container creation. It requires authentication.
+
+First retrieve the numeric `id` associated with the holding collection with a GET request to the endpoint `/v1/collections/<entity>/<collection_name>`, where `<entity>` is your username.
+
+```bash
+$ curl -s -H 'Authorization: Bearer <token>' http://127.0.0.1/v1/collections/<entity>/<collection_name>
+```
+
+This is the value associated with the `id` key of the answer. For example:
+```
+{
+  "data": {
+    "deletedAt": "0001-01-01T00:00:00Z",
+    "entityName": "pini",
+    "deleted": false,
+    "name": "pini-private",
+    "owner": "1",
+    "size": 4,
+    "description": "My private collection",
+    "customData": "",
+    "entity": "1",
+    "updatedBy": "1",
+    "id": "6",
+    "createdBy": "1",
+    "private": true,
+    "createdAt": "2021-02-20T20:21:13.692215Z",
+    "containers": [
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "updatedAt": "2021-02-20T20:21:13.777940Z"
+  }
+}
+```
+
+Then we can issue a POST request to the endpoint `/v1/containers` with the payload:
+```
+{
+  "collection": "<collection_numeric_id>"
+  "name": "<new_container_name>"
+}
+```
+```bash
+$ curl -X POST -H 'Authorization: Bearer <token>' -H "Content-Type: application/json" --data '{"collection": 6, "name": "fish"}' http://127.0.0.1/v1/containers 
+```
+
+There is no container creation, because it is not needed with the Singularity Registry Server data model. But the response is as if the container was created so that any workflow using this endpoint could work the same as with Sylabs library:
+
+```bash
+{
+  "data": {
+    "collection": "6",
+    "description": "My private collection",
+    "collectionName": "pini-private",
+    "owner": "1",
+    "readOnly": false,
+    "id": "6",
+    "size": 4,
+    "imageTags": {},
+    "createdBy": "1",
+    "private": true,
+    "downloadCount": null,
+    "updatedAt": "2021-02-20T20:21:13.777940Z",
+    "fullDescription": "Test-private Collection",
+    "deletedAt": "0001-01-01T00:00:00Z",
+    "entityName": "pini",
+    "deleted": false,
+    "name": "test-private",
+    "stars": 0,
+    "customData": "",
+    "images": [],
+    "entity": "1",
+    "updatedBy": "1",
+    "archTags": {
+      "amd64": {}
+    },
+    "createdAt": "2021-02-20T20:21:13.692215Z",
+    "containers": [
+      "5",
+      "6",
+      "7",
+      "8"
+    ]
+  }
+}
+```
