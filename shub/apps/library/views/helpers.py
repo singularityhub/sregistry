@@ -341,17 +341,3 @@ def get_collection(name, retry=True):
         if retry is True and "/" in name:
             name = name.split("/")[0]
             return get_collection(name, retry=False)
-
-
-def get_collection_by_id(id, retry=True):
-    """get a collection by id.
-
-    Parameters
-    ==========
-    id: the numerical id of the collection to look up
-    """
-    try:
-        collection = Collection.objects.get(id=id)
-        return collection
-    except Collection.DoesNotExist:
-        return None

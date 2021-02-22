@@ -47,7 +47,6 @@ from .helpers import (
     get_token,
     get_container,
     get_collection,
-    get_collection_by_id,
     validate_token,
 )
 
@@ -737,7 +736,7 @@ class ContainersView(RatelimitMixin, APIView):
     def post(self, request):
         """Mimic the creation a new container.
 
-        POST /v1/coontainers
+        POST /v1/containers
 
         Body parameters:
         * collection: collection numeric id as a string
@@ -747,11 +746,14 @@ class ContainersView(RatelimitMixin, APIView):
         ignore here because containers' privacy is inherited from the
         collection they belong to.
 
-        Return the newly created container.
+        Return new container's data (but it is not created actually).
 
         This endpoint only mimics the Sylabs library's one, without actually
         creating the container object. Because in the sregistry data model a
         container cannot exist with no images.
+
+        It is provided to improve compatibility with other singularity
+        clients.
         """
 
         print("POST ContainersView")
@@ -775,8 +777,11 @@ class ContainersView(RatelimitMixin, APIView):
 
         # check permissions
         # return 403 when collection does not exist or user is not an owner
-        collection = Collection.objects.get(id=collection_id)
         token = get_token(request)
+        try:
+            collection = Collection.objects.get(id=collection_id)
+        except Collection.DoesNotExist:
+            collection = None
         if (not collection) or (token.user not in collection.owners.all()):
             message = {
                 "error": {
