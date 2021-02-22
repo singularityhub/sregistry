@@ -13,7 +13,7 @@ from django.shortcuts import redirect, reverse
 from sregistry.utils import parse_image_name
 
 from shub.apps.logs.utils import generate_log
-from shub.apps.main.utils import format_collection_name
+from shub.apps.main.utils import format_collection_name, format_container_name
 from shub.apps.main.models import Collection, Container
 from shub.settings import (
     MINIO_BUCKET,
@@ -708,18 +708,19 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
 
 class ContainersView(RatelimitMixin, APIView):
-    """Return a simple list of containers
-    GET /v1/containers
-    """
 
     renderer_classes = (JSONRenderer,)
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
-    ratelimit_method = "GET"
+    ratelimit_method = ("GET", "POST")
     renderer_classes = (JSONRenderer,)
 
     def get(self, request):
+        """Return a simple list of containers.
+
+        GET /v1/containers
+        """
 
         print("GET ContainersView")
         print(request.data)
@@ -731,6 +732,85 @@ class ContainersView(RatelimitMixin, APIView):
         # token = get_token(request)
         # collections = generate_collections_list(token.user)
         return Response(data={}, status=200)
+
+    def post(self, request):
+        """Mimic the creation a new container.
+
+        POST /v1/containers
+
+        Body parameters:
+        * collection: collection numeric id as a string
+        * name: new container name
+
+        Sylabs library has an optional 'private' parameter, which we
+        ignore here because containers' privacy is inherited from the
+        collection they belong to.
+
+        Return new container's data (but it is not created actually).
+
+        This endpoint only mimics the Sylabs library's one, without actually
+        creating the container object. Because in the sregistry data model a
+        container cannot exist with no images.
+
+        It is provided to improve compatibility with other singularity
+        clients.
+        """
+
+        print("POST ContainersView")
+        if not validate_token(request):
+            message = {"error": {"code": 403, "message": "Token not valid"}}
+            return Response(message, status=403)
+
+        # body should have {'collection': collection_id, 'name': new_container_name}
+        # 'private' is optional and unused
+        # {"collection": "22", "name": "my_container"}
+        body = json.loads(request.body.decode("utf-8"))
+        if not ("collection" in body and "name" in body):
+            message = {"error": {"code": 400, "message": "Invalid payload."}}
+            return Response(message, status=400)
+
+        try:
+            collection_id = int(body["collection"])
+        except ValueError:
+            message = {"error": {"code": 400, "message": "Invalid payload."}}
+            return Response(message, status=400)
+
+        # check permissions
+        # return 403 when collection does not exist or user is not an owner
+        token = get_token(request)
+        try:
+            collection = Collection.objects.get(id=collection_id)
+        except Collection.DoesNotExist:
+            collection = None
+        if (not collection) or (token.user not in collection.owners.all()):
+            message = {
+                "error": {
+                    "code": 403,
+                    "message": "Permission denied {0} {1}".format(
+                        token.user.id, body["entity"]
+                    ),
+                }
+            }
+            return Response(message, status=403)
+
+        # does a container with the same name exist already?
+        name = format_container_name(body["name"])
+        containers = collection.containers.filter(name=name)
+
+        if containers:
+            message = {
+                "error": {
+                    "code": 403,
+                    "message": "A container named '{0}' exists already for collection id '{1}'!".format(
+                        name, collection_id
+                    ),
+                }
+            }
+            return Response(message, status=403)
+
+        # We don't need to create the specific container here
+        details = generate_collection_details(collection, [], token.user)
+        return Response(data={"data": details}, status=200)
 
 
 class GetNamedCollectionView(RatelimitMixin, APIView):
@@ -806,10 +886,15 @@ class GetNamedContainerView(RatelimitMixin, APIView):
             return Response(status=403)
 
         # We don't need to create the specific container here
-        containers = collection.containers.filter(name=container) or []
-
-        # Even if the container doesn't exist, we return response that it does,
-        # And it's created in the next view.
-
-        data = generate_collection_details(collection, containers, token.user)
-        return Response(data={"data": data}, status=200)
+        containers = collection.containers.filter(name=container)
+        if containers:
+            data = generate_collection_details(collection, containers, token.user)
+            return Response(data={"data": data}, status=200)
+        else:
+            message = {
+                "error": {
+                    "code": 404,
+                    "message": "Error retrieving container: not found",
+                }
+            }
+            return Response(message, status=404)
