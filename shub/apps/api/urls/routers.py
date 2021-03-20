@@ -18,8 +18,8 @@ from shub.apps.api.actions.push import collection_auth_check
 from shub.apps.api.actions.upload import UploadUI, upload_complete
 
 router = routers.DefaultRouter()
-router.register(r"^containers", ContainerViewSet, base_name="container")
-router.register(r"^collections", CollectionViewSet, base_name="collection")
+router.register(r"^containers", ContainerViewSet, basename="container")
+router.register(r"^collections", CollectionViewSet, basename="collection")
 
 urlpatterns = [
     url(r"^", include(router.urls)),
