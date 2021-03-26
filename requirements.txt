@@ -28,7 +28,6 @@ markdown
 numexpr
 oauth2client==3.0
 Pillow
-PyYAML==5.1
 psycopg2-binary
 pygments
 python3-saml
