@@ -27,7 +27,7 @@ from ratelimit.decorators import ratelimit
 
 def get_label(key=None, value=None):
 
-    keyargs = dict()
+    keyargs = {}
     if key is not None:
         keyargs["key"] = key
     if value is not None:

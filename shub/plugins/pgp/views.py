@@ -96,25 +96,22 @@ def lookup(request):
                 )
                 resp["Content-Disposition"] = 'attachment; filename="pgpkey.asc"'
                 return resp
-            else:
-                resp = HttpResponse(
-                    utils.build_machine_readable_indexes(keys),
-                    content_type="text/plain",
-                )
-                return resp
-        else:
+            resp = HttpResponse(
+                utils.build_machine_readable_indexes(keys),
+                content_type="text/plain",
+            )
+            return resp
 
-            # html response
-            op = op if op else "index"
-            if op == "get":
-                c = {"key": utils.keys_ascii_armor(keys), "search": search}
-                return render(request, "pgpdb/lookup_get.html", c)
-            elif op in ["index", "vindex"]:
-                c = {"keys": keys, "search": search}
-                if op == "index":
-                    return render(request, "pgpdb/lookup_index.html", c)
-                else:
-                    return render(request, "pgpdb/lookup_vindex.html", c)
+        # html response
+        op = op if op else "index"
+        if op == "get":
+            c = {"key": utils.keys_ascii_armor(keys), "search": search}
+            return render(request, "pgpdb/lookup_get.html", c)
+        if op in ["index", "vindex"]:
+            c = {"keys": keys, "search": search}
+            if op == "index":
+                return render(request, "pgpdb/lookup_index.html", c)
+            return render(request, "pgpdb/lookup_vindex.html", c)
 
     except __LookupException:
         content = render(request, "pgpdb/lookup_not_found.html")

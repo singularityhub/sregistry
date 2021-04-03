@@ -147,11 +147,10 @@ def is_valid_packets(packets):
 def keys_ascii_armor(keys):
     if keys.count() == 1:
         return keys[0].ascii_armor()
-    else:
-        data = b""
-        for key in keys:
-            data += key.read()
-        return encode_ascii_armor(data)
+    data = b""
+    for key in keys:
+        data += key.read()
+    return encode_ascii_armor(data)
 
 
 def build_machine_readable_indexes(keys):

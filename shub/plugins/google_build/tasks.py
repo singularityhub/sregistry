@@ -57,7 +57,7 @@ def build_commits(collection, commits, branch):
     collection: The collection to get details for.
     commits: the commits to build.
     """
-    modified = dict()
+    modified = {}
     removed = []
 
     # Find changed files!
@@ -146,7 +146,7 @@ def build_previous_commits(collection, branch):
                 continue
 
             # Only going to build updated recipes
-            elif record["status"] in ["added", "modified", "renamed"]:
+            if record["status"] in ["added", "modified", "renamed"]:
 
                 # Supports building from Singularity recipes
                 if re.search("Singularity", filename):

@@ -23,7 +23,8 @@ class BaseSitemap(Sitemap):
 class ContainerSitemap(BaseSitemap):
     changefreq = "weekly"
 
-    def lastmod(self, obj):
+    @staticmethod
+    def lastmod(obj):
         return obj.build_date
 
     def items(self):
@@ -33,7 +34,8 @@ class ContainerSitemap(BaseSitemap):
 class CollectionSitemap(BaseSitemap):
     changefreq = "weekly"
 
-    def lastmod(self, obj):
+    @staticmethod
+    def lastmod(obj):
         return obj.modify_date
 
     def items(self):

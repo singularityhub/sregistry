@@ -12,7 +12,7 @@ from rest_framework.authtoken.models import Token
 import traceback
 
 
-class BaseLoggingMixin(object):
+class BaseLoggingMixin:
     logging_methods = "__all__"
 
     """Mixin to log requests"""

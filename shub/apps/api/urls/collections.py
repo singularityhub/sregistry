@@ -28,7 +28,8 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     containers = serializers.SerializerMethodField("list_containers")
 
-    def list_containers(self, collection):
+    @staticmethod
+    def list_containers(collection):
         container_list = []
         for c in collection.containers.all():
             entry = {
@@ -67,7 +68,8 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 class CollectionDetailByName(APIView):
     """Retrieve a collection instance based on it's name"""
 
-    def get_object(self, collection_name):
+    @staticmethod
+    def get_object(collection_name):
         try:
             collection = Collection.objects.get(name=collection_name.lower())
         except Collection.DoesNotExist:
@@ -95,7 +97,8 @@ class CollectionSearch(APIView):
     a general search to look across all fields for one term
     """
 
-    def get_object(self, query):
+    @staticmethod
+    def get_object(query):
         collections = collection_query(query.lower())
         return collections
 

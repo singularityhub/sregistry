@@ -117,10 +117,7 @@ def new_collection(request):
 
             messages.info(request, "Collection %s created." % name)
             return redirect("collection_details", cid=collection.id)
-
-        # Just new collection form, not a post
-        else:
-            return render(request, "collections/new_collection.html")
+        return render(request, "collections/new_collection.html")
 
     # If user makes it down here, does not have permission
     messages.info(request, "You don't have permission to perform this action.")

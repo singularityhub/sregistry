@@ -144,7 +144,8 @@ class User(AbstractUser):
         """return a list of providers that the user has credentials for."""
         return [x.provider for x in self.social_auth.all()]
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "users"
 
     @property
@@ -248,7 +249,7 @@ class Team(models.Model):
             return True
 
         # Edit permission to owners given so
-        elif request.user in self.owners.all():
+        if request.user in self.owners.all():
             return True
 
         return False
@@ -275,7 +276,8 @@ class Team(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "users"
 
     class Meta:
@@ -294,7 +296,8 @@ class MembershipInvite(models.Model):
     def __unicode__(self):
         return "<%s:%s>" % (self.id, self.team.name)
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "users"
 
     def get_url(self):

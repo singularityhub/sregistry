@@ -26,7 +26,8 @@ class LabelSerializer(serializers.ModelSerializer):
 
     containers = serializers.SerializerMethodField("list_containers")
 
-    def list_containers(self, label):
+    @staticmethod
+    def list_containers(label):
         container_list = []
         for container in label.containers.all():
             container_list.append(container.get_uri())
@@ -59,7 +60,8 @@ class LabelViewSet(viewsets.ReadOnlyModelViewSet):
 class LabelDetail(APIView):
     """Retrieve a container instance based on it's name"""
 
-    def get_object(self, key, value):
+    @staticmethod
+    def get_object(key, value):
         # If not specified, return all
         if key is None and value is None:
             return Label.objects.all()

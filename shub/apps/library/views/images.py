@@ -71,7 +71,8 @@ class CompletePushImageFileView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
     parser_classes = (EmptyParser,)
 
-    def put(self, request, container_id, format=None):
+    @staticmethod
+    def put(request, container_id, format=None):
 
         print("PUT CompletePushImageFileView")
 
@@ -95,7 +96,8 @@ class RequestMultiPartAbortView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
     allowed_methods = ("PUT",)
 
-    def put(self, request, upload_id):
+    @staticmethod
+    def put(request, upload_id):
         """In a post, the upload_id will be the container id."""
         print("PUT RequestMultiPartAbortView")
 
@@ -124,7 +126,8 @@ class RequestMultiPartCompleteView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
     allowed_methods = ("PUT",)
 
-    def put(self, request, upload_id):
+    @staticmethod
+    def put(request, upload_id):
         """A put is done to complete the upload, providing the image id and number parts
         https://github.com/sylabs/scs-library-client/blob/30f9b6086f9764e0132935bcdb363cc872ac639d/client/push.go#L537
         """
@@ -179,7 +182,8 @@ class RequestMultiPartPushImageFileView(APIView):
     )
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
-    def put(self, request, upload_id):
+    @staticmethod
+    def put(request, upload_id):
         """After starting the multipart upload continue the process"""
         print("PUT RequestMultiPartPushImageFileView")
 
@@ -254,7 +258,8 @@ class RequestMultiPartPushImageFileView(APIView):
         data = {"presignedURL": signed_url}
         return Response(data={"data": data}, status=200)
 
-    def post(self, request, upload_id):
+    @staticmethod
+    def post(request, upload_id):
         """In a post, the upload_id will be the container id."""
 
         print("POST RequestMultiPartPushImageFileView")
@@ -323,7 +328,8 @@ class RequestPushImageFileView(RatelimitMixin, APIView):
     ratelimit_method = "POST"
     renderer_classes = (JSONRenderer,)
 
-    def post(self, request, container_id, format=None):
+    @staticmethod
+    def post(request, container_id, format=None):
 
         print("POST RequestPushImageFileView")
 
@@ -371,7 +377,8 @@ class PushImageView(RatelimitMixin, APIView):
     ratelimit_method = "GET"
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, username, collection, name, version):
+    @staticmethod
+    def get(request, username, collection, name, version):
 
         print("GET PushNamedContainerView")
 
@@ -394,7 +401,7 @@ class PushImageView(RatelimitMixin, APIView):
         tag = "DUMMY-%s" % str(uuid.uuid4())
 
         # The container will always be created, and it needs to be handled later
-        container, created = Container.objects.get_or_create(
+        container, _ = Container.objects.get_or_create(
             collection=collection,
             name=name,
             frozen=False,
@@ -420,7 +427,8 @@ class DownloadImageView(RatelimitMixin, APIView):
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
     ratelimit_method = "GET"
 
-    def get_download_url(self, container):
+    @staticmethod
+    def get_download_url(container):
 
         if "image" in container.metadata:
             return container.metadata["image"]
@@ -431,7 +439,8 @@ class DownloadImageView(RatelimitMixin, APIView):
         )
         return "%s%s" % (settings.DOMAIN_NAME, url)
 
-    def get(self, request, name):
+    @staticmethod
+    def get(request, name):
         print("GET DownloadImageView")
         names = parse_image_name(name)
         container = get_container(names)
@@ -477,7 +486,8 @@ class GetImageView(RatelimitMixin, APIView):
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
     ratelimit_method = "GET"
 
-    def get(self, request, name):
+    @staticmethod
+    def get(request, name):
 
         # The request specifies ?arch=amd64 but that's all we got
         print("GET GetImageView")
@@ -539,7 +549,8 @@ class CollectionsView(RatelimitMixin, APIView):
     ratelimit_method = ("GET", "POST")
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
         """Return a simple list of collections.
 
         GET /v1/collections
@@ -554,7 +565,8 @@ class CollectionsView(RatelimitMixin, APIView):
         collections = generate_collections_list(token.user)
         return Response(data=collections, status=200)
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         """Create a new collection.
 
         POST /v1/collections
@@ -631,7 +643,8 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
     parser_classes = (EmptyParser,)
 
-    def get(self, request, collection_id):
+    @staticmethod
+    def get(request, collection_id):
 
         print("GET CollectionTagsView")
         if not validate_token(request):
@@ -647,7 +660,8 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
         tags = generate_collection_tags(collection)
         return Response(data={"data": tags}, status=200)
 
-    def post(self, request, collection_id):
+    @staticmethod
+    def post(request, collection_id):
 
         print("POST ContainerTagView")
 
@@ -719,7 +733,8 @@ class ContainersView(RatelimitMixin, APIView):
     ratelimit_method = "GET"
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
 
         print("GET ContainersView")
         print(request.data)
@@ -746,7 +761,8 @@ class GetNamedCollectionView(RatelimitMixin, APIView):
     ratelimit_method = "GET"
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, name, username=None):
+    @staticmethod
+    def get(request, name, username=None):
 
         print("GET GetNamedCollectionView")
 
@@ -784,7 +800,8 @@ class GetNamedContainerView(RatelimitMixin, APIView):
     ratelimit_method = "GET"
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, username, name, container):
+    @staticmethod
+    def get(request, username, name, container):
 
         print("GET GetNamedContainerView")
 

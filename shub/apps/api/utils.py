@@ -30,7 +30,7 @@ def _parse_header(auth):
 
     header, content = auth.split(" ")
     content = content.split(",")
-    values = dict()
+    values = {}
     for entry in content:
         key, val = re.split("=", entry, 1)
         values[key] = val

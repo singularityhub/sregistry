@@ -123,7 +123,7 @@ def _download_container(container, request):
         return HttpResponseForbidden()
 
     # A remove build will store a metadata image url
-    elif "image" in container.metadata:
+    if "image" in container.metadata:
 
         if "google_build" in PLUGINS_ENABLED:
             from shub.plugins.google_build.utils import generate_signed_url
@@ -131,7 +131,7 @@ def _download_container(container, request):
             signed_url = generate_signed_url(container.metadata["image"])
 
             # If we can generate a URL, add one to limit and return url
-            if signed_url != None and container.get_count < container.get_limit:
+            if signed_url is not None and container.get_count < container.get_limit:
                 container.get_count += 1
                 container.collection.get_count += 1
                 container.collection.save()
@@ -141,6 +141,4 @@ def _download_container(container, request):
 
         # There is no container
         raise Http404
-
-    else:
-        raise Http404
+    raise Http404
