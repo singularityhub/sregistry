@@ -41,11 +41,11 @@ RUN apt-get update && apt-get install -y \
     build-essential
 
 # Install Python requirements out of /tmp so not triggered if other contents of /code change
-ADD requirements.txt /tmp/requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
 
-ADD . /code/
+COPY . /code/
 
 ################################################################################
 # PLUGINS
