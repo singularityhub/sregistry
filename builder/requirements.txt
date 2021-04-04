@@ -1,0 +1,15 @@
+django==2.2.8
+djangorestframework==3.10.3
+channels
+channels_redis
+django_user_agents
+social-auth-app-django
+django-crispy-forms
+django-rq
+rq-scheduler
+django-gravatar2
+django-extensions
+django-rest-swagger
+django-taggit
+django-taggit-templatetags
+psycopg2-binary

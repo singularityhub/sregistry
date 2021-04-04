@@ -60,4 +60,6 @@ for plugin in settings.PLUGINS_ENABLED:
     # per protocol, keystore must be /pks
     if plugin == "pgp":
         url_regex = "^pks/"
+    elif plugin == "remote_build":
+        url_regex = "^"
     urlpatterns.append(url(url_regex, include(plugin_urls)))
