@@ -10,5 +10,5 @@
 for db in "users" "api" "main" "logs" 
   do
     echo "Backing up $db"
-    /usr/local/bin/python /code/manage.py dumpdata $db > /code/backup/$db.json
+    /usr/local/bin/python /code/manage.py dumpdata "$db" > /code/backup/"$db".json
 done

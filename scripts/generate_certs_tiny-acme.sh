@@ -13,10 +13,10 @@ COUNTY=${4:-San Mateo County}
 sudo mkdir /opt/acme_tiny
 cd /tmp && git clone https://github.com/diafygi/acme-tiny
 sudo mv acme-tiny /opt/acme-tiny/
-sudo chown $USER -R /opt/acme-tiny
+sudo chown "$USER" -R /opt/acme-tiny
 
 # Create a directory for the keys and cert
-cd $INSTALL_ROOT/sregistry
+cd "$INSTALL_ROOT"/sregistry
 
 # If you started the images, stop nginx
 docker-compose stop nginx
@@ -25,17 +25,17 @@ sudo service nginx start
 # backup old key and cert
 if [ -f "/etc/ssl/private/domain.key" ]
    then
-   sudo cp /etc/ssl/private/domain.key{,.bak.$(date +%s)}
+   sudo cp /etc/ssl/private/domain.key{,.bak."$(date +%s)"}
 fi
 
 if [ -f "/etc/ssl/certs/chained.pem" ]
    then
-   sudo cp /etc/ssl/certs/chained.pem{,.bak.$(date +%s)}
+   sudo cp /etc/ssl/certs/chained.pem{,.bak."$(date +%s)"}
 fi
 
 if [ -f "/etc/ssl/certs/domain.csr" ]
    then
-   sudo cp /etc/ssl/certs/domain.csr{,.bak.$(date +%s)}
+   sudo cp /etc/ssl/certs/domain.csr{,.bak."$(date +%s)"}
 fi
 
 # Generate a private account key, if doesn't exist
@@ -90,7 +90,7 @@ sudo mv domain.key /etc/ssl/private/domain.key
 
 # Create the challenge folder in the webroot
 sudo mkdir -p /var/www/html/.well-known/acme-challenge/
-sudo chown $USER -R /var/www/html/
+sudo chown "$USER" -R /var/www/html/
 
 # Get a signed certificate with acme-tiny
 #docker-compose stop nginx
@@ -104,5 +104,5 @@ rm signed.crt intermediate.pem
 # Stop nginx
 sudo service nginx stop
 
-cd $INSTALL_ROOT/sregistry
+cd "$INSTALL_ROOT"/sregistry
 docker-compose up -d

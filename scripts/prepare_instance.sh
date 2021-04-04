@@ -58,15 +58,15 @@ sudo docker run hello-world
 # sudo groupadd docker
 
 #make sure to add all users that will maintain / use the registry
-sudo usermod -aG docker $USER
+sudo usermod -aG docker "$USER"
 
 # Docker-compose
 sudo apt -y install docker-compose
 
 # Note that you will need to log in and out for changes to take effect
 
-if [ ! -d $INSTALL_ROOT/sregistry ]; then
-    cd $INSTALL_ROOT
+if [ ! -d "$INSTALL_ROOT"/sregistry ]; then
+    cd "$INSTALL_ROOT"
 
     # if you need to install a specific branch
     # git clone -b <branch> https://www.github.com/singularityhub/sregistry.git
