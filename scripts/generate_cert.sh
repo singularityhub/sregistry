@@ -14,7 +14,7 @@ sudo apt-get update && \
     sudo apt-get install -y python-certbot-nginx
 
 # Get certificates (might need sudo)
-certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --email "${EMAIL}" --agree-tos --redirect
+certbot certonly --nginx -d "$DOMAIN" -d "www.$DOMAIN" --email "$EMAIL" --agree-tos --redirect
 
 # The prompt is interactive, and will show the locations of certificates
 
@@ -46,12 +46,12 @@ certbot certonly --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --email "${EMAIL}" --
 
 # Since the containers expect these files to be in /etc/ssl, copy there
 # This CANNOT be a link.
-sudo cp /etc/letsencrypt/live/${DOMAIN}/fullchain.pem /etc/ssl/certs/chained.pem
-sudo cp /etc/letsencrypt/live/${DOMAIN}/privkey.pem /etc/ssl/private/domain.key
+sudo cp /etc/letsencrypt/live/"$DOMAIN"/fullchain.pem /etc/ssl/certs/chained.pem
+sudo cp /etc/letsencrypt/live/"$DOMAIN"/privkey.pem /etc/ssl/private/domain.key
 
 # Create recursive backup
-backup=$(echo /etc/letsencrypt{,.bak.$(date +%s)} | cut -d ' ' -f 2)
-sudo cp -R /etc/letsencrypt $backup
+backup=$(echo /etc/letsencrypt{,.bak."$(date +%s)"} | cut -d ' ' -f 2)
+sudo cp -R /etc/letsencrypt "$backup"
 
 # Add extra security
 if [ ! -f "/etc/ssl/certs/dhparam.pem" ]
@@ -62,7 +62,7 @@ fi
 # Stop nginx
 sudo service nginx stop
 
-cd $INSTALL_ROOT/sregistry
+cd "$INSTALL_ROOT"/sregistry
 
 # First up will pull required containers, and you should have already built quay.io/vanessa/sregistry
 # docker build -t quay.io/vanessa/sregistry .
