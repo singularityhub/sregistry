@@ -36,20 +36,17 @@ class SingleContainerSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField("get_download_url")
     metadata = serializers.SerializerMethodField("get_cleaned_metadata")
 
-    @staticmethod
-    def collection_name(container):
+    def collection_name(self, container):
         return container.collection.name
 
-    @staticmethod
-    def get_cleaned_metadata(container):
+    def get_cleaned_metadata(self, container):
         metadata = container.metadata
         for key in ["build_metadata", "builder", "build_finish", "image"]:
             if key in metadata:
                 del metadata[key]
         return metadata
 
-    @staticmethod
-    def get_download_url(container):
+    def get_download_url(self, container):
 
         secret = container.collection.secret
         download_url = reverse(
@@ -85,12 +82,10 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
     collection = serializers.SerializerMethodField("collection_name")
     metadata = serializers.SerializerMethodField("get_cleaned_metadata")
 
-    @staticmethod
-    def collection_name(container):
+    def collection_name(self, container):
         return container.collection.name
 
-    @staticmethod
-    def get_cleaned_metadata(container):
+    def get_cleaned_metadata(self, container):
         metadata = container.metadata
         for key in ["build_metadata", "builder", "build_finish", "image"]:
             if key in metadata:
@@ -274,8 +269,7 @@ def _container_get(request, container, name=None, tag=None):
 class ContainerSearch(APIView):
     """search for a list of containers depending on a query"""
 
-    @staticmethod
-    def get_object(name, collection, tag):
+    def get_object(self, name, collection, tag):
         from shub.apps.main.query import specific_container_query
 
         return specific_container_query(name=name, collection=collection, tag=tag)

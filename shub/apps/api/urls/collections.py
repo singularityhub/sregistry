@@ -68,8 +68,7 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 class CollectionDetailByName(APIView):
     """Retrieve a collection instance based on it's name"""
 
-    @staticmethod
-    def get_object(collection_name):
+    def get_object(self, collection_name):
         try:
             collection = Collection.objects.get(name=collection_name.lower())
         except Collection.DoesNotExist:
@@ -97,8 +96,7 @@ class CollectionSearch(APIView):
     a general search to look across all fields for one term
     """
 
-    @staticmethod
-    def get_object(query):
+    def get_object(self, query):
         collections = collection_query(query.lower())
         return collections
 

@@ -26,8 +26,7 @@ class LabelSerializer(serializers.ModelSerializer):
 
     containers = serializers.SerializerMethodField("list_containers")
 
-    @staticmethod
-    def list_containers(label):
+    def list_containers(self, label):
         container_list = []
         for container in label.containers.all():
             container_list.append(container.get_uri())

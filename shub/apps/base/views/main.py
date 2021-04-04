@@ -44,8 +44,7 @@ class VersionView(APIView):
 
     renderer_classes = (JSONRenderer,)
 
-    @staticmethod
-    def get(request):
+    def get(self, request):
 
         data = {"version": "v1.0.0", "apiVersion": "2.0.0-alpha.1"}
 
