@@ -34,7 +34,7 @@ DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
 DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace("http://", "")
 
-ADMINS = (("vsochat", "vsochat@gmail.com"),)
+ADMINS = (("vsochat", "@vsoch"),)
 MANAGERS = ADMINS
 
 HELP_CONTACT_EMAIL = "vsochat@stanford.edu"
