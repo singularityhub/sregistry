@@ -7,6 +7,22 @@ pdf: true
 
 Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
 
+## Release Version
+
+If you've downloaded a [release](https://github.com/singularityhub/sregistry/releases/),
+you'll want to update the `docker-compose.yaml` instances of the quay.io/vanessa/sregistry
+image to be tagged with the release version that matches your clone. E.g.:
+
+```yaml
+# Change instances of
+  image: quay.io/vanessa/sregistry
+# to
+  image: quay.io/vanessa/sregistry:1.1.34
+```
+
+If you have cloned master, then the current master should coincide with 
+latest and you don't need to do these updates.
+
 ## Under Maintenance Page
 
 If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.
@@ -92,6 +108,7 @@ minio-images/
 ```
 
 ### Configuration
+
 For secrets (the access and secret key that are used to create the container) 
 we are reading in environment variables for the server in `.minio-env`
 that looks like this:
