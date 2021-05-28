@@ -16,6 +16,7 @@ ENABLE_TWITTER_AUTH = False
 ENABLE_GITHUB_AUTH = True
 ENABLE_GITLAB_AUTH = False
 ENABLE_BITBUCKET_AUTH = False
+ENABLE_GITHUB_ENTERPRISE_AUTH = False
 
 # NOTE you will need to set authentication methods up.
 # Configuration goes into secrets.py

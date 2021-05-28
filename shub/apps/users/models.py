@@ -71,13 +71,13 @@ class CustomUserManager(BaseUserManager):
         return self._create_user(username, email, password, True, True, **extra_fields)
 
     def add_superuser(self, user):
-        """ Intended for existing user"""
+        """Intended for existing user"""
         user.is_superuser = True
         user.save(using=self._db)
         return user
 
     def add_staff(self, user):
-        """ Intended for existing user"""
+        """Intended for existing user"""
         user.is_staff = True
         user.save(using=self._db)
         return user
@@ -128,7 +128,7 @@ class User(AbstractUser):
         return False
 
     def get_credentials(self, provider):
-        """ return one or more credentials, or None"""
+        """return one or more credentials, or None"""
         if self.is_anonymous is False:
             try:
                 # Case 1: one credential
