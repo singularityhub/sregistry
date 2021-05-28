@@ -231,7 +231,7 @@ class RecipePushViewSet(ModelViewSet):
             collection = Collection.objects.get(name=collection_name)
 
             # Only owners can push to existing collections
-            if not owner in collection.owners.all():
+            if owner not in collection.owners.all():
                 print("user not in owners")
                 raise PermissionDenied(detail="Unauthorized")
 

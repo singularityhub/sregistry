@@ -21,7 +21,8 @@ class TokenStatusView(APIView):
 
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, format=None):
+    @staticmethod
+    def get(request, format=None):
         if validate_token(request):
             return Response(status=200)
         return Response(status=404)
@@ -32,7 +33,8 @@ class GetNamedEntityView(APIView):
 
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, username):
+    @staticmethod
+    def get(request, username):
 
         print("GET NamedEntityView")
         print(request.query_params)
@@ -65,7 +67,8 @@ class GetEntitiesView(APIView):
 
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, format=None):
+    @staticmethod
+    def get(request, format=None):
 
         print("GET GetEntitiesView")
 

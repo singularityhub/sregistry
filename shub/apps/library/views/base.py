@@ -22,7 +22,8 @@ class LibraryBaseView(APIView):
 
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
 
         user = None
         if not request.user.is_anonymous:

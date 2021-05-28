@@ -36,7 +36,7 @@ def validate_credentials(user, context=None):
     context: an optional context object to append to
     """
     if context is None:
-        context = dict()
+        context = {}
 
     # Right now we have github for repos and google for storage
     credentials = [
@@ -152,7 +152,7 @@ def social_user(backend, uid, user=None, *args, **kwargs):
             msg = "This {0} account is already in use.".format(provider)
             return login(request=backend.strategy.request, message=msg)
             # raise AuthAlreadyAssociated(backend, msg)
-        elif not user:
+        if not user:
             user = social.user
 
     return {

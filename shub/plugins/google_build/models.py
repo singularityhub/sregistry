@@ -55,7 +55,8 @@ class RecipeFile(models.Model):
         upload_to=get_upload_folder, max_length=255, storage=OverwriteStorage()
     )
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "recipefile"
 
     def __str__(self):

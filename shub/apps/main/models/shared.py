@@ -129,7 +129,8 @@ class Collection(models.Model):
     def get_uri(self):
         return "%s:%s" % (self.name, self.containers.count())
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "collection"
 
     def labels(self):
@@ -138,9 +139,9 @@ class Collection(models.Model):
 
     def container_names(self):
         """return distinct container names"""
-        return list(
-            [x[0] for x in self.containers.values_list("name").distinct() if len(x) > 0]
-        )
+        return [
+            x[0] for x in self.containers.values_list("name").distinct() if len(x) > 0
+        ]
 
     # Permissions
 
@@ -185,7 +186,8 @@ class Star(models.Model):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "collection"
 
     class Meta:
@@ -212,7 +214,8 @@ class Share(models.Model):
     def __str__(self):
         return self.container.name
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "main"
 
     class Meta:
@@ -240,7 +243,8 @@ class Label(models.Model):
     def __unicode__(self):
         return "%s:%s" % (self.key, self.value)
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "label"
 
     class Meta:

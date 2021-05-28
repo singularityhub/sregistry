@@ -39,7 +39,6 @@ class Command(BaseCommand):
 
         if user.is_superuser is False:
             raise CommandError("This user already is not a superuser.")
-        else:
-            user.is_superuser = False
-            bot.debug("%s is no longer a superuser." % (user.username))
-            user.save()
+        user.is_superuser = False
+        bot.debug("%s is no longer a superuser." % (user.username))
+        user.save()

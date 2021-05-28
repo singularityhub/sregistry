@@ -28,7 +28,8 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     containers = serializers.SerializerMethodField("list_containers")
 
-    def list_containers(self, collection):
+    @staticmethod
+    def list_containers(collection):
         container_list = []
         for c in collection.containers.all():
             entry = {

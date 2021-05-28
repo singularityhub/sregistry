@@ -132,7 +132,8 @@ class Container(models.Model):
             return self.image.datafile.file
         return None
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "container"
 
     def __str__(self):

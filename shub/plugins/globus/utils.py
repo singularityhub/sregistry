@@ -35,10 +35,10 @@ def list_tokens(tokens):
     This function is first used to populate the Globus social auth
     extra_data field that holds the organized tokens
     """
-    lookup = dict()
+    lookup = {}
     tokens = [tokens] + tokens["other_tokens"]
     for token in tokens:
-        lookup[token["resource_server"]] = dict()
+        lookup[token["resource_server"]] = {}
         for token_type in ["id_token", "refresh_token", "access_token"]:
             if token_type in token:
                 lookup[token["resource_server"]][token_type] = token[token_type]

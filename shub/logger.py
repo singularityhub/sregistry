@@ -66,7 +66,8 @@ class ShubMessage:
                 text = "%s%s%s" % (self.colors[level], text, self.colors["OFF"])
         return text
 
-    def emitError(self, level):
+    @staticmethod
+    def emitError(level):
         """determine if a level should print to
         stderr, includes all levels but INFO and QUIET"""
         if level in [
@@ -82,7 +83,8 @@ class ShubMessage:
             return True
         return False
 
-    def emitOutput(self, level):
+    @staticmethod
+    def emitOutput(level):
         """determine if a level should print to stdout
         only includes INFO"""
         if level in [LOG, INFO]:
@@ -132,7 +134,8 @@ class ShubMessage:
         # Add all log messages to history
         self.history.append(message)
 
-    def write(self, stream, message):
+    @staticmethod
+    def write(stream, message):
         """write will write a message to a stream,
         first checking the encoding
         """

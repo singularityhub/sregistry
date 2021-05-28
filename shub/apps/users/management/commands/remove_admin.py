@@ -39,7 +39,6 @@ class Command(BaseCommand):
 
         if user.is_staff is False:  # and user.manager is False:
             raise CommandError("This user already can't manage and build.")
-        else:
-            user.is_staff = False
-            bot.debug("%s can no longer manage and build." % (user.username))
-            user.save()
+        user.is_staff = False
+        bot.debug("%s can no longer manage and build." % (user.username))
+        user.save()

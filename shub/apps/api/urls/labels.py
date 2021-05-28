@@ -59,7 +59,8 @@ class LabelViewSet(viewsets.ReadOnlyModelViewSet):
 class LabelDetail(APIView):
     """Retrieve a container instance based on it's name"""
 
-    def get_object(self, key, value):
+    @staticmethod
+    def get_object(key, value):
         # If not specified, return all
         if key is None and value is None:
             return Label.objects.all()

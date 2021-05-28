@@ -65,7 +65,8 @@ class ImageFile(models.Model):
     owner_id = models.CharField(max_length=200, null=True)
     datafile = models.FileField(upload_to=get_upload_folder, max_length=255)
 
-    def get_label(self):
+    @staticmethod
+    def get_label():
         return "imagefile"
 
     def get_abspath(self):
