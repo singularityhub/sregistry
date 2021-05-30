@@ -40,13 +40,13 @@ One thing I (@vsoch) can't do for you in advance is produce application keys and
 ENABLE_GOOGLE_AUTH=False
 ENABLE_TWITTER_AUTH=False
 ENABLE_GITHUB_AUTH=True
-ENABLE_GITHUB_AUTH=False
 ENABLE_GITLAB_AUTH=False
 ENABLE_BITBUCKET_AUTH=False
+ENABLE_GITHUB_ENTERPRISE_AUTH=False
 ```
 
-and you will need at least one to log in. I've found that Github works the fastest and easiest, and then Google.
-Twitter now requires an actual server name and won't work with localost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. If you want automated builds from a repository
+and you will need at least one to log in. I've found that GitHub works the fastest and easiest, and then Google.
+Twitter now requires an actual server name and won't work with localhost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. If you want automated builds from a repository
 integration with Google Cloud Build, then you must use GitHub.
 
 ## Plugins
@@ -101,7 +101,7 @@ The callback url should be in the format `http://127.0.0.1/complete/github`, and
 
 ### Setting up Github Enterprise OAuth
 
-The GitHub Exterprise [docs are here](https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html) and it looks like it uses the same backend as the regular GitHub, so you should not use both of these (meaning you should only have one set of environment variables export in your secrets for one or the other).  You will want to register a new application on your instance of GitHub Enterprise Developers, set the callback URL to "http://example.com/complete/github-enterprise/" replacing example.com with your domain, and then the following environment variables should be defined in your secrets.
+The GitHub Exterprise [docs are here](https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html).  You will want to register a new application on your instance of GitHub Enterprise in Developer Settings, set the callback URL to "http://example.com/complete/github-enterprise/" replacing example.com with your domain, and then the following environment variables should be defined in your secrets.
 
 ```python
 # The URL for your GitHub Enterprise appliance:
@@ -114,8 +114,6 @@ SOCIAL_AUTH_GITHUB_ENTERPRISE_API_URL = "https://git.example.com/api/v3/"
 SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY = ""
 SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = ""
 ```
-
-Again, do not also export environment variables for a regular GitHub application.
 
 ### Gitlab OAuth2
 
