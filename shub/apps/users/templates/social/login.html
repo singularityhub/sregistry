@@ -43,6 +43,10 @@
         <a class="social-button" id="github-connect" href="{% url 'social:begin' 'github' %}?next={{ domain }}{{ request.path }}">Login with Github</a>
         {% endif %}
 
+        {% if ENABLE_GITHUB_ENTERPRISE_AUTH %}
+        <a class="social-button" id="github-connect" href="{% url 'social:begin' 'github-enterprise' %}?next={{ domain }}{{ request.path }}">Login with Github Enterprise</a>
+        {% endif %}
+
         {% if ENABLE_GITLAB_AUTH %}
         <a class="social-button" id="gitlab-connect" href="{% url 'social:begin' 'gitlab' %}?next={{ domain }}{{ request.path }}">Login with Gitlab</a>
         {% endif %}

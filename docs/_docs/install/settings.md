@@ -42,9 +42,11 @@ ENABLE_TWITTER_AUTH=False
 ENABLE_GITHUB_AUTH=True
 ENABLE_GITLAB_AUTH=False
 ENABLE_BITBUCKET_AUTH=False
+ENABLE_GITHUB_ENTERPRISE_AUTH=False
 ```
 
-and you will need at least one to log in. I've found that Github works the fastest and easiest, and then Google. Twitter now requires an actual server name and won't work with localost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. If you want automated builds from a repository
+and you will need at least one to log in. I've found that GitHub works the fastest and easiest, and then Google.
+Twitter now requires an actual server name and won't work with localhost, but if you are deploying on a server with a proper domain go ahead and use it. All avenues are extremely specific with regard to callback urls, so you should be very careful in setting them up. If you want automated builds from a repository
 integration with Google Cloud Build, then you must use GitHub.
 
 ## Plugins
@@ -75,6 +77,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
 
 Google is great in letting you specify multiple acceptable callback urls, so you should set every version of `http://127.0.0.1/complete/google-oauth2` (I did with and without http/https, along with the ending and without the ending slash, just in case). Note that `1.` extra arguments have been added to ensure that users can refresh tokens, and `2.` in testing I was using `http` and not `https`, and I eventually added `https` (and so the url was adjusted accordingly). Next, we need to follow instructions for [web applications](https://developers.google.com/identity/protocols/OAuth2WebServer). 
 
+
 ### Setting up Github OAuth
 
 For users to connect to Github, you need to [register a new application](https://github.com/settings/applications/new), and add the key and secret to your `secrets.py` file like this: 
@@ -95,7 +98,25 @@ SOCIAL_AUTH_GITHUB_SCOPE = ["admin:repo_hook",
 
 The callback url should be in the format `http://127.0.0.1/complete/github`, and replace the localhost address with your domain. See the [Github Developers](https://github.com/settings/developers) pages to browse more information on the Github APIs.
 
+
+### Setting up Github Enterprise OAuth
+
+The GitHub Exterprise [docs are here](https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html).  You will want to register a new application on your instance of GitHub Enterprise in Developer Settings, set the callback URL to "http://example.com/complete/github-enterprise/" replacing example.com with your domain, and then the following environment variables should be defined in your secrets.
+
+```python
+# The URL for your GitHub Enterprise appliance:
+SOCIAL_AUTH_GITHUB_ENTERPRISE_URL = "https://git.example.com/"
+
+# Set the API URL for your GitHub Enterprise appliance:
+SOCIAL_AUTH_GITHUB_ENTERPRISE_API_URL = "https://git.example.com/api/v3/"
+
+# Fill the Client ID and Client Secret values from GitHub in the settings:
+SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY = ""
+SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = ""
+```
+
 ### Gitlab OAuth2
+
 Instructions are provided [here](https://github.com/python-social-auth/social-docs/blob/master/docs/backends/gitlab.rst). Basically:
 
 1. You need to [register an application](https://gitlab.com/profile/applications), be sure to add the `read_user` scope. If you need `api`, add it to (you shouldn't).

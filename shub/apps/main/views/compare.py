@@ -93,7 +93,7 @@ def generate_treemap_context(request):
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 def collections_treemap(request, context=None):
-    """ collection treemap shows total size of a collection"""
+    """collection treemap shows total size of a collection"""
     if context is None:
         context = generate_treemap_context(request)
     return render(request, "singularity/collections_treemap.html", context)

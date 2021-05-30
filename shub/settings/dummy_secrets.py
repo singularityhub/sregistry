@@ -48,6 +48,20 @@
 # You shouldn't actually need this if we aren't using repos
 # SOCIAL_AUTH_GITHUB_SCOPE = ["repo","user"]
 
+
+# -----------------------------------------------------------------------------
+# GitHub Enterprise OAuth
+# Only required if ENABLE_GITHUB_ENTERPRISE_AUTH=True in config.py
+# See https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_URL = ""
+
+# Set the API URL for your GitHub Enterprise appliance:
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_API_URL = ""
+
+# Fill the Client ID and Client Secret values from GitHub in the settings:
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY = ""
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = ""
+
 # -----------------------------------------------------------------------------
 # GitLab OAuth2
 
