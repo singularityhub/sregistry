@@ -59,7 +59,7 @@ A plugin mentioned here is added to `INSTALLED_APPS` at runtime, and any `AUTHEN
 and `CONTEXT_PROCESSORS` listed in the plugin `__init.py__` is merged into the project settings.
 
 More documentation will be added as the plugin interface is developed. For now, see plugins
-distrubuted with sregisty under `shub/plugins` for example code.
+distributed with sregisty under `shub/plugins` for example code.
 
 Besides, if your plugin has any specific software requirements that are not currently available in the Docker image and **those requirements are compatible with the current software**, you can set a new build argument `ENABLE_{PLUGIN_NAME}` and add the corresponding installation commands in the `PLUGINS` section of the Dockerfile with the following format:
 ```bash

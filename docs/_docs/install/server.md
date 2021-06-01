@@ -9,7 +9,7 @@ Before doing `docker-compose up -d` to start the containers, there are some spec
 
 ## Under Maintenance Page
 
-If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintainance.
+If it's ever the case that the Docker images need to be brought down for maintenance, a static fallback page should be available to notify the user. If you noticed in the [prepare_instance.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/prepare_instance.sh) script, one of the things we installed is nginx (on the instance). This is because we need to use it to get proper certificates for our domain (for https). Before you do this, you might want to copy the index that we've provided to replace the default (some lame page that says welcome to Nginx!) to one that you can show when the server is undergoing maintenance.
 
 ```bash
 cp $INSTALL_ROOT/sregistry/scripts/nginx-index.html /var/www/html/index.html
@@ -33,7 +33,7 @@ you'll find a section for domain names, and other metadata about your registry. 
 this to be a custom hostname that you use, and custom names and unique resource identifiers for your
 registry. For example, if you have a Google Domain and are using Google Cloud, you should be able to set it up using [Cloud DNS](https://console.cloud.google.com/net-services/dns/api/enable?nextPath=%2Fzones&project=singularity-static-registry&authuser=1). Usually this means
 creating a zone for your instance, adding a Google Domain, and copying the DNS records for
-the domain into Google Domains. Sometimes it can take a few days for changes to propogate.
+the domain into Google Domains. Sometimes it can take a few days for changes to propagate.
 You are strongly encouraged to register both `your.domain.com`, as well as `www.your.domain.com` and have them point to the same IP address.
 We will discuss setting up https in a later section.
 
