@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - adding GitHub enterprise backend for social auth (1.1.35)
  - remove un-needed lib PyYaml (1.1.34)
  - update base container to Python 3.6.13
  - fix google build deprecated djangorestframework function

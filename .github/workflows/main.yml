@@ -13,6 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Check for typos in docs
+        uses: crate-ci/typos@592b36d23c62cb378f6097a292bc902ee73f93ef # version 1.0.4
+        with: 
+          files: ./docs ./README.md
+
       - name: Setup black linter
         run: conda create --quiet --name black black
 
