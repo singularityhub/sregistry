@@ -65,7 +65,7 @@ With this command we are:
 
   - Allowing access on port 389 (unecrypted LDAP / StartTLS encrypted)
   - Creating a directory that will have a `basedn: dc=my-company,dc=com`. The
-    basedn is the root of the LDAP directory tree. It is usally created by
+    basedn is the root of the LDAP directory tree. It is usually created by
     breaking your domain name into domain components (dc).
   - Creating an admin account, which will have the dn (distinguished name)
     `cn=admin,dc=my-company,dc=com` and password `avocados`.
