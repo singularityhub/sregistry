@@ -12,6 +12,9 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - update base container to Python 3.6.13 (1.1.36)
+ - fix google build deprecated djangorestframework function
+ - add notes in docs/docker-compose.yaml to pin versions
  - adding GitHub enterprise backend for social auth (1.1.35)
  - remove un-needed lib PyYaml (1.1.34)
  - updating Django and Django Restframework (1.1.33)

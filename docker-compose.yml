@@ -5,6 +5,8 @@ db:
 
 uwsgi:
   restart: always
+
+  # IMPORTANT: update the tag to coincide with release version
   image: quay.io/vanessa/sregistry
   env_file:
     - ./.minio-env
@@ -39,6 +41,7 @@ redis:
   image: redis:latest
 
 scheduler:
+  # IMPORTANT: update the tag to coincide with release version
   image: quay.io/vanessa/sregistry
   command: python /code/manage.py rqscheduler
   volumes:
@@ -53,6 +56,8 @@ scheduler:
     - db
 
 worker:
+
+  # IMPORTANT: update the tag to coincide with release version
   image: quay.io/vanessa/sregistry
   command: python /code/manage.py rqworker default
   volumes:

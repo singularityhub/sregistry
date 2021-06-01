@@ -13,7 +13,7 @@ from shub.plugins.google_build import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r"^build", views.RecipePushViewSet, base_name="build")  # build
+router.register(r"^build", views.RecipePushViewSet, basename="build")  # build
 
 urlpatterns = [
     url(r"^github/receive/?$", views.receive_hook, name="receive_hook"),
