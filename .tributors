@@ -8,7 +8,8 @@
         "name": "Tom Schoonjans",
         "bio": "I'm a research software engineer working @rosalindfranklininstitute, and am passionate about developing quality open source software.",
         "blog": "tschoonj.github.io",
-        "orcid": "0000-0002-3919-3546"
+        "orcid": "0000-0002-3919-3546",
+        "email": "Tom.Schoonjans@genomicsplc.com"
     },
     "Aneoshun": {
         "name": "Antoine Cully",
@@ -99,5 +100,8 @@
     "0nebody": {
         "name": "0nebody",
         "blog": "https://github.com/0nebody"
+    },
+    "craigwindell": {
+        "name": "craigwindell"
     }
 }
