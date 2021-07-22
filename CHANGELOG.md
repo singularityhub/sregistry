@@ -12,6 +12,9 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - fix issues with psycopg2-binary and saml auth (1.1.38)
+   - Pin psycopg2-binary 2.8.6 to deal with UTC errors
+   - change formatting of the login URL to fix saml auth
  - bump django version update (1.1.37)
  - update base container to Python 3.6.13 (1.1.36)
  - fix google build deprecated djangorestframework function
