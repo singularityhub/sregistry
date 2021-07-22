@@ -28,7 +28,7 @@ markdown
 numexpr
 oauth2client==3.0
 Pillow
-psycopg2-binary
+psycopg2-binary~=2.8.6
 pygments
 python3-saml
 python-social-auth
