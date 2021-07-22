@@ -192,6 +192,17 @@
             "avatar_url": [
                 "https://avatars.githubusercontent.com/u/4522799?v=4"
             ]
+        },
+        {
+            "login": "craigwindell",
+            "name": "craigwindell",
+            "contributions": [
+                "code"
+            ],
+            "profile": "https://github.com/craigwindell",
+            "avatar_url": [
+                "https://avatars.githubusercontent.com/u/44250868?v=4"
+            ]
         }
     ],
     "contributorsPerLine": 7
