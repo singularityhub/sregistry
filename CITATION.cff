@@ -1,0 +1,10 @@
+cff-version: 1.1.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Sochat
+    given-names: Vanessa
+    orcid: https://orcid.org/0000-0002-4387-3819
+title: "Singularity Registry: Open Source Registry for Singularity Images"
+version: 1.1.38
+doi: 10.21105/joss.00426
+date-released: 2017-10-16
