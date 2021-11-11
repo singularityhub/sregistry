@@ -6,7 +6,7 @@
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8F%20%20%E2%97%8B-orange)](https://fair-software.eu)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 - [Documentation](https://singularityhub.github.io/sregistry)
@@ -41,6 +41,7 @@
     <td align="center"><a href="https://github.com/0nebody"><img src="https://avatars.githubusercontent.com/u/26727168?v=4?s=100" width="100px;" alt=""/><br /><sub><b>0nebody</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=0nebody" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/dtrudg"><img src="https://avatars.githubusercontent.com/u/4522799?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dtrudg</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=dtrudg" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/craigwindell"><img src="https://avatars.githubusercontent.com/u/44250868?v=4?s=100" width="100px;" alt=""/><br /><sub><b>craigwindell</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=craigwindell" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/hashkeks"><img src="https://avatars.githubusercontent.com/u/34633191?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cedric</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=hashkeks" title="Code">💻</a></td>
   </tr>
 </table>
 

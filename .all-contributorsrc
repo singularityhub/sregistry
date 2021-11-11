@@ -203,6 +203,17 @@
             "avatar_url": [
                 "https://avatars.githubusercontent.com/u/44250868?v=4"
             ]
+        },
+        {
+            "login": "hashkeks",
+            "name": "Cedric",
+            "contributions": [
+                "code"
+            ],
+            "profile": "https://github.com/hashkeks",
+            "avatar_url": [
+                "https://avatars.githubusercontent.com/u/34633191?v=4"
+            ]
         }
     ],
     "contributorsPerLine": 7
