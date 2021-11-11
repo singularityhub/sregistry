@@ -103,6 +103,7 @@
                            <tr>
                                <th></th>
                                <th>uri</th>
+                               <th>Description</th>
                                <th>Recipe <i class="fa fa-cloud-download" style="margin-left:5px"></i></th>
                                <th>Status</th>
                                <th>Tag</th>
@@ -132,7 +133,7 @@
                                    {{ collection.name }}/{{ container.name }}:{{ container.tag }}
                                    </a>
                                </td>
-                                
+                               <td>{% if container.description %}{{ container.description }}{% endif %}</td>                                
                                <td>{% if container.builder.deffile %}<a href="{{ container.builder.deffile }}" target="_blank">Singularity.{{ container.tag }}</a>{% else %}
                                <a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a>{% endif %}</td>
                                <td>
