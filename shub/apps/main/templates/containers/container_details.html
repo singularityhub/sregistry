@@ -41,6 +41,13 @@
 
 {% include "messages/message.html" %}
 
+<ul class="row" style="margin-left:-28px">
+    <div class="messages" style="width:100%">
+        <p style="display:none; border-radius:5px;" class="alert alert-info" id='custom-message'></p>
+    </div>
+</ul>
+
+
 <div class="row" style="margin-top:20px; display:none" id="share_box">
 
     <div class="col-md-7" style="margin-bottom:30px; margin-left:20px;">
@@ -68,6 +75,16 @@
                 <a href="{% url 'collection_details' container.collection.id %}"><h2 class="title">
                     {{ container.get_short_uri }}</h2></a>
                 {% if container.version %}<p>Version {{ container.version }}</p>{% endif %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>{% if edit_permission %}<input id="the_description" type="text" class="form-control" placeholder="Add your description here" aria-label="Description" aria-describedby="basic-addon2" {% if container.description %}value="{{ container.description }}"{% endif %}>{% else %}
+                         {% if container.description %}{{ container.description }}{% endif %}
+                         {% endif %}</p>
+                    </div>
+                    <div class="col-md-3">
+                    {% if edit_permission %}<button style="float:left" id="the_description_button" class="btn btn-primary">Save Description</button>{% endif %}
+                    </div>
+                 </div>
                 <h3>
                      <span class="icon-controls" style="position:relative;top:-70px">
                      </span>
@@ -277,7 +294,6 @@
 </div>
 {% include "social/share_links.html" %}
 {% endblock %}
-
 {% block scripts %}
 {% if edit_permission %}
 <script src="{% static "js/cookie-token.js" %}"></script>
@@ -431,6 +447,30 @@ $(document).ready(function(){
     })
 
     {% endif %}
+    {% if edit_permission %}
+    function saveDescription() {
+        var description = $("#the_description").val();
+        console.log(description);
+        $.ajax({
+                url : "{% url 'save_container_description' cid=container.id %}", // the endpoint
+                type : "POST", // http method
+                data : { description: description },
+                success : function(msg) {
+                   console.log(msg)
+                   $("#custom-message").text(msg['result'])
+                   $("#custom-message").show();
+                },
+                error : function(xhr,errmsg,err) {
+                   $("#custom-message").text(errmsg['result'])
+                   $("#custom-message").show();
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+         });
+    }
+
+    $("#the_description_button").click(function(){
+        saveDescription();
+    }){% endif %}
 
 })
 
@@ -443,6 +483,5 @@ window.onload = function() {
   iframe.frameBorder = "0";
   $(iframe).appendTo('#osembed'); 
 }
-
 </script>
 {% endblock %}

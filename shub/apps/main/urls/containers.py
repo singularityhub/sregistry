@@ -63,4 +63,9 @@ urlpatterns = [
         views.download_container,
         name="download_container",
     ),
+    url(
+        r"^containers/(?P<cid>\d+)/describe/?$",
+        views.save_container_description,
+        name="save_container_description",
+    ),
 ]

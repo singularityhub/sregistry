@@ -16,7 +16,7 @@ from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as r
 from django.shortcuts import render, redirect
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.contrib import messages
 from datetime import datetime
 from ratelimit.decorators import ratelimit
@@ -80,6 +80,25 @@ def container_details(request, cid):
         "edit_permission": edit_permission,
     }
     return render(request, "containers/container_details.html", context)
+
+
+@ratelimit(key="ip", rate=rl_rate, block=rl_block)
+@login_required
+def save_container_description(request, cid):
+    """allow an owner of a collection to change the descriptions
+    via a contenteditable field
+    """
+    container = get_container(cid=cid)
+    if not container.has_edit_permission(request):
+        return JsonResponse({"result": "This action is not permitted."})
+
+    if request.method == "POST":
+        description = request.POST.get("description")
+        if description:
+            container.metadata["description"] = description
+            container.save()
+            return JsonResponse({"result": "Description updated"})
+    return JsonResponse({"result": "Nope, can't do that"})
 
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)

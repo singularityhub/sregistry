@@ -99,6 +99,10 @@ class Container(models.Model):
             return self.get_short_uri()
         return self.get_storage()
 
+    @property
+    def description(self):
+        return self.metadata.get("description")
+
     def get_storage(self):
         """Return the full storage path, which includes the version string"""
         if "/" in self.name:

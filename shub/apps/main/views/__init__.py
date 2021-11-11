@@ -35,6 +35,7 @@ from .containers import (
     container_details,
     container_tags,
     delete_container,
+    save_container_description,
 )
 
 from .compare import collections_treemap, container_size_data, collection_size_data
