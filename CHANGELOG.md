@@ -12,7 +12,8 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
- - Adding container descriptions, editable by owners (1.1.39)
+ - Adding container descriptions, editable by owners (1.1.40)
+ - add: auto set "verify" attribute of s3 and s3_external obj in minio.py for SSL use (1.1.39) 
  - fix issues with psycopg2-binary and saml auth (1.1.38)
    - Pin psycopg2-binary 2.8.6 to deal with UTC errors
    - change formatting of the login URL to fix saml auth

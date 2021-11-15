@@ -72,7 +72,7 @@ session = Session(
 # https://github.com/boto/boto3/blob/develop/boto3/session.py#L185
 s3 = session.client(
     "s3",
-    verify=False,
+    verify=MINIO_SSL,
     use_ssl=MINIO_SSL,
     endpoint_url=MINIO_HTTP_PREFIX + MINIO_SERVER,
     region_name=MINIO_REGION,
@@ -83,10 +83,10 @@ s3 = session.client(
 # https://github.com/boto/botocore/blob/master/botocore/auth.py#L846
 s3_external = session.client(
     "s3",
+    verify=MINIO_SSL,
     use_ssl=MINIO_SSL,
-    region_name=MINIO_REGION,
     endpoint_url=MINIO_HTTP_PREFIX + MINIO_EXTERNAL_SERVER,
-    verify=False,
+    region_name=MINIO_REGION,
     config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
 )
 
