@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: scheduler
+  name: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: scheduler
+    spec:
+      containers:
+        - command: ["python"]
+          args: ["/code/manage.py", "rqscheduler"]
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: newminio
+            - name: MINIO_ACCESS_KEY_OLD
+              value: minio
+            - name: MINIO_SECRET_KEY
+              value: newminio123
+            - name: MINIO_SECRET_KEY_OLD
+              value: minio123
+          image: quay.io/vanessa/sregistry
+          name: scheduler
+          resources: {}
+          volumeMounts:
+            - mountPath: /code
+              name: scheduler-hostpath0
+            - mountPath: /var/www/static
+              name: uwsgi-hostpath1
+            - mountPath: /var/www/images
+              name: uwsgi-hostpath2
+      restartPolicy: Always
+      volumes:
+        - name: scheduler-hostpath0
+          persistentVolumeClaim:
+            claimName: scheduler-claim.code
+        - name: uwsgi-hostpath1
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.static
+        - name: uwsgi-hostpath2
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.images

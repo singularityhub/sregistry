@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minio
+  name: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - args:
+            - server
+            - images
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: newminio
+            - name: MINIO_ACCESS_KEY_OLD
+              value: minio
+            - name: MINIO_SECRET_KEY
+              value: newminio123
+            - name: MINIO_SECRET_KEY_OLD
+              value: minio123
+          image: minio/minio
+          name: minio
+          ports:
+            - containerPort: 9000
+          resources: {}
+          volumeMounts:
+            - mountPath: /images
+              name: minio-hostpath0
+            - mountPath: /root/.minio/certs/public.crt
+              subPath: certs/chained.pem 
+              readOnly: true
+              name: minio-hostpath1
+            - mountPath: /root/.minio/certs/private.key
+              subPath: private/domain.key
+              readOnly: true
+              name: minio-hostpath1
+      restartPolicy: Always
+      volumes:
+        - name: minio-hostpath0
+          persistentVolumeClaim:
+            claimName: minio-claim.images
+        - name: minio-hostpath1
+          persistentVolumeClaim:
+            claimName: minio-claim.ssl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: minio
+  name: minio
+spec:
+  type: NodePort
+  ports:
+    - name: "9000"
+      port: 9000
+      nodePort: 30900
+      targetPort: 9000
+  selector:
+    app: minio
+

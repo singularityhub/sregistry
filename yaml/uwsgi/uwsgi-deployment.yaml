@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: uwsgi
+  name: uwsgi
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: uwsgi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: uwsgi
+    spec:
+      containers:
+        - env:
+            - name: MINIO_ACCESS_KEY
+              value: newminio
+            - name: MINIO_ACCESS_KEY_OLD
+              value: minio
+            - name: MINIO_SECRET_KEY
+              value: newminio123
+            - name: MINIO_SECRET_KEY_OLD
+              value: minio123
+          image: quay.io/vanessa/sregistry
+          name: uwsgi
+          resources: {}
+          volumeMounts:
+            - mountPath: /code
+              name: uwsgi-hostpath0
+            - mountPath: /var/www/static
+              name: uwsgi-hostpath1
+            - mountPath: /var/www/images
+              name: uwsgi-hostpath2
+      restartPolicy: Always
+      volumes:
+        - name: uwsgi-hostpath0
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.code
+        - name: uwsgi-hostpath1
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.static
+        - name: uwsgi-hostpath2
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.images
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: uwsgi
+  name: uwsgi
+spec:
+  ports:
+    - name: "3031"
+      port: 3031
+      targetPort: 3031
+  selector:
+    app: uwsgi 

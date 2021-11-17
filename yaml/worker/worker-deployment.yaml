@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: worker
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - command: ["python"]
+          args: ["/code/manage.py", "rqworker", "default"]
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: newminio
+            - name: MINIO_ACCESS_KEY_OLD
+              value: minio
+            - name: MINIO_SECRET_KEY
+              value: newminio123
+            - name: MINIO_SECRET_KEY_OLD
+              value: minio123
+          image: quay.io/vanessa/sregistry
+          name: worker
+          resources: {}
+          volumeMounts:
+            - mountPath: /code
+              name: worker-hostpath0
+            - mountPath: /var/www/static
+              name: uwsgi-hostpath0
+            - mountPath: /var/www/images
+              name: uwsgi-hostpath1
+      restartPolicy: Always
+      volumes:
+        - name: worker-hostpath0
+          persistentVolumeClaim:
+            claimName: worker-claim.code
+        - name: uwsgi-hostpath0
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.static
+        - name: uwsgi-hostpath1
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.images

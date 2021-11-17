@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - image: quay.io/vanessa/sregistry_nginx
+          name: nginx
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          resources: {}
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/default.conf
+              name: nginx-hostpath0
+              subPath: nginx.conf
+              readOnly: true
+            - mountPath: /etc/nginx/uwsgi_params.par
+              subPath: uwsgi_params.par
+              name: nginx-hostpath0
+              readOnly: true
+            - mountPath: /etc/ssl/certs
+              subPath: certs/
+              name: nginx-hostpath1
+              readOnly: true
+            - mountPath: /etc/ssl/private
+              subPath: private/
+              name: nginx-hostpath1
+              readOnly: true
+            - mountPath: /code
+              name: uwsgi-hostpath0
+            - mountPath: /var/www/static
+              name: uwsgi-hostpath1
+            - mountPath: /var/www/images
+              name: uwsgi-hostpath2
+      restartPolicy: Always
+      volumes:
+        - name: nginx-hostpath0
+          persistentVolumeClaim:
+            claimName: nginx-claim.nginx-files
+        - name: nginx-hostpath1
+          persistentVolumeClaim:
+            claimName: nginx-claim.ssl
+        - name: uwsgi-hostpath0
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.code
+        - name: uwsgi-hostpath1
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.static
+        - name: uwsgi-hostpath2
+          persistentVolumeClaim:
+            claimName: uwsgi-claim.images
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 80
+    nodePort: 30080
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    nodePort: 30443
+    protocol: TCP
+    name: https
+  selector:
+    app: nginx
