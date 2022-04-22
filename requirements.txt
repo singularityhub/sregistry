@@ -18,7 +18,7 @@ django-rq
 django-taggit
 django-taggit-templatetags
 django-user-agents
-django==2.2.27
+django==2.2.28
 djangorestframework==3.11.2
 google
 google-api-python-client
