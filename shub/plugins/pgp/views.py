@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright (C) 2019-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -11,12 +11,11 @@ Commit: 763c2708c16bf58064f741ceb2e2ab752dea3663 (no LICENSE)
 
 """
 
+import pgpdump
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.http.response import Http404
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
-import pgpdump
 
 from shub.plugins.pgp import forms, models, utils
 

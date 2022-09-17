@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,18 +8,17 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from shub.apps.api.models import ImageFile
-from shub.settings import CONTAINER_WEEKLY_GET_LIMIT
-from django.urls import reverse
-from django.db import models
-
-from django.contrib.postgres.fields import JSONField
-from taggit.managers import TaggableManager
-
 import uuid
 
-from .helpers import has_view_permission, has_edit_permission, get_collection_users
+from django.contrib.postgres.fields import JSONField
+from django.db import models
+from django.urls import reverse
+from taggit.managers import TaggableManager
 
+from shub.apps.api.models import ImageFile
+from shub.settings import CONTAINER_WEEKLY_GET_LIMIT
+
+from .helpers import get_collection_users, has_edit_permission, has_view_permission
 
 ################################################################################
 # Supporting Variables and Functions ###########################################

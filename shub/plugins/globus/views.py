@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -10,26 +10,28 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.http import JsonResponse
-from .actions import get_endpoints, do_transfer, search_endpoints
-from .decorators import has_globus_association
-from shub.apps.main.views import get_container
-from shub.plugins.globus.utils import get_client, get_transfer_client, associate_user
-
-from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
-
+from globus_sdk.exc import TransferAPIError
 from ratelimit.decorators import ratelimit
 from social_django.models import UserSocialAuth
-from globus_sdk.exc import TransferAPIError
+
+from shub.apps.main.views import get_container
+from shub.plugins.globus.utils import associate_user, get_client, get_transfer_client
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
+
+from .actions import do_transfer, get_endpoints, search_endpoints
+from .decorators import has_globus_association
 
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)
 @login_required
 @has_globus_association
 def globus_logout(request):
-    """log the user out of globus - this is a complete disconnect meaning
+    """
+    log the user out of globus - this is a complete disconnect meaning
     that we revoke tokens and delete the social auth object.
     """
     client = get_client()
@@ -94,7 +96,8 @@ def globus_login(request):
 @login_required
 @has_globus_association
 def globus_transfer(request, cid=None, endpoints=None):
-    """a main portal for working with globus. If the user has navigated
+    """
+    a main portal for working with globus. If the user has navigated
     here with a container id, it is presented with option to do a
     transfer. If the method is a POST, we also do a custom search
     for a set of containers.

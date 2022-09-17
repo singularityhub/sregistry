@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -11,19 +11,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from django.conf import settings
 from django.conf.urls import url
 from django.urls import reverse
-
-from shub.apps.api.utils import validate_request
-from shub.apps.main.models import Container
-from shub.apps.logs.mixins import LoggingMixin
-from shub.apps.api.utils import has_permission
-
-from sregistry.main.registry.auth import generate_timestamp
-
-from rest_framework import generics, serializers, viewsets, status
-from rest_framework.exceptions import PermissionDenied, NotFound
 from ratelimit.mixins import RatelimitMixin
+from rest_framework import generics, serializers, status, viewsets
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from shub.apps.api.utils import has_permission, validate_request
+from shub.apps.logs.mixins import LoggingMixin
+from shub.apps.main.models import Container
+from sregistry.main.registry.auth import generate_timestamp
 
 ################################################################################
 # Single Object Serializers

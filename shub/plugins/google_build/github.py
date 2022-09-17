@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,37 +8,35 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse
+import re
+from datetime import datetime
 
 import django_rq
+import requests
+from dateutil.parser import parse
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
+from shub.apps.main.models import Collection
 from shub.apps.users.models import User
 from shub.logger import bot
 from shub.settings import (
-    DISABLE_GITHUB,
     DISABLE_BUILDING,
+    DISABLE_GITHUB,
     DOMAIN_NAME,
     SREGISTRY_GOOGLE_BUILD_LIMIT,
 )
-from shub.apps.main.models import Collection
 
 from .utils import (
+    DELETE,
+    POST,
+    JsonResponseMessage,
     check_headers,
     get_default_headers,
-    JsonResponseMessage,
     load_body,
     paginate,
     validate_payload,
-    DELETE,
-    POST,
 )
-
-from dateutil.parser import parse
-from datetime import datetime
-import re
-import requests
-
 
 api_base = "https://api.github.com"
 
@@ -440,8 +438,8 @@ def receive_github_hook(request):
 def verify_payload(request, collection):
     """verify payload will verify a payload"""
 
-    from shub.plugins.google_build.tasks import parse_hook
     from shub.plugins.google_build.actions import is_over_limit
+    from shub.plugins.google_build.tasks import parse_hook
 
     payload = load_body(request)
 

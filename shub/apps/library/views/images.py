@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,29 +8,42 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import json
+import uuid
+from datetime import timedelta
+from urllib.parse import urlparse
+
+import django_rq
 from django.conf import settings
 from django.shortcuts import redirect, reverse
-from sregistry.utils import parse_image_name
-
-from shub.apps.logs.utils import generate_log
-from shub.apps.main.utils import format_collection_name
-from shub.apps.main.models import Collection, Container
-from shub.settings import (
-    MINIO_BUCKET,
-    MINIO_REGION,
-    MINIO_SIGNED_URL_EXPIRE_MINUTES,
-    MINIO_MULTIPART_UPLOAD,
-)
-
 from ratelimit.mixins import RatelimitMixin
-
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.renderers import JSONRenderer
 
-from .parsers import EmptyParser
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from shub.apps.logs.utils import generate_log
+from shub.apps.main.models import Collection, Container
+from shub.apps.main.utils import format_collection_name
+from shub.settings import (
+    MINIO_BUCKET,
+    MINIO_MULTIPART_UPLOAD,
+    MINIO_REGION,
+    MINIO_SIGNED_URL_EXPIRE_MINUTES,
+)
+from sregistry.utils import parse_image_name
 
+from .helpers import generate_collection_details  # includes containers
+from .helpers import (
+    generate_collection_metadata,
+    generate_collection_tags,
+    generate_collections_list,
+    generate_container_metadata,
+    get_collection,
+    get_container,
+    get_token,
+    validate_token,
+)
 from .minio import (
     delete_minio_container,
     minioExternalClient,
@@ -38,23 +51,7 @@ from .minio import (
     s3_external,
     sregistry_presign_v4,
 )
-from .helpers import (
-    generate_collection_tags,
-    generate_collections_list,
-    generate_collection_details,  # includes containers
-    generate_collection_metadata,
-    generate_container_metadata,
-    get_token,
-    get_container,
-    get_collection,
-    validate_token,
-)
-
-from urllib.parse import urlparse
-from datetime import timedelta
-import django_rq
-import json
-import uuid
+from .parsers import EmptyParser
 
 # Image Files
 
@@ -645,6 +642,7 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
         # Always return empty so it hits the container tag generation endpoint
         tags = generate_collection_tags(collection)
+        print(tags)
         return Response(data={"data": tags}, status=200)
 
     def post(self, request, collection_id):

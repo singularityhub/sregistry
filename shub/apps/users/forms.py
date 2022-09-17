@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,12 +8,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from crispy_forms.layout import Layout, Submit
-
 from crispy_forms.helper import FormHelper
-from shub.apps.users.models import Team
-
+from crispy_forms.layout import Layout, Submit
 from django.forms import ModelForm
+
+from shub.apps.users.models import Team
 
 
 class TeamForm(ModelForm):

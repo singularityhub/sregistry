@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,18 +8,18 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import os
+from itertools import chain
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-
 from django.urls import reverse
-from django.db import models
-
 from rest_framework.authtoken.models import Token
+
 from shub.apps.users.utils import get_usertoken
-from itertools import chain
-import os
 
 ################################################################################
 # Supporting Functions

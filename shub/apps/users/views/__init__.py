@@ -1,22 +1,21 @@
-from .users import delete_account, update_token, view_token, view_profile
 from .auth import (
+    agree_terms,
     login,
     logout,
-    agree_terms,
     redirect_if_no_refresh_token,
     social_user,
     validate_credentials,
 )
-
 from .teams import (
     add_owner,
     delete_team,
-    view_team,
-    view_teams,
     edit_team,
     generate_team_invite,
+    join_team,
     leave_team,
     remove_member,
     remove_owner,
-    join_team,
+    view_team,
+    view_teams,
 )
+from .users import delete_account, update_token, view_profile, view_token

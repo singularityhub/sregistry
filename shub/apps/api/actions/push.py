@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -9,25 +9,21 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-from rest_framework.exceptions import PermissionDenied
-
-from shub.apps.main.models import Collection
-from shub.apps.main.utils import format_collection_name
-from shub.apps.api.utils import validate_request, has_permission, get_request_user
-from shub.settings import (
-    DISABLE_BUILDING,
-    VIEW_RATE_LIMIT as rl_rate,
-    VIEW_RATE_LIMIT_BLOCK as rl_block,
-)
-
-from ratelimit.decorators import ratelimit
-from sregistry.main.registry.auth import generate_timestamp
-
 import json
 import uuid
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from ratelimit.decorators import ratelimit
+from rest_framework.exceptions import PermissionDenied
+
+from shub.apps.api.utils import get_request_user, has_permission, validate_request
+from shub.apps.main.models import Collection
+from shub.apps.main.utils import format_collection_name
+from shub.settings import DISABLE_BUILDING
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
+from sregistry.main.registry.auth import generate_timestamp
 
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)

@@ -1,11 +1,11 @@
 from importlib import import_module
 
-from .applications import *
-from .config import *
-from .main import *
-from .logging import *
-from .auth import *
 from .api import *
+from .applications import *
+from .auth import *
+from .config import *
+from .logging import *
+from .main import *
 from .tasks import *
 
 # If PAM_AUTH in plugins enbled, add django_pam

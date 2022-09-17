@@ -26,20 +26,20 @@ To use these images provided, you can bring up the containers like so:
 ## Start Containers
 
 ```bash
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 The `-d` means detached, and that you won't see any output (or errors) to the
 console. You can easily restart and stop containers, either specifying the
 container name(s) or leaving blank to apply to all containers. Note that these
-commands must be run in the folder with the `docker-compose.yml` :
+commands must be run in the folder with the `docker compose.yml` :
 
 ```bash
-$ docker-compose restart uwsgi worker nginx
-$ docker-compose stop
+$ docker compose restart uwsgi worker nginx
+$ docker compose stop
 ```
 
-When you do `docker-compose up -d` the application should be available at
+When you do `docker compose up -d` the application should be available at
 `http://127.0.0.1/` , and if you've configured https, `https://127.0.0.1/` . If
 you need to shell into the application, for example to debug with `python
 manage.py shell` you can get the container id with `docker ps` and then do:
@@ -55,8 +55,8 @@ Sometimes you might want to start containers and debug. The first thing to do is
 to stop and remove old containers, and if necessary, remove old images.
 
 ```bash
-$ docker-compose stop
-$ docker-compose rm
+$ docker compose stop
+$ docker compose rm
 ```
 
 If you want to re-pull (or for other reason, remove) the core images, do that
@@ -70,13 +70,13 @@ $ docker rmi quay.io/vanessa/sregistry_nginx
 You can inspect any container by looking at its logs:
 
 ```bash
-$ docker-compose logs uwsgi
+$ docker compose logs uwsgi
 
 # Only the last 30 lines
-$ docker-compose logs --tail=30 uwsgi
+$ docker compose logs --tail=30 uwsgi
 
 # Hanging
-$ docker-compose logs --tail=30 -f uwsgi
+$ docker compose logs --tail=30 -f uwsgi
 ```
 
 It's also helpful to (after stopping and removing) bring up the containers but
@@ -84,7 +84,7 @@ leave out the `-d` This can commonly show issues related to starting up (and
 ordering of it).
 
 ```bash
-$ docker-compose up
+$ docker compose up
 ```
 
 And then press Control+C to kill the command and continue.
@@ -121,8 +121,8 @@ conservative and only restart those containers that are needed (e.g., usually
 NGINX and uWSGI).
 
 ```bash
-$ docker-compose restart uwsgi nginx    # uwsgi and nginx
-$ docker-compose restart                # all containers
+$ docker compose restart uwsgi nginx    # uwsgi and nginx
+$ docker compose restart                # all containers
 ```
 
 ## Build Containers
@@ -141,7 +141,7 @@ $ cd nginx
 $ docker build -t quay.io/vanessa/sregistry_nginx .
 ```
 
-That's it! Likely the easiest thing to do is `docker-compose up -d` and let the
+That's it! Likely the easiest thing to do is `docker compose up -d` and let the
 containers be pulled and started, and debug only if necessary. Once you have
 issued the commands to generate and start your containers, it's time to read the
 [setup](../setup) guide to better understand how to configure and interact with

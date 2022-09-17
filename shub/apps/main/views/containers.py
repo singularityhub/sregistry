@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,18 +8,18 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from shub.apps.main.models import Container, Label
-from shub.apps.library.views.minio import delete_minio_container
-
-from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
-
-from django.shortcuts import render, redirect
-
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, Http404
-from django.contrib import messages
 from datetime import datetime
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from ratelimit.decorators import ratelimit
+
+from shub.apps.library.views.minio import delete_minio_container
+from shub.apps.main.models import Container, Label
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 
 # get container

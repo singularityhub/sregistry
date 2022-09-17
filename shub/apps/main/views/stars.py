@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,17 +8,17 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from shub.apps.main.models import Collection, Star
-
-from django.http.response import Http404
-from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
-
-from django.shortcuts import render
 from django.db.models.aggregates import Count
 from django.http import JsonResponse
+from django.http.response import Http404
+from django.shortcuts import render
 from ratelimit.decorators import ratelimit
-from .collections import get_collection
 
+from shub.apps.main.models import Collection, Star
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
+
+from .collections import get_collection
 
 ################################################################################
 # COLLECTIONS ##################################################################

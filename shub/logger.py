@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -42,7 +42,8 @@ class ShubMessage:
     # Colors --------------------------------------------
 
     def useColor(self):
-        """useColor will determine if color should be added
+        """
+        useColor will determine if color should be added
         to a print. Will check if being run in a terminal, and
         if has support for ascii
         """
@@ -58,7 +59,8 @@ class ShubMessage:
         return True
 
     def addColor(self, level, text):
-        """addColor to the prompt (usually prefix) if terminal
+        """
+        addColor to the prompt (usually prefix) if terminal
         supports, and specified to do so
         """
         if self.colorize:
@@ -67,7 +69,8 @@ class ShubMessage:
         return text
 
     def emitError(self, level):
-        """determine if a level should print to
+        """
+        determine if a level should print to
         stderr, includes all levels but INFO and QUIET"""
         if level in [
             ABRT,
@@ -83,8 +86,10 @@ class ShubMessage:
         return False
 
     def emitOutput(self, level):
-        """determine if a level should print to stdout
-        only includes INFO"""
+        """
+        determine if a level should print to stdout
+        only includes INFO
+        """
         if level in [LOG, INFO]:
             return True
         return False
@@ -96,7 +101,8 @@ class ShubMessage:
         return False
 
     def emit(self, level, message, prefix=None):
-        """emit is the main function to print the message
+        """
+        emit is the main function to print the message
         optionally with a prefix
 
         Parameters
@@ -133,7 +139,8 @@ class ShubMessage:
         self.history.append(message)
 
     def write(self, stream, message):
-        """write will write a message to a stream,
+        """
+        write will write a message to a stream,
         first checking the encoding
         """
         if isinstance(message, bytes):
@@ -141,7 +148,8 @@ class ShubMessage:
         stream.write(message)
 
     def get_logs(self, join_newline=True):
-        """'get_logs will return the complete history, joined by newline
+        """
+        get_logs will return the complete history, joined by newline
         (default) or as is.
         """
         if join_newline:
@@ -159,7 +167,8 @@ class ShubMessage:
         suffix=None,
         symbol=None,
     ):
-        """create a terminal progress bar, default bar shows for verbose+
+        """
+        create a terminal progress bar, default bar shows for verbose+
 
         Parameters
         ==========
@@ -244,7 +253,8 @@ class ShubMessage:
 
 
 def get_logging_level():
-    """get_logging_level will configure a logging to standard out based on the user's
+    """
+    get_logging_level will configure a logging to standard out based on the user's
     selected level, which should be in an environment variable called
     SREGISTRY_MESSAGELEVEL. if SOM_MESSAGELEVEL is not set, the maximum level
     (5) is assumed (all messages).
@@ -253,7 +263,9 @@ def get_logging_level():
 
 
 def get_user_color_preference():
-    """see in the environment if the user wants to disable colored logging"""
+    """
+    see in the environment if the user wants to disable colored logging
+    """
     COLORIZE = os.environ.get("SREGISTRY_COLORIZE", None)
     if COLORIZE is not None:
         COLORIZE = convert2boolean(COLORIZE)
@@ -261,7 +273,8 @@ def get_user_color_preference():
 
 
 def convert2boolean(arg):
-    """convert2boolean is used for environmental variables that must be
+    """
+    convert2boolean is used for environmental variables that must be
     returned as boolean
     """
     if not isinstance(arg, bool):

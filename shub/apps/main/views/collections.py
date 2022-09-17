@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,26 +8,23 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from shub.settings import (
-    PRIVATE_ONLY,
-    COLLECTIONS_VIEW_PAGE_COUNT as collection_count,
-    VIEW_RATE_LIMIT as rl_rate,
-    VIEW_RATE_LIMIT_BLOCK as rl_block,
-)
-from shub.apps.users.views import validate_credentials
-from shub.apps.main.utils import format_collection_name
-from shub.apps.main.models import Container, Collection
-
-
-from django.shortcuts import render, redirect
-from django.db.models import Q, Count
-from django.http.response import Http404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+import uuid
 from itertools import chain
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
+from django.http.response import Http404
+from django.shortcuts import redirect, render
 from ratelimit.decorators import ratelimit
 
-import uuid
+from shub.apps.main.models import Collection, Container
+from shub.apps.main.utils import format_collection_name
+from shub.apps.users.views import validate_credentials
+from shub.settings import COLLECTIONS_VIEW_PAGE_COUNT as collection_count
+from shub.settings import PRIVATE_ONLY
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 
 def get_collection(cid):
@@ -203,8 +200,8 @@ def collection_settings(request, cid):
     ==========
     cid: the id of the collection
     """
-    from shub.apps.users.permissions import has_create_permission
     from shub.apps.users.models import Team
+    from shub.apps.users.permissions import has_create_permission
 
     collection = get_collection(cid)
     edit_permission = collection.has_edit_permission(request)

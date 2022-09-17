@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,24 +8,27 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import os
+from datetime import datetime, timedelta
+
+import django_rq
 from dateutil.parser import parse
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
+
+from shub.apps.main.models import Collection, Container
 from shub.logger import bot
-from shub.apps.main.models import Container, Collection
 from sregistry.main.google_build.client import get_client
-from datetime import datetime, timedelta
 from sregistry.utils import get_recipe_tag
+
 from .utils import (
-    convert_size,
-    clear_container_payload,
-    create_container_payload,
     JsonResponseMessage,
+    clear_container_payload,
+    convert_size,
+    create_container_payload,
     generate_jwt_token,
 )
-import os
-import django_rq
 
 
 def trigger_build(sender, instance, **kwargs):
@@ -275,6 +278,7 @@ def delete_container_collection(cid, uid):
     uid: the user id requesting permission
     """
     from shub.apps.main.views import get_collection
+
     from .github import delete_webhook
 
     collection = get_collection(cid)

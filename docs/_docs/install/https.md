@@ -92,17 +92,17 @@ DOMAIN_NAME_HTTP = "https://127.0.0.1"
 DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace("https://", "")
 ```
 
-Finally, we need to make sure that we are using the docker-compose file for https,
+Finally, we need to make sure that we are using the docker compose file for https,
 the nginx.conf for https, and that the certificates are correctly bound.
 
 ```bash
-mv docker-compose.yml docker-compose.yml.http
-mv https/docker-compose.yml .
+mv docker compose.yml docker compose.yml.http
+mv https/docker compose.yml .
 mv nginx.conf nginx.conf http
 mv https/nginx.conf.https nginx.conf
 ```
 
-In the docker-compose.yml that is newly copied, change the binds of the
+In the docker compose.yml that is newly copied, change the binds of the
 paths to use the files in your present working directory.
 
 ```yaml
@@ -138,11 +138,11 @@ the old certificate paths, and add the new ones we just created:
     ssl_prefer_server_ciphers on;
 ```
 
-You can then do `docker-compose up -d`. As instructed by the tool, we probably
+You can then do `docker compose up -d`. As instructed by the tool, we probably
 need to restart our browsers.
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 And amazingly (I opened Chrome freshly) my site has https!
@@ -173,7 +173,7 @@ rm -rf  /home/vanessa/.local/share/mkcert/
 ```
 
 I also deleted the mkcert directory and the original certificates,
-and undid the changes above to settings, the docker-compose and nginx.conf files
+and undid the changes above to settings, the docker compose and nginx.conf files
 
 ## Production https
 
@@ -265,11 +265,11 @@ The commands to stop the nginx container and
 renew the certificates might look like this (this is for typical Ubuntu or similar).
 
 ```bash
-docker-compose stop nginx
+docker compose stop nginx
 sudo service nginx start
 sudo certbot renew
 sudo service nginx stop
-docker-compose start nginx
+docker compose start nginx
 ```
 
 And then issue the command to start your container.

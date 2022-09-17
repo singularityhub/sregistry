@@ -27,6 +27,19 @@ You can also pull a container using Singularity natively with the `shub://` uri:
 $ singularity pull shub://containers.page/collection/container:tag
 ```
 
+Here is an example pull from a local registry:
+
+```bash
+$ singularity pull --no-https --library http://127.0.0.1 vsoch/dinosaur-collection/another:latest
+INFO:    Downloading library image
+780.0KiB / 780.0KiB [=====================================================================================================================] 100 %0s
+WARNING: integrity: signature not found for object group 1
+WARNING: Skipping container verification
+```
+
+Note that there was a bug in Singularity that would issue an error with an unexpected 302 - this is
+at least fixed in 3.10 so upgrade appropriately.
+
 ## Singularity Push
 
 As of version `1.1.10`, Singularity Registry Server offers a library endpoint
@@ -37,20 +50,35 @@ registry:
 $ singularity remote add --no-login DinosaurCloud cloud.dinosaur.io
 ```
 
+If you are adding an insecure (e.g., no https) remote:
+
+```bash
+$ singularity remote add --insecure --no-login DinosaurCloud 127.0.0.1
+```
+
 Verify it's there:
 
 ```bash
 $ singularity remote list
-NAME           URI              	GLOBAL
-DinosaurCloud  cloud.dinosaur.io        NO
-[SylabsCloud]  cloud.sylabs.io   	YES
+
+Cloud Services Endpoints
+========================
+
+NAME           URI              ACTIVE  GLOBAL  EXCLUSIVE  INSECURE
+DinosaurCloud  127.0.0.1        NO      NO      NO         YES
+SylabsCloud    cloud.sylabs.io  YES     YES     NO         NO
+
+Keyservers
+==========
+
+URI                     GLOBAL  INSECURE  ORDER
+https://keys.sylabs.io  YES     NO        1*
+
+* Active cloud services keyserver
 ```
 
-**Important** Sylabs requires these endpoints to have https, for obvious reasons. If you want to test with localhost, you'll need to edit [this file](https://github.com/sylabs/singularity/blob/5e483be4af2e120e646d33f0757e855c8d3be2da/internal/pkg/remote/remote.go#L237)
-and re-compile Singularity to set the url to have http. The example above is a hypothetical "cloud.dinosaur.io" however in actual development, I used 127.0.0.1 (and you'll see it 
-in various spots below). This is how I developed this set of endpoints.
-
-Once you add the remote, then you'll first need to login and get your token at the /token endpoint, for example:
+The `--insecure` flag is going to allow you to develop without https. Otherwise the Singularity client
+will require it. Once you add the remote, then you'll first need to login and get your token at the /token endpoint, for example:
 
 ```bash
 1eb5bc1daeca0f5a215ec242c9690209ca0b3d71
@@ -60,10 +88,11 @@ And then provide it (via copy paste) to the Singularity client to create a remot
 
 ```bash
 $ singularity remote login DinosaurCloud
-INFO:    Authenticating with remote: DinosaurCloud
-Generate an API Key at https://127.0.0.1/auth/tokens, and paste here:
-API Key: 
-INFO:    API Key Verified!
+Generate an access token at http://127.0.0.1/auth/tokens, and paste it here.
+Token entered will be hidden for security.
+Access Token: 
+INFO:    Access Token Verified!
+INFO:    Token stored in /home/vanessa/.singularity/remote.yaml
 ```
 
 If you paste a token that isn't valid, you'll get a different message
@@ -81,24 +110,29 @@ so once you specify to use an endpoint, it knows the token. If you are having
 issues copy pasting the token into your terminal (I had some when I wanted to
 re-create it) you can also just open up this file and edit the text manually:
 
+```bash
+$ cat /home/vanessa/.singularity/remote.yaml
 ```
-$ cat /home/vanessa/.singularity/remote.yaml Active: DinosaurCloud
+```console
+Active: SylabsCloud
 Remotes:
   DinosaurCloud:
     URI: 127.0.0.1
-    Token: 1eb5bcrdaeca0f5a215ef242c9690209ca0b3d71
+    Token: 8c5ea955d96570000c72f9609a3afcf60986abf1
     System: false
+    Exclusive: false
+    Insecure: true
   SylabsCloud:
     URI: cloud.sylabs.io
-    Token: hahhaayeahrightdude
     System: true
+    Exclusive: false
 ```
 
 The easiest thing to do is now to set your remote to be DinosaurCloud (or whatever
 you called it) so you don't need to specify the push command with `--library`:
 
 ```bash
-singularity remote use DinosaurCloud
+$ singularity remote use DinosaurCloud
 ```
 
 Now that we have a token, let's try a push! For security purposes, the collection
@@ -220,18 +254,18 @@ This is useful so that you can (locally from your registry) pull an image withou
 
 ### Push
 
-If you don't have an image handy, you can pull one from Singularity Hub:
+If you don't have an image handy, you can pull one:
 
 ```bash
-singularity pull shub://vsoch/hello-world
+singularity pull docker://busybox
 ```
 
 And then a push to your registry looks like this:
 
 ```bash
-sregistry push vsoch-hello-world-master.img --name dinosaur/avocado --tag delicious
-sregistry push vsoch-hello-world-master.img --name meowmeow/avocado --tag nomnomnom
-sregistry push vsoch-hello-world-master.img --name dinosaur/avocado --tag whatinthe
+$ sregistry push -U busybox_latest.sif --name dinosaur/avocado --tag delicious
+$ sregistry push -U busybox_latest.sif --name meowmeow/avocado --tag nomnomnom
+$ sregistry push -U busybox_latest.sif --name dinosaur/avocado --tag whatinthe
 ```
 
 If you don't specify a tag, `latest` is used. If you have authentication issues,

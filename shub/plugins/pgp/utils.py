@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright (C) 2019-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -16,15 +16,16 @@ import calendar
 import datetime
 import urllib.parse
 
-import shub.plugins.pgp as pgpdb
 from pgpdump.packet import (
     PublicKeyPacket,
     PublicSubkeyPacket,
     SignaturePacket,
-    UserIDPacket,
     UserAttributePacket,
+    UserIDPacket,
 )
 from pgpdump.utils import crc24
+
+import shub.plugins.pgp as pgpdb
 
 PGP_ARMOR_BASE = """-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: shub-pgpdb {0}

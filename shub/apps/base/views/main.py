@@ -9,14 +9,13 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from django.shortcuts import render
-
 from ratelimit.decorators import ratelimit
-
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)

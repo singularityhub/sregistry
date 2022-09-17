@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2016-2021 Vanessa Sochat.
+Copyright (C) 2016-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,10 +8,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from dateutil.parser import parse
-import django_rq
 import os
 import re
+
+import django_rq
+from dateutil.parser import parse
 
 
 def prepare_build_task(cid, recipes, branch):
@@ -24,8 +25,9 @@ def prepare_build_task(cid, recipes, branch):
     branch: the repository branch (kept as metadata)
     """
     print("RUNNING PREPARE BUILD TASK WITH RECIPES %s" % recipes)
-    from .actions import receive_build
     from shub.apps.main.views import get_collection
+
+    from .actions import receive_build
 
     collection = get_collection(cid)
     receive_build(collection=collection, recipes=recipes, branch=branch)

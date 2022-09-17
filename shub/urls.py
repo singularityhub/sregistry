@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -13,16 +13,16 @@ from importlib import import_module
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap, index
+from django.contrib.sitemaps.views import index, sitemap
+from rest_framework.documentation import include_docs_urls
+from rest_framework.schemas import get_schema_view
+
 from shub.apps.api import urls as api_urls
 from shub.apps.base import urls as base_urls
+from shub.apps.base.sitemap import CollectionSitemap, ContainerSitemap
 from shub.apps.library import urls as library_urls
 from shub.apps.main import urls as main_urls
 from shub.apps.users import urls as user_urls
-from shub.apps.base.sitemap import CollectionSitemap, ContainerSitemap
-
-from rest_framework.schemas import get_schema_view
-from rest_framework.documentation import include_docs_urls
 
 # Documentation URL
 API_TITLE = "Singularity Registry API"

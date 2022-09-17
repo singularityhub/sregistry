@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2016-2021 Vanessa Sochat.
+Copyright (C) 2016-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,27 +8,28 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from datetime import datetime, timedelta
-from django.http import JsonResponse
-from django.conf import settings
-from oauth2client.client import GoogleCredentials
-from googleapiclient import discovery
-import google.auth.transport.requests
-import google.auth
-import google.auth.iam
-from sregistry.logger import RobotNamer
+import binascii
+import collections
 import hashlib
 import hmac
 import json
-import jwt
-import binascii
-import collections
 import re
-import requests
-from urllib.parse import unquote
-from six.moves.urllib.parse import quote
 import uuid
+from datetime import datetime, timedelta
+from urllib.parse import unquote
 
+import google.auth
+import google.auth.iam
+import google.auth.transport.requests
+import jwt
+import requests
+from django.conf import settings
+from django.http import JsonResponse
+from googleapiclient import discovery
+from oauth2client.client import GoogleCredentials
+from six.moves.urllib.parse import quote
+
+from sregistry.logger import RobotNamer
 
 ################################################################################
 # REQUESTS

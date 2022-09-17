@@ -1,4 +1,3 @@
-anyjson
 coreapi==2.3.3
 cython
 django-chosen

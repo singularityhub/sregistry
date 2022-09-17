@@ -5,12 +5,12 @@ pdf: true
 
 # Installation: Web Server and Storage
 
-Before doing `docker-compose up -d` to start the containers, there are some specific things that need to be set up.
+Before doing `docker compose up -d` to start the containers, there are some specific things that need to be set up.
 
 ## Release Version
 
 If you've downloaded a [release](https://github.com/singularityhub/sregistry/releases/),
-you'll want to update the `docker-compose.yaml` instances of the quay.io/vanessa/sregistry
+you'll want to update the `docker compose.yaml` instances of the quay.io/vanessa/sregistry
 image to be tagged with the release version that matches your clone. E.g.:
 
 ```yaml
@@ -69,7 +69,7 @@ cloud build that will be saved in some matching cloud storage.
 However for versions 1.1.24 and later, to better handle the Singularity `library://`
 client that uses Amazon S3, we added a [Minio Storage](https://docs.min.io/docs/python-client-api-reference.html#presigned_get_object) 
 backend, or another container (minio) that is deployed alongside Singularity Registry server.
-If you look in the [docker-compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker-compose.yml) that looks something like this:
+If you look in the [docker compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker compose.yml) that looks something like this:
 
 ```
 minio:
@@ -91,7 +91,7 @@ At the time of development we are using this version of minio:
 minio version RELEASE.2020-04-02T21-34-49Z
 ```
 
-which you can set in the docker-compose.yml file to pin it. Notice that we bind the
+which you can set in the docker compose.yml file to pin it. Notice that we bind the
 folder "minio-images" in the present working directory to /images in the container,
 which is where we are telling minio to write images to the filesystem. This means
 that if your container goes away, the image files will still be present on the host.
@@ -115,10 +115,8 @@ that looks like this:
 
 ```bash
 # Credentials (change the first two)
-MINIO_ACCESS_KEY=newminio
-MINIO_SECRET_KEY=newminio123
-MINIO_ACCESS_KEY_OLD=minio
-MINIO_SECRET_KEY_OLD=minio123
+MINIO_ROOT_USER=minioadmin
+MINIO_ROOT_PASSWORD=minioadmin
 
 # Turn on/off the Minio browser at 127.0.0.1:9000?
 MINIO_BROWSER=on
@@ -127,14 +125,8 @@ MINIO_BROWSER=on
 DISABLE_MINIO_CLEANUP = False
 ```
 
-If you [read about how minio is configured](https://github.com/minio/minio/tree/master/docs/config)
-you will notice that since the container was built previously with the default credentials,
-to change them we are required to define the same variables with `*_OLD` suffix. This
-means that you should be able to keep the last two lines (minio and minio123, respectively)
-and change the first two to your new access key and secret. And if it's not clear:
-
-> **You should obviously change the access key and secret in the minio-env file!**
-
+Note that these admin keys have been in use since April 2021. You can see
+more details about credentials in [the Minio documentation](https://docs.min.io/minio/baremetal/reference/minio-server/minio-server.html#root-credentials).
 The `.minio-env` file is also bound to the uwsgi container, so that the generation of the minio
 storage can be authenticated by the uwsgi container, which is the interface between
 the Singularity client and minio. For variables that aren't secrets, you can look
@@ -155,10 +147,10 @@ MINIO_MULTIPART_UPLOAD = True
 
 Since the container networking space is different from what the external
 Singularity client interacts with, we define them both here. If you deploy
-a minio server external to the docker-compose.yml, you can update both of
+a minio server external to the docker compose.yml, you can update both of
 these URLs to be the url to access it. The number of minutes for the signed
 url to expire applies to single PUT (upload), GET (download), and upload Part (PUT) requests.
-Finally, the logs that you see with `docker-compose logs minio` are fairly limited,
+Finally, the logs that you see with `docker compose logs minio` are fairly limited,
 it's recommended to install the client [mc](https://docs.minio.io/docs/minio-client-quickstart-guide)
 to better inspect:
 
@@ -265,7 +257,7 @@ Getting https certificates is really annoying, and getting `dhparams.pem` takes 
  - starting nginx
  - installing certbot
  - generating certificates
- - linking them to where the docker-compose expects them
+ - linking them to where the docker compose expects them
  - add a reminder or some other method to renew within 89 days
 
 With certbot, you should be able to run `certbot renew` when the time to renew comes up. There is also an [older
@@ -278,14 +270,14 @@ version](https://github.com/singularityhub/sregistry/blob/master/scripts/generat
  - moving them to where they need to be.
  - add a reminder or some other method to renew within 89 days
 
-Once you have done this (and you are ready for https), you should use the `docker-compose.yml` and the `nginx.conf` provided in the folder [https](https://github.com/singularityhub/sregistry/blob/master/https/). So do something like this:
+Once you have done this (and you are ready for https), you should use the `docker compose.yml` and the `nginx.conf` provided in the folder [https](https://github.com/singularityhub/sregistry/blob/master/https/). So do something like this:
 
 ```bash
 mkdir http
 mv nginx.conf http
-mv docker-compose.yml http
+mv docker compose.yml http
 
-cp https/docker-compose.yml .
+cp https/docker compose.yml .
 cp https/nginx.conf.https nginx.conf
 ```
 
@@ -294,7 +286,7 @@ If you run into strange errors regarding any kind of authentication / server / n
 ### Minio
 
 Minio has detailed instructions for setting up https [here](https://github.com/minio/minio/tree/master/docs/tls),
-and you can use existing or self signed certificates. The docker-compose.yml in the https folder takes the
+and you can use existing or self signed certificates. The docker compose.yml in the https folder takes the
 strategy of binding the same SSL certs to `${HOME}/.minio/certs` in the container.
 Note that inside the certs directory, the private key must by named private.key and the public key must be named public.crt.
 
