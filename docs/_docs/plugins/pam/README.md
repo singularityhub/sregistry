@@ -12,7 +12,7 @@ the host system.
 
 To enable PAM authentication you must:
   * Add `pam_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Uncomment binds to /etc/shadow and /etc/passwd in `docker-compose.yml`
+  * Uncomment binds to /etc/shadow and /etc/passwd in `docker compose.yml`
   * Build the docker image with the build argument ENABLE_PAM set to true
 More detailed instructions are below.
 
@@ -40,7 +40,7 @@ PLUGINS_ENABLED = [
 ```
 
 Since we need to get access to users from the host,
-you need to edit the `docker-compose.yml` and uncomment binds to your host:
+you need to edit the `docker compose.yml` and uncomment binds to your host:
 
 ```bash
 uwsgi:

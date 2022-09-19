@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,10 +8,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from rest_framework.authtoken.models import Token
-from django.utils.timezone import now
 import json
 import re
+
+from django.utils.timezone import now
+from rest_framework.authtoken.models import Token
 
 
 def get_request_collection(instance):
@@ -25,8 +26,8 @@ def get_request_collection(instance):
     import pickle
 
     pickle.dump(instance, open("instance.pkl", "wb"))
-    from sregistry.utils import parse_image_name
     from shub.apps.main.models import Collection
+    from sregistry.utils import parse_image_name
 
     try:
         response = json.loads(instance.response)

@@ -54,14 +54,14 @@ docker build --build-arg ENABLE_GLOBUS=true -t quay.io/vanessa/sregistry .
 Once the build is done, start the container.
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 and after you've started it, run the script to generate the endpoint (in the example below, the container is named `sregistry_uwsgi_1` and we figured this out with `docker ps`).
 
 ```
 docker exec -it sregistry_uwsgi_1 /bin/bash /code/scripts/globus/globus-setup.sh
-docker-compose restart
+docker compose restart
 ```
 
 The script above will ask you to open your browser to authenticate. This first step is with regard to the endpoint. You, as the admin, are

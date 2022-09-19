@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright (C) 2019-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,43 +8,34 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
-from django.shortcuts import render, redirect
+import json
+import re
+import uuid
+from datetime import timedelta
 
-from rest_framework.viewsets import ModelViewSet
+import django_rq
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
+from ratelimit.decorators import ratelimit
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.viewsets import ModelViewSet
 
-from shub.apps.main.views import get_container, get_collection
-
+from shub.apps.api.utils import get_request_user, has_permission, validate_request
 from shub.apps.main.models import Collection, Container
-
-from shub.apps.api.utils import get_request_user, validate_request, has_permission
-
+from shub.apps.main.views import get_collection, get_container
 from shub.settings import (
-    DISABLE_GITHUB,
-    DISABLE_BUILDING,
     DISABLE_BUILD_RECEIVE,
+    DISABLE_BUILDING,
+    DISABLE_GITHUB,
     SREGISTRY_GOOGLE_BUILD_LIMIT,
-    VIEW_RATE_LIMIT as rl_rate,
-    VIEW_RATE_LIMIT_BLOCK as rl_block,
 )
-
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 from sregistry.main.registry.auth import generate_timestamp
-from .github import (
-    create_webhook,
-    get_repo,
-    list_repos,
-    receive_github_hook,
-    update_webhook_metadata,
-)
-
-from .models import RecipeFile
-import django_rq
-from datetime import timedelta
 
 from .actions import (
     complete_build,
@@ -52,13 +43,15 @@ from .actions import (
     delete_container_collection,
     is_over_limit,
 )
-
+from .github import (
+    create_webhook,
+    get_repo,
+    list_repos,
+    receive_github_hook,
+    update_webhook_metadata,
+)
+from .models import RecipeFile
 from .utils import JsonResponseMessage, validate_jwt
-
-from ratelimit.decorators import ratelimit
-import re
-import json
-import uuid
 
 
 @ratelimit(key="ip", rate=rl_rate, block=rl_block)

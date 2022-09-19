@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from shub.plugins.globus import views
 
 urlpatterns = [

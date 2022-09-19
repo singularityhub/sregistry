@@ -203,7 +203,7 @@ with the [install docs](https://singularityhub.github.io/sregistry/install-serve
 and you can continue here after you've done:
 
 ```
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 and confirmed the registry running at localhost, and also have logged in

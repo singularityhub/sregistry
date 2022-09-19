@@ -29,7 +29,7 @@ This section covers rationale, background, and frequently asked questions.
  - [Frequenty Asked Questions](docs/faq): Quick answers to some questions you might have on your mind.
 
 ## Deploy a Registry Server
-This section is going to cover installation, which means configuration of a Docker image, building of the image, and then starting your image with other services (docker-compose) to run your registry server.
+This section is going to cover installation, which means configuration of a Docker image, building of the image, and then starting your image with other services (docker compose, previously docker-compose) to run your registry server.
 
  - [install](docs/install): configure, build, and deploy your registry server.
  - [setup](docs/setup): setting up and registering the running application.

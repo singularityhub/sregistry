@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,14 +8,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from shub.settings import MEDIA_ROOT
-from shub.logger import bot
-from sregistry.utils import parse_image_name
-from django.db import IntegrityError
-import django_rq
-import shutil
 import os
+import shutil
 import uuid
+
+import django_rq
+from django.db import IntegrityError
+
+from shub.logger import bot
+from shub.settings import MEDIA_ROOT
+from sregistry.utils import parse_image_name
 
 
 def move_upload_to_storage(collection, upload_id):
@@ -113,8 +115,8 @@ def upload_container(cid, user, name, version, upload_id, size=None):
              error / success codes.
     """
 
-    from shub.apps.main.models import Container, Collection
-    from shub.apps.api.models import ImageUpload, ImageFile
+    from shub.apps.api.models import ImageFile, ImageUpload
+    from shub.apps.main.models import Collection, Container
 
     collection = Collection.objects.get(id=cid)
 

@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright (C) 2019-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -11,28 +11,27 @@ Commit: 763c2708c16bf58064f741ceb2e2ab752dea3663 (no LICENSE)
 
 """
 
-import os
 import base64
+import os
 import uuid
 
+import pgpdump
 from django.conf import settings
-
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db import models
-from django.db.models.signals import class_prepared, post_save, post_delete
+from django.db.models.signals import class_prepared, post_delete, post_save
 from django.utils.timezone import make_aware, utc
 from django.utils.translation import ugettext_lazy as _
-from shub.apps.users.models import User
-
-import pgpdump
 from pgpdump.packet import (
     PublicKeyPacket,
     PublicSubkeyPacket,
     SignaturePacket,
     UserIDPacket,
 )
-from pgpdump.utils import crc24, PgpdumpException
+from pgpdump.utils import PgpdumpException, crc24
+
+from shub.apps.users.models import User
 from shub.plugins.pgp import utils
 
 

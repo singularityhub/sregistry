@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,18 +8,18 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.shortcuts import redirect, render
-
 from django.contrib import messages
-from django.utils import timezone
-from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.utils import timezone
 from ratelimit.decorators import ratelimit
-from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
-from social_core.backends.github import GithubOAuth2
 from six.moves.urllib.parse import urljoin
+from social_core.backends.github import GithubOAuth2
+
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 ################################################################################
 # AUTHENTICATION

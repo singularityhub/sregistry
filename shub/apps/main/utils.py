@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,15 +8,15 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import os
+import re
+import tempfile
 from datetime import timedelta
+
 from django.conf import settings
 from django.utils import timezone
 
 from sregistry.utils import read_json
-
-import os
-import re
-import tempfile
 
 
 def get_nightly_comparisons(date=None):

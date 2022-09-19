@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,7 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from shub.settings import USER_COLLECTIONS, USER_COLLECTION_LIMIT
+from shub.settings import USER_COLLECTION_LIMIT, USER_COLLECTIONS
 
 
 def has_create_permission(request):

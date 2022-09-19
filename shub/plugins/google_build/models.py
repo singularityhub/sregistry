@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright (C) 2019-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,13 +8,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.db.models.signals import post_save
+import os
+import uuid
+
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+
 from shub.apps.api.models.storage import OverwriteStorage
+
 from .actions import trigger_build
-import uuid
-import os
 
 
 def get_upload_folder(instance, filename):

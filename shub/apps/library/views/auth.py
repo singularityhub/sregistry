@@ -11,9 +11,10 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from shub.apps.users.models import User
 
-from .helpers import validate_token, generate_user_data, get_token
+from .helpers import generate_user_data, get_token, validate_token
 
 
 class TokenStatusView(APIView):

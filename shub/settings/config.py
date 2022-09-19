@@ -1,12 +1,14 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
 with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
+
+import os
 
 # AUTHENTICATION
 
@@ -113,6 +115,13 @@ MINIO_SSL = False  # use SSL for minio
 MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
 MINIO_REGION = "us-east-1"
 MINIO_MULTIPART_UPLOAD = True
+MINIO_ROOT_USER = os.environ.get("MINIO_ROOT_USER")
+MINIO_ROOT_PASSWORD = os.environ.get("MINIO_ROOT_PASSWORD")
+
+if not MINIO_ROOT_USER or not MINIO_ROOT_PASSWORD:
+    print(
+        "Warning: either MINIO_ROOT_USER or MINIO_ROOT_PASSWORD is missing, storage may not work."
+    )
 
 # Don't clean up images in Minio that are no longer referenced by sregistry
 DISABLE_MINIO_CLEANUP = False

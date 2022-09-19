@@ -5,11 +5,13 @@ https://github.com/aschn/drf-tracking
 
 """
 
+import traceback
+
 from django.utils.timezone import now
+from rest_framework.authtoken.models import Token
+
 from shub.apps.logs.models import APIRequestLog
 from shub.apps.logs.utils import clean_data
-from rest_framework.authtoken.models import Token
-import traceback
 
 
 class BaseLoggingMixin(object):

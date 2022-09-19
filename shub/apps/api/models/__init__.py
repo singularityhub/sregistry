@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,12 +8,13 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.conf import settings
-from django.db import models
-import uuid
-import time
 import hashlib
 import os
+import time
+import uuid
+
+from django.conf import settings
+from django.db import models
 
 ################################################################################
 # HELPERS

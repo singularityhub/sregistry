@@ -252,7 +252,7 @@ The variables mean the following:
   - `-D` specifies we want to bind as our admin account
   - `-W` prompts for the password for that account
 
-**Important** You need to get the ip-address of your ldap server. Since we aren't using docker-compose,
+**Important** You need to get the ip-address of your ldap server. Since we aren't using docker compose,
 the containers won't magically see one another. You can inspect the container's networking as follows:
 
 ```bash
@@ -310,7 +310,7 @@ docker build --build-arg ENABLE_LDAP=true -t quay.io/vanessa/sregistry .
 It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
 
 ```bash
-docker-compose logs -f uwsgi
+docker compose logs -f uwsgi
 ```
 
 For example, if you put in an incorrect credential, you would see the following in the logs:
@@ -325,4 +325,4 @@ Once you have set these options, startup sregistry and you should be able to see
 
 ![ldap.png](ldap.png)
 
-and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*. As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker-compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.
+and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*. As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.

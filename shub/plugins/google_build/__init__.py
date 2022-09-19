@@ -1,4 +1,5 @@
 from django.conf import settings
+
 from shub.logger import bot
 
 # Ensure that application credentials exist

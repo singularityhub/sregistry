@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2020-2021 Vanessa Sochat.
+Copyright (C) 2020-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,35 +8,36 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import hashlib
+import hmac
+import os
 from datetime import datetime
+
 from boto3 import Session
 from botocore.client import Config
+from minio import Minio
+from minio.compat import queryencode, urlsplit
+from minio.error import InvalidArgumentError
+from minio.signer import (
+    collections,
+    generate_canonical_request,
+    generate_credential_string,
+    generate_signing_key,
+    generate_string_to_sign,
+    get_signed_headers,
+)
 
 from shub.apps.main.models import Container
 from shub.settings import (
     DISABLE_MINIO_CLEANUP,
-    MINIO_SERVER,
-    MINIO_EXTERNAL_SERVER,
     MINIO_BUCKET,
+    MINIO_EXTERNAL_SERVER,
     MINIO_REGION,
+    MINIO_ROOT_PASSWORD,
+    MINIO_ROOT_USER,
+    MINIO_SERVER,
     MINIO_SSL,
 )
-
-from minio.error import InvalidArgumentError
-from minio import Minio
-from minio.compat import urlsplit, queryencode
-from minio.signer import (
-    generate_canonical_request,
-    generate_string_to_sign,
-    generate_signing_key,
-    generate_credential_string,
-    get_signed_headers,
-    collections,
-)
-
-import os
-import hmac
-import hashlib
 
 # Signature version '4' algorithm.
 _SIGN_V4_ALGORITHM = "AWS4-HMAC-SHA256"
@@ -46,16 +47,16 @@ MINIO_HTTP_PREFIX = "https://" if MINIO_SSL else "http://"
 minioClient = Minio(
     MINIO_SERVER,
     region=MINIO_REGION,
-    access_key=os.environ.get("MINIO_ACCESS_KEY"),
-    secret_key=os.environ.get("MINIO_SECRET_KEY"),
+    access_key=MINIO_ROOT_USER,
+    secret_key=MINIO_ROOT_PASSWORD,
     secure=MINIO_SSL,
 )
 
 minioExternalClient = Minio(
     MINIO_EXTERNAL_SERVER,
     region=MINIO_REGION,
-    access_key=os.environ.get("MINIO_ACCESS_KEY"),
-    secret_key=os.environ.get("MINIO_SECRET_KEY"),
+    access_key=MINIO_ROOT_USER,
+    secret_key=MINIO_ROOT_PASSWORD,
     secure=MINIO_SSL,
 )
 
@@ -63,8 +64,8 @@ if not minioClient.bucket_exists(MINIO_BUCKET):
     minioClient.make_bucket(MINIO_BUCKET)
 
 session = Session(
-    aws_access_key_id=os.environ.get("MINIO_ACCESS_KEY"),
-    aws_secret_access_key=os.environ.get("MINIO_SECRET_KEY"),
+    aws_access_key_id=MINIO_ROOT_USER,
+    aws_secret_access_key=MINIO_ROOT_PASSWORD,
     region_name=MINIO_REGION,
 )
 

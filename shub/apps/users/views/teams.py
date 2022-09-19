@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,20 +8,21 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.http.response import Http404
-from django.http import HttpResponseRedirect, JsonResponse
+import uuid
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, JsonResponse
+from django.http.response import Http404
+from django.shortcuts import redirect, render
 from ratelimit.decorators import ratelimit
+
 from shub.apps.users.forms import TeamForm
-from shub.apps.users.models import Team, MembershipInvite
+from shub.apps.users.models import MembershipInvite, Team
 from shub.apps.users.permissions import has_create_permission, is_invite_valid
 from shub.apps.users.utils import get_user
-from shub.settings import VIEW_RATE_LIMIT as rl_rate, VIEW_RATE_LIMIT_BLOCK as rl_block
-
-import uuid
+from shub.settings import VIEW_RATE_LIMIT as rl_rate
+from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 
 def get_team(tid):

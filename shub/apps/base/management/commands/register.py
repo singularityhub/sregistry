@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2021 Vanessa Sochat.
+Copyright (C) 2017-2022 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,14 +8,16 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
+import os
+from datetime import datetime
+from random import choice
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
-from django.conf import settings
+
 from shub.logger import bot
 from shub.settings import ADMINS
-from random import choice
-from datetime import datetime
-import os
 
 
 class Command(BaseCommand):
