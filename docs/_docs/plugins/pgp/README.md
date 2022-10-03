@@ -13,7 +13,7 @@ protocol, meaning that activating the plugin will expose "lookup" and "add" endp
 
 To enable the pgp plugin you must:
 
-  * Add `pgp` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
+  * Add `pgp` to the `PLUGINS_ENABLED` list in `shub/settings/local.py`
   * Build the docker image with the build argument ENABLE_PGP set to true:
     ```bash
     $ docker build --build-arg ENABLE_PGP=true -t quay.io/vanessa/sregistry .

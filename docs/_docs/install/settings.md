@@ -6,11 +6,15 @@ toc: false
 
 # Settings
 
-See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
+See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? Inside are a bunch of different settings for the application. At a minimum you'll need to set up some minimal secrets and database config before we start the application.
+
+There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
+
+Rather than updating the `config.py` file directly, it's recommended you copy the values you want to modify to `settings/local.py`. Values in this file will override anything in the other config files and is an easy way to persist changes across upgrades.
 
 ## Secrets
 
-There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
+You will need to create a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
 
 An template to work from is provided in the settings folder called `dummy_secrets.py`. You can copy this template:
 
@@ -32,7 +36,7 @@ SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
 ### Authentication Secrets
 
-One thing I (@vsoch) can't do for you in advance is produce application keys and secrets to give your Registry for each social provider that you want to allow users (and yourself) to login with. We are going to use a framework called [python social auth](https://python-social-auth-docs.readthedocs.io/en/latest/configuration/django.html) to achieve this, and in fact you can add a [number of providers](http://python-social-auth-docs.readthedocs.io/en/latest/backends/index.html) (I have set up a lot of them, including SAML, so please <a href="https://www.github.com/singularityhub/sregistry/isses" target="_blank">submit an issue</a> if you want one added to the base proper.). Singularity Registry uses OAuth2 with a token--> refresh flow because it gives the user power to revoke permission at any point, and is a more modern strategy than storing a database of usernames and passwords. You can enable or disable as many of these that you want, and this is done in the [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py):
+One thing I (@vsoch) can't do for you in advance is produce application keys and secrets to give your Registry for each social provider that you want to allow users (and yourself) to login with. We are going to use a framework called [python social auth](https://python-social-auth-docs.readthedocs.io/en/latest/configuration/django.html) to achieve this, and in fact you can add a [number of providers](http://python-social-auth-docs.readthedocs.io/en/latest/backends/index.html) (I have set up a lot of them, including SAML, so please <a href="https://www.github.com/singularityhub/sregistry/isses" target="_blank">submit an issue</a> if you want one added to the base proper.). Singularity Registry uses OAuth2 with a token--> refresh flow because it gives the user power to revoke permission at any point, and is a more modern strategy than storing a database of usernames and passwords. You can enable or disable as many of these that you want. You can see these settings in the [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py):
 
 
 ```python
@@ -101,7 +105,7 @@ The callback url should be in the format `http://127.0.0.1/complete/github`, and
 
 ### Setting up Github Enterprise OAuth
 
-The GitHub Exterprise [docs are here](https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html).  You will want to register a new application on your instance of GitHub Enterprise in Developer Settings, set the callback URL to "http://example.com/complete/github-enterprise/" replacing example.com with your domain, and then the following environment variables should be defined in your secrets.
+The GitHub Exterprise [docs are here](https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html). You will want to register a new application on your instance of GitHub Enterprise in Developer Settings, set the callback URL to "http://example.com/complete/github-enterprise/" replacing example.com with your domain, and then the following environment variables should be defined in your `secrets.py`.
 
 ```python
 # The URL for your GitHub Enterprise appliance:
@@ -164,7 +168,7 @@ SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET = '<your-consumer-secret>'
 SOCIAL_AUTH_BITBUCKET_OAUTH2_VERIFIED_EMAILS_ONLY = True
 ```
 
-Finally, don't forget to enable the bitbucket login in settings/config.py:
+Finally, don't forget to enable the bitbucket login in `settings/local.py`:
 
 ```python
 ENABLE_BITBUCKET_AUTH=True
@@ -185,11 +189,11 @@ the callback url here should be `http://[your-domain]/complete/twitter`.
 
 ## Config
 
-In the [config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) you need to define the following:
+Here are some settings you might want to customize for your installation by adding them to `settings/local.py`. You can see the full set of values in [config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) but it's recommended you store changes in `settings/local.py` to persist across upgrades.
 
 ### Google Analytics
 
-If you want to add a Google analytics code, you can do this in the settings/config.py:
+If you want to add a Google analytics code:
 
 ```python
 GOOGLE_ANALYTICS = "UA-XXXXXXXXX"
@@ -199,7 +203,7 @@ The default is set to None, and doesn't add analytics to the registry.
 
 
 ### Domain Name
-A Singularity Registry Server should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is change the `DOMAIN_NAME_*` variables in your settings [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py#L30).
+A Singularity Registry Server should have a domain. It's not required, but it makes it much easier for yourself and users to remember the address. The first thing you should do is set the `DOMAIN_NAME_*` variables in your `settings/local.py` file.
 
 For local testing, you will want to change `DOMAIN_NAME` and `DOMAIN_NAME_HTTP` to be localhost. Also note that I've set the regular domain name (which should be https) to just http because I don't have https locally:
 
@@ -341,7 +345,7 @@ For other disable and limit arguments (for GitHub, creating, or receiving builds
 
 By default, the database itself will be deployed as a postgres image called `db`. You probably don't want this for production (for example, I use a second instance with postgres and a third with a hot backup, but it's an ok solution for a small cluster or single user. Either way, we recommend backing it up every so often.
 
-When your database is set up, you can define it in your `secrets.py` and it will override the Docker image one in the `settings/main.py file`. It should look something like this
+When your database is set up, you can define it in your `local.py`. It should look something like this:
 
 ```python
 DATABASES = {
@@ -366,7 +370,9 @@ LOGGING_SAVE_RESPONSES=True
 ## API
 
 Take a look in [settings/api.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/api.py)
-to configure your restful API. You can uncomment the first block to require authentication:
+to configure your restful API.
+
+For instance, you add this `local.py` to require authentication:
 
 ```python
   'DEFAULT_PERMISSION_CLASSES': (

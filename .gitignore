@@ -20,8 +20,8 @@ make_video.sh
 celerybeat-schedule.db
 *.mp4
 OLD
-secrets.py
-local_settings.py
+shub/settings/secrets.py
+shub/settings/local.py
 cronjob
 
 # Static #

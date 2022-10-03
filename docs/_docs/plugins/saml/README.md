@@ -11,8 +11,8 @@ The `saml_auth` plugin allows users to authentication with your [SAML provider](
 
 To enable SAML authentication you must:
 
-  * Add `saml_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Add some configuration details to `shub/settings/config.py`
+  * Add `saml_auth` to the `PLUGINS_ENABLED` list in `shub/settings/local.py`
+  * Add some configuration details to `shub/settings/local.py`
   * Configure the details of your SAML provider in in `shub/settings/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
   * Build the docker image with the build argument ENABLE_SAML set to true:
     ```bash
@@ -31,18 +31,10 @@ cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 This quick start is intended to demonstrate basic functionality of the SAML authentication. 
 
 
-#### Edit Config.py
+#### Edit `local.py`
 
-In the file `shub/settings/config.py` you should add the name of your institution (used to render the button)
-along with the idp (the unique identifier for your SAML server request). That means uncommenting these lines.
-
-```bash
-# AUTH_SAML_IDP = "stanford"
-# AUTH_SAML_INSTITUTION = "Stanford University"
-```
-
-so they appear like:
-
+In the file `shub/settings/local.py` you should add the name of your institution (used to render the button)
+along with the idp (the unique identifier for your SAML server request). For example:
 
 ```bash
 AUTH_SAML_IDP = "stanford"

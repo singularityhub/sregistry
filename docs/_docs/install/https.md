@@ -83,7 +83,7 @@ The certificate is at "./singularity-registry.org+5.pem" and the key at "./singu
 It will expire on 29 August 2023 🗓
 ```
 
-Then I moved them into the registry root, and updated my shub/settings/config.py to use
+Then I moved them into the registry root, and updated my `shub/settings/local.py` to use
 https on localhost.
 
 ```python

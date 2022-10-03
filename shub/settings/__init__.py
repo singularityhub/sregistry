@@ -8,6 +8,17 @@ from .logging import *
 from .main import *
 from .tasks import *
 
+# load any local overrides
+try:
+    from .secrets import *
+except ImportError:
+    pass
+
+try:
+    from .local import *
+except ImportError:
+    pass
+
 # If PAM_AUTH in plugins enbled, add django_pam
 if "pam_auth" in PLUGINS_ENABLED:
     INSTALLED_APPS += ["django_pam"]

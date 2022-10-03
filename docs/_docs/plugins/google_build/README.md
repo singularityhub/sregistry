@@ -24,14 +24,11 @@ an endpoint.
 ## Configure sregistry
 
 By default, google build is disabled. To configure sregistry to 
-use Google Cloud build and Storage, in settings/config.py you can enable the plugin by 
-uncommenting it from the list here:
+use Google Cloud build and Storage, in `shub/settings/local.py` enable the plugin by
+adding it to a `PLUGINS_ENABLED` list:
 
 ```bash
 PLUGINS_ENABLED = [
-#    'ldap_auth',
-#    'saml_auth',
-#    'globus',
      'google_build'
 ]
 ```

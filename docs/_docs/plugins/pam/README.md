@@ -11,7 +11,7 @@ The `pam_auth` plugin allows users to login to sregistry using the unix accounts
 the host system.
 
 To enable PAM authentication you must:
-  * Add `pam_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
+  * Add `pam_auth` to the `PLUGINS_ENABLED` list in `shub/settings/local.py`
   * Uncomment binds to /etc/shadow and /etc/passwd in `docker compose.yml`
   * Build the docker image with the build argument ENABLE_PAM set to true
 More detailed instructions are below.
@@ -27,15 +27,12 @@ and each user will still each need to export their token to push.  You can read 
 
 This is the detailed walkthough to set up the PAM AUthentication plugin. 
 
-First, uncomment "pam_auth" at the bottom of `shub/settings/config.py` to 
-enable the login option.
+First, add a `PLUGINS_ENABLED` setting in `shub/settings/local.py` that
+includes "pam_auth" to enable the login option.
 
 ```bash
 PLUGINS_ENABLED = [
-#    'ldap_auth',
     'pam_auth',
-#    'globus',
-#    'saml_auth'
 ]
 ```
 

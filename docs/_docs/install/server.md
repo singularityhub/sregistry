@@ -45,8 +45,8 @@ If you don't care about user experience during updates and server downtime, you 
 ## Custom Domain
 
 In the [config settings file](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py#L30)
-you'll find a section for domain names, and other metadata about your registry. You will need to update
-this to be a custom hostname that you use, and custom names and unique resource identifiers for your
+you'll find a section for domain names, and other metadata about your registry. You will need to set
+these values in `local.py` to be a custom hostname that you use, and custom names and unique resource identifiers for your
 registry. For example, if you have a Google Domain and are using Google Cloud, you should be able to set it up using [Cloud DNS](https://console.cloud.google.com/net-services/dns/api/enable?nextPath=%2Fzones&project=singularity-static-registry&authuser=1). Usually this means
 creating a zone for your instance, adding a Google Domain, and copying the DNS records for
 the domain into Google Domains. Sometimes it can take a few days for changes to propagate.
