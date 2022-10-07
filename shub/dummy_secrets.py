@@ -6,7 +6,7 @@
 # You must uncomment, and set SECRET_KEY to a secure random value
 # e.g. https://djskgen.herokuapp.com/
 
-# SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'
+SECRET_KEY = "xxxxxxxxxxxxxxxxxx"
 
 
 # =============================================================================
@@ -77,15 +77,15 @@
 # GOOGLE_APPLICATION_CREDENTIALS="/path/to/credentials.json"
 # SREGISTRY_GOOGLE_PROJECT="myproject-ftw"
 
-# SREGISTRY_GOOGLE_BUILD_CACHE="true"
+# GOOGLE_BUILD_CACHE="true"
 # After build, do not delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed).
 # Defaults to being unset, meaning that files are cleaned up. If you define this as anything, the build files will be cached.
 
-# SREGISTRY_GOOGLE_BUILD_LIMIT=100
+# GOOGLE_BUILD_LIMIT=100
 # To prevent denial of service attacks on Google Cloud Storage, you should set a reasonable limit for the number of active, concurrent builds.
 # This number should be based on your expected number of users, repositories, and recipes per repository.
 
-# SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
+# GOOGLE_BUILD_SINGULARITY_VERSION="v3.2.1-slim"
 # if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity. The version will default to 3.2.0-slim If you want to use a different version, update this variable.
 
 # SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
@@ -94,11 +94,11 @@
 # Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken,
 # and we recommend creating both <name> and <name>_cloudbuild in the console and then setting the name here.
 
-# SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS=None
+# GOOGLE_BUILD_TIMEOUT_SECONDS=None
 # The number of seconds for the build to timeout. If set to None, will be 10 minutes. If
-# unset, will default to 3 hours. This time should be less than the SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
+# unset, will default to 3 hours. This time should be less than the GOOGLE_BUILD_EXPIRE_SECONDS
 
-# SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS=28800
+# GOOGLE_BUILD_EXPIRE_SECONDS=28800
 # The number of seconds for the build to expire, meaning it's response is no longer accepted by the server. This must be defined.
 # The default 28800 indicates 8 hours (in seconds)
 

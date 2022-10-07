@@ -42,3 +42,4 @@ social-auth-core[saml]
 sregistry[all-basic]>=0.2.19
 uwsgi
 minio==5.0.8
+pyyaml

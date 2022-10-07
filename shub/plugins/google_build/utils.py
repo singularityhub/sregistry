@@ -228,7 +228,7 @@ def generate_jwt_token(secret, payload, algorithm="HS256"):
     algorithm: the algorithm to use.
     """
     # Add an expiration of 8 hours to the payload
-    expires_in = settings.SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
+    expires_in = settings.GOOGLE_BUILD_EXPIRE_SECONDS
     payload["exp"] = datetime.utcnow() + timedelta(seconds=expires_in)
     return jwt.encode(payload, secret, algorithm).decode("utf-8")
 
