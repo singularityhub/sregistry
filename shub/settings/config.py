@@ -28,6 +28,20 @@ ENABLE_GITHUB_ENTERPRISE_AUTH = False
 # See below for additional authentication module, e.g. LDAP that are
 # available, and configured, as plugins.
 
+# Environment helpers
+
+
+def get_sregistry_envar(key):
+    envar_key = "SREGISTRY_%s" % key
+    return os.environ.get(envar_key)
+
+
+def get_sregistry_envar_list(key):
+    envar_list = os.environ.get(key) or []
+    if envar_list:
+        envar_list = [x.strip() for x in envar_list.split(",") if x.strip()]
+    return envar_list
+
 
 # DOMAIN NAMES
 ## IMPORTANT: if/when you switch to https, you need to change "DOMAIN_NAME"
@@ -37,8 +51,13 @@ DOMAIN_NAME = "http://127.0.0.1"
 DOMAIN_NAME_HTTP = "http://127.0.0.1"
 DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace("http://", "")
 
+envar_admins = get_sregistry_envar_list("SREGISTRY_ADMINS")
 ADMINS = (("vsochat", "@vsoch"),)
+if envar_admins:
+    ADMINS = tuple(envar_admins)
 MANAGERS = ADMINS
+
+# Get additional admins from the environment
 
 HELP_CONTACT_EMAIL = "vsochat@stanford.edu"
 HELP_INSTITUTION_SITE = "https://srcc.stanford.edu"
@@ -96,11 +115,12 @@ DISABLE_BUILD_RECEIVE = False
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "HOST": "db",
-        "PORT": "5432",
+        "ENGINE": os.environ.get("SREGISTRY_DATABASE_ENGINE")
+        or "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("SREGISTRY_DATABASE_NAME") or "postgres",
+        "USER": os.environ.get("SREGISTRY_DATABASE_USER") or "postgres",
+        "HOST": os.environ.get("SREGISTRY_DATABASE_HOST") or "db",
+        "PORT": os.environ.get("SREGISTRY_DATABASE_PORT") or "5432",
     }
 }
 
@@ -159,3 +179,89 @@ PLUGINS_ENABLED = [
     #    'globus',
     #    'saml_auth'
 ]
+
+# Any plugins enabled from the environment?
+PLUGINS_ENABLED += get_sregistry_envar_list("SREGISTRY_PLUGINS_ENABLED")
+
+## Environment
+
+# Custom additions are handled before this
+# Limit defaults that user can set
+BOOLEAN_DEFAULTS = [
+    "ENABLE_GOOGLE_AUTH",
+    "ENABLE_TWITTER_AUTH",
+    "ENABLE_GITHUB_AUTH",
+    "ENABLE_GITLAB_AUTH",
+    "ENABLE_BITBUCKET_AUTH",
+    "ENABLE_GITHUB_ENTERPRISE_AUTH",
+    "USER_COLLECTIONS",
+    "PRIVATE_ONLY",
+    "DEFAULT_PRIVATE",
+    "DISABLE_BUILDING",
+    "SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION",
+    "DISABLE_GITHUB",
+    "DISABLE_BUILD_RECEIVE",
+    "MINIO_SSL",
+    "MINIO_MULTIPART_UPLOAD",
+    "DISABLE_MINIO_CLEANUP",
+    "LOGGING_SAVE_RESPONSES",
+    "VIEW_RATE_LIMIT_BLOCK",
+]
+
+STRING_DEFAULTS = [
+    "DOMAIN_NAME",
+    "DOMAIN_NAME_HTTP",
+    "HELP_CONTACT_EMAIL",
+    "HELP_INSTITUTION_SITE",
+    "REGISTRY_NAME",
+    "REGISTRY_URI",
+    "GOOGLE_ANALYTICS",
+    "MINIO_SERVER",
+    "MINIO_EXTERNAL_SERVER",
+    "MINIO_BUCKET",
+    "MINIO_REGION",
+    "VIEW_RATE_LIMIT",
+]
+
+INTEGER_DEFAULTS = [
+    "DATA_UPLOAD_MAX_MEMORY_SIZE",
+    "USER_COLLECTION_LIMIT",
+    "COLLECTIONS_VIEW_PAGE_COUNT",
+    "CONTAINER_WEEKLY_GET_LIMIT",
+    "COLLECTION_WEEKLY_GET_LIMIT",
+    "SREGISTRY_GOOGLE_BUILD_LIMIT",
+    "SREGISTRY_GOOGLE_BUILD_TIMEOUT_SECONDS",
+    "SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS",
+    "CONTAINER_SIGNED_URL_EXPIRE_SECONDS",
+    "MINIO_SIGNED_URL_EXPIRE_MINUTES",
+]
+
+# Set envars by type
+for key in BOOLEAN_DEFAULTS:
+    value = get_sregistry_envar(key)
+
+    # Setting a boolean
+    if value in ["true", "True"]:
+        locals()[key] = True
+        print("Setting %s from the environment to True" % key)
+
+    elif value in ["False", "false"]:
+        locals()[key] = False
+        print("Setting %s from the environment to False" % key)
+
+# Integer values
+for key in INTEGER_DEFAULTS:
+    value = get_sregistry_envar(key)
+    if value:
+        try:
+            locals()[key] = int(value)
+        except:
+            print("There was an issue setting %s as an integer." % key)
+
+# Set string environment variables
+for key in STRING_DEFAULTS:
+    value = get_sregistry_envar(key)
+
+    if value:
+        print("Setting %s from the environment." % key)
+        locals()[key] = value

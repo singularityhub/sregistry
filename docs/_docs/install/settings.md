@@ -8,6 +8,30 @@ toc: false
 
 See that folder called [settings](https://github.com/singularityhub/sregistry/blob/master/shub/settings)? inside are a bunch of different starting settings for the application. We will change them in these files before we start the application. There are actually only two files you need to poke into, generating a `settings/secrets.py` from our template [settings/dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/dummy_secrets.py) for application secrets, and [settings/config.py](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py) to configure your database and registry information.
 
+## Environment
+
+As of version `1.1.41`, you can set any configuration value from settings in the environment to override the settings value.
+To determine the value for the environment variable, if it isn't already defined in the environment (e.g., `MINIO_SECRET`) 
+you can add the `SREGISTRY_` prefix to derive it. This means:
+
+ - A setting like `ENABLE_GOOGLE_AUTH` would be set as `SREGISTRY_ENABLE_GOOGLE_AUTH`
+ - To set something to True, you could do `SREGISTRY_ENABLE_GOOGLE_AUTH=True` or `SREGISTRY_ENABLE_GOOGLE_AUTH=true`
+ - To set something to False, you could do `SREGISTRY_ENABLE_GOOGLE_AUTH=False` or `SREGISTRY_ENABLE_GOOGLE_AUTH=false`
+ - To set an integer value, you could do `SREGISTRY_USER_COLLECTION_LIMIT=100` (it will be converted)
+ - To set a string value, simply set it (e.g., `SREGISTRY_REGISTRY_NAME="Tacosaurus Centers"`
+ 
+Generally, any boolean, integer, or string can be set. For database credentials, the following custom variables
+are exposed (all strings):
+
+ - SREGISTRY_DATABASE_ENGINE
+ - SREGISTRY_DATABASE_NAME (postgres)
+ - SREGISTRY_DATABASE_USER (postgres)
+ - SREGISTRY_DATABASE_HOST (db)
+ - SREGISTRY_DATABASE_PORT (5432)
+
+And you can set a custom set of comma separated values for either of `SREGISTRY_ADMINS` or `SREGISTRY_PLUGINS_ENABLED`.
+Each of these settings is explained in more detail in the sections below.
+
 ## Secrets
 
 There should be a file called `secrets.py` in the shub settings folder (it won't exist in the repo, you have to make it), in which you will store the application secret and other social login credentials.
