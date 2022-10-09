@@ -368,8 +368,8 @@ def get_bucket_name(object_name):
     to get from the client settings, otherwise we get from the object.
     """
     # First default to what is defined with server
-    if hasattr(settings, "SREGISTRY_GOOGLE_STORAGE_BUCKET"):
-        return settings.SREGISTRY_GOOGLE_STORAGE_BUCKET
+    if hasattr(settings, "GOOGLE_STORAGE_BUCKET"):
+        return settings.GOOGLE_STORAGE_BUCKET
 
     # https://www.googleapis.com/download/storage/v1/b/<bucket>/o
     parts = re.split("/v[0-9]{1}/b/", object_name)

@@ -1,0 +1,231 @@
+# You can rename this file to settings.yaml (and customize) to define your settings
+# As a reminder, you can define settings here, in a secrets.py, or the environment.
+# Any of the below can be set in the environment by adding the SREGISTRY_ prefix
+
+# SERVER
+
+# YOU MUST DEFINE THIS
+# e.g. use a generator https://djskgen.herokuapp.com/
+# SECRET_KEY=xxxxxxxxxxxxxxxxxxxx
+# Debug mode, typically useful for development
+DEBUG: false
+# This is the default allowed hosts, uncomment and edit this list to change
+# ALLOWED_HOSTS:
+#  - "*"
+
+# Domains
+
+## IMPORTANT: if/when you switch to https, you need to change DOMAIN_NAME
+# to have https, otherwise some functionality will not work (e.g., GitHub webhooks)
+DOMAIN_NAME: http://127.0.0.1
+DOMAIN_NAME_HTTP: http://127.0.0.1
+
+# Get additional admins from the environment
+HELP_CONTACT_EMAIL: vsoch@users.noreply.github.com
+HELP_INSTITUTION_SITE: https://srcc.stanford.edu
+REGISTRY_NAME: Tacosaurus Computing Center
+REGISTRY_URI: taco
+# An image url or one of the following: 'mm', 'identicon', 'monsterid', 'wavatar', 'retro'. Defaults to 'mm', and 'retro' here
+GRAVATAR_DEFAULT_IMAGE: retro
+# GOOGLE_ANALYTICS: UA-XXXXXXXXX
+
+# DATABASE
+
+DATABASE_ENGINE: django.db.backends.postgresql_psycopg2
+DATABASE_NAME: postgres
+DATABASE_USER: postgres
+DATABASE_HOST: db
+DATABASE_PORT: "5432"
+
+# STORAGE
+
+# Minio Storage
+
+# use SSL for minio
+MINIO_SSL: false
+MINIO_MULTIPART_UPLOAD: true
+# Don't clean up images in Minio that are no longer referenced by sregistry
+DISABLE_MINIO_CLEANUP: false
+MINIO_ROOT_USER: null
+MINIO_ROOT_PASSWORD: null
+MINIO_SERVER: minio:9000  # Internal to sregistry
+MINIO_EXTERNAL_SERVER: 127.0.0.1:9000  # minio server for Singularity to interact with
+MINIO_BUCKET: sregistry
+MINIO_REGION: us-east-1
+MINIO_SIGNED_URL_EXPIRE_MINUTES: 5
+
+# Redis
+
+REDIS_HOST: redis
+REDIS_URL: redis://redis/0
+
+# SOCIAL AUTH
+
+# Which social auths do you want to use (you must choose one)?
+API_REQUIRE_AUTH: false
+ENABLE_GOOGLE_AUTH: false
+ENABLE_TWITTER_AUTH: false
+ENABLE_GITHUB_AUTH: true
+ENABLE_GITLAB_AUTH: false
+ENABLE_BITBUCKET_AUTH: false
+ENABLE_GITHUB_ENTERPRISE_AUTH: false
+
+# NOTE you will need to set authentication methods up for your choice above.
+# See https://singularityhub.github.io/sregistry/docs/install/settings
+# The commented out variables to set are provided below!
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL: http://127.0.0.1
+# On any admin or plugin login redirect to standard social-auth entry point for agreement to terms
+LOGIN_REDIRECT_URL: /login
+
+# Twitter Social Authentication
+# SOCIAL_AUTH_TWITTER_KEY: xxxxxxxx
+# SOCIAL_AUTH_TWITTER_SECRET: xxxxxxxxxxxx
+
+# Google social authentication
+# http://psa.matiasaguirre.net/docs/backends/google.html?highlight=google
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY: xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET: xxxxxxxxxxxxxxxxxxxxx
+
+# GitHub social authentication
+# http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
+# SOCIAL_AUTH_GITHUB_KEY: xxxxxxxxxxxx
+# SOCIAL_AUTH_GITHUB_SECRET: xxxxxxxxxxxx
+
+# GitHub Enterprise
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_URL: xxxxxxxxxxxx
+# Set the API URL for your GitHub Enterprise appliance:
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_API_URL: xxxxxxxxxxxx
+# Fill the Client ID and Client Secret values from GitHub in the settings
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY: xxxxxxxxxxxx
+# SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET: xxxxxxxxxxxx
+
+# GitLab OAuth2
+# SOCIAL_AUTH_GITLAB_KEY: xxxxxxxxxxxx
+# SOCIAL_AUTH_GITLAB_SECRET: xxxxxxxxxxxx
+
+# Bitbucket social auth
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_KEY: '<your-consumer-key>'
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET: '<your-consumer-secret>'
+# If using bitbucket, only allow verified emails
+# SOCIAL_AUTH_BITBUCKET_OAUTH2_VERIFIED_EMAILS_ONLY: True
+
+# COLLECTIONS AND USER PERMISSIONS/LIMITS
+
+# Allow users to create public collections
+USER_COLLECTIONS: true
+# Should registries by default be private, with no option for public?
+PRIVATE_ONLY: false
+# Should the default for a new registry be private or public?
+DEFAULT_PRIVATE: false
+# Disable all pushes of containers, recipes, etc. Also for Google Cloud Build
+DISABLE_BUILDING: false
+# A global setting to disable all webhooks / interaction with Github
+DISABLE_GITHUB: false
+# prevent responses from being received from Google Cloud Build
+DISABLE_BUILD_RECEIVE: false
+# Set this to be some size in MB to limit uploads.
+# Uploads > 2.5GB will not use memory, but the filesystem
+# DATA_UPLOAD_MAX_MEMORY_SIZE: 
+# Limit users to N collections (None is unlimited)
+# USER_COLLECTION_LIMIT: 2
+# The number of collections to show on the /<domain>/collections page
+COLLECTIONS_VIEW_PAGE_COUNT: 250
+# The maximum number of downloads allowed per container/collection, per week
+CONTAINER_WEEKLY_GET_LIMIT: 100
+COLLECTION_WEEKLY_GET_LIMIT: 100
+
+# LOGGING
+
+# Do you want to save complete response metadata per each pull?
+# If you disable, we still keep track of collection pull counts, but not specific versions
+LOGGING_SAVE_RESPONSES: true
+DJANGO_LOG_LEVEL: WARNING
+
+# RATE LIMITING
+
+# Given that someone goes over, are they blocked for the period?
+VIEW_RATE_LIMIT_BLOCK: true
+# The rate limit for each view, django-ratelimit, 50 per day per ipaddress)
+VIEW_RATE_LIMIT: 50/1d
+
+# API SETTINGS
+
+API_VERSION: v1
+API_ANON_THROTTLE_RATE: 100/day
+API_USER_THROTTLE_RATE: 1000/day
+API_DEFAULT_SCHEMA_CLASS: rest_framework.schemas.coreapi.AutoSchema
+API_DEFAULT_PAGINATION_CLASS: rest_framework.pagination.LimitOffsetPagination
+API_PAGE_SIZE: 10
+
+# PLUGINS
+
+# Google Cloud Build + Storage: configure a custom builder and storage endpoint
+
+# GOOGLE_BUILD_SINGULARITY_VERSION: v3.3.0-slim
+# GOOGLE_APPLICATION_CREDENTIALS: /path/to/credentials.json"
+# GOOGLE_PROJECT: "myproject",
+# After build, do not delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed).
+# Defaults to being unset, meaning that files are cleaned up. If you define this as anything, the build files will be cached.
+# GOOGLE_BUILD_CACHE: "true"
+# if you want to specify a version of Singularity. The version must coincide with a container tag hosted under singularityware/singularity.
+# The version will default to 3.2.0-slim If you want to use a different version, update this variable.
+# GOOGLE_BUILD_SINGULARITY_VERSION: v3.2.1-slim
+# GOOGLE_STORAGE_BUCKET: taco-singularity-registry
+# the name for the bucket you want to create. The example here is using the unique identifier appended with “sregistry-
+# If you don't define it, it will default to a string that includes the hostname.
+# Additionally, a temporary bucket is created with the same name ending in _cloudbuild. This bucket is for build time dependencies,
+# and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken,
+# and we recommend creating both <name> and <name>_cloudbuild in the console and then setting the name here.
+# GOOGLE_BUILD_LIMIT: 100
+# GOOGLE_BUILD_TIMEOUT_SECONDS: # unset defaults to 10 minutes
+# GOOGLE_BUILD_EXPIRE_SECONDS: 28800
+# Google Build
+# To prevent denial of service attacks on Google Cloud Storage, you should set a reasonable limit for the number of active, concurrent builds.
+# This number should be based on your expected number of users, repositories, and recipes per repository.
+# GOOGLE_BUILD_LIMIT: 100
+# The number of seconds for the build to timeout. If set to None, will be 10 minutes. If
+# unset, will default to 3 hours. This time should be less than the GOOGLE_BUILD_EXPIRE_SECONDS
+# GOOGLE_BUILD_TIMEOUT_SECONDS: 
+# The number of seconds for the build to expire, meaning it's response is no longer accepted by the server. This must be defined.
+# Using 28800 would indicate 8 hours (in seconds)
+# GOOGLE_BUILD_EXPIRE_SECONDS: 28800
+# The number of seconds to expire a signed URL given to download a container
+# from storage. This can be much smaller than 10, as we only need it to endure
+# for the POST.
+# CONTAINER_SIGNED_URL_EXPIRE_SECONDS: 10
+
+
+# LDAP Authentication (ldap-auth)
+
+# Only required if 'ldap-auth' is added to PLUGINS_ENABLED
+# This example assumes you are using an OpenLDAP directory
+# If using an alternative directory - e.g. Microsoft AD, 389 you
+# will need to modify attribute names/mappings accordingly
+# See https://django-auth-ldap.readthedocs.io/en/1.2.x/index.html
+
+# The URI to our LDAP server (may be ldap:// or ldaps://)
+# AUTH_LDAP_SERVER_URI: ldaps://ldap.example.com
+# DN and password needed to bind to LDAP to retrieve user information
+# Can leave blank if anonymous binding is sufficient
+# AUTH_LDAP_BIND_DN: ""
+# AUTH_LDAP_BIND_PASSWORD: ""
+# AUTH_LDAP_USER_SEARCH: "ou=users,dc=example,dc=com"
+# AUTH_LDAP_GROUP_SEARCH: "ou=groups,dc=example,dc=com"
+# Anyone in this group can get a token to manage images, not superuser
+# AUTH_LDAP_STAFF_GROUP_FLAGS: "cn=staff,ou=django,ou=groups,dc=example,dc=com"
+# Anyone in this group is a superuser for the app
+# AUTH_LDAP_SUPERUSER_GROUP_FLAGS: "cn=superuser,ou=django,ou=groups,dc=example,dc=com"
+# OR cn=sregistry_admin,ou=groups,dc=example,dc=com
+
+# Globus Assocation (globus)
+# Only required if 'globus' is added to PLUGINS_ENABLED in config.py
+# SOCIAL_AUTH_GLOBUS_KEY: xxxxxxxxxxxx
+# SOCIAL_AUTH_GLOBUS_USERNAME: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org
+# SOCIAL_AUTH_GLOBUS_SECRET: xxxxxxxxxxxxxxxx
+# GLOBUS_ENDPOINT_ID: myendpoint
+
+# SAML Authentication (saml)
+# Only required if 'saml_auth' is added to PLUGINS_ENABLED
+# AUTH_SAML_IDP: stanford
+# AUTH_SAML_INSTITUTION: Stanford University
