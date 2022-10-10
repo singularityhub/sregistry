@@ -82,7 +82,6 @@ STRING_DEFAULTS = {
     "REGISTRY_NAME": "Tacosaurus Computing Center",
     "REGISTRY_URI": "taco",
     "GOOGLE_ANALYTICS": "",  # "UA-XXXXXXXXX"  (leave this as empty string so it is set!)
-    "GOOGLE_BUILD_SINGULARITY_VERSION": "v3.3.0-slim",
     "DATABASE_ENGINE": "django.db.backends.postgresql_psycopg2",
     "DATABASE_NAME": "postgres",
     "DATABASE_USER": "postgres",
@@ -185,9 +184,7 @@ INTEGER_DEFAULTS = {
     # The maximum number of downloads allowed per container/collection, per week
     "CONTAINER_WEEKLY_GET_LIMIT": 100,
     "COLLECTION_WEEKLY_GET_LIMIT": 100,
-    "GOOGLE_BUILD_LIMIT": 100,
     "GOOGLE_BUILD_TIMEOUT_SECONDS": None,  # None defaults to 10 minutes
-    "GOOGLE_BUILD_EXPIRE_SECONDS": 28800,
     "MINIO_SIGNED_URL_EXPIRE_MINUTES": 5,
     # Google Build
     # To prevent denial of service attacks on Google Cloud Storage, you should set a reasonable limit for the number of active, concurrent builds.
@@ -277,8 +274,8 @@ DEFAULTS = STRING_DEFAULTS | BOOLEAN_DEFAULTS | INTEGER_DEFAULTS
 if os.path.exists(SETTINGS_FILE):
     with open(SETTINGS_FILE, "r") as fd:
         custom_settings = yaml.load(fd.read(), Loader=yaml.FullLoader)
-    # Only update if it's set
     for k, v in custom_settings.items():
+        # Only update if it's set in the settings file.
         if v is None:
             continue
         DEFAULTS[k] = v

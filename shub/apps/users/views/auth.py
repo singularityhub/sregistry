@@ -35,8 +35,7 @@ def validate_credentials(user, context=None):
     user: the user to check, should have social_auth
     context: an optional context object to append to
     """
-    if context is None:
-        context = dict()
+    context = context or {}
 
     # Right now we have github for repos and google for storage
     credentials = [

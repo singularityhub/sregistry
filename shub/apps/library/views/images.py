@@ -39,7 +39,6 @@ from .helpers import (
     generate_collection_tags,
     generate_collections_list,
     generate_container_metadata,
-    get_collection,
     get_container,
     get_token,
     validate_token,

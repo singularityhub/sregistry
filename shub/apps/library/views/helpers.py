@@ -72,7 +72,6 @@ def get_collection_downloads(collection):
     downloads = 0
     for container in collection.containers.all():
         downloads += get_container_downloads(container)
-    return
 
 
 def get_container_downloads(container):
@@ -190,9 +189,9 @@ def generate_collection_tags(collection):
     latest. Technically, collections should be namespaced
     consistently, and we assume this.
     """
-    unique_tags = set(
-        [c.tag for c in collection.containers.all() if not re.search(tag_regex, c.tag)]
-    )
+    unique_tags = {
+        c.tag for c in collection.containers.all() if not re.search(tag_regex, c.tag)
+    }
     tags = {}
 
     for tag in unique_tags:
@@ -267,9 +266,6 @@ def generate_container_metadata(container):
 
     data = {
         "deleted": False,  # 2019-03-15T19:02:24.015Z
-        "createdAt": container.add_date.strftime(
-            formatString
-        ),  # No idea what their format is...
         "createdBy": str(container.collection.owners.first().id),
         "createdAt": container.add_date.strftime(
             formatString

@@ -79,8 +79,7 @@ def paginate(url, headers, min_count=30, start_page=1, params=None, limit=None):
     min_count: the results count to go to
     start_page: the starting page
     """
-    if params is None:
-        params = dict()
+    params = params or {}
     result = []
     result_count = 1000
     page = start_page
@@ -282,9 +281,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
     client_email = credentials.service_account_email
     credential_scope = "{}/auto/storage/goog4_request".format(datestamp)
     credential = "{}/{}".format(client_email, credential_scope)
-
-    if headers is None:
-        headers = dict()
+    headers = headers or {}
     headers["host"] = "storage.googleapis.com"
 
     canonical_headers = ""
@@ -300,7 +297,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
         signed_headers += "{};".format(lower_k)
     signed_headers = signed_headers[:-1]  # remove trailing ';'
 
-    query_parameters = dict()
+    query_parameters = {}
     query_parameters["X-Goog-Algorithm"] = "GOOG4-RSA-SHA256"
     query_parameters["X-Goog-Credential"] = credential
     query_parameters["X-Goog-Date"] = request_timestamp

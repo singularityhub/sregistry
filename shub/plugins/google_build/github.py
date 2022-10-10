@@ -86,8 +86,7 @@ def get_auth_token(user, idx=0):
 
     if len(auth) > idx:
         return auth[idx].access_token
-    else:
-        return auth[0].access_token
+    return auth[0].access_token
 
 
 def get_repo(user, reponame, username, headers=None):

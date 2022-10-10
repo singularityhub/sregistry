@@ -132,8 +132,5 @@ def _download_container(container, request):
                 return redirect(signed_url)
             return HttpResponseForbidden()
 
-        # There is no container
-        raise Http404
-
-    else:
-        raise Http404
+    # There is no container
+    raise Http404
