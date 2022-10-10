@@ -25,6 +25,7 @@ your registries' local `shub/settings/secrets.py` file.
  - [SAML](saml): Authentication with SAML
  - [Google Build](google-build) provides build and storage on Google Cloud.
  - [Keystore](pgp) provides a standard keystore for signing containers
+ - [Remote Build](remote-build) provides a library endpoint to remotely build container
 
 The Dockerfile has some build arguments to build the Docker image according to the plugins software requirements. These variables are set to false by default:
 
@@ -34,6 +35,7 @@ ARG ENABLE_PAM=false
 ARG ENABLE_GOOGLEBUILD=false
 ARG ENABLE_GLOBUS=false
 ARG ENABLE_SAML=false
+ARG ENABLE_REMOTEBUILD=false
 ```
 
 Therefore, if you want to install the requirements of all current supported plugins, you can build the image as follows: 
@@ -67,6 +69,6 @@ RUN if $ENABLE_{PLUGIN_NAME}; then {INSTALLATION_COMMAND}; fi;
 ```
 ## Writing Documentation
 Documentation for your plugin is just as important as the plugin itself! You should create a subfolder under
-`docs/pages/plugins/<your-plugin>` with an appropriate README.md that is linked to in this file.
+`docs/_docs/plugins/<your-plugin>` with an appropriate README.md that is linked to in this file.
 Use the others as examples to guide you.
 
