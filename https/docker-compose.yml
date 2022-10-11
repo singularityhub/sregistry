@@ -1,16 +1,37 @@
+# Common environment settings for all shub containers
+x-common-env-args: &common-env-args
+  env_file:
+    - ./.minio-env
+
+
 services:
+  # Base service dependencies
   db:
     image: postgres
     environment:
      - POSTGRES_HOST_AUTH_METHOD=trust
 
+  redis:
+    restart: always
+    image: redis:latest
+
+  minio:
+    image: minio/minio
+    <<: *common-env-args
+    volumes:
+      - ./minio-images:/images
+      - /etc/ssl/certs/chained.pem:/root/.minio/certs/public.crt:ro
+      - /etc/ssl/private/private.key:/root/.minio/certs/private.key:ro
+    ports:
+     - "9000:9000"
+    command: ["server", "images"]
+
+  # Applications
   uwsgi:
     restart: always
-
+    <<: *common-env-args
     # IMPORTANT: update the tag to coincide with release version
     image: quay.io/vanessa/sregistry
-    env_file:
-      - ./.minio-env
     volumes:
       - .:/code
       - ./static:/var/www/static
@@ -40,50 +61,30 @@ services:
       - uwsgi
       - db
 
-  redis:
-    restart: always
-    image: redis:latest
-
   scheduler:
-
     # IMPORTANT: update the tag to coincide with release version
     image: quay.io/vanessa/sregistry
     command: python /code/manage.py rqscheduler
+    <<: *common-env-args
     volumes:
       - .:/code
     volumes_from:
       - uwsgi
-    env_file:
-      - ./.minio-env
     links:
       - minio
       - redis
       - db
 
   worker:
-
     # IMPORTANT: update the tag to coincide with release version
     image: quay.io/vanessa/sregistry
     command: python /code/manage.py rqworker default
+    <<: *common-env-args
     volumes:
       - .:/code
     volumes_from:
       - uwsgi
-    env_file:
-      - ./.minio-env
     links:
       - minio
       - redis
       - db
-
-  minio:
-    image: minio/minio
-    volumes:
-      - ./minio-images:/images
-      - /etc/ssl/certs/chained.pem:/root/.minio/certs/public.crt:ro
-      - /etc/ssl/private/private.key:/root/.minio/certs/private.key:ro
-    env_file:
-     - ./.minio-env
-    ports:
-     - "9000:9000"  
-    command: ["server", "images"]
