@@ -63,6 +63,7 @@ BOOLEAN_DEFAULTS = {
 STRING_DEFAULTS = {
     # Will be converted to list, and defaults to "*"
     "ALLOWED_HOSTS": None,
+    "SECRET_KEY": None,
     "API_VERSION": "v1",
     "API_ANON_THROTTLE_RATE": "100/day",
     "API_USER_THROTTLE_RATE": "1000/day",
@@ -159,7 +160,6 @@ STRING_DEFAULTS = {
     "AUTH_LDAP_STAFF_GROUP_FLAGS": None,  # "cn=staff,ou=django,ou=groups,dc=example,dc=com",
     # Anyone in this group is a superuser for the app
     "AUTH_LDAP_SUPERUSER_GROUP_FLAGS": None,  # "cn=superuser,ou=django,ou=groups,dc=example,dc=com"
-    # "cn=sregistry_admin,ou=groups,dc=example,dc=com"
     # Globus Assocation (globus)
     # Only required if 'globus' is added to PLUGINS_ENABLED in config.py
     "SOCIAL_AUTH_GLOBUS_KEY": None,
@@ -654,7 +654,7 @@ if not MINIO_ROOT_USER or not MINIO_ROOT_PASSWORD:
     )
 
 # If we don't have a secret key, no go
-if "SECRET_KEY" not in locals():
+if "SECRET_KEY" not in locals() or "SECRET_KEY" in locals() and not locals()["SECRET_KEY"]:
     sys.exit("SECRET_KEY is required but not set. Set SREGISTRY_SECRET_KEY.")
 
 
