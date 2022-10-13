@@ -654,7 +654,11 @@ if not MINIO_ROOT_USER or not MINIO_ROOT_PASSWORD:
     )
 
 # If we don't have a secret key, no go
-if "SECRET_KEY" not in locals() or "SECRET_KEY" in locals() and not locals()["SECRET_KEY"]:
+if (
+    "SECRET_KEY" not in locals()
+    or "SECRET_KEY" in locals()
+    and not locals()["SECRET_KEY"]
+):
     sys.exit("SECRET_KEY is required but not set. Set SREGISTRY_SECRET_KEY.")
 
 
