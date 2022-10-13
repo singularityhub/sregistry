@@ -24,7 +24,7 @@ from shub.settings import (
     DISABLE_BUILDING,
     DISABLE_GITHUB,
     DOMAIN_NAME,
-    SREGISTRY_GOOGLE_BUILD_LIMIT,
+    GOOGLE_BUILD_LIMIT,
 )
 
 from .utils import (
@@ -86,8 +86,7 @@ def get_auth_token(user, idx=0):
 
     if len(auth) > idx:
         return auth[idx].access_token
-    else:
-        return auth[0].access_token
+    return auth[0].access_token
 
 
 def get_repo(user, reponame, username, headers=None):
@@ -467,7 +466,7 @@ def verify_payload(request, collection):
     if is_over_limit():
         message = (
             "Registry concurrent build limit is "
-            + "%s" % SREGISTRY_GOOGLE_BUILD_LIMIT
+            + "%s" % GOOGLE_BUILD_LIMIT
             + ". Please try again later."
         )
 

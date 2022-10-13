@@ -137,9 +137,9 @@ class Collection(models.Model):
 
     def container_names(self):
         """return distinct container names"""
-        return list(
+        return [
             [x[0] for x in self.containers.values_list("name").distinct() if len(x) > 0]
-        )
+        ]
 
     # Permissions
 

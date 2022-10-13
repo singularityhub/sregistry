@@ -83,12 +83,9 @@ def globus_login(request):
         auth_uri = client.oauth2_get_authorize_url()
         return redirect(auth_uri)
 
-    else:
-
-        # Second step of authentication flow - we need to ask for token
-        code = request.GET.get("code")
-        associate_user(request.user, client=client, code=code)
-
+    # Second step of authentication flow - we need to ask for token
+    code = request.GET.get("code")
+    associate_user(request.user, client=client, code=code)
     return redirect("globus_transfer")
 
 

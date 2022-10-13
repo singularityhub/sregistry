@@ -25,7 +25,7 @@ from .containers import get_container
 
 def get_tag(name=None, tid=None):
 
-    keyargs = dict()
+    keyargs = {}
     if name is not None:
         keyargs["name"] = name
     if tid is not None:

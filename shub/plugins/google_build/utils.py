@@ -79,8 +79,7 @@ def paginate(url, headers, min_count=30, start_page=1, params=None, limit=None):
     min_count: the results count to go to
     start_page: the starting page
     """
-    if params is None:
-        params = dict()
+    params = params or {}
     result = []
     result_count = 1000
     page = start_page
@@ -228,7 +227,7 @@ def generate_jwt_token(secret, payload, algorithm="HS256"):
     algorithm: the algorithm to use.
     """
     # Add an expiration of 8 hours to the payload
-    expires_in = settings.SREGISTRY_GOOGLE_BUILD_EXPIRE_SECONDS
+    expires_in = settings.GOOGLE_BUILD_EXPIRE_SECONDS
     payload["exp"] = datetime.utcnow() + timedelta(seconds=expires_in)
     return jwt.encode(payload, secret, algorithm).decode("utf-8")
 
@@ -282,9 +281,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
     client_email = credentials.service_account_email
     credential_scope = "{}/auto/storage/goog4_request".format(datestamp)
     credential = "{}/{}".format(client_email, credential_scope)
-
-    if headers is None:
-        headers = dict()
+    headers = headers or {}
     headers["host"] = "storage.googleapis.com"
 
     canonical_headers = ""
@@ -300,7 +297,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
         signed_headers += "{};".format(lower_k)
     signed_headers = signed_headers[:-1]  # remove trailing ';'
 
-    query_parameters = dict()
+    query_parameters = {}
     query_parameters["X-Goog-Algorithm"] = "GOOG4-RSA-SHA256"
     query_parameters["X-Goog-Credential"] = credential
     query_parameters["X-Goog-Date"] = request_timestamp
@@ -368,8 +365,8 @@ def get_bucket_name(object_name):
     to get from the client settings, otherwise we get from the object.
     """
     # First default to what is defined with server
-    if hasattr(settings, "SREGISTRY_GOOGLE_STORAGE_BUCKET"):
-        return settings.SREGISTRY_GOOGLE_STORAGE_BUCKET
+    if hasattr(settings, "GOOGLE_STORAGE_BUCKET"):
+        return settings.GOOGLE_STORAGE_BUCKET
 
     # https://www.googleapis.com/download/storage/v1/b/<bucket>/o
     parts = re.split("/v[0-9]{1}/b/", object_name)

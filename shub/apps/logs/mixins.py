@@ -14,7 +14,7 @@ from shub.apps.logs.models import APIRequestLog
 from shub.apps.logs.utils import clean_data
 
 
-class BaseLoggingMixin(object):
+class BaseLoggingMixin:
     logging_methods = "__all__"
 
     """Mixin to log requests"""

@@ -12,7 +12,9 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
- - update python base to 3.9, minio server to use new credentials
+ - consolidate config into one file with environment (2.0.0)
+   - This is an API breaking change, as the settings are completely refactored
+ - update python base to 3.9, minio server to use new credentials (1.1.4)
    - docker-compose updated to use docker compose
  - add: auto set "verify" attribute of s3 and s3_external obj in minio.py for SSL use (1.1.39) 
  - fix issues with psycopg2-binary and saml auth (1.1.38)

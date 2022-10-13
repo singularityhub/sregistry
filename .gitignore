@@ -21,6 +21,7 @@ celerybeat-schedule.db
 *.mp4
 OLD
 secrets.py
+settings.yaml
 local_settings.py
 cronjob
 

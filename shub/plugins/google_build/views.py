@@ -31,7 +31,7 @@ from shub.settings import (
     DISABLE_BUILD_RECEIVE,
     DISABLE_BUILDING,
     DISABLE_GITHUB,
-    SREGISTRY_GOOGLE_BUILD_LIMIT,
+    GOOGLE_BUILD_LIMIT,
 )
 from shub.settings import VIEW_RATE_LIMIT as rl_rate
 from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
@@ -211,7 +211,7 @@ class RecipePushViewSet(ModelViewSet):
         if is_over_limit():
             message = (
                 "Registry concurrent build limit is "
-                + "%s" % SREGISTRY_GOOGLE_BUILD_LIMIT
+                + "%s" % GOOGLE_BUILD_LIMIT
                 + ". Please try again later."
             )
             print(message)
@@ -224,7 +224,7 @@ class RecipePushViewSet(ModelViewSet):
             collection = Collection.objects.get(name=collection_name)
 
             # Only owners can push to existing collections
-            if not owner in collection.owners.all():
+            if owner not in collection.owners.all():
                 print("user not in owners")
                 raise PermissionDenied(detail="Unauthorized")
 

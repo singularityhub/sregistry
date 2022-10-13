@@ -40,7 +40,7 @@ def generate_size_data(collections):
     flare.analytics.graph.ShortestPaths,5914,9
     flare.analytics.graph.SpanningTree,3416,10
     """
-    data = dict()
+    data = {}
     for collection in collections:
 
         collection_name = collection.name

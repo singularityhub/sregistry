@@ -160,9 +160,9 @@ class PGPKeyModel(models.Model):
 
     def packets(self):
         result = []
-        result += [x for x in self.public_keys.all()]
-        result += [x for x in self.userids.all()]
-        result += [x for x in self.signatures.all()]
+        result += list(self.public_keys.all())
+        result += list(self.userids.all())
+        result += list(self.signatures.all())
         return sorted(result, key=lambda x: x.index)
 
     def ascii_armor(self):

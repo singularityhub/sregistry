@@ -25,7 +25,7 @@ from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 def get_label(key=None, value=None):
 
-    keyargs = dict()
+    keyargs = {}
     if key is not None:
         keyargs["key"] = key
     if value is not None:

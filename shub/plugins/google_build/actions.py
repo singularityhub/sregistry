@@ -209,8 +209,8 @@ def get_build_context():
 
     # Provide all envars directly to client instead of environment
     context = {
-        "GOOGLE_APPLICATION_CREDENTIALS": settings.GOOGLE_APPLICATION_CREDENTIALS,
-        "SREGISTRY_GOOGLE_PROJECT": settings.SREGISTRY_GOOGLE_PROJECT,
+        "SREGISTRY_GOOGLE_APPLICATION_CREDENTIALS": settings.GOOGLE_APPLICATION_CREDENTIALS,
+        "SREGISTRY_GOOGLE_PROJECT": settings.GOOGLE_PROJECT,
     }
 
     # Put the credentials in the environment to find
@@ -220,12 +220,12 @@ def get_build_context():
 
     # The following are optional
     for attr in [
-        "SREGISTRY_GOOGLE_BUILD_CACHE",
-        "SREGISTRY_GOOGLE_BUILD_SINGULARITY_VERSION",
-        "SREGISTRY_GOOGLE_STORAGE_BUCKET",
+        "GOOGLE_BUILD_CACHE",
+        "GOOGLE_BUILD_SINGULARITY_VERSION",
+        "GOOGLE_STORAGE_BUCKET",
     ]:
         if hasattr(settings, attr):
-            context[attr] = getattr(settings, attr)
+            context["SREGISTRY_" + attr] = getattr(settings, attr)
     return context
 
 
@@ -319,13 +319,13 @@ def is_over_limit(limit=None):
            builds. If not set, we use the default in settings.
     """
     # Allow the function to set a custom limit
-    limit = limit or settings.SREGISTRY_GOOGLE_BUILD_LIMIT
+    limit = limit or settings.GOOGLE_BUILD_LIMIT
 
     # Instantiate client with context (connects to buckets)
     context = get_build_context()
     client = get_client(debug=True, **context)
 
-    project = settings.SREGISTRY_GOOGLE_PROJECT
+    project = settings.GOOGLE_PROJECT
     result = (
         client._build_service.projects()
         .builds()

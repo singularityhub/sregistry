@@ -59,7 +59,7 @@ def build_commits(collection, commits, branch):
     collection: The collection to get details for.
     commits: the commits to build.
     """
-    modified = dict()
+    modified = {}
     removed = []
 
     # Find changed files!

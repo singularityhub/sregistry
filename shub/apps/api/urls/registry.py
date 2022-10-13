@@ -18,7 +18,7 @@ from rest_framework.response import Response
 ################################################################################
 
 
-class Registry(object):
+class Registry:
     def __init__(self, **kwargs):
         self.name = settings.REGISTRY_NAME
         self.id = settings.REGISTRY_URI
