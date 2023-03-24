@@ -110,5 +110,10 @@
         "name": "Cedric",
         "bio": "Please be patient, I'm an intern ;'(",
         "blog": "cedriccasper.com"
+    },
+    "SethosII": {
+        "name": "Paul Jähne",
+        "orcid": "0000-0001-8178-4350",
+        "affiliation": "Humboldt-Universität zu Berlin"
     }
 }
