@@ -6,7 +6,7 @@
 
 # YOU MUST DEFINE THIS
 # e.g. use a generator https://djskgen.herokuapp.com/
-# SECRET_KEY=xxxxxxxxxxxxxxxxxxxx
+# SECRET_KEY: xxxxxxxxxxxxxxxxxxxx
 # Debug mode, typically useful for development
 DEBUG: false
 # This is the default allowed hosts, uncomment and edit this list to change
