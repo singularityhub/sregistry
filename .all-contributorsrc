@@ -214,6 +214,17 @@
             "avatar_url": [
                 "https://avatars.githubusercontent.com/u/34633191?v=4"
             ]
+        },
+        {
+            "login": "SethosII",
+            "name": "Paul Jähne",
+            "contributions": [
+                "code"
+            ],
+            "profile": "https://github.com/SethosII",
+            "avatar_url": [
+                "https://avatars.githubusercontent.com/u/4445745?v=4"
+            ]
         }
     ],
     "contributorsPerLine": 7
