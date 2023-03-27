@@ -31,6 +31,7 @@ Pillow
 psycopg2-binary~=2.8.6
 pygments
 python3-saml
+python-jose
 python-social-auth
 pyyaml
 requests
