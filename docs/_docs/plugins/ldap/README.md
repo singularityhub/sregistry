@@ -84,7 +84,7 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 Here is a way to get familiar with the executables inside the image for ldap:
 
 ```bash
-docker exec -it openldap bash
+docker exec -it openldap sh
 
 root@docker[72b21bd3c290]:/# which ldapadd
 /usr/bin/ldapadd
