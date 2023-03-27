@@ -323,6 +323,6 @@ uwsgi_1   | Authentication failed for adminuser: failed to map the username to a
 
 Once you have set these options, startup sregistry and you should be able to see the ldap option on the login page:
 
-![ldap.png](ldap.png)
+![ldap.png](ldap/ldap.png)
 
 and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*. As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.
