@@ -113,8 +113,8 @@
     },
     "SethosII": {
         "name": "Paul Jähne",
-        "orcid": "0000-0001-8178-4350",
-        "affiliation": "Humboldt-Universität zu Berlin",
+        "orcid": null,
+        "affiliation": "Fraunhofer-Institut für Zelltherapie und Immunologie",
         "blog": "https://github.com/SethosII"
     }
 }
