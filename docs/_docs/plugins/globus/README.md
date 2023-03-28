@@ -75,19 +75,19 @@ Once your server is setup with an endpoint, any logged in user must authenticate
 
  1. When you are logged in, you can access your Integrations under Settings in your user menu:
 
-![pages/plugins/globus/img/settings.png](pages/plugins/globus/img/settings.png)
+![settings.png](../../assets/img/globus/settings.png)
 
  2. Go to the "Integrations" tab of the user profile and click "Connect Globus"
 
-![pages/plugins/globus/img/connect-globus.png](pages/plugins/globus/img/connect-globus.png)
+![connect-globus.png](../../assets/img/globus/connect-globus.png)
 
  3. You will be redirected to the Globus Login page. Do that.
 
-![pages/plugins/globus/img/globus-login.png](pages/plugins/globus/img/globus-login.png)
+![globus-login.png](../../assets/img/globus/globus-login.png)
 
  4. And when you login, you will be redirected to the Globus Transfer page:
 
-![pages/plugins/globus/img/transfer.png](pages/plugins/globus/img/transfer.png)
+![transfer.png](../../assets/img/globus/transfer.png)
 
 
 ### Search
@@ -95,11 +95,11 @@ The Globus Transfer portal shows endpoints with scope `shared-with-me` and
 `my-endpoints`. To see endpoints that you might actually want to transfer to,
 you should do a search using the box at the top:
 
-![pages/plugins/globus/img/search.png](pages/plugins/globus/img/search.png)
+![search.png](../../assets/img/globus/search.png)
 
 Here is the search result for the query "Stanford" that shows Stanford's various endpoints.
 
-![pages/plugins/globus/img/search-result.png](pages/plugins/globus/img/search-result.png). 
+![search-result.png](../../assets/img/globus/search-result.png). 
 
 Any endpoint that says "ACTIVATE" you need to follow the link to activate it from Globus. Any endpoint that has
 a green label "activated" should be ready for use.
@@ -119,27 +119,27 @@ SREGISTRY_CLIENT=registry sregistry push --name tacos/avocados.simg avocados.sim
 We can now navigate to our "tacos" collection and see the container! We also see that there is a little transfer
 button (the font awesome exchange icon) next to it:
 
-![pages/plugins/globus/img/exchange.png](pages/plugins/globus/img/exchange.png).
+![exchange.png](../../assets/img/globus/exchange.png).
 
 This will take you back to the endpoints page, and you are again free to search for an endpoint that you want to
 transfer to. This time when you see a green label that indicates an endpoint is activated, you will also see the option
 to transfer:
 
-![pages/plugins/globus/img/transfer-option.png](pages/plugins/globus/img/transfer-option.png).
+![transfer-option.png](../../assets/img/globus/transfer-option.png).
 
 A notification will pop up that the task is underway!
 
-![pages/plugins/globus/img/verify.png](pages/plugins/globus/img/verify.png).
+![verify.png](../../assets/img/globus/verify.png).
 
 If you click "view task" in the notification you will be taken again to Globus to view the task status. It will hopefully
 succeed.
 
-![pages/plugins/globus/img/complete-transfer.png](pages/plugins/globus/img/complete-transfer.png).
+![complete-transfer.png](../../assets/img/globus/complete-transfer.png).
 
 Finally, when the time is needed (and if you want to, you don't have to) you can return to
 the user profile "Integrations" tab and click "Disconnect Globus" to log out.
 
-![pages/plugins/globus/img/logout.png](pages/plugins/globus/img/logout.png)
+![logout.png](../../assets/img/globus/logout.png)
 
 
 ## Background
