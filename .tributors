@@ -113,6 +113,8 @@
     },
     "SethosII": {
         "name": "Paul Jähne",
+        "orcid": null,
+        "affiliation": "Fraunhofer-Institut für Zelltherapie und Immunologie",
         "blog": "https://github.com/SethosII"
     }
 }
