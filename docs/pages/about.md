@@ -30,4 +30,3 @@ This means that, given a pretty basic server to run the application, and enough 
 ## Support
 
 If you need help, please don't hesitate to [open an issue](https://www.github.com/{{ site.github_repo }}/{{ site.github_user }}).
-

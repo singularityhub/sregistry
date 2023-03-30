@@ -21,11 +21,11 @@ To enable the pgp plugin you must:
 
 The keystore, unlike other plugins, requires no further setup. Brief interactions
 for usage are shown below.
-  
+
 ## Quick Start
 
 Singularity has it's own little key storage in your home, at `$HOME/.singularity/sypgp`. It also
-has a set of client functions, `singularity key` to interact with local and remote keys. 
+has a set of client functions, `singularity key` to interact with local and remote keys.
 For the client commands we will be using this client.
 
 **Important**: If you are deploying a server, you are required to have https for the
@@ -89,14 +89,14 @@ $ singularity key search --url http://localhost  dinosaur
 Showing 1 results
 
 KEY ID    BITS  NAME/EMAIL
-f5198c71  4096  Vanessasaurus (dinosaurs) <vsochat@stanford.edu>  
+f5198c71  4096  Vanessasaurus (dinosaurs) <vsochat@stanford.edu>
 
 ```
 
 Let's delete all of our local keys to verify that we are really searching the Singularity Registry Server:
 
 ```bash
-$ rm /home/vanessa/.singularity/sypgp/pgp-public 
+$ rm /home/vanessa/.singularity/sypgp/pgp-public
 ```
 
 Now let's do the search again. Since it still shows up, it must be from the registry!
@@ -106,7 +106,7 @@ $ singularity key search --url http://localhost  dinosaur
 Showing 1 results
 
 KEY ID    BITS  NAME/EMAIL
-f5198c71  4096  Vanessasaurus (dinosaurs) <vsochat@stanford.edu>  
+f5198c71  4096  Vanessasaurus (dinosaurs) <vsochat@stanford.edu>
 ```
 
 Now pull it! We can see that 1 key is added.
@@ -116,7 +116,7 @@ $ singularity key pull --url http://localhost CFA6763B11637E52404A25F5DE565315F5
 1 key(s) added to keyring of trust /home/vanessa/.singularity/sypgp/pgp-public
 ```
 
-If you had tried to add the key without deleting the local one first, you already would have had it 
+If you had tried to add the key without deleting the local one first, you already would have had it
 (note below that zero keys are added):
 
 ```bash

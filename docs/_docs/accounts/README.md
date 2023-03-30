@@ -9,7 +9,7 @@ permalink: docs/accounts/
 
 Singularity Registry server creates user accounts by way of login with OAuth2, and
 then interaction with the API via user specific tokens. These sections describe
-how to generate accounts, teams, as well as robot users for interacting with 
+how to generate accounts, teams, as well as robot users for interacting with
 continuous integration.
 
  - [credentials](credentials): overview of basic accounts and credentials

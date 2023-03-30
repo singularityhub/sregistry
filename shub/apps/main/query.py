@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -33,7 +33,6 @@ def container_query(q, across_collections=1):
 
     if across_collections:
         if q["tag"] is not None:
-
             # Query across collections for image name and tag
             return Container.objects.filter(
                 Q(name__icontains=q["image"]) | Q(tag__icontains=q["tag"])

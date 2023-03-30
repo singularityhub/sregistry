@@ -20,7 +20,6 @@ class BaseLoggingMixin:
     """Mixin to log requests"""
 
     def initial(self, request, *args, **kwargs):
-
         ipaddr = request.META.get("HTTP_X_FORWARDED_FOR", None)
 
         if ipaddr:
@@ -39,7 +38,7 @@ class BaseLoggingMixin:
                 + "."
                 + type(attributes.__self__).__name__
             )
-        except:
+        except Exception:
             pass
 
         # get the method of the view
@@ -50,7 +49,7 @@ class BaseLoggingMixin:
 
         try:
             params = clean_data(request.query_params.dict())
-        except:
+        except Exception:
             params = {}
 
         # create log

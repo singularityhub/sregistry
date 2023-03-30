@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -129,14 +129,13 @@ def receive_build(collection, recipes, branch):
 
     # Derive tag from the recipe, or default to latest
     for recipe, metadata in recipes.items():
-
         # First preference to command line, then recipe tag
         tag = get_recipe_tag(recipe) or "latest"
 
         # Get a container, if it exists, we've already written file here
         try:
             container = collection.containers.get(tag=tag)
-        except:  # DoesNotExist
+        except Exception:  # DoesNotExist
             container = Container.objects.create(
                 collection=collection, tag=tag, name=collection.name
             )
@@ -395,7 +394,6 @@ def complete_build(cid, params, check_again_seconds=10):
         container.metadata["image"] = response["media_link"]
 
     elif "status" in response:
-
         # If it's still working, schedule to check with exponential backoff
         if response["status"] in ["QUEUED", "WORKING"]:
             check_again_seconds = check_again_seconds * 2

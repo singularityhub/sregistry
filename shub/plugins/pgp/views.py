@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2022 Vanessa Sochat.
+Copyright 2019-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -35,7 +35,7 @@ def add(request):
         # check keytext
         try:
             pgp = pgpdump.AsciiData(keytext.encode("utf-8", "ignore"))
-        except:
+        except Exception:
             raise __AddException
         keys = utils.parse_public_key_packets(pgp)
         keytexts = []
@@ -86,7 +86,6 @@ def lookup(request):
         options_str = form.cleaned_data["options"].lower()
         options = [x.strip() for x in options_str.split(",")]
         if "mr" in options:
-
             # machine readable response
             if op == "get":
                 resp = HttpResponse(
@@ -102,7 +101,6 @@ def lookup(request):
                 )
                 return resp
         else:
-
             # html response
             op = op if op else "index"
             if op == "get":

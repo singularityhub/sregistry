@@ -8,10 +8,10 @@ toc: false
 
 ## Singularity Pull
 
-Singularity Registry Server implements a basic version of the Sylabs Library API, 
-meaning that you can pull a container with Singularity directly. 
+Singularity Registry Server implements a basic version of the Sylabs Library API,
+meaning that you can pull a container with Singularity directly.
 
-**Important** you must be using Singularity 3.3.0 or greater for this to work! 
+**Important** you must be using Singularity 3.3.0 or greater for this to work!
 If not, you should use [Singularity Registry Client](#singularity-registry-client)
  (which also has examples below of using the `shub://` endpoint with singularity).
 
@@ -90,7 +90,7 @@ And then provide it (via copy paste) to the Singularity client to create a remot
 $ singularity remote login DinosaurCloud
 Generate an access token at http://127.0.0.1/auth/tokens, and paste it here.
 Token entered will be hidden for security.
-Access Token: 
+Access Token:
 INFO:    Access Token Verified!
 INFO:    Token stored in /home/vanessa/.singularity/remote.yaml
 ```
@@ -101,7 +101,7 @@ If you paste a token that isn't valid, you'll get a different message
 $ singularity remote login DinosaurCloud
 INFO:    Authenticating with remote: DinosaurCloud
 Generate an API Key at https://127.0.0.1/auth/tokens, and paste here:
-API Key: 
+API Key:
 FATAL:   while verifying token: error response from server: Invalid Token
 ```
 
@@ -138,7 +138,7 @@ $ singularity remote use DinosaurCloud
 Now that we have a token, let's try a push! For security purposes, the collection
 should already exist, and be owned by you. Collaborators are not allowed to push.
 
-```bash 
+```bash
                                          # library://user/collection/container[:tag]
 $ singularity push -U busybox_latest.sif library://vsoch/dinosaur-collection/another:latest
 ```
@@ -245,7 +245,7 @@ Not shown in the demo above is the pull command, but it does the same thing as t
 
 ```bash
 sregistry pull banana/pudding:milkshake
-Progress |===================================| 100.0% 
+Progress |===================================| 100.0%
 Success! banana-pudding-milkshake.img
 ```
 
@@ -342,7 +342,7 @@ sregistry labels --key maintainer --value vanessasaur
 
 # Curl
 
-Like with the Sylabs Library API, it is possible to interact with Singularity Registry Server 
+Like with the Sylabs Library API, it is possible to interact with Singularity Registry Server
 using Curl. You can browse the API schema via the `/api` path of your server.
 
 ## Authentication
@@ -400,7 +400,7 @@ a POST request to the endpoint `/v1/collections` and this json payload:
 Here is an example with our user id of 1:
 
 ```bash
-$ curl -X POST -H 'Authorization: Bearer <token>' -H "Content-Type: application/json" --data '{"entity": 1, "name": "dinosaurs"}' http://127.0.0.1/v1/collections 
+$ curl -X POST -H 'Authorization: Bearer <token>' -H "Content-Type: application/json" --data '{"entity": 1, "name": "dinosaurs"}' http://127.0.0.1/v1/collections
 ```
 
 You can then see the response that the collection was created, and it will appear in the interface:

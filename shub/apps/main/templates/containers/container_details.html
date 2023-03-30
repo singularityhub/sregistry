@@ -17,14 +17,14 @@
 
 #container_tags {
     float:right;
-    background:white; 
+    background:white;
     border-radius:10px;
     border:none;
     margin-bottom:50px
 }
 
 
-#id_spec { 
+#id_spec {
      position: absolute;
      height:800px;
      top: 0;
@@ -44,15 +44,15 @@
 <div class="row" style="margin-top:20px; display:none" id="share_box">
 
     <div class="col-md-7" style="margin-bottom:30px; margin-left:20px;">
-       <span id="share_prompt">For how many days should this temporary download link be active?</span> 
-       <span id="expire_days" 
-             contenteditable="true" 
+       <span id="share_prompt">For how many days should this temporary download link be active?</span>
+       <span id="expire_days"
+             contenteditable="true"
              style="padding:10px; margin-right:10px;"
              class="alert alert-info">7</span> days.
        <button id="generate_share"
-               style="margin-left:30px" 
+               style="margin-left:30px"
                class="btn btn-sm btn-primary">Generate Link</button>
-    <p id="share_result" 
+    <p id="share_result"
        style="display:none;"
        class="well"></p>
     </div>
@@ -81,37 +81,37 @@
                 </ul>
                 {% endif %}
             </div>
- 
+
             <div class="content"  style="padding-bottom:20px">
 
                 {% if edit_permission %}
                      {% if container.frozen %}
-                     <a data-toggle="tooltip" 
-                        data-placement="right" 
-                        title="freezing a container will ensure that building the tag does not override the current version" 
+                     <a data-toggle="tooltip"
+                        data-placement="right"
+                        title="freezing a container will ensure that building the tag does not override the current version"
                         href="{% url 'change_freeze_status' container.id %}">
                         <button class="btn btn-sm btn-default">Unfreeze</button>
                      </a>
                      {% else %}
-                         <a data-toggle="tooltip" 
-                            data-placement="right" 
-                            title="freezing a container will ensure that building the tag does not override the current version" 
+                         <a data-toggle="tooltip"
+                            data-placement="right"
+                            title="freezing a container will ensure that building the tag does not override the current version"
                             href="{% url 'change_freeze_status' container.id %}">
                             <button class="btn btn-sm btn-default">Freeze</button>
                          </a>
                      {% endif %}
                 {% else %}
                     {% if container.frozen %}
-                    <a data-toggle="tooltip" 
-                       data-placement="right" 
-                       title="freezing a container will ensure that building the tag does not override the current version" 
+                    <a data-toggle="tooltip"
+                       data-placement="right"
+                       title="freezing a container will ensure that building the tag does not override the current version"
                        href="#"><button class="btn btn-sm btn-default" disabled>Unfreeze</button>
                     </a>
                     {% else %}
                     <a data-toggle="tooltip"
-                       data-placement="right" 
-                       title="freezing a container will ensure that building the tag does not override the current version" 
-                       href="#"><button 
+                       data-placement="right"
+                       title="freezing a container will ensure that building the tag does not override the current version"
+                       href="#"><button
                        class="btn btn-sm btn-default" disabled>Freeze</button>
                     </a>
                     {% endif %}
@@ -119,26 +119,26 @@
 
                 {% if container.tags.all %}
                 <a href="{% url 'container_tags' container.id %}"><button class="btn btn-sm btn-default">Tags</button></a>
-                {% endif %} 
+                {% endif %}
 
                 {% if container.image %}
-                <a href="{% url 'download_container' container.id container.collection.secret %}" 
+                <a href="{% url 'download_container' container.id container.collection.secret %}"
                    target="_blank">
                    <button class="btn btn-sm btn-default">Download</button>
                 </a>
                 {% if edit_permission %}
-                <a id="share_container" 
+                <a id="share_container"
                    class="btn btn-default btn-sm"
-                   title="generate a temporary link to download your container" 
+                   title="generate a temporary link to download your container"
                    class="btn btn-sm btn-default">
                    <i class="fa fa-share"></i>
                 </a>
                 {% endif %}
                 {% if 'globus' in PLUGINS_ENABLED %}{% if container.image %}
-                <a id="transfer_container" 
+                <a id="transfer_container"
                    href="{{ DOMAIN }}transfer/{{ container.id }}/"
                    class="btn btn-default btn-sm"
-                   title="transfer your container to a globus endpoint" 
+                   title="transfer your container to a globus endpoint"
                    class="btn btn-sm btn-default">
                    <i class="fa fa-exchange"></i>
                 </a>
@@ -186,7 +186,7 @@
             <div class="col-md-6" style="padding:10px;background-color:white;border-radius:5px">
 
                 <h4>Metrics</h4>
-                {% for key, value in container.metrics.items %} 
+                {% for key, value in container.metrics.items %}
                     <p class="metric">{{ key|to_space }}: {{ value }}</p>
                 {% endfor %}
 
@@ -209,7 +209,7 @@
             <div class="col-md-6" style="padding:10px;background-color:white;border-radius:5px">
 
                 <h4>Metrics</h4>
-                {% for key, value in container.metrics.items %} 
+                {% for key, value in container.metrics.items %}
                     <p class="metric">{{ key|to_space }}: {{ value }}</p>
                 {% endfor %}
 
@@ -251,19 +251,19 @@
         <div id="labels" class="tab-pane fade">
             <div class="col-md-12">
 
-                {% for label in labels %} 
+                {% for label in labels %}
                     <div class="row">
                         <div class="col-md-6">
                             <h4><a href="{% url 'view_label_id' label.id %}">{{ label.key }}</a></h4>
                         </div>
-                        <div class="col-md-6" style='margin-top:20px'> 
+                        <div class="col-md-6" style='margin-top:20px'>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <p class="well">{{ label.value }}</p>
                         </div>
-                        <div class="col-md-6" style='margin-top:20px'> 
+                        <div class="col-md-6" style='margin-top:20px'>
                             <h3>n={{ label.containers.count }}</h3>
                         </div>
                     </div>
@@ -311,7 +311,7 @@ $(document).ready(function(){
        }, 2000);
        $(message).removeClass('hidden');
     });
-    
+
     cb.on('error',function(e){
        var message = "#" + $(e.trigger).attr("id") + "-alert";
        $(message).text("Error!");
@@ -321,18 +321,18 @@ $(document).ready(function(){
        $(message).removeClass('hidden');
     });
 
-    {% if container.metadata.deffile %}    
+    {% if container.metadata.deffile %}
     make_editor("recipe")
     {% endif %}
-    {% if container.metadata.runscript %}    
+    {% if container.metadata.runscript %}
     make_editor("runscript")
     {% endif %}
     {% if container.metadata.test %}
     make_editor("test")
     {% endif %}
-    {% if container.metadata.environment %}    
+    {% if container.metadata.environment %}
     make_editor("environment")
-    {% endif %}    
+    {% endif %}
 
 
     // Add topic tags to container
@@ -426,7 +426,7 @@ $(document).ready(function(){
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
              });
-        
+
 
     })
 
@@ -441,7 +441,7 @@ window.onload = function() {
   iframe.width = "100%";
   iframe.height = "800px";
   iframe.frameBorder = "0";
-  $(iframe).appendTo('#osembed'); 
+  $(iframe).appendTo('#osembed');
 }
 
 </script>

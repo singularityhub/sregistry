@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -42,7 +42,6 @@ def generate_size_data(collections):
     """
     data = {}
     for collection in collections:
-
         collection_name = collection.name
         if "/" in collection_name:
             collection_name = collection_name.split("/")[0]

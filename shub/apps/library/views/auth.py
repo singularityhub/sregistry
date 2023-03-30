@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright 2019-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -34,18 +34,16 @@ class GetNamedEntityView(APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, username):
-
         print("GET NamedEntityView")
         print(request.query_params)
         print(username)
 
         token = validate_token(request)
         if token:
-
             # Look up the user, must exist with the token
             try:
                 user = User.objects.get(username=username)
-            except:
+            except Exception:
                 return Response(status=404)
 
             # Verify that the token belongs to the user
@@ -67,11 +65,9 @@ class GetEntitiesView(APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, format=None):
-
         print("GET GetEntitiesView")
 
         if validate_token(request):
-
             print("TOKEN IS VALID")
             token = get_token(request)
 

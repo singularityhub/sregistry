@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -24,7 +24,6 @@ from shub.settings import VIEW_RATE_LIMIT_BLOCK as rl_block
 
 
 def get_label(key=None, value=None):
-
     keyargs = {}
     if key is not None:
         keyargs["key"] = key
@@ -52,7 +51,7 @@ def view_label(request, lid):
     """view containers with a specific, exact key/pair"""
     try:
         label = Label.objects.get(id=lid)
-    except:
+    except Exception:
         messages.info(request, "This label does not exist.")
         return redirect("all_labels")
 
@@ -66,7 +65,7 @@ def view_label_keyval(request, key, value):
     """view containers with a specific, exact key/pair"""
     try:
         label = Label.objects.get(key=key, value=value)
-    except:
+    except Exception:
         messages.info(request, "This label does not exist.")
         return redirect("all_labels")
 

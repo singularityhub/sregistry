@@ -22,7 +22,7 @@
                 {% endif %}
                 {% if team.permission == "open" %}
                 <a href="{% url 'join_team' team.id %}">
-                    <button type="button" 
+                    <button type="button"
                             class="btn btn-default btn-sm waves-effect waves-light">Join Team</button></a>
                 {% endif %}
             {% else %}
@@ -86,13 +86,13 @@
     <div class="col-md-12">
 
     {% if count > 0 %}
-      
-        <div class="col-md-12" 
+
+        <div class="col-md-12"
              class="table card material-table mdl-data-table--selectable">
 
-        <table id="members" 
-               class="table" 
-               cellspacing="0" width="100%" style="padding-top:20px"> 
+        <table id="members"
+               class="table"
+               cellspacing="0" width="100%" style="padding-top:20px">
            <thead>
                <tr>
                    <th>Name</th>
@@ -116,27 +116,27 @@
                    {% if edit_permission %}
 
                    <td>
-                       <!-- Membership -->                  
+                       <!-- Membership -->
                        {% if member in team.members.all %}
                        {% if request.user == member %}{% else %}
-                       <button class="btn btn-danger btn-xs remove_member" 
+                       <button class="btn btn-danger btn-xs remove_member"
                                id="userid_{{ member.id }}">Remove Member</button>
                        {% endif %}
                        {% endif %}
 
-                       <!-- Ownership -->                  
-                       {% if member in team.owners.all %} 
+                       <!-- Ownership -->
+                       {% if member in team.owners.all %}
                        {% if team.owners.count > 1 %}
-                       <button class="btn btn-danger btn-xs remove_owner" 
+                       <button class="btn btn-danger btn-xs remove_owner"
                                id="userid_{{ member.id }}">Remove Owner</button>
                        {% else %}
                        <button class="btn btn-danger btn-xs remove_owner"
-                               title="A team must have at least one owner." 
+                               title="A team must have at least one owner."
                                id="userid_{{ member.id }}" disabled>Remove Owner</button>
-                       {% endif %} 
+                       {% endif %}
 
                        {% else %}
-                       <button class="btn btn-danger btn-xs add_owner" 
+                       <button class="btn btn-danger btn-xs add_owner"
                                id="userid_{{ member.id }}">Make Owner</button>
                        {% endif %}
                    </td>
@@ -188,7 +188,7 @@ $(document).ready(function(){
 
         $.ajax({
             url : "/teams/{{ team.id }}/" + action+ "/" + membership + "/" + user_id,
-            type : "POST", 
+            type : "POST",
 
             success : function(json) {
                 console.log(json);

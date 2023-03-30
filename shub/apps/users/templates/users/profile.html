@@ -94,7 +94,7 @@ $(document).ready(function(){
     $('.gravatar').addClass('thumbnail');
 
     {% if active_tab %}
-        $('#pill-{{ active_tab }}').click()    
+        $('#pill-{{ active_tab }}').click()
     {% endif %}
 
     // Hack until figure out why pagination ugly
@@ -110,7 +110,7 @@ $(document).ready(function(){
            document.location = "{% url 'delete_account' %}";
         }
     })
- 
+
     $(".browser-default").change(function(){
         $('.material-pagination').hide();
     })

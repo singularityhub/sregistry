@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -32,8 +32,7 @@ def get_request_collection(instance):
     try:
         response = json.loads(instance.response)
         name = response["collection"]
-    except:
-
+    except Exception:
         # Case 1: library endpoint
         if "/v1/images" in instance.path:
             collection_name = instance.path.replace("/v1/images/", "")

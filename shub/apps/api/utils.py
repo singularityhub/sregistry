@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -59,7 +59,7 @@ def get_request_user(auth, user=None):
 
     try:
         user = User.objects.get(username=username)
-    except:
+    except Exception:
         bot.debug("%s is not a valid user, request invalid." % username)
     return user
 
@@ -108,7 +108,6 @@ def has_pull_permission(user, collection=None):
     # The collection must exist!
 
     if collection is not None:
-
         return collection.has_view_permission(user)
 
     return False
@@ -136,7 +135,6 @@ def has_permission(auth, collection=None, pull_permission=True):
 
 
 def validate_request(auth, payload, sender="push", timestamp=None, superuser=True):
-
     """validate header and payload for a request
 
     Parameters
@@ -174,7 +172,7 @@ def validate_request(auth, payload, sender="push", timestamp=None, superuser=Tru
 
     try:
         user = User.objects.get(username=username)
-    except:
+    except Exception:
         print("%s is not a valid user, request invalid." % username)
         return False
 

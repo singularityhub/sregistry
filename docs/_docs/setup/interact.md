@@ -23,4 +23,3 @@ docker exec -it ${NAME} bash
 ```
 
 Next, learn how to [create and manage](roles) different user roles.
-

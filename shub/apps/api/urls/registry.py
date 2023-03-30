@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -9,7 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 
@@ -51,4 +51,6 @@ class RegistryViewSet(viewsets.ViewSet):
 ################################################################################
 
 
-urlpatterns = [url(r"^registry/identity/?$", RegistryViewSet.as_view({"get": "get"}))]
+urlpatterns = [
+    re_path(r"^registry/identity/?$", RegistryViewSet.as_view({"get": "get"}))
+]

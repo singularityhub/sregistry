@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -75,7 +75,6 @@ class Container(models.Model):
 
     # A helper function to get an image.
     def get_image(self):
-
         # A remote build will have an image path stored as metadata
         if self.image is None:
             if "image" in self.metadata:
@@ -87,7 +86,6 @@ class Container(models.Model):
 
     # A container only gets a version when it's frozen, otherwise known by tag
     def get_short_uri(self):
-
         # An automated build means a collection has a common namespace
         if "/" in self.name:
             return "%s:%s" % (self.name, self.tag)

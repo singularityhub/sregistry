@@ -13,7 +13,6 @@ from random import choice
 
 
 class RobotNamer:
-
     _descriptors = [
         "chunky",
         "buttery",

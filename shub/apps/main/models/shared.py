@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -159,7 +159,7 @@ class Collection(models.Model):
             try:
                 Star.objects.get(user=request.user, collection=self)
                 return True
-            except:
+            except Exception:
                 return False
         return False
 

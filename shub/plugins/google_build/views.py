@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2022 Vanessa Sochat.
+Copyright 2019-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -89,7 +89,6 @@ def save_collection(request):
         return redirect("collections")
 
     if request.method == "POST":
-
         # The checked repos are sent in format REPO_{{ repo.owner.login }}/{{ repo.name }}
         repos = [
             x.replace("REPO_", "")
@@ -100,7 +99,6 @@ def save_collection(request):
         webhook_secret = str(uuid.uuid4())
 
         if repos:
-
             # If the user doesn't have permission to create a collection
             if not request.user.has_create_permission():
                 messages.error(
@@ -128,14 +126,12 @@ def save_collection(request):
             )
 
             if "errors" in webhook:
-
                 # If there is an error, we should tell user about it
                 message = ",".join([x["message"] for x in webhook["errors"]])
                 messages.info(request, "Errors: %s" % message)
 
             # If the webhook was successful, it will have a ping_url
             elif "ping_url" in webhook:
-
                 # Add minimal metadata about repo and webhook
                 collection.metadata["github"]["webhook"] = webhook
 
@@ -155,7 +151,6 @@ def save_collection(request):
 
 
 class RecipePushSerializer(serializers.HyperlinkedModelSerializer):
-
     created = serializers.DateTimeField(read_only=True)
     collection = serializers.CharField(read_only=True)
     tag = serializers.CharField(read_only=True)
@@ -176,7 +171,6 @@ class RecipePushViewSet(ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
-
         print(self.request.data)
         tag = self.request.data.get("tag", "latest")
         name = self.request.data.get("name")
@@ -280,7 +274,6 @@ def receive_build(request, cid):
         return JsonResponseMessage(message="Building receive is disabled.")
 
     if request.method == "POST":
-
         # Must be an existing container
         container = get_container(cid)
         if container is None:
@@ -367,7 +360,6 @@ def receive_hook(request):
     the header information. If it cannot be determined, it is ignored.
     """
     if request.method == "POST":
-
         # Has to have Github-Hookshot
         if re.search("GitHub-Hookshot", request.META["HTTP_USER_AGENT"]) is not None:
             return receive_github_hook(request)

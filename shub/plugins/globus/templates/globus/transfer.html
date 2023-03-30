@@ -20,7 +20,7 @@
             <div class="header">
                 <a href="{% url 'profile' %}">
                  <h3 class="title">{{ request.user.username }}: </a>
-                  {% if container %} transfer {{ container.name }}{% else %}endpoints {% endif %} 
+                  {% if container %} transfer {{ container.name }}{% else %}endpoints {% endif %}
                   </h3>
             </div>
         </div>
@@ -52,12 +52,12 @@
     <div class="col-md-3">
         <ul class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <li class="active"><a data-toggle="pill" id="pill-builder" class="endpoint" href="#transfer">Transfer</a></li>
-            <li><a data-toggle="pill" id="pill-builder" href="#endpoints">Endpoints</a></li> 
+            <li><a data-toggle="pill" id="pill-builder" href="#endpoints">Endpoints</a></li>
         </ul>
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-8" style="padding-left:0px">
-        <div class="tab-content"> 
+        <div class="tab-content">
            <div id="transfer" class="tab-pane fade in active">
 
                     {% if endpoints|length == 0 %}
@@ -65,7 +65,7 @@
                         <div class="col-md-12">
                            <p class="alert alert-info">
                                You don't have any shared or personal endpoints for transfer.
-                           </p> 
+                           </p>
                         </div>
                     </div>
                     {% endif %}
@@ -100,14 +100,14 @@
             <tr class="tableRow">
                 <td data-search="{{ endpoint.id }}">
                     {% if endpoint.activated %}{{ endpoint.id }}{% else %}
-                    <a class="makeactive" data-uid="{{ endpoint.id }}" 
-                                          target="_blank" 
+                    <a class="makeactive" data-uid="{{ endpoint.id }}"
+                                          target="_blank"
                                           href="https://www.globus.org/app/endpoints/{{ endpoint.id }}/activate">ACTIVATE {{ endpoint.id }}</a>{% endif %}
                 </td>
                 <td data-search="{{ endpoint.activated }} {{ endpoint.is_globus_connect }}">
                       {% if endpoint.activated %}<span class="label label-success">activated</span>{% endif %}
-                      {% if endpoint.is_globus_connect %}<span class="label label-primary">globus connect</span>{% endif %}                  
-                      {% if endpoint.public %}<span class="label label-primary">public</span>{% endif %}            
+                      {% if endpoint.is_globus_connect %}<span class="label label-primary">globus connect</span>{% endif %}
+                      {% if endpoint.public %}<span class="label label-primary">public</span>{% endif %}
                 </td>
                 <td data-search="{{ endpoint.display_name }}">{{ endpoint.display_name }}</td>
                 <td {% if endpoint.contact_email %}data-search="{{ endpoint.contact_email }}"{% endif %}>{% if endpoint.contact_email %}{{ endpoint.contact_email }}{% endif %}</td>
@@ -126,7 +126,7 @@
     <div class="col-md-12">
     <p class="alert alert-info">
     You are connected to Globus! Browse <a href="{% url 'collections' %}">container collections</a> and look for the <i class="fa fa-exchange" style="padding:20px"></i> icon to select an endpoint to transfer the image..
-    </p> 
+    </p>
     </div>
 </div>
 {% endif %}
@@ -140,9 +140,9 @@
             <div class="card">
                 <div class="card-header" id="heading{{ ep.id }}">
                     <h5 class="mb-0">
-                        <button class="btn btn-link" 
-                                data-toggle="collapse" 
-                                data-target="#collapse{{ ep.id }}" 
+                        <button class="btn btn-link"
+                                data-toggle="collapse"
+                                data-target="#collapse{{ ep.id }}"
                                 aria-expanded="false" aria-controls="collapse{{ ep.id }}">
                                 {{ ep.display_name }}
                         </button>
@@ -177,7 +177,7 @@
 $(document).ready(function(){
 
   {% if active_tab %}
-    $('#pill-{{ active_tab }}').click()    
+    $('#pill-{{ active_tab }}').click()
   {% endif %}
 
    $('.material-pagination').hide();
@@ -223,7 +223,7 @@ $(document).ready(function(){
             {% if container %}
             message+='view <a href="/globus/endpoint/' + uid + '{{ container.id }}"> the endpoint details.</a>';
             {% else %}
-            message+='view <a href="/globus/endpoint/' + uid + '"> the endpoint details.</a>'; 
+            message+='view <a href="/globus/endpoint/' + uid + '"> the endpoint details.</a>';
             {% endif %}
             $('#message-activate').append(message);
             $('#message-activate').show();
@@ -247,7 +247,7 @@ $(document).ready(function(){
                    } else {
                         tr[i].style.display = "none";
                    }
-                })                
+                })
             }
          }
         {% endif %}

@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2020 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -44,7 +44,6 @@ class VersionView(APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request):
-
         data = {"version": "v1.0.0", "apiVersion": "2.0.0-alpha.1"}
 
         return Response(data={"data": data}, status=200)

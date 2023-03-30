@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -99,12 +99,9 @@ def my_collections(request):
 def new_collection(request):
     """new_container_collection will display a form to generate a new collection"""
     if request.user.has_create_permission():
-
         if request.method == "POST":
-
             name = request.POST.get("name")
             if name is not None:
-
                 # No special characters allowed
                 name = format_collection_name(name)
                 collection = Collection(name=name, secret=str(uuid.uuid4()))
@@ -138,11 +135,10 @@ def view_named_collection(request, username, reponame):
     try:
         collection = Collection.objects.get(name="%s/%s" % (username, reponame))
     except Collection.DoesNotExist:
-
         # Then look for username only
         try:
             collection = Collection.objects.get(name=username)
-        except:
+        except Exception:
             raise Http404
 
     return _view_collection(request, collection)
@@ -245,7 +241,6 @@ def edit_collection(request, cid):
         return redirect("collections")
 
     if request.method == "POST":
-
         # Make private?
         private = request.POST.get("private")
         if private is not None and PRIVATE_ONLY is False:
@@ -425,7 +420,6 @@ def _edit_contributors(userids, collection, add_user=True, level="contributor"):
         user = get_user(userid)
 
         if user is not None:
-
             # Are we adding an owner or a contributor?
             func = collection.owners
             if level == "contributor":
@@ -455,9 +449,7 @@ def edit_contributors(request, cid):
     owners = collection.owners.all()
 
     if request.user in owners:
-
         if request.method == "POST":
-
             # Add and remove owners and contributors
             unset = [None, "", []]
             add_contribs = request.POST.get("add_contributors")
@@ -480,7 +472,6 @@ def edit_contributors(request, cid):
                 )
 
             if remove_owners not in unset:
-
                 # Do not allow all owners to be removed
                 if len(remove_owners) < collection.owners.count():
                     collection = _edit_contributors(

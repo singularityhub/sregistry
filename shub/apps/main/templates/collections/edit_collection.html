@@ -15,7 +15,7 @@
                    <h3 class="title"><span class="small"> collection</span> <a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a>
                    </h3>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 
@@ -28,8 +28,8 @@
             {% csrf_token %}
 
             <label for="private" style="padding-top:20px">Private</label>
-            <select id="private" 
-                    name="private" 
+            <select id="private"
+                    name="private"
                     class="form-control">
 
                 {% if PRIVATE_ONLY %}

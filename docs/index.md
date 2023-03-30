@@ -14,7 +14,7 @@ excluded_in_search: true
 
 # Singularity Registry Server
 
-Hello there! It's so great that you want to use Singularity Registry Server. Let's get started. 
+Hello there! It's so great that you want to use Singularity Registry Server. Let's get started.
 
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/singularityhub/lobby)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.00426/status.svg)](https://doi.org/10.21105/joss.00426)

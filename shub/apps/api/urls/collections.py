@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -9,7 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,7 +24,6 @@ from shub.apps.main.query import collection_query
 
 
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
-
     containers = serializers.SerializerMethodField("list_containers")
 
     def list_containers(self, collection):
@@ -110,6 +109,8 @@ class CollectionSearch(APIView):
 
 
 urlpatterns = [
-    url(r"^collection/search/(?P<query>.+?)/?$", CollectionSearch.as_view()),
-    url(r"^collection/(?P<collection_name>.+?)/?$", CollectionDetailByName.as_view()),
+    re_path(r"^collection/search/(?P<query>.+?)/?$", CollectionSearch.as_view()),
+    re_path(
+        r"^collection/(?P<collection_name>.+?)/?$", CollectionDetailByName.as_view()
+    ),
 ]

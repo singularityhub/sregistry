@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -24,7 +24,6 @@ from .containers import get_container
 
 
 def get_tag(name=None, tid=None):
-
     keyargs = {}
     if name is not None:
         keyargs["name"] = name
@@ -56,7 +55,7 @@ def view_tag(request, tid):
     """view containers for a tag"""
     try:
         tag = Tag.objects.get(id=tid)
-    except:
+    except Exception:
         messages.info(request, "This tag does not exist.")
         return redirect("all_tags")
 

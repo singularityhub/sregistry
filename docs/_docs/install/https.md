@@ -160,7 +160,7 @@ The local CA is now uninstalled from the system trust store(s)! 👋
 ```
 
 You can see where the root certs were located:
- 
+
 ```bash
 $ ./mkcert -CAROOT
 /home/vanessa/.local/share/mkcert
@@ -181,7 +181,7 @@ and undid the changes above to settings, the docker compose and nginx.conf files
 
 Recall that the first step to get https is to have a hostname. You can use Google
 Domains, or you can also create an account on [https://www.dynu.com](https://www.dynu.com) (It’s free).
-Log into your account and under the Control Panel go to DDNS Services. On the next page, click the **+ Add** button, and fill out the Host and Top Level fields under Option 1 using whatever you like. 
+Log into your account and under the Control Panel go to DDNS Services. On the next page, click the **+ Add** button, and fill out the Host and Top Level fields under Option 1 using whatever you like.
 This will be how users access your server (e.g., `sregistry.dynu.net)`. Click + Add.
 
  - On the next page, change the IPv4 Address to the IP address for your droplet. Change the TTL to 60. Click Save.

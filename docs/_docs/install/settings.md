@@ -12,7 +12,7 @@ that can be populated in several ways:
  - Directly in the file (e.g., if you build your own base container)
  - From the environment (described below with a `SREGISTRY_` prefix
  - From a config file, `settings.yaml` in the root directory of your server OR custom set at `SREGISTRY_SETTINGS_FILE`
- 
+
 Order of preference or variables honored is:
 
  1. secrets.py
@@ -25,15 +25,15 @@ E.g., anything you define in a secrets.py takes first preference, followed by th
 You will want to choose a strategy that works for your deployment, and then tweak the values to your liking before we start the application.
 For example, if you are running sregistry on a filesystem directly that you can access, you can easily write secrets into _either_:
 
- - A `secrets.py` in the `shub/` directory alongside settings and you can use the [dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/dummy_secrets.py) as a starter template. 
-  - A `settings.yaml` in the root directory of your application (or set at `SREGISTRY_SETTINGS_FILE` and you can use the [dummy-settings.yaml](https://github.com/singularityhub/sregistry/blob/master/shub/dummy-settings.yaml) as a starter template. 
- 
-If you are deploying via Kubernetes or similar, you can either choose to define secrets entirely in the environment, or you can have one of these files added via a config map or similar (or some combination of those two things). 
+ - A `secrets.py` in the `shub/` directory alongside settings and you can use the [dummy_secrets.py](https://github.com/singularityhub/sregistry/blob/master/shub/dummy_secrets.py) as a starter template.
+  - A `settings.yaml` in the root directory of your application (or set at `SREGISTRY_SETTINGS_FILE` and you can use the [dummy-settings.yaml](https://github.com/singularityhub/sregistry/blob/master/shub/dummy-settings.yaml) as a starter template.
+
+If you are deploying via Kubernetes or similar, you can either choose to define secrets entirely in the environment, or you can have one of these files added via a config map or similar (or some combination of those two things).
 
 ## Environment
 
 As of version `2.0.0`, you can set any configuration value from settings in the environment to override the settings value.
-To determine the value for the environment variable, if it isn't already defined in the environment (e.g., `MINIO_SECRET`) 
+To determine the value for the environment variable, if it isn't already defined in the environment (e.g., `MINIO_SECRET`)
 you can add the `SREGISTRY_` prefix to derive it. This means:
 
  - A setting like `ENABLE_GOOGLE_AUTH` would be set as `SREGISTRY_ENABLE_GOOGLE_AUTH`
@@ -41,7 +41,7 @@ you can add the `SREGISTRY_` prefix to derive it. This means:
  - To set something to False, you could do `SREGISTRY_ENABLE_GOOGLE_AUTH=False` or `SREGISTRY_ENABLE_GOOGLE_AUTH=false`
  - To set an integer value, you could do `SREGISTRY_USER_COLLECTION_LIMIT=100` (it will be converted)
  - To set a string value, simply set it (e.g., `SREGISTRY_REGISTRY_NAME="Tacosaurus Centers"`
- 
+
 Generally, any boolean, integer, or string can be set. For database credentials, the following custom variables
 are exposed (all strings):
 
@@ -99,8 +99,8 @@ Twitter now requires an actual server name and won't work with localhost, but if
 Other authentication methods, such as LDAP, are implemented as [plugins](https://singularityhub.github.io/sregistry/docs/plugins/) to sregistry. See the [plugins documentation](https://singularityhub.github.io/sregistry/docs/plugins/) for details on how to configure these. You should also now look here to see which plugins you will
 want to set up (and then build into your container). You can look at either of the dummy `secrets.py`  or `settings.yaml` to see the variables that are required (and examples).
 
-For authentication plugins, we will walk through the setup of each in detail here. 
-For other plugins, you should look at the [plugins](https://singularityhub.github.io/sregistry/docs/plugins/) documentation now before proceeding. 
+For authentication plugins, we will walk through the setup of each in detail here.
+For other plugins, you should look at the [plugins](https://singularityhub.github.io/sregistry/docs/plugins/) documentation now before proceeding.
 
 Remember, for all of the below, you should put the content in one of:
 
@@ -121,12 +121,12 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'xxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.c
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'xxxxxxxxxxxxxxxxx'
 ```
 
-Google is great in letting you specify multiple acceptable callback urls, so you should set every version of `http://127.0.0.1/complete/google-oauth2` (I did with and without http/https, along with the ending and without the ending slash, just in case). Note that `1.` extra arguments have been added to ensure that users can refresh tokens, and `2.` in testing I was using `http` and not `https`, and I eventually added `https` (and so the url was adjusted accordingly). Next, we need to follow instructions for [web applications](https://developers.google.com/identity/protocols/OAuth2WebServer). 
+Google is great in letting you specify multiple acceptable callback urls, so you should set every version of `http://127.0.0.1/complete/google-oauth2` (I did with and without http/https, along with the ending and without the ending slash, just in case). Note that `1.` extra arguments have been added to ensure that users can refresh tokens, and `2.` in testing I was using `http` and not `https`, and I eventually added `https` (and so the url was adjusted accordingly). Next, we need to follow instructions for [web applications](https://developers.google.com/identity/protocols/OAuth2WebServer).
 
 
 ### Setting up Github OAuth
 
-For users to connect to Github, you need to [register a new application](https://github.com/settings/applications/new), and add the key and secret to your `secrets.py` file like this: 
+For users to connect to Github, you need to [register a new application](https://github.com/settings/applications/new), and add the key and secret to your `secrets.py` file like this:
 
 ```python
 # http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
@@ -158,7 +158,7 @@ SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = ""
 Instructions are provided [here](https://github.com/python-social-auth/social-docs/blob/master/docs/backends/gitlab.rst). Basically:
 
 1. You need to [register an application](https://gitlab.com/profile/applications), be sure to add the `read_user` scope. If you need `api`, add it to (you shouldn't).
-2. Set the callback URL to `http://registry.domain/complete/gitlab/`. The URL **must** match the value sent. If you are having issues, try adjusting the trailing slash or http/https/. 
+2. Set the callback URL to `http://registry.domain/complete/gitlab/`. The URL **must** match the value sent. If you are having issues, try adjusting the trailing slash or http/https/.
 3. In your `secrets.py` file under settings, add:
 
 ```
@@ -215,7 +215,7 @@ SOCIAL_AUTH_TWITTER_KEY = ''
 SOCIAL_AUTH_TWITTER_SECRET = ''
 ```
 
-Note that Twitter now does not accept localhost urls. Thus, 
+Note that Twitter now does not accept localhost urls. Thus,
 the callback url here should be `http://[your-domain]/complete/twitter`.
 
 
@@ -400,7 +400,7 @@ And remember you can set these in the environment too:
 
 ### Logging
 
-By default, Singularity Registry keeps track of all requests to pull containers, and you have control over the level of detail that is kept. If you want to save complete metadata (meaning the full json response for each call) then you should set `LOGGING_SAVE_RESPONSES` to True. If you expect heavy use and want to save the minimal (keep track of which collections are pulled how many times) the reccomendation is to set this to False. 
+By default, Singularity Registry keeps track of all requests to pull containers, and you have control over the level of detail that is kept. If you want to save complete metadata (meaning the full json response for each call) then you should set `LOGGING_SAVE_RESPONSES` to True. If you expect heavy use and want to save the minimal (keep track of which collections are pulled how many times) the reccomendation is to set this to False.
 
 ```python
 LOGGING_SAVE_RESPONSES=True

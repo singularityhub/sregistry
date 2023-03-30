@@ -21,14 +21,14 @@ To enable LDAP authentication you must:
 ```
 cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 ```
-  
+
 Because no two LDAP directories are the same, configuration can be complex and there are no
 standard settings. The plugin uses `django-auth-ldap`, which provides more [detailed documentation
 at Read the Docs](https://django-auth-ldap.readthedocs.io/en/1.2.x/authentication.html).
 
 To test LDAP authentication you may wish to use a docker container that provides an OpenLDAP
 directory. `mwaeckerlin/openldap` [(GitHub)](https://github.com/mwaeckerlin/openldap) [(Docker
-Hub)](https://hub.docker.com/r/mwaeckerlin/openldap/) is a useful container configured 
+Hub)](https://hub.docker.com/r/mwaeckerlin/openldap/) is a useful container configured
 with unencrypted, StartTLS, and SSL access to an OpenLDAP directory.
 
 ## Quick Start
@@ -48,7 +48,7 @@ To test sregistry LDAP authentication we can use a Dockerized OpenLDAP server.
 
 
 #### Create the server
-As instructed in [https://github.com/mwaeckerlin/openldap](https://github.com/mwaeckerlin/openldap) and [(here!)](https://marc.xn--wckerlin-0za.ch/computer/setup-openldap-server-in-docker)  let's bring 
+As instructed in [https://github.com/mwaeckerlin/openldap](https://github.com/mwaeckerlin/openldap) and [(here!)](https://marc.xn--wckerlin-0za.ch/computer/setup-openldap-server-in-docker)  let's bring
 up a dummy LDAP server:
 
 ```bash
@@ -70,7 +70,7 @@ With this command we are:
   - Creating an admin account, which will have the dn (distinguished name)
     `cn=admin,dc=my-company,dc=com` and password `avocados`.
 
-The `-d` means "detached" so you won't see the output in the terminal. If you need to see output, remove the `-d`. Here is the 
+The `-d` means "detached" so you won't see the output in the terminal. If you need to see output, remove the `-d`. Here is the
 running container:
 
 ```
@@ -304,7 +304,7 @@ Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/con
 
 Finally, you must build the Docker image with the build argument ENABLE_LDAP set to true:
 ```bash
-docker build --build-arg ENABLE_LDAP=true -t quay.io/vanessa/sregistry . 
+docker build --build-arg ENABLE_LDAP=true -t quay.io/vanessa/sregistry .
 ```
 
 It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
@@ -317,7 +317,7 @@ For example, if you put in an incorrect credential, you would see the following 
 
 ```bash
 uwsgi_1   | [pid: 56|app: 0|req: 4/4] 172.17.0.1 () {42 vars in 1025 bytes} [Thu Oct 26 07:18:10 2017] GET /ldap_auth/login/?next=http://127.0.0.1/login/ => generated 13475 bytes in 26 msecs (HTTP/1.1 200) 7 headers in 382 bytes (1 switches on core 0)
-uwsgi_1   | search_s('ou=users,dc=my-company,dc=com', 2, '(uid=%(user)s)') returned 0 objects: 
+uwsgi_1   | search_s('ou=users,dc=my-company,dc=com', 2, '(uid=%(user)s)') returned 0 objects:
 uwsgi_1   | Authentication failed for adminuser: failed to map the username to a DN.
 ```
 

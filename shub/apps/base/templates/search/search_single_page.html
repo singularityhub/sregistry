@@ -11,7 +11,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-  
+
                         <input id="q" type="text"/>
                         <input id="searchSubmit" type="submit" value="Search"/>
                         <br/>
@@ -36,7 +36,7 @@ $(document).ready( function() {
         $('#results').html('&nbsp;').load('{% url "container_search" %}?q=' + q);
     });
 });
- 
+
 // Control spinner
 $(document).ajaxStart( function() {
     $('#spinner').show();

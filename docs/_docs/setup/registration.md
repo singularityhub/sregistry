@@ -18,8 +18,8 @@ cd containers
 ```
 
 ## 2. Generate your Metadata
-Then use the manager to generate a markdown file for your registry. In this example, we have 
-interactively shelled inside the `uwsgi` image for our sregistry like `docker run -it <container> bash` 
+Then use the manager to generate a markdown file for your registry. In this example, we have
+interactively shelled inside the `uwsgi` image for our sregistry like `docker run -it <container> bash`
 and are sitting in the `/code` folder.
 
 ```bash
@@ -38,7 +38,7 @@ Your robot is at https://vsoch.github.io/robots/assets/img/robots/robot5413.png
 Specifically, this produces a markdown file in the present working directory (which is mapped to your host) that can be plopped into a folder. It is named based on your registry `uri`, and looks like this:
 
 ```bash
-$ cat taco-registry.md 
+$ cat taco-registry.md
 ---
 layout: registry
 title:  "Tacosaurus Computing Center"
@@ -57,7 +57,7 @@ Tacosaurus Computing Center is a Singularity Registry to provide institution lev
 
 ```
 
-At this point, you can send this file to `@vsoch` and she will be happy to add your 
+At this point, you can send this file to `@vsoch` and she will be happy to add your
 registry to the... registry! If you want to customize your robot image, or submit
 the file yourself via a pull request, continue reading!
 
@@ -89,8 +89,8 @@ thumb: custom/taco-logo.png
 You can then add your files, and submit a PR to the main repo. We will have tests that ping your registry to ensure correct naming of files and registry address, along with a preview of the content that is added. If you want to prevew locally, you can run `jekyll serve`.
 
 
-Great! Now that you have your accounts, you probably want to learn about how to build and push images! 
-To push directly, you will first need to generate a [credential](../accounts/credentials). If you 
+Great! Now that you have your accounts, you probably want to learn about how to build and push images!
+To push directly, you will first need to generate a [credential](../accounts/credentials). If you
 have enabled the [Google Build+Github](../plugins/google-build) plugin,
-then you will be able to log in with GitHub, and connect GitHub repositories to build 
+then you will be able to log in with GitHub, and connect GitHub repositories to build
 on commit. Either way, you should next read about the [client](../client).

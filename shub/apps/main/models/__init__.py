@@ -1,2 +1,2 @@
 from .containers import Container
-from .shared import *
+from .shared import *  # noqa

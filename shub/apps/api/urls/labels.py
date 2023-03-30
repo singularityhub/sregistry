@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,7 +8,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.conf.urls import url
+from django.urls import re_path
 from rest_framework import serializers, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,7 +21,6 @@ from shub.apps.main.models import Label
 
 
 class LabelSerializer(serializers.ModelSerializer):
-
     containers = serializers.SerializerMethodField("list_containers")
 
     def list_containers(self, label):
@@ -72,7 +71,7 @@ class LabelDetail(APIView):
 
     def get(self, request, key=None, value=None):
         labels = self.get_object(key, value)
-        data = [LabelSerializer(l).data for l in labels]
+        data = [LabelSerializer(label).data for label in labels]
         return Response(data)
 
 
@@ -81,11 +80,11 @@ class LabelDetail(APIView):
 ################################################################################
 
 urlpatterns = [
-    url(r"^labels/search/?$", LabelDetail.as_view()),  # all labels
-    url(
+    re_path(r"^labels/search/?$", LabelDetail.as_view()),  # all labels
+    re_path(
         r"^labels/search/(?P<key>.+?)/key/(?P<value>.+?)/value/?$",
         LabelDetail.as_view(),
     ),  # key and value
-    url(r"^labels/search/(?P<key>.+?)/key/?$", LabelDetail.as_view()),  # key
-    url(r"^labels/search/(?P<value>.+?)/value/?$", LabelDetail.as_view()),  # value
+    re_path(r"^labels/search/(?P<key>.+?)/key/?$", LabelDetail.as_view()),  # key
+    re_path(r"^labels/search/(?P<value>.+?)/value/?$", LabelDetail.as_view()),  # value
 ]

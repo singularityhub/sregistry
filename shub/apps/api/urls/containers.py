@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -9,8 +9,7 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
 from django.conf import settings
-from django.conf.urls import url
-from django.urls import reverse
+from django.urls import re_path, reverse
 from ratelimit.mixins import RatelimitMixin
 from rest_framework import generics, serializers, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied
@@ -28,7 +27,6 @@ from sregistry.main.registry.auth import generate_timestamp
 
 
 class SingleContainerSerializer(serializers.ModelSerializer):
-
     collection = serializers.SerializerMethodField("collection_name")
     image = serializers.SerializerMethodField("get_download_url")
     metadata = serializers.SerializerMethodField("get_cleaned_metadata")
@@ -44,7 +42,6 @@ class SingleContainerSerializer(serializers.ModelSerializer):
         return metadata
 
     def get_download_url(self, container):
-
         secret = container.collection.secret
         download_url = reverse(
             "download_container", kwargs={"cid": container.id, "secret": secret}
@@ -75,7 +72,6 @@ class SingleContainerSerializer(serializers.ModelSerializer):
 
 
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
-
     collection = serializers.SerializerMethodField("collection_name")
     metadata = serializers.SerializerMethodField("get_cleaned_metadata")
 
@@ -137,9 +133,7 @@ class ContainerDetailByName(LoggingMixin, RatelimitMixin, generics.GenericAPIVie
     def get_object(
         self, collection, name, tag=None, version=None
     ):  # pylint: disable=arguments-differ
-
         try:
-
             # Given collection, container, tag and version
             if tag is not None and version is not None:
                 container = Container.objects.get(
@@ -282,32 +276,32 @@ class ContainerSearch(APIView):
 ################################################################################
 
 urlpatterns = [
-    url(
+    re_path(
         r"^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/tag/(?P<tag>.+?)/?$",
         ContainerSearch.as_view(),
     ),
-    url(
+    re_path(
         r"^container/search/collection/(?P<collection>.+?)/name/(?P<name>.+?)/?$",
         ContainerSearch.as_view(),
     ),
-    url(
+    re_path(
         r"^container/search/name/(?P<name>.+?)/tag/(?P<tag>.+?)/?$",
         ContainerSearch.as_view(),
     ),
-    url(r"^container/search/name/(?P<name>.+?)/?$", ContainerSearch.as_view()),
-    url(
+    re_path(r"^container/search/name/(?P<name>.+?)/?$", ContainerSearch.as_view()),
+    re_path(
         r"^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)@(?P<version>.+?)/?$",
         ContainerDetailByName.as_view(),
     ),
-    url(
+    re_path(
         r"^container/(?P<collection>.+?)/(?P<name>.+?)@(?P<version>.+?)/?$",
         ContainerDetailByName.as_view(),
     ),
-    url(
+    re_path(
         r"^container/(?P<collection>.+?)/(?P<name>.+?):(?P<tag>.+?)/?$",
         ContainerDetailByName.as_view(),
     ),
-    url(
+    re_path(
         r"^container/(?P<collection>.+?)/(?P<name>.+?)/?$",
         ContainerDetailByName.as_view(),
     ),

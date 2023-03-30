@@ -22,12 +22,12 @@ span.even { background: rgba(91, 192, 222, 0.32); }
                    <h3 class="title">{% if my_collections %}
                    {% gravatar user.email 90 %} <span style="padding-top:20px;padding-left:25px">My Collections</span>
                     {% else %}
-                   <img src="{% static 'img/robot_package.png' %}" 
-                        width="160px" 
+                   <img src="{% static 'img/robot_package.png' %}"
+                        width="160px"
                         style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>Collections
                    {% endif %}</h3>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 
@@ -40,8 +40,8 @@ span.even { background: rgba(91, 192, 222, 0.32); }
             </p>
             {% if request.user.is_authenticated %}
 
-                {% if request.user.has_create_permission %}                
-                <a id="new-container" 
+                {% if request.user.has_create_permission %}
+                <a id="new-container"
                    href="{% url 'new_collection' %}"
                    title="Create an empty collection to push containers to">
                    <button class="btn btn-primary">New Collection</button></a>
@@ -69,7 +69,7 @@ span.even { background: rgba(91, 192, 222, 0.32); }
     <!-- Navigation to different groups of collections -->
     <div class="col-md-12">
         <div class="content"  style="padding-bottom:20px">
-                <a href="{% url 'collection_stars' %}"><button class="btn btn-sm btn-default">Top Collections</button></a> 
+                <a href="{% url 'collection_stars' %}"><button class="btn btn-sm btn-default">Top Collections</button></a>
                 {% if page_title == "Container Collections" %}
                 <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default" disabled>All Collections</button></a>
                 {% else %}
@@ -123,7 +123,7 @@ $(document).ready(function(){
     $('.material-pagination').hide();
 
     $('#collection_table').DataTable( {
-       pageLength: 100, 
+       pageLength: 100,
        columnDefs: [
             {
                 targets: [ 1, 2, 3, 4, 5 ],

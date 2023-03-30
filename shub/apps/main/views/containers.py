@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -129,7 +129,6 @@ def change_freeze_status(request, cid):
     edit_permission = container.has_edit_permission(request)
 
     if edit_permission:
-
         # If the container wasn't frozen, assign new version
         # '2017-08-06T19:28:43.294175'
         if container.version is None and container.frozen is False:

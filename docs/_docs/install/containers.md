@@ -115,7 +115,7 @@ $ python manage.py dbshell
 
 ## Restart Containers
 
-If you modify the container code (the Python, or a configuration value, etc.), 
+If you modify the container code (the Python, or a configuration value, etc.),
 you should restart the container for changes to take effect. It's good to be
 conservative and only restart those containers that are needed (e.g., usually
 NGINX and uWSGI).

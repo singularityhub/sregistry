@@ -16,15 +16,15 @@ Other cloud vendors have been included with sregistry client (AWS, S3, Minio) an
 build and storage pairs can be added here. If you would like to discuss adding a builder
 and storage pair, please [open an issue](https://www.github.com/singularityhub/sregistry).
 
-Don't forget to go back to the [install docs](https://singularityhub.github.io/sregistry/install-settings) where you left off. This quick start will walk through setting up custom storage using 
+Don't forget to go back to the [install docs](https://singularityhub.github.io/sregistry/install-settings) where you left off. This quick start will walk through setting up custom storage using
 [Google Cloud Build](https://singularityhub.github.io/sregistry-cli/client-google-build)
 and [Google Storage](https://singularityhub.github.io/sregistry-cli/client-google-storage) as
 an endpoint.
 
 ## Configure sregistry
 
-By default, google build is disabled. To configure sregistry to 
-use Google Cloud build and Storage, in settings/config.py you can enable the plugin by 
+By default, google build is disabled. To configure sregistry to
+use Google Cloud build and Storage, in settings/config.py you can enable the plugin by
 uncommenting it from the list here:
 
 ```bash
@@ -43,7 +43,7 @@ $ docker build --build-arg ENABLE_GOOGLEBUILD=true -t quay.io/quay.io/vanessa/sr
 
 ## Secrets
 
-Next, set the following variables in `shub/settings/secrets.py`, 
+Next, set the following variables in `shub/settings/secrets.py`,
 that you can create from `dummy_secrets.py` in the shub/settings folder.
 The first two speak for themselves, your project name and path to your
 Google Application Credentials.
@@ -65,7 +65,7 @@ SREGISTRY_GOOGLE_PROJECT=myproject-ftw
 You can create custom [Google Application Credentials](https://cloud.google.com/docs/authentication/getting-started) for your server in the browser, and it will be enough to make the service account
 a project owner. To allow for signed urls, you will need to also add [iam.serviceAccounts.signBlob](https://cloud.google.com/iam/credentials/reference/rest/v1/projects.serviceAccounts/signBlob?authuser=1)
 to the permissions. This is associated with the role "Service Account Token Creator" and I've added
-it in the past by going to IAM and Admin -> IAM and then selecting the service account and 
+it in the past by going to IAM and Admin -> IAM and then selecting the service account and
 searching for that role. Yes, it's sort of annoying to get working the first time. ;/
 
 If you are on a Google Cloud instance you can scp (with gcloud) using the command line as follows:
@@ -85,7 +85,7 @@ SREGISTRY_GOOGLE_BUILD_CACHE="true"
 
 If you set this variable (to anything), it means that after build, you will not
 delete intermediate dependencies in cloudbuild bucket (keep them as cache for rebuild if needed).
-This defaults to being unset, meaning that files are cleaned up. If you define this as anything, 
+This defaults to being unset, meaning that files are cleaned up. If you define this as anything,
 the build files will be cached.
 
 ### Build Limit
@@ -115,7 +115,7 @@ The version must coincide with a container tag hosted under [singularityware/sin
 ### Storage Bucket Name
 
 By default, the bucket name will be called `sregistry-gcloud-build-[hostname]`, and since
-your host is a docker container, that will resolve to a random set of numbers and 
+your host is a docker container, that will resolve to a random set of numbers and
 letters. For this reason, we *strongly recommend you set a consistent hostname*.
 If you do not and need to remove and bring up the containers again, the bucket
 metadata will not match the new bucket name. Here is an example of how to set a custom name:
@@ -124,7 +124,7 @@ metadata will not match the new bucket name. Here is an example of how to set a 
 SREGISTRY_GOOGLE_STORAGE_BUCKET="taco-singularity-registry"
 ```
 
-Additionally, a temporary bucket is created with the same name ending in `_cloudbuild`. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken, 
+Additionally, a temporary bucket is created with the same name ending in `_cloudbuild`. This bucket is for build time dependencies, and is cleaned up after the fact. If you are having trouble getting a bucket it is likely because the name is taken,
 and we recommend creating both `[name]` and `[name]_cloudbuild` in the console and then setting the name here.
 
 ### Build Timeout
@@ -150,7 +150,7 @@ CONTAINER_SIGNED_URL_EXPIRE_SECONDS=10
 This can be much smaller than 10, as we only need it to endure for the POST. I've tested and found
 that 3-5 seconds is about right.
 
-### Build Expiration 
+### Build Expiration
 
 You must define the number of seconds that your build expires in, meaning that it would no
 longer be accepted by the server.
@@ -181,7 +181,7 @@ default, for a working registry, this should be False.
 DISABLE_BUILDING=True
 ```
 
-This setting is also in the main settings page, but mentioned here for 
+This setting is also in the main settings page, but mentioned here for
 Google Cloud Build.
 
 ### Disable Build Receive
@@ -193,11 +193,11 @@ denied).
 DISABLE_BUILD_RECEIVE=True
 ```
 
-These variables are written in detail in the dummy_secrets.py file. 
+These variables are written in detail in the dummy_secrets.py file.
 If you need more information, you can read [the Google Cloud Build page](https://singularityhub.github.io/sregistry-cli/client-google-build).
 
 If you are missing some variable, there will be an error message
-on interaction with the Google Cloud Build API since you won't be able to 
+on interaction with the Google Cloud Build API since you won't be able to
 authenticate. Once your settings are ready to go, you will want to continue
 with the [install docs](https://singularityhub.github.io/sregistry/install-server#storage) where you left off,
 and you can continue here after you've done:
@@ -247,7 +247,7 @@ container collections page (the "Containers" link in the navigation):
 
 ![/sregistry/assets/img/google-build-new-collection.png](../../assets/img/google-build-new-collection.png)
 
-If the Google Build plugin is correctly enabled, you'll see a second option on the 
+If the Google Build plugin is correctly enabled, you'll see a second option on the
 right:
 
 ![/sregistry/assets/img/google-build-connect-github.png](../../assets/img/google-build-connect-github.png)
@@ -258,14 +258,14 @@ permission to connect to will show up. You can select one:
 ![/sregistry/assets/img/google-build-repos.png](../../assets/img/google-build-repos.png)
 
 Once you've connected the repository, an initial build will build
-the latest version of the recipes that are discovered. Any recipe that 
+the latest version of the recipes that are discovered. Any recipe that
 is in the format `Singularity.<tag>` or just `Singularity` (tag defaults
 to latest) will be built.
 
 ![assets/img/google-build-collection.png](../../assets/img/google-build-collection.png)
 
 If you have two recipes named equivalently in different folders, the
-recipe that was more recently updated will be used. 
+recipe that was more recently updated will be used.
 
 ### Push a Recipe
 
@@ -290,7 +290,7 @@ created (for example, below I created the collection "collection"), you can push
 $ sregistry build --name registry://collection/container:tag Singularity --builder google_build
 ```
 
-Notice that we specify the builder to be "google_build." Also notice 
+Notice that we specify the builder to be "google_build." Also notice
 that the command simply requires a name for your collection (it doesn't
 need to exist, but you need push access and to have [exported your token](https://singularityhub.github.io/sregistry/credentials) to your local machine.
 
@@ -320,12 +320,12 @@ And there you have it!
 $ ls
 hello-registry_latest.sif
 
-$ singularity run hello-registry_latest.sif 
+$ singularity run hello-registry_latest.sif
 Tacotacotaco!
-``` 
+```
 
 Note that having a custom registry name (containers.page, in the above example)
-was a bug in early versions of Singularity 3.x. if you have trouble with 
+was a bug in early versions of Singularity 3.x. if you have trouble with
 this command, you will need to upgrade Singularity.
 
 You can technically also just pull it with simple bash commands, if you

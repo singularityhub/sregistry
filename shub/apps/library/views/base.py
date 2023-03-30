@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2021 Vanessa Sochat.
+Copyright 2019-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -23,7 +23,6 @@ class LibraryBaseView(APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request):
-
         user = None
         if not request.user.is_anonymous:
             user = request.user.username

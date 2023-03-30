@@ -16,7 +16,7 @@ services:
       - ./static:/var/www/static
       - ./images:/var/www/images
       # uncomment for PAM auth
-      #- /etc/passwd:/etc/passwd 
+      #- /etc/passwd:/etc/passwd
       #- /etc/shadow:/etc/shadow
     links:
       - minio
@@ -77,7 +77,8 @@ services:
       - db
 
   minio:
-    image: minio/minio
+    # https://min.io/docs/minio/linux/operations/install-deploy-manage/migrate-fs-gateway.html
+    image: minio/minio:RELEASE.2022-08-02T23-59-16Z
     volumes:
       - ./minio-images:/images
       - /etc/ssl/certs/chained.pem:/root/.minio/certs/public.crt:ro
@@ -85,5 +86,5 @@ services:
     env_file:
      - ./.minio-env
     ports:
-     - "9000:9000"  
+     - "9000:9000"
     command: ["server", "images"]

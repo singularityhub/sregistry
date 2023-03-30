@@ -10,7 +10,7 @@
   margin-top:20px !important;
 }
 
-#id_spec { 
+#id_spec {
      position: absolute;
      height:800px;
      top: 0;
@@ -47,10 +47,10 @@
 <div class="row">
 
     <div class='col-md-12'>
-  
+
     {% if container.tags %}
         {% for tag in container.tags.all %}
-        <a href="{% url 'view_tag' tag.id %}"><button class="btn btn-xsm btn-default">{{ tag.name }}</button></a> 
+        <a href="{% url 'view_tag' tag.id %}"><button class="btn btn-xsm btn-default">{{ tag.name }}</button></a>
         {% endfor %}
     {% else %}
      <p class="alert alert-info">This container does not have any tags.</p>

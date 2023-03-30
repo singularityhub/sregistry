@@ -126,7 +126,7 @@ DISABLE_GITHUB: false
 DISABLE_BUILD_RECEIVE: false
 # Set this to be some size in MB to limit uploads.
 # Uploads > 2.5GB will not use memory, but the filesystem
-# DATA_UPLOAD_MAX_MEMORY_SIZE: 
+# DATA_UPLOAD_MAX_MEMORY_SIZE:
 # Limit users to N collections (None is unlimited)
 # USER_COLLECTION_LIMIT: 2
 # The number of collections to show on the /<domain>/collections page
@@ -186,7 +186,7 @@ API_PAGE_SIZE: 10
 # GOOGLE_BUILD_LIMIT: 100
 # The number of seconds for the build to timeout. If set to None, will be 10 minutes. If
 # unset, will default to 3 hours. This time should be less than the GOOGLE_BUILD_EXPIRE_SECONDS
-# GOOGLE_BUILD_TIMEOUT_SECONDS: 
+# GOOGLE_BUILD_TIMEOUT_SECONDS:
 # The number of seconds for the build to expire, meaning it's response is no longer accepted by the server. This must be defined.
 # Using 28800 would indicate 8 hours (in seconds)
 # GOOGLE_BUILD_EXPIRE_SECONDS: 28800

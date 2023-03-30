@@ -29,7 +29,7 @@ docker exec $NAME python /code/manage.py add_superuser --username vsoch
 docker exec $NAME python /code/manage.py add_admin --username vsoch
 ```
 
-You will want to go to [http://127.0.0.1/token](http://127.0.0.1/token) and use the contents of the json object to define the necessary environment variabes. 
+You will want to go to [http://127.0.0.1/token](http://127.0.0.1/token) and use the contents of the json object to define the necessary environment variabes.
 
 {% include alert.html title="Important!" content="You must be a superuser <strong>and</strong> admin to build images." %}
 

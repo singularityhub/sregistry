@@ -20,7 +20,7 @@ image to be tagged with the release version that matches your clone. E.g.:
   image: quay.io/vanessa/sregistry:1.1.34
 ```
 
-If you have cloned master, then the current master should coincide with 
+If you have cloned master, then the current master should coincide with
 latest and you don't need to do these updates.
 
 ## Under Maintenance Page
@@ -60,14 +60,14 @@ were stored on the filesystem, specifically at `/var/www/images` that was bound 
 at `images`. We did this by way of using a custom nginx image with the nginx upload module
 enabled (see [this post](https://vsoch.github.io/2018/django-nginx-upload/) for an example).
 
-There is also the other option to use [custom builders]({{ site.url }}/install-builders) 
-that can be used to push a recipe to Singularity Registry Server, and then trigger a 
+There is also the other option to use [custom builders]({{ site.url }}/install-builders)
+that can be used to push a recipe to Singularity Registry Server, and then trigger a
 cloud build that will be saved in some matching cloud storage.
 
 ### Default
 
 However for versions 1.1.24 and later, to better handle the Singularity `library://`
-client that uses Amazon S3, we added a [Minio Storage](https://docs.min.io/docs/python-client-api-reference.html#presigned_get_object) 
+client that uses Amazon S3, we added a [Minio Storage](https://docs.min.io/docs/python-client-api-reference.html#presigned_get_object)
 backend, or another container (minio) that is deployed alongside Singularity Registry server.
 If you look in the [docker compose.yml](https://github.com/singularityhub/sregistry/blob/master/docker compose.yml) that looks something like this:
 
@@ -79,7 +79,7 @@ minio:
   env_file:
    - ./.minio-env
   ports:
-   - "9000:9000"  
+   - "9000:9000"
   command: ["server", "images"]
 ```
 
@@ -109,7 +109,7 @@ minio-images/
 
 ### Configuration
 
-For secrets (the access and secret key that are used to create the container) 
+For secrets (the access and secret key that are used to create the container)
 we are reading in environment variables for the server in `.minio-env`
 that looks like this:
 
@@ -171,7 +171,7 @@ You can then list the hosts that are known as follows (and make sure yours appea
 
 ```bash
 / # ./mc config host ls
-gcs  
+gcs
   URL       : https://storage.googleapis.com
   AccessKey : YOUR-ACCESS-KEY-HERE
   SecretKey : YOUR-SECRET-KEY-HERE
@@ -180,9 +180,9 @@ gcs
 
 local
   URL       : http://localhost:9000
-  AccessKey : 
-  SecretKey : 
-  API       : 
+  AccessKey :
+  SecretKey :
+  API       :
   Lookup    : auto
 
 myminio
@@ -193,14 +193,14 @@ myminio
   Lookup    : auto
 
 
-play 
+play
   URL       : https://play.min.io
   AccessKey : YOUR-ACCESS-KEY-HERE
   SecretKey : YOUR-SECRET-KEY-HERE
   API       : S3v4
   Lookup    : auto
 
-s3   
+s3
   URL       : https://s3.amazonaws.com
   AccessKey : YOUR-ACCESS-KEY-HERE
   SecretKey : YOUR-SECRET-KEY-HERE
@@ -239,7 +239,7 @@ This is really helpful for debugging!
 127.0.0.1 X-Amz-Request-Id: 1602C00C5749AF1F
 127.0.0.1 <?xml version="1.0" encoding="UTF-8"?>
 <Error><Code>SignatureDoesNotMatch</Code><Message>The request signature we calculated does not match the signature you provided. Check your key and signing method.</Message><Key>test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874</Key><BucketName>sregistry</BucketName><Resource>/sregistry/test/big:sha256.92278b7c046c0acf0952b3e1663b8abb819c260e8a96705bad90833d87ca0874</Resource><RequestId>1602C00C5749AF1F</RequestId><HostId>e9ba6dec-55a9-4add-a56b-dd42a817edf2</HostId></Error>
-127.0.0.1 
+127.0.0.1
 ```
 The above shows an error - the signature is somehow wrong. It came down to not specifying the signature type in a config
 when I instantiated the client, and also needing to customize the `presign_v4` function to allowing
@@ -252,7 +252,7 @@ SSL instructions for minio are included in the next section.
 
 ### Server Certificates
 
-Getting https certificates is really annoying, and getting `dhparams.pem` takes forever. But after the domain is obtained, it's important to do. Again, remember that we are working on the host, and we have an nginx server running. You should follow the instructions (and I do this manually) in [generate_cert.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/generate_cert.sh). 
+Getting https certificates is really annoying, and getting `dhparams.pem` takes forever. But after the domain is obtained, it's important to do. Again, remember that we are working on the host, and we have an nginx server running. You should follow the instructions (and I do this manually) in [generate_cert.sh](https://github.com/singularityhub/sregistry/blob/master/scripts/generate_cert.sh).
 
  - starting nginx
  - installing certbot
@@ -303,8 +303,8 @@ docker build -t quay.io/vanessa/sregistry .
 
 This section is mostly for your FYI. The nginx container that we used to rely on for uploads is a custom compiled
 nginx that included the [nginx uploads module](https://www.nginx.com/resources/wiki/modules/upload/).
-This allowed us to define a server block that would accept multipart form data directly, and 
-allowed uploads directly to the server without needing to stress the uwsgi application. 
+This allowed us to define a server block that would accept multipart form data directly, and
+allowed uploads directly to the server without needing to stress the uwsgi application.
 The previous image we used is still provided on Docker Hub at
 [quay.io/vanessa/sregistry_nginx](https://hub.docker.com/r/quay.io/vanessa/sregistry_nginx)
 While we don't use this for standard uploads, we still use it for the web interface upload,
@@ -325,7 +325,7 @@ nginx:
   links:
     - uwsgi
     - db
-``` 
+```
 to this, meaning that we will build from the nginx folder:
 
 ```bash

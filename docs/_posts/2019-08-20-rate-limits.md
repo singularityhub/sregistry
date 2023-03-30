@@ -28,7 +28,7 @@ stringent or flexible in how you allow your users to interact with the server.
 
 ### Global Disables
 
-In the case that you need to turn a component off to investigate or debug, we've 
+In the case that you need to turn a component off to investigate or debug, we've
 added global variables to disabling building, receiving builds, or GitHub webhooks (in
 the case of the [Google Build](/sregistry/docs/plugins/google-build) integration.
 

@@ -43,10 +43,10 @@
                 <label for="remove_contributors">Remove Contributors</label>
 
                 {% if collection.contributors.count > 0 %}
-                <select id="remove_contributors" 
-                        name="remove_contributors" 
+                <select id="remove_contributors"
+                        name="remove_contributors"
                         class="form-control"
-                        style="margin-bottom:20px;" multiple>                
+                        style="margin-bottom:20px;" multiple>
                     {% for current in collection.contributors.all %}
                     <option value="{{ current.id }}">{{ current.username }}</option>
                     {% endfor %}
@@ -60,11 +60,11 @@
 
                 <!-- Owners -->
                 <label for="remove_owners">Remove Owners</label>
-                <select id="remove_owners" 
-                        name="remove_owners" 
+                <select id="remove_owners"
+                        name="remove_owners"
                         class="form-control"
                         style="margin-bottom:20px;" multiple>
-                
+
                 {% if collection.owners.count > 1 %}
                     {% for current in collection.owners.all %}
                     <option value="{{ current.id }}">{{ current.username }}</option>
@@ -85,14 +85,14 @@
             <p class="alert alert-info" style="padding:5px">Contributors get read only (command line access) to pull containers if the collection is private.</p>
             <small>Users can be added based on your teams. {% if has_create_permission %}If you want to make a new team, <a href="{% url 'new_team' %}">do that here.</a>{% endif %}</small><br>
             {% if teams %}
-            <select id="add_contributors"  
-                    name="add_contributors" 
+            <select id="add_contributors"
+                    name="add_contributors"
                     class="form-control"
                     style="margin-bottom:20px;" multiple>
-            
+
                 {% for team in teams %}
                     {% if request.user in team.get_members %}
-                    <option disabled>Team: {{ team.name }}</option> 
+                    <option disabled>Team: {{ team.name }}</option>
                     {% for contender in team.get_members %}
                         {% if contender.id in contrib_ids %}
                         {% else %}
@@ -112,14 +112,14 @@
             <label for="add_owners">Add Owners</label>
             <p class="alert alert-info" style="padding:5px">Owners of a collection have full permissions to push, delete, and edit in the web interface. Grant this with caution.</p>
             {% if teams %}
-            <select id="add_owners"  
-                    name="add_owners" 
+            <select id="add_owners"
+                    name="add_owners"
                     class="form-control"
                     style="margin-bottom:20px;" multiple>
-                
+
                 {% for team in teams %}
                     {% if request.user in team.get_members %}
-                    <option disabled>Team: {{ team.name }}</option> 
+                    <option disabled>Team: {{ team.name }}</option>
                     {% for contender in team.get_members %}
                         {% if contender.id in owners_ids %}
                         {% else %}

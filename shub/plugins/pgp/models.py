@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2019-2022 Vanessa Sochat.
+Copyright 2019-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -36,7 +36,6 @@ from shub.plugins.pgp import utils
 
 
 class PGPKeyModelManager(models.Manager):
-
     PGP_KEY_STORAGE = "pgpdb/{0}/{1}.pgp"
 
     def contribute_to_class(self, model, name):
@@ -125,7 +124,6 @@ class PGPKeyModelManager(models.Manager):
                     )
 
     def post_delete(self, sender, instance, **kwargs):
-        """\sa: self.post_save()"""
         instance.file.delete(False)
 
     def save_to_storage(self, user, data):
@@ -191,7 +189,6 @@ class PGPPacketModel(models.Model):
 
 # Tag 6, Tag14
 class PGPPublicKeyModel(PGPPacketModel):
-
     UNKNOWN = 0
     RSA_ENC_SIGN = 1
     RSA_ENC = 2
@@ -277,7 +274,6 @@ class PGPUserIDModel(PGPPacketModel):
 
 # Tag 2
 class PGPSignatureModel(PGPPacketModel):
-
     SIG_UNKNOWN = -1
     BINARY = 0x00
     TEXT = 0x01

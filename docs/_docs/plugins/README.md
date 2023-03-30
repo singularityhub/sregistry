@@ -11,7 +11,7 @@ Singularity Registry Server supports added functionality through plugins. Plugin
 such as container scanning, LDAP authentication, to be added without complicating the core code of
 sregistry.
 
-Plugins distributed with `sregistry` are found in the `shub/plugins` directory. 
+Plugins distributed with `sregistry` are found in the `shub/plugins` directory.
 
 ## Included Plugins
 
@@ -36,7 +36,7 @@ ARG ENABLE_GLOBUS=false
 ARG ENABLE_SAML=false
 ```
 
-Therefore, if you want to install the requirements of all current supported plugins, you can build the image as follows: 
+Therefore, if you want to install the requirements of all current supported plugins, you can build the image as follows:
 ```bash
 docker build --build-arg ENABLE_LDAP=true --build-arg ENABLE_PAM=true  --build-arg ENABLE_GOOGLEBUILD=true --build-arg ENABLE_GLOBUS=true --build-arg ENABLE_SAML=true -t quay.io/vanessa/sregistry .
 ```
@@ -69,4 +69,3 @@ RUN if $ENABLE_{PLUGIN_NAME}; then {INSTALLATION_COMMAND}; fi;
 Documentation for your plugin is just as important as the plugin itself! You should create a subfolder under
 `docs/pages/plugins/<your-plugin>` with an appropriate README.md that is linked to in this file.
 Use the others as examples to guide you.
-
