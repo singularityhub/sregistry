@@ -86,7 +86,7 @@ thumb: custom/taco-logo.png
 ```
 
 ## 4. Submit a PR
-You can then add your files, and submit a PR to the main repo. We will have tests that ping your registry to ensure correct naming of files and registry address, along with a preview of the content that is added. If you want to prevew locally, you can run `jekyll serve`.
+You can then add your files, and submit a PR to the main repo. We will have tests that ping your registry to ensure correct naming of files and registry address, along with a preview of the content that is added. If you want to preview locally, you can run `jekyll serve`.
 
 
 Great! Now that you have your accounts, you probably want to learn about how to build and push images!

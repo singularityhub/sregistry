@@ -16,7 +16,7 @@ jobs:
       - name: Check for typos in docs
         uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
         with:
-           files: ./docs ./README.md
+           files: ./docs/_docs ./docs/_posts ./README.md
 
       - name: Setup black linter
         run: conda create --quiet --name black black
