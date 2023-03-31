@@ -11,9 +11,9 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 from importlib import import_module
 
 from django.conf import settings
-from django.urls import include, re_path
 from django.contrib import admin
 from django.contrib.sitemaps.views import index, sitemap
+from django.urls import include, re_path
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
@@ -40,9 +40,13 @@ urlpatterns = [
     re_path(r"^admin/", admin.site.urls),
     re_path(r"^", include(base_urls)),
     re_path(r"^api/", include(api_urls)),
-    re_path(r"^", include(library_urls)),  # Sylabs library API - includes v1 and v2 (damn)
+    re_path(
+        r"^", include(library_urls)
+    ),  # Sylabs library API - includes v1 and v2 (damn)
     re_path(r"^api/schema/$", schema_view),
-    re_path(r"^api/docs/", include_docs_urls(title=API_TITLE, description=API_DESCRIPTION)),
+    re_path(
+        r"^api/docs/", include_docs_urls(title=API_TITLE, description=API_DESCRIPTION)
+    ),
     re_path(r"^", include(main_urls)),
     re_path(r"^", include(user_urls)),
     re_path(r"^sitemap\.xml$", index, {"sitemaps": sitemaps}, name="sitemap"),
@@ -60,4 +64,4 @@ for plugin in settings.PLUGINS_ENABLED:
     # per protocol, keystore must be /pks
     if plugin == "pgp":
         url_regex = "^pks/"
-    urlpatterns.append(url(url_regex, include(plugin_urls)))
+    urlpatterns.append(re_path(url_regex, include(plugin_urls)))
