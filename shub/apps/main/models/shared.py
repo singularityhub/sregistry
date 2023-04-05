@@ -11,7 +11,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 import uuid
 
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
@@ -58,7 +57,7 @@ class Collection(models.Model):
     secret = models.CharField(
         max_length=200, null=False, verbose_name="Collection secret for webhook"
     )
-    metadata = JSONField(default=dict)  # open field for metadata about a collection
+    metadata = models.JSONField(default=dict)  # open field for metadata about a collection
     tags = TaggableManager()
 
     # Users

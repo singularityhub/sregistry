@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import uuid
 
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
@@ -56,8 +55,8 @@ class Container(models.Model):
     image = models.ForeignKey(
         ImageFile, null=True, blank=False, on_delete=models.SET_NULL
     )
-    metadata = JSONField(default=dict, blank=True)
-    metrics = JSONField(default=dict, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    metrics = models.JSONField(default=dict, blank=True)
     name = models.CharField(max_length=250, null=False, blank=False)
     tag = models.CharField(max_length=250, null=False, blank=False, default="latest")
     secret = models.CharField(max_length=250, null=True, blank=True)

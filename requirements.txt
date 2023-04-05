@@ -1,6 +1,6 @@
 coreapi==2.3.3
 cython
-django==2.2.28
+django
 django-chosen
 django-crispy-forms
 django-datatables-view
