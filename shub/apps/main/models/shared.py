@@ -57,7 +57,9 @@ class Collection(models.Model):
     secret = models.CharField(
         max_length=200, null=False, verbose_name="Collection secret for webhook"
     )
-    metadata = models.JSONField(default=dict)  # open field for metadata about a collection
+    metadata = models.JSONField(
+        default=dict
+    )  # open field for metadata about a collection
     tags = TaggableManager()
 
     # Users

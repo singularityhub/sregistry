@@ -472,7 +472,7 @@ LOGGING = {
 # Custom user model (unlikely to change)
 AUTH_USER_MODEL = "users.User"
 SOCIAL_AUTH_USER_MODEL = "users.User"
-DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Allow setting custom hosts in the environment
 ALLOWED_HOSTS = cfg.ALLOWED_HOSTS or ["*"]

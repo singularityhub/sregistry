@@ -32,6 +32,7 @@ Hub)](https://hub.docker.com/r/mwaeckerlin/openldap/) is a useful container conf
 with unencrypted, StartTLS, and SSL access to an OpenLDAP directory.
 
 ## Quick Start
+
 This quick start is intended to demonstrate basic functionality of the LDAP server, and you should
 review the links referenced above for more detail.
 
@@ -81,6 +82,7 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 ```
 
 #### Interact with it
+
 Here is a way to get familiar with the executables inside the image for ldap:
 
 ```bash
@@ -325,4 +327,19 @@ Once you have set these options, startup sregistry and you should be able to see
 
 ![ldap.png](../../assets/img/ldap.png)
 
-and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*. As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.
+and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*.
+
+#### Debugging
+
+LDAP is hard to setup, and while we aren't experts, we can keep a log of errors (and resolutions)
+that come up for our user base. If you see this error:
+
+```console
+Authentication failed for USERNAME: failed to map the username to a DN.
+```
+
+The solution can be found [here](https://stackoverflow.com/a/37033098). The string "uid" had to be
+replaced with "samaccountname" described [here](https://github.com/singularityhub/sregistry/blob/master/shub/settings.py#L580).
+
+
+As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.

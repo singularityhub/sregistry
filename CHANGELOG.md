@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - update to use Django 4.2 (2.1.0)
  - consolidate config into one file with environment (2.0.0)
    - This is an API breaking change, as the settings are completely refactored
  - update python base to 3.9, minio server to use new credentials (1.1.4)
