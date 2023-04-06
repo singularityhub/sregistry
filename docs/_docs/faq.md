@@ -19,7 +19,7 @@ toc: false
 
 Singularity Registry Server is an open source registry for [Singularity](https://www.github.com/sylabs/singularity)
 containers. It is optimized to be flexible for deployment with different plugins for
-authentication, storage, and building, and for community contribution. 
+authentication, storage, and building, and for community contribution.
 
 ### What is a Linux Container?
 
@@ -36,7 +36,7 @@ A container image is an encapsulated, portable environment that is created to di
 
 is the predecessor to Singularity Registry, and while it also serves as an image registry, in addition it provides a cloud build service for users. Singularity Hub also takes advantage of Github for version control of build recipes. The user pushes to Github, a builder is deployed, and the image available to the user. Singularity Hub would allow a user to build and run an image from a resource where he or she doesn't have sudo simply by using Github as a middleman.
 
-**Singularity Registry Server** 
+**Singularity Registry Server**
 
 is similarly an image registry that plugs in natively to the singularity software, but it places no dependencies on Github, and puts the power of deciding how to build in the hands of the user. This could mean building after tests pass with a "push" command in a Github repository, building via a SLURM job, or on a private server. While Singularity Hub is entirely public and only allows for a minimum number of private images, a Singularity Registry Server can be entirely private, with expiring tokens that can be shared. The administrator can choose
 to include Singularity Hub like features via plugins, but only if they are desired.
@@ -74,13 +74,12 @@ Both are similar, and in fact might be friends! We can easily talk about things 
 
 And things that are different:
 
- - A Docker registry serves layers (`.tar.gz`) and not entire images. A Singularity Registry serves entire images. 
- - Any Docker image from a Docker Registry can be immediately converted to Singularity. As far as I know, the other way around is not developed. 
+ - A Docker registry serves layers (`.tar.gz`) and not entire images. A Singularity Registry serves entire images.
+ - Any Docker image from a Docker Registry can be immediately converted to Singularity. As far as I know, the other way around is not developed.
  - Singularity Registry images can be pulled to a cluster resource. Docker images cannot.
 
-There are really great use cases for both, and the decision of which to use is up to the goals of the user. 
+There are really great use cases for both, and the decision of which to use is up to the goals of the user.
 
 ### Are there features of Singularity that are particularly supported by Singularity Hub?
 
 Singularity aims to support scientific containers, so Singularity Hub and Registry take an extra step to serve metadata about the containers via the API. It's important to know about usage (downloads and stars) but also software, environment variables, labels, and runscripts. This supports being able to do more research analytics across containers to better understand how containers (and more broadly software) help answer scientific questions. Given the issues we have with reproducibility, this is essential.
-

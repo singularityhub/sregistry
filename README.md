@@ -55,13 +55,13 @@
 
 ## What is Singularity Registry
 
-Singularity Registry Server is a server to provide management and storage of 
-Singularity images for an institution or user to deploy locally. 
-It does not manage building but serves endpoints to obtain and save containers. 
+Singularity Registry Server is a server to provide management and storage of
+Singularity images for an institution or user to deploy locally.
+It does not manage building but serves endpoints to obtain and save containers.
 
 ## Images Included
 
-Singularity Registry consists of several Docker images, and they are integrated 
+Singularity Registry consists of several Docker images, and they are integrated
 to work together using [docker-compose.yml](docker-compose.yml).
 
 The images are the following:

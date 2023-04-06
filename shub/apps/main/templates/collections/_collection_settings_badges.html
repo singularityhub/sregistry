@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <div class="row">
     <div class="col-md-12">
 
@@ -31,22 +31,21 @@
 $('.copyme').click(function(){
     var copy_id = $(this).attr('id')
     var content = $("#" + copy_id + "_well")
-    var range = document.createRange();  
-    range.selectNode(content[0])  
+    var range = document.createRange();
+    range.selectNode(content[0])
     window.getSelection().addRange(range)
 
-  try {  
-        // Now that we've selected the anchor text, execute the copy command  
-        var successful = document.execCommand('copy');  
-        var msg = successful ? 'successful' : 'unsuccessful';  
+  try {
+        // Now that we've selected the anchor text, execute the copy command
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
         toast_message('Copy ' + msg)
-      }  catch(err) {  
-        toast_message('Oops, unable to copy');  
-      }  
+      }  catch(err) {
+        toast_message('Oops, unable to copy');
+      }
 
-    // removeRange(range) when it is supported  
-    window.getSelection().removeAllRanges();  
+    // removeRange(range) when it is supported
+    window.getSelection().removeAllRanges();
 
 });
 </script>
-

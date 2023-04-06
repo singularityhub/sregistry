@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 {% block head %}
 
 {% endblock %}
@@ -13,29 +13,29 @@
       {% csrf_token %}
       <input type="file" name="file1" required><br>
   <div id="div_id_name" class="form-group" style='width:400px'>
-      <label for="id_name" 
+      <label for="id_name"
              class="control-label  requiredField">Container Name<span class="asteriskField">*</span></label>
            <div class="controls">
-           <input type="text" 
-             name="name" 
+           <input type="text"
+             name="name"
              value=""
-             placeholder="ubuntu" 
+             placeholder="ubuntu"
              required=""
-             maxlength="50" class="textinput textInput form-control"  
-             id="id_name">      
+             maxlength="50" class="textinput textInput form-control"
+             id="id_name">
              </div>
       </div>
   <div id="div_id_tag" class="form-group" style='width:400px'>
-      <label for="id_name" 
+      <label for="id_name"
              class="control-label  requiredField">Container Tag<span class="asteriskField">*</span></label>
       <div class="controls">
-      <input type="text" 
-             name="tag" 
+      <input type="text"
+             name="tag"
              value=""
-             placeholder="latest" 
+             placeholder="latest"
              required=""
-             maxlength="50" class="textinput textInput form-control"  
-             id="id_tag">      
+             maxlength="50" class="textinput textInput form-control"
+             id="id_tag">
       </div>
   </div>
       <input type="submit" class="btn btn-primary" name="submit" value="Upload">

@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -134,7 +134,7 @@ class User(AbstractUser):
                 # Case 1: one credential
                 credential = self.social_auth.get(provider=provider)
                 return credential
-            except:
+            except Exception:
                 # Case 2: more than one credential for the provider
                 credential = self.social_auth.filter(provider=provider)
                 if credential:
@@ -316,7 +316,6 @@ class MembershipInvite(models.Model):
 
 @receiver(pre_save, sender=Team)
 def create_team_group(sender, instance, **kwargs):
-
     # Get the name from the team
     name = instance.name.replace(" ", "-").lower().strip()
     instance.name = name

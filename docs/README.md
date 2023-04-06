@@ -24,7 +24,7 @@ cd docs
 ### 2. Customize
 
 To edit configuration values, customize the [_config.yml](_config.yml).
-To add pages, write them into the [pages](pages) folder. 
+To add pages, write them into the [pages](pages) folder.
 You define urls based on the `permalink` attribute in your pages,
 and then add them to the navigation by adding to the content of [_data/toc.myl](_data/toc.yml).
 

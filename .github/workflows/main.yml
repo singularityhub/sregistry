@@ -14,15 +14,16 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Check for typos in docs
-        uses: crate-ci/typos@592b36d23c62cb378f6097a292bc902ee73f93ef # version 1.0.4
-        with: 
-          files: ./docs ./README.md
+        uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
+        with:
+           files: ./docs/_docs ./docs/_posts ./README.md
 
       - name: Setup black linter
         run: conda create --quiet --name black black
 
-      - name: Lint python code
+      - name: Lint and format Python code
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
           source activate black
-          black --check shub
+          pip install -r .github/dev-requirements.txt
+          pre-commit run --all-files

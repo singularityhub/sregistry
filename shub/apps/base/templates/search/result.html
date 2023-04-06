@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% include "style/search.html" %}
 
                         {% if results|length %}
@@ -8,7 +8,7 @@
                                     <strong>Found {{ results|length }} collections</strong>
                                 </td>
                             </tr>
- 
+
                             {% for collection in results %}
                             <tr class="{% cycle 'odd' 'even' %}">
                                 <td><strong>{{ forloop.counter }}.</strong></td>

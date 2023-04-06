@@ -11,6 +11,7 @@ Gemfile.lock
 sregistry
 _site
 minio-images
+env
 
 # Other #
 #########

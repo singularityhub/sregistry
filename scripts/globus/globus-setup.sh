@@ -16,7 +16,7 @@ if [ ! -f "$HOME/.globus.cfg" ]; then
 fi
 
 echo "Generating Globus Personal Endpoint"
-token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_connect_setup_key'  | tr -d '"') 
+token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_connect_setup_key'  | tr -d '"')
 /opt/globus/globusconnectpersonal -setup "${token}"
 
 # Export that globus plugin is enabled to config
@@ -32,7 +32,7 @@ echo "ROBOTNAME='${ROBOTNAME}'" >> /code/shub/settings/config.py
 ENDPOINT_ID=$(globus endpoint local-id)
 if [ "${ENDPOINT_ID}" != "No Globus Connect Personal installation found." ]; then
     echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/shub/settings/config.py
-fi    
+fi
 
 # Have we set up config paths yet?
 if [ ! -f "$HOME/.globusonline/lta/config-paths" ]; then

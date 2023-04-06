@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -122,7 +122,6 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
     # Only continue if user is an owner
     if user in collection.owners.all():
-
         # parse the image name, get the datafile
         names = parse_image_name(name, version=version)
         storage = os.path.basename(names["storage"])
@@ -138,7 +137,6 @@ def upload_container(cid, user, name, version, upload_id, size=None):
 
         # If the path exists, it's a file from nginx module, move to storage
         if os.path.exists(upload_id):
-
             # If name is too long, will return OSError on move to storage
             new_path = move_nginx_upload_to_storage(collection, upload_id, storage)
             instance = ImageUpload.objects.create(
@@ -179,7 +177,6 @@ def upload_container(cid, user, name, version, upload_id, size=None):
         create_new = True
 
         if containers:
-
             # If we already have a container, it might be frozen
             container = containers[0]
 

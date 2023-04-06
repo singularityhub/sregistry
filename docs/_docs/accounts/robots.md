@@ -39,7 +39,7 @@ collection.save()
 ```
 
 As an alternative, if you intend to add this robot user to more than one collection,
-you can create a [Team]({{ site.url }}{{ site.baseurl }}/docs/setup/teams) in the interface, 
+you can create a [Team]({{ site.url }}{{ site.baseurl }}/docs/setup/teams) in the interface,
 add the robot user to it also via the console:
 
 ```python

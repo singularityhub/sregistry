@@ -16,7 +16,7 @@ and then, given an image called "tacos" in collection "dinosaur" with tag "lates
 singularity pull shub://127.0.0.1/dinosaur/tacos:latest
 ```
 
-### How is it different? 
+### How is it different?
 
 This is different than the traditional shub pull command (which uses Github as a namespace) because of the inclusion of the registry uri. On Github, if you imagine that there was a repo named "tacos" owned by user "dinosaur" that pull would look different (and still work):
 

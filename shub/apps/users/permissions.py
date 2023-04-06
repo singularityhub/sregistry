@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -21,7 +21,6 @@ def has_create_permission(request):
         return True
 
     if USER_COLLECTIONS is True and not request.user.is_anonymous:
-
         # Does the registry have a user collection limit?
         if USER_COLLECTION_LIMIT is not None:
             if (

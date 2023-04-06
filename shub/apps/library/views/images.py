@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -68,7 +68,6 @@ class CompletePushImageFileView(RatelimitMixin, APIView):
     parser_classes = (EmptyParser,)
 
     def put(self, request, container_id, format=None):
-
         print("PUT CompletePushImageFileView")
 
         try:
@@ -320,7 +319,6 @@ class RequestPushImageFileView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def post(self, request, container_id, format=None):
-
         print("POST RequestPushImageFileView")
 
         if not validate_token(request):
@@ -368,7 +366,6 @@ class PushImageView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, username, collection, name, version):
-
         print("GET PushNamedContainerView")
 
         if not validate_token(request):
@@ -417,7 +414,6 @@ class DownloadImageView(RatelimitMixin, APIView):
     ratelimit_method = "GET"
 
     def get_download_url(self, container):
-
         if "image" in container.metadata:
             return container.metadata["image"]
 
@@ -474,7 +470,6 @@ class GetImageView(RatelimitMixin, APIView):
     ratelimit_method = "GET"
 
     def get(self, request, name):
-
         # The request specifies ?arch=amd64 but that's all we got
         print("GET GetImageView")
         names = parse_image_name(name)
@@ -528,7 +523,6 @@ class GetImageView(RatelimitMixin, APIView):
 
 
 class CollectionsView(RatelimitMixin, APIView):
-
     ratelimit_key = "ip"
     ratelimit_rate = settings.VIEW_RATE_LIMIT
     ratelimit_block = settings.VIEW_RATE_LIMIT_BLOCK
@@ -628,7 +622,6 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
     parser_classes = (EmptyParser,)
 
     def get(self, request, collection_id):
-
         print("GET CollectionTagsView")
         if not validate_token(request):
             print("Token not valid")
@@ -636,7 +629,7 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
         try:
             collection = Collection.objects.get(id=collection_id)
-        except:
+        except Exception:
             return Response(status=404)
 
         # Always return empty so it hits the container tag generation endpoint
@@ -645,7 +638,6 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
         return Response(data={"data": tags}, status=200)
 
     def post(self, request, collection_id):
-
         print("POST ContainerTagView")
 
         if not validate_token(request):
@@ -672,10 +664,8 @@ class GetCollectionTagsView(RatelimitMixin, APIView):
 
         # If the container is existing and frozen, no go.
         if existing is not None:
-
             # Case 1: the tag exists, and it's frozen
             if existing.frozen:
-
                 # We can't create this new container with the tag, delete it
                 container.delete()
                 return Response(
@@ -717,7 +707,6 @@ class ContainersView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request):
-
         print("GET ContainersView")
         print(request.data)
         print(request.query_params)
@@ -744,7 +733,6 @@ class GetNamedCollectionView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, name, username=None):
-
         print("GET GetNamedCollectionView")
 
         if not validate_token(request):
@@ -782,7 +770,6 @@ class GetNamedContainerView(RatelimitMixin, APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, username, name, container):
-
         print("GET GetNamedContainerView")
 
         if not validate_token(request):

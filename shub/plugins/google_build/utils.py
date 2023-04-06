@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2016-2022 Vanessa Sochat.
+Copyright 2016-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -84,7 +84,6 @@ def paginate(url, headers, min_count=30, start_page=1, params=None, limit=None):
     result_count = 1000
     page = start_page
     while result_count >= 30:
-
         # If the user set a limit, honor it
         if limit is not None:
             if len(result) >= limit:
@@ -262,7 +261,7 @@ def generate_signed_url(storage_path, expiration=None, headers=None, http_method
     # The blob must exist
     try:
         service.objects().get(bucket=bucket["id"], object=object_name).execute()
-    except:  # HttpError:
+    except Exception:  # HttpError:
         return None
 
     escaped_object_name = quote(object_name, safe="")

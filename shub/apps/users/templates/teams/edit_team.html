@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block content %}
 {% include 'messages/message.html' %}
@@ -16,17 +16,17 @@
         <h3 class="title"><a href="{% url 'teams' %}" style="text-decoration:none; margin-right:15px"><< </a> {{ title }}</h3>
         {% endif %}
             <main>
-                <form method="POST" enctype="multipart/form-data"> 
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div id="div_id_name" class="form-group">
                         <label for="id_name" class="control-label  requiredField">Name<span class="asteriskField">*</span></label>
                         <div class="controls">
-                        <input type="text" 
-                               name="name" 
-                               value="{% if team.name %}{{ team.name }}{% endif %}" 
+                        <input type="text"
+                               name="name"
+                               value="{% if team.name %}{{ team.name }}{% endif %}"
                                required=""
-                               maxlength="50" class="textinput textInput form-control"  
-                               id="id_name"> 
+                               maxlength="50" class="textinput textInput form-control"
+                               id="id_name">
                         </div>
                     </div>
                     <div id="div_id_team_image" class="form-group">
@@ -38,7 +38,7 @@
                     </div>
                     <div id="div_id_permission" class="form-group">
                        <label for="id_permission" class="control-label  requiredField">
-                       Permission needed to join team<span class="asteriskField">*</span> 
+                       Permission needed to join team<span class="asteriskField">*</span>
                        </label>
                        <div class="controls">
                            <select name="permission" class="custom-select" id="id_permission">{% if team.permission == "invite" %}

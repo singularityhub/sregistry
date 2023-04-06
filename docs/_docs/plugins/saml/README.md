@@ -28,7 +28,7 @@ cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 
 
 ## Quick Start
-This quick start is intended to demonstrate basic functionality of the SAML authentication. 
+This quick start is intended to demonstrate basic functionality of the SAML authentication.
 
 
 #### Edit Config.py
@@ -61,4 +61,3 @@ mv saml.key /etc/ssl/private
 ```
 
 and then generate the `metadata.xml` by going to `http://localhost/saml_auth/saml.xml`. Usually institutions have different portals for submitting metadata / getting information about SAML, for Stanford the information is via the [SAML SP Service Provider Database](https://spdb.stanford.edu/).
-

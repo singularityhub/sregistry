@@ -1,7 +1,7 @@
 ---
 title: Deployment backup
 description: Deployment backup
-tags: 
+tags:
  - docker
 ---
 
@@ -9,7 +9,7 @@ tags:
 
 With changes to models and heavy development, there can be mistakes and errors
 related to losing data. We can only do our best to back up the data locally,
-back up the containers, and take snapshots of the server. This guide will provide 
+back up the containers, and take snapshots of the server. This guide will provide
 detail to that.
 
 ## Snapshots

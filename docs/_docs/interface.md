@@ -23,7 +23,7 @@ When you agree, the robots welcome you!
 
 ![teams.png](../assets/img/interface/terms-welcome.png)
 
-## Collections 
+## Collections
 
 A collection is a set of containers under the same namespace. For example, `dinosaur/avocado` and `dinosaur/banana` could be two containers in the `dinosaur` collection. You can browse all collections in the main collection view:
 
@@ -106,7 +106,7 @@ And a Swagger schema one, if that's how you roll:
 
 Along with the API, there are tools to visualize your registry and otherwise interact.
 
-![teams.png](../assets/img/interface/tools.png) 
+![teams.png](../assets/img/interface/tools.png)
 
 For example, here is the treemap.
 
@@ -145,8 +145,8 @@ collection = Collection.objects.get(name="collection")
 user = User.objects.get(username='vsoch')
 
 # Who are current contributors, owners?
-collection.contributors.all()                                                                                                          
-collection.owners.all()      
+collection.contributors.all()
+collection.owners.all()
 
 # Add to contributors and/or owners
 collection.contributors.add(user)

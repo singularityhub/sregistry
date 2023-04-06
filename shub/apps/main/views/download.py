@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -96,7 +96,6 @@ def _download_container(container, request):
 
     """
     if container.image is not None:
-
         filename = container.get_download_name()
         filepath = container.image.get_abspath()
 
@@ -117,14 +116,13 @@ def _download_container(container, request):
 
     # A remove build will store a metadata image url
     elif "image" in container.metadata:
-
         if "google_build" in PLUGINS_ENABLED:
             from shub.plugins.google_build.utils import generate_signed_url
 
             signed_url = generate_signed_url(container.metadata["image"])
 
             # If we can generate a URL, add one to limit and return url
-            if signed_url != None and container.get_count < container.get_limit:
+            if signed_url is not None and container.get_count < container.get_limit:
                 container.get_count += 1
                 container.collection.get_count += 1
                 container.collection.save()

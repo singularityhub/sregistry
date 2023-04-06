@@ -45,5 +45,5 @@ Once you have completed all the configuration of the role in your recipe, it is 
 sudo ansible-playbook sregistry.yml
 ```
 
-Want to learn more? Check out the [official documentation](https://github.com/grycap/ansible-role-singularity-registry) 
+Want to learn more? Check out the [official documentation](https://github.com/grycap/ansible-role-singularity-registry)
 for the entire story.

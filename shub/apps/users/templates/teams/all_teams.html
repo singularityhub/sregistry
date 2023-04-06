@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
@@ -33,14 +33,14 @@ span.even { background: rgba(91, 192, 222, 0.32); }
 {% if teams %}
 <div class="row" style="margin-top:30px">
 
-            <div class="col-md-12" 
+            <div class="col-md-12"
                  class="table card material-table mdl-data-table--selectable">
 
-            <table id="teams_table" 
+            <table id="teams_table"
                    class="table"
-                   cellspacing="0" 
-                   width="100%" 
-                   style="padding-top:20px"> 
+                   cellspacing="0"
+                   width="100%"
+                   style="padding-top:20px">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -53,13 +53,13 @@ span.even { background: rgba(91, 192, 222, 0.32); }
                <tr>
                    <td><a href="{% url 'team_details' team.id %}">{{ team.name }}</a></td>
                    <td><a href="{% url 'team_details' team.id %}">
-                           <button class="btn btn-primary btn-xs" 
+                           <button class="btn btn-primary btn-xs"
                                    type="button" id="team_details">View</button></a>
 
                        {% if request.user in team.get_members %}{% else %}
                        {% if team.permission == "open" %}
                        <a href="{% url 'join_team' team.id %}">
-                          <button class="btn btn-info btn-secondary" 
+                          <button class="btn btn-info btn-secondary"
                                   type="button" id="join_team">Join</button>
                        </a>{% endif %}{% endif%}
                    </td>
@@ -90,7 +90,7 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 
     $('#teams_table').DataTable( {
-       pageLength: 100, 
+       pageLength: 100,
        columnDefs: [
             {
                 targets: [ 0, 1, 2 ],

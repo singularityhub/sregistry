@@ -91,7 +91,7 @@ Once your server is setup with an endpoint, any logged in user must authenticate
 
 
 ### Search
-The Globus Transfer portal shows endpoints with scope `shared-with-me` and 
+The Globus Transfer portal shows endpoints with scope `shared-with-me` and
 `my-endpoints`. To see endpoints that you might actually want to transfer to,
 you should do a search using the box at the top:
 
@@ -99,7 +99,7 @@ you should do a search using the box at the top:
 
 Here is the search result for the query "Stanford" that shows Stanford's various endpoints.
 
-![search-result.png](../../assets/img/globus/search-result.png). 
+![search-result.png](../../assets/img/globus/search-result.png).
 
 Any endpoint that says "ACTIVATE" you need to follow the link to activate it from Globus. Any endpoint that has
 a green label "activated" should be ready for use.

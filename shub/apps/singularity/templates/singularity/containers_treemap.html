@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <style>
@@ -35,8 +35,8 @@ rect {
     <div class="col-md-4">
         <h3 style="margin-bottom:0px">Container Sizes (MB)</h3>
         <small>{{ generation_date }}</small>
-        <a id="save_as_svg" 
-           value="" 
+        <a id="save_as_svg"
+           value=""
            style="margin-left:10px; cursor:pointer"
            onclick="save_svg()"><i class="fa fa-save"></i></a>
     </div>

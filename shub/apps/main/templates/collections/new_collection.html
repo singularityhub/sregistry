@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block content %}
 {% include 'messages/message.html' %}
@@ -9,19 +9,19 @@
 </span>
 <div class="row" style="margin-top:30px; margin-left:-10px">
     <div class="col-md-6">
-        <h3 class="title">New Collection</h3>            
+        <h3 class="title">New Collection</h3>
             <main>
-                <form method="POST" enctype="multipart/form-data" action="{% url 'new_collection' %}"> 
+                <form method="POST" enctype="multipart/form-data" action="{% url 'new_collection' %}">
                     {% csrf_token %}
                     <div id="div_id_name" class="form-group">
                         <label for="id_name" class="control-label  requiredField">Name<span class="asteriskField">*</span></label>
                         <div class="controls">
-                        <input type="text" 
-                               name="name" 
-                               value="" 
+                        <input type="text"
+                               name="name"
+                               value=""
                                required=""
-                               maxlength="50" class="textinput textInput form-control"  
-                               id="id_name"> 
+                               maxlength="50" class="textinput textInput form-control"
+                               id="id_name">
                         </div>
                     </div>
                    <button class="btn btn-primary" id="submit-id-submit">Submit</button>

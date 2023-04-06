@@ -1,4 +1,4 @@
-{% load static from staticfiles %}
+{% load static %}
 {% load gravatar %}
 <!DOCTYPE HTML>
 <html lang="en">
@@ -65,7 +65,7 @@
     <header>
     {% include "base/navigation.html" %}
     </header>
-    
+
     {% block hero %}{% endblock %}
     <div class="container-fluid" style="margin:30px">
     {% block content %}{% endblock %}
@@ -85,7 +85,7 @@
     <script type="text/javascript" src="{% static "js/bootstrap-table.js"%}"></script>
 
     {% block scripts %}{% endblock %}
-    
+
     </body>
     {% endblock %}
 </html>

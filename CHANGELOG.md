@@ -1,8 +1,8 @@
 # CHANGELOG
 
-This is a manually generated log to track changes to the repository for each release. 
-Each section should include general headers such as **Implemented enhancements** 
-and **Merged pull requests**. All closed issued and bug fixes should be 
+This is a manually generated log to track changes to the repository for each release.
+Each section should include general headers such as **Implemented enhancements**
+and **Merged pull requests**. All closed issued and bug fixes should be
 represented by the pull requests that fixed them. Critical items to know are:
 
  - renamed commands
@@ -12,11 +12,12 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - update to use Django 4.2 (2.1.0)
  - consolidate config into one file with environment (2.0.0)
    - This is an API breaking change, as the settings are completely refactored
  - update python base to 3.9, minio server to use new credentials (1.1.4)
    - docker-compose updated to use docker compose
- - add: auto set "verify" attribute of s3 and s3_external obj in minio.py for SSL use (1.1.39) 
+ - add: auto set "verify" attribute of s3 and s3_external obj in minio.py for SSL use (1.1.39)
  - fix issues with psycopg2-binary and saml auth (1.1.38)
    - Pin psycopg2-binary 2.8.6 to deal with UTC errors
    - change formatting of the login URL to fix saml auth

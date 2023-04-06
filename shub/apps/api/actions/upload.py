@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -36,7 +36,6 @@ def upload_complete(request):
     from shub.apps.api.actions.create import upload_container
 
     if request.method == "POST":
-
         path = request.POST.get("file1.path")
         size = request.POST.get("file1.size")
         cid = request.POST.get("collection")

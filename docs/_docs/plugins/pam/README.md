@@ -7,7 +7,7 @@ permalink: docs/plugins/pam
 
 # PAM Authentication
 
-The `pam_auth` plugin allows users to login to sregistry using the unix accounts on 
+The `pam_auth` plugin allows users to login to sregistry using the unix accounts on
 the host system.
 
 To enable PAM authentication you must:
@@ -25,9 +25,9 @@ and each user will still each need to export their token to push.  You can read 
 
 ## Getting Started
 
-This is the detailed walkthough to set up the PAM AUthentication plugin. 
+This is the detailed walkthough to set up the PAM AUthentication plugin.
 
-First, uncomment "pam_auth" at the bottom of `shub/settings/config.py` to 
+First, uncomment "pam_auth" at the bottom of `shub/settings/config.py` to
 enable the login option.
 
 ```bash
@@ -51,14 +51,14 @@ uwsgi:
     - ./static:/var/www/static
     - ./images:/var/www/images
     # uncomment for PAM auth
-    #- /etc/passwd:/etc/passwd 
+    #- /etc/passwd:/etc/passwd
     #- /etc/shadow:/etc/shadow
   links:
     - redis
     - db
 ```
 
-If you do this, we lose the user added in the container for nginx! 
+If you do this, we lose the user added in the container for nginx!
 You also need to add the nginx user to your host:
 
 ```bash

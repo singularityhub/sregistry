@@ -8,7 +8,7 @@ https://github.com/aschn/drf-tracking
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_save
-from django.utils.six import python_2_unicode_compatible
+from six import python_2_unicode_compatible
 
 from shub.apps.logs.managers import PrefetchUserManager
 
@@ -81,7 +81,7 @@ def finalize_request(sender, instance, **kwargs):
 
     try:
         collection = get_request_collection(instance)
-    except:
+    except Exception:
         collection = None
 
     if collection is not None:

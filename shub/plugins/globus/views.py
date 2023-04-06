@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -37,7 +37,6 @@ def globus_logout(request):
     client = get_client()
 
     try:
-
         # Properly revoke and log out
         social = request.user.social_auth.get(provider="globus")
         for _, token_info in social.extra_data.items():

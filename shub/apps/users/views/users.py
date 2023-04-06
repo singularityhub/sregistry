@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -108,11 +108,11 @@ def view_profile(request, username=None):
 @login_required
 def delete_account(request):
     """delete a user's account and all associated containers."""
-    from shub.apps.main.views.collections import _delete_collection
+    from shub.apps.main.views.collections import _delete_collection  # noqa
     from shub.settings import PLUGINS_ENABLED
 
     if "google_build" in PLUGINS_ENABLED:
-        from shub.plugins.google_build.views import _delete_collection
+        from shub.plugins.google_build.views import _delete_collection  # noqa
 
     if not request.user or request.user.is_anonymous:
         messages.info(request, "This action is not prohibited.")

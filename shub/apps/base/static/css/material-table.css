@@ -83,7 +83,7 @@ div.material-table .table-footer label {
   display: flex;
   -webkit-flex-direction: row
   /* works with row or column */
-  
+
   flex-direction: row;
   -webkit-align-items: center;
   align-items: center;
@@ -96,7 +96,7 @@ div.material-table .table-footer .select-wrapper {
   display: flex;
   -webkit-flex-direction: row
   /* works with row or column */
-  
+
   flex-direction: row;
   -webkit-align-items: center;
   align-items: center;

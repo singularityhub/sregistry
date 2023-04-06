@@ -1,11 +1,11 @@
-{% load staticfiles %}
+{% load static %}
 {% load gravatar %}
 
 <nav class="navbar fixed-top navbar-expand-sm navbar-light bg-light">
     <a class="navbar-brand" href="{% url 'index' %}">
          <span style="font-size: 1.8rem; color:#e32929; text-decoration:none; text-transform:uppercase">S<span style="font-size:1.8rem;color:black;text-transform:uppercase">Registry</span>
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">☰</button> 
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">☰</button>
     <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav ml-auto">
             <li class="nav-item"><a class="nav-link" href="{% url 'collections' %}">Containers</a>

@@ -21,17 +21,18 @@ To enable LDAP authentication you must:
 ```
 cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 ```
-  
+
 Because no two LDAP directories are the same, configuration can be complex and there are no
 standard settings. The plugin uses `django-auth-ldap`, which provides more [detailed documentation
 at Read the Docs](https://django-auth-ldap.readthedocs.io/en/1.2.x/authentication.html).
 
 To test LDAP authentication you may wish to use a docker container that provides an OpenLDAP
 directory. `mwaeckerlin/openldap` [(GitHub)](https://github.com/mwaeckerlin/openldap) [(Docker
-Hub)](https://hub.docker.com/r/mwaeckerlin/openldap/) is a useful container configured 
+Hub)](https://hub.docker.com/r/mwaeckerlin/openldap/) is a useful container configured
 with unencrypted, StartTLS, and SSL access to an OpenLDAP directory.
 
 ## Quick Start
+
 This quick start is intended to demonstrate basic functionality of the LDAP server, and you should
 review the links referenced above for more detail.
 
@@ -48,7 +49,7 @@ To test sregistry LDAP authentication we can use a Dockerized OpenLDAP server.
 
 
 #### Create the server
-As instructed in [https://github.com/mwaeckerlin/openldap](https://github.com/mwaeckerlin/openldap) and [(here!)](https://marc.xn--wckerlin-0za.ch/computer/setup-openldap-server-in-docker)  let's bring 
+As instructed in [https://github.com/mwaeckerlin/openldap](https://github.com/mwaeckerlin/openldap) and [(here!)](https://marc.xn--wckerlin-0za.ch/computer/setup-openldap-server-in-docker)  let's bring
 up a dummy LDAP server:
 
 ```bash
@@ -70,7 +71,7 @@ With this command we are:
   - Creating an admin account, which will have the dn (distinguished name)
     `cn=admin,dc=my-company,dc=com` and password `avocados`.
 
-The `-d` means "detached" so you won't see the output in the terminal. If you need to see output, remove the `-d`. Here is the 
+The `-d` means "detached" so you won't see the output in the terminal. If you need to see output, remove the `-d`. Here is the
 running container:
 
 ```
@@ -81,6 +82,7 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 ```
 
 #### Interact with it
+
 Here is a way to get familiar with the executables inside the image for ldap:
 
 ```bash
@@ -304,7 +306,7 @@ Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/con
 
 Finally, you must build the Docker image with the build argument ENABLE_LDAP set to true:
 ```bash
-docker build --build-arg ENABLE_LDAP=true -t quay.io/vanessa/sregistry . 
+docker build --build-arg ENABLE_LDAP=true -t quay.io/vanessa/sregistry .
 ```
 
 It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
@@ -317,7 +319,7 @@ For example, if you put in an incorrect credential, you would see the following 
 
 ```bash
 uwsgi_1   | [pid: 56|app: 0|req: 4/4] 172.17.0.1 () {42 vars in 1025 bytes} [Thu Oct 26 07:18:10 2017] GET /ldap_auth/login/?next=http://127.0.0.1/login/ => generated 13475 bytes in 26 msecs (HTTP/1.1 200) 7 headers in 382 bytes (1 switches on core 0)
-uwsgi_1   | search_s('ou=users,dc=my-company,dc=com', 2, '(uid=%(user)s)') returned 0 objects: 
+uwsgi_1   | search_s('ou=users,dc=my-company,dc=com', 2, '(uid=%(user)s)') returned 0 objects:
 uwsgi_1   | Authentication failed for adminuser: failed to map the username to a DN.
 ```
 
@@ -325,4 +327,19 @@ Once you have set these options, startup sregistry and you should be able to see
 
 ![ldap.png](../../assets/img/ldap.png)
 
-and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*. As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.
+and login with the username/password pairs *testuser/testuser* and *testadmin/testadmin*.
+
+#### Debugging
+
+LDAP is hard to setup, and while we aren't experts, we can keep a log of errors (and resolutions)
+that come up for our user base. If you see this error:
+
+```console
+Authentication failed for USERNAME: failed to map the username to a DN.
+```
+
+The solution can be found [here](https://stackoverflow.com/a/37033098). The string "uid" had to be
+replaced with "samaccountname" described [here](https://github.com/singularityhub/sregistry/blob/master/shub/settings.py#L580).
+
+
+As a final note, if you choose this method to deploy an actual ldap server, you might consider adding the container to the docker compose. If you've done this and need help, or want to contribute what you've learned, please submit a Pull Request to update these docs.

@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% load crispy_forms_tags %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
@@ -43,11 +43,11 @@
         <div style="padding:20px">
             <div class="header" style="padding-bottom:10px">
                    <h3 class="title">
-                   <img src="{% static 'img/robot_vision.png' %}" 
+                   <img src="{% static 'img/robot_vision.png' %}"
                         width="160px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
                    Container Labels</h3>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 
@@ -87,7 +87,7 @@ $(document).ready(function(){
     $('.material-pagination').hide();
 
     $('#collection_table').DataTable( {
-       pageLength: 100, 
+       pageLength: 100,
        columnDefs: [
             {
                 targets: [ 0, 1, 2 ],

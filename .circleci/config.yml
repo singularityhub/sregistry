@@ -4,7 +4,7 @@
 # defined here or within the CircleCI settings. The following environment
 # variables are acceptable here or in these settings (for sensitive information)
 #
-# CONTAINER_NAME if not set, will use Github repo and organization name 
+# CONTAINER_NAME if not set, will use Github repo and organization name
 # DOCKER_USER
 # DOCKER_EMAIL
 # Dockerfile optional, if the path is different than the Dockerfile in $PWD
@@ -30,7 +30,7 @@ install: &install
 
 sourceenv: &sourceenv
     name: Source environment variables from the BASH_ENV
-    command: source $BASH_ENV 
+    command: source $BASH_ENV
 
 
 # Docker
@@ -67,7 +67,7 @@ dockerenv: &dockerenv
 dockerload: &dockerload
     name: Load Docker container Image
     no_output_timeout: 30m
-    command: | 
+    command: |
       echo "Working directory is ${PWD}"
       docker info
       set +o pipefail
@@ -128,7 +128,7 @@ dockernginx: &dockernginx
     name: Build nginx custom container
     command: |
       source ${BASH_ENV}
-      echo "Building ${CONTAINER_NAME}_nginx:${DOCKER_TAG}"      
+      echo "Building ${CONTAINER_NAME}_nginx:${DOCKER_TAG}"
       cd ${REPO_NAME}/nginx && \
       ls && \
       docker build -f ${DOCKERFILE} -t ${CONTAINER_NAME}_nginx:${DOCKER_TAG} .
@@ -196,7 +196,7 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: 
+              ignore:
                 - gh-pages
                 - /docs?/.*/
                 - contributors/*
@@ -208,7 +208,7 @@ workflows:
             - build
           filters:
             branches:
-              ignore: 
+              ignore:
                 - gh-pages
                 - /docs?/.*/
                 - contributors/*

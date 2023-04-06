@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,10 +8,11 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from importlib import import_module
-import yaml
 import os
 import sys
+from importlib import import_module
+
+import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -63,7 +64,7 @@ BOOLEAN_DEFAULTS = {
 STRING_DEFAULTS = {
     # Will be converted to list, and defaults to "*"
     "ALLOWED_HOSTS": None,
-    "SECRET_KEY": None,
+    "SECRET_KEY": "12345",
     "API_VERSION": "v1",
     "API_ANON_THROTTLE_RATE": "100/day",
     "API_USER_THROTTLE_RATE": "1000/day",
@@ -250,6 +251,7 @@ for key in STRING_DEFAULTS:
     value = get_sregistry_envar(key)
     if value is not None:
         STRING_DEFAULTS[key] = value
+
 
 # Finally, create settings object
 class Settings:
@@ -470,6 +472,7 @@ LOGGING = {
 # Custom user model (unlikely to change)
 AUTH_USER_MODEL = "users.User"
 SOCIAL_AUTH_USER_MODEL = "users.User"
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Allow setting custom hosts in the environment
 ALLOWED_HOSTS = cfg.ALLOWED_HOSTS or ["*"]
@@ -565,7 +568,6 @@ if "pam_auth" in PLUGINS_ENABLED:
 
 # If LDAP_AUTH in plugins enabled, populate from settings
 if "ldap_auth" in PLUGINS_ENABLED:
-
     # To work with OpenLDAP and posixGroup groups we need to import some things
     import ldap
     from django_auth_ldap.config import LDAPSearch, PosixGroupType
@@ -602,7 +604,6 @@ if "ldap_auth" in PLUGINS_ENABLED:
 
 # If google_build in use, we are required to include GitHub
 if "google_build" in PLUGINS_ENABLED:
-
     # For task discovery by celery
     SOCIAL_AUTH_GITHUB_SCOPE = [
         "admin:repo_hook",
@@ -616,7 +617,6 @@ if "google_build" in PLUGINS_ENABLED:
 
 # Apply any plugin settings
 for plugin in PLUGINS_ENABLED:
-
     plugin_module = "shub.plugins." + plugin
     plugin = import_module(plugin_module)
 
@@ -636,7 +636,6 @@ for plugin in PLUGINS_ENABLED:
 
 # Finally, ensure all variables in cfg are set in locals
 for key, value in cfg:
-
     # Don't set if the value is empty, or it's been set previously
     if value is None or key in locals() and locals()[key] is not None:
         continue
@@ -644,7 +643,7 @@ for key, value in cfg:
 
 # Try reading in from secrets first (no issue if not found)
 try:
-    from .secrets import *
+    from .secrets import *  # noqa
 except ImportError:
     pass
 
@@ -662,12 +661,12 @@ if (
     sys.exit("SECRET_KEY is required but not set. Set SREGISTRY_SECRET_KEY.")
 
 
-if ENABLE_GOOGLE_AUTH:
+if ENABLE_GOOGLE_AUTH:  # noqa
     # The scope is not needed, unless you want to develop something new.
     SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
         "access_type": "offline",
         "approval_prompt": "auto",
     }
 
-if ENABLE_GITLAB_AUTH:
+if ENABLE_GITLAB_AUTH:  # noqa
     SOCIAL_AUTH_GITLAB_SCOPE = ["api", "read_user"]

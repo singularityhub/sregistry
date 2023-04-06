@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -29,7 +29,6 @@ class Command(BaseCommand):
     help = "produce registration markdown file"
 
     def handle(self, *args, **options):
-
         template = "tools/template-registry.md"
         outfile = os.path.basename(template).replace(
             "template-", "%s-" % settings.REGISTRY_URI
@@ -37,7 +36,7 @@ class Command(BaseCommand):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         try:
             admin = ADMINS[0][0]
-        except:
+        except Exception:
             admin = "sregistry-robot"
             bot.warning("No admin in settings, will use %s" % admin)
 

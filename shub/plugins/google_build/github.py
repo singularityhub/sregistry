@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -379,7 +379,6 @@ def receive_github_hook(request):
     """
     # We do these checks again for sanity
     if request.method == "POST":
-
         if DISABLE_GITHUB or DISABLE_BUILDING:
             return JsonResponseMessage(message="Building is disabled")
 
@@ -456,7 +455,7 @@ def verify_payload(request, collection):
     # If a branch is provided, this is the version  "ref": "refs/heads/master",
     try:
         branch = payload.get("ref", "refs/heads/master").replace("refs/heads/", "")
-    except:
+    except Exception:
         branch = "master"
 
     # Some newer webhooks have commits

@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -8,55 +8,55 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 """
 
-from django.conf.urls import url
+from django.urls import re_path
 
 import shub.apps.main.views as views
 
 urlpatterns = [
-    url(r"^collections/?$", views.all_collections, name="collections"),
-    url(
+    re_path(r"^collections/?$", views.all_collections, name="collections"),
+    re_path(
         r"^collections/(?P<cid>\d+)/edit/?$",
         views.edit_collection,
         name="edit_collection",
     ),
-    url(r"^collections/new/?$", views.new_collection, name="new_collection"),
-    url(
+    re_path(r"^collections/new/?$", views.new_collection, name="new_collection"),
+    re_path(
         r"^collections/(?P<cid>\d+)/settings/?$",
         views.collection_settings,
         name="collection_settings",
     ),
-    url(
+    re_path(
         r"^collections/(?P<cid>\d+)/contributors/?$",
         views.edit_contributors,
         name="edit_contributors",
     ),
-    url(
+    re_path(
         r"^collections/(?P<cid>\d+)/?$",
         views.view_collection,
         name="collection_details",
     ),
-    url(r"^collections/my/?$", views.my_collections, name="my_collections"),
-    url(
+    re_path(r"^collections/my/?$", views.my_collections, name="my_collections"),
+    re_path(
         r"^collections/(?P<cid>\d+)/usage/?$",
         views.collection_commands,
         name="collection_commands",
     ),
-    url(
+    re_path(
         r"^collections/(?P<cid>\d+)/delete/?$",
         views.delete_collection,
         name="delete_collection",
     ),
-    url(
+    re_path(
         r"^collections/(?P<cid>\d+)/private/?$",
         views.make_collection_private,
         name="make_collection_private",
     ),
-    url(
+    re_path(
         r"^collections/(?P<cid>\d+)/public/?$",
         views.make_collection_public,
         name="make_collection_public",
     ),
-    url(
+    re_path(
         r"^collections/(?P<username>.+?)/(?P<reponame>.+?)/?$",
         views.view_named_collection,
         name="collection_byname",

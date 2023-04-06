@@ -31,6 +31,6 @@ git clone https://github.com/singularityhub/sregistry
 cd sregistry
 ```
 
-For the files linked below, you should find the correspoinding file in the Github repository that you cloned. If you are setting this up for the first time, it's recommended to try locally and then move onto your production resource.
+For the files linked below, you should find the corresponding file in the Github repository that you cloned. If you are setting this up for the first time, it's recommended to try locally and then move onto your production resource.
 
 Next, why don't you [configure settings](settings) to customize your installation.

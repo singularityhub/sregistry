@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% load crispy_forms_tags %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 {% include "style/sliders.html" %}
@@ -28,7 +28,7 @@
             <div class="header">
                 <a href="{% url 'collection_details' collection.id %}">
                  <h3 class="title">{{ collection.name }}:{{ collection.tag }}</a>
-                  settings   
+                  settings
                   </h3>
             </div>
         </div>
@@ -45,7 +45,7 @@
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-8">
-        <div class="tab-content"> 
+        <div class="tab-content">
             <div id="users" class="tab-pane fade in active">
                {% include "collections/_collection_settings_users.html" %}
             </div>

@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% load crispy_forms_tags %}
-{% load staticfiles %}
+{% load static %}
 
 {% block content %}
 <div id="fh5co-portfolio">
@@ -22,13 +22,13 @@
 
     </div>
     <div class="col-md-4">
-                <p id="message" 
-                   class="alert alert-info"><strong>You must agree to the terms of service to continue.</strong> 
+                <p id="message"
+                   class="alert alert-info"><strong>You must agree to the terms of service to continue.</strong>
                    <br><br>These terms basically say that Singularity Registry softawre is provided as a service to you, and that you are responsible for what you put in your institution's containers. By way of publicly sharing container content via a Singularity Registry, you are making the content of the containers accessible worldwide to anyone that uses the Singularity client. The developers of Singularity Registry trust that you will not act maliciously, dishonestly, or destructively.</p>
-        <button class="btn btn-info" 
+        <button class="btn btn-info"
                 id="agree_button">I Agree</button>
 
-        <button class="btn btn-info" 
+        <button class="btn btn-info"
                 style="display:none"
                 id="continue_button"
                 disabled>Continue</button>

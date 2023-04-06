@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% load crispy_forms_tags %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
@@ -18,7 +18,7 @@
                    <img src="{% static 'img/robot1.png' %}" width="80px" style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>
                    Star Collections</h3>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 
@@ -45,7 +45,7 @@
                 <th>Name</th>
                 <th>Containers</th>
                 <th>Last Modified</th>
-                <th><i class="fa fa-2x fa-star" 
+                <th><i class="fa fa-2x fa-star"
                        style="color:gold"></i></th>
             </tr>
         </thead>
@@ -82,7 +82,7 @@ $(document).ready(function(){
     $('.material-pagination').hide();
 
     $('#collection_table').DataTable( {
-       pageLength: 100, 
+       pageLength: 100,
        columnDefs: [
             {
                 targets: [ 0, 1, 2 ],

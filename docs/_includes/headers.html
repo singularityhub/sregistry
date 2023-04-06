@@ -11,7 +11,7 @@ $.each(headers, function(i, header){
 })
 
 // Ensure that sidebar on left has arrows
-$(".pancakes-parent").on('click', function(){ 
+$(".pancakes-parent").on('click', function(){
     console.log($(this).next());
     $(this).next().find('.pancakes-child').toggle();
     if ($(this).hasClass('open-parent')){

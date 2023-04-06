@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -10,7 +10,6 @@ with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import uuid
 
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
@@ -56,8 +55,8 @@ class Container(models.Model):
     image = models.ForeignKey(
         ImageFile, null=True, blank=False, on_delete=models.SET_NULL
     )
-    metadata = JSONField(default=dict, blank=True)
-    metrics = JSONField(default=dict, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    metrics = models.JSONField(default=dict, blank=True)
     name = models.CharField(max_length=250, null=False, blank=False)
     tag = models.CharField(max_length=250, null=False, blank=False, default="latest")
     secret = models.CharField(max_length=250, null=True, blank=True)
@@ -75,7 +74,6 @@ class Container(models.Model):
 
     # A helper function to get an image.
     def get_image(self):
-
         # A remote build will have an image path stored as metadata
         if self.image is None:
             if "image" in self.metadata:
@@ -87,7 +85,6 @@ class Container(models.Model):
 
     # A container only gets a version when it's frozen, otherwise known by tag
     def get_short_uri(self):
-
         # An automated build means a collection has a common namespace
         if "/" in self.name:
             return "%s:%s" % (self.name, self.tag)

@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2017-2022 Vanessa Sochat.
+Copyright 2017-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -127,7 +127,6 @@ def redirect_if_no_refresh_token(backend, response, social, *args, **kwargs):
 # Update headers to use token
 # https://github.com/python-social-auth/social-core/pull/428/files
 class ShubGithubOAuth2(GithubOAuth2):
-
     # copied from https://github.com/python-social-auth/social-core/pull/428
     # and must be removed once we've got a newer social-auth-core
     def _user_data(self, access_token, path=None):

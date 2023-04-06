@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/social-auth.css"%}">
@@ -20,8 +20,8 @@
     <div class="row">
     <div style="padding-top:20px" class="alert alert-info" role="alert">This is the standalone token for providing to the Singularity client.</div>
        <div class="col-md-1" style='padding-top:10px'>
-           <button id="just_token" 
-                   class="btn copyme" 
+           <button id="just_token"
+                   class="btn copyme"
                    data-clipboard-target="#just_token">
                    <i class="fa fa-copy"></i></button>
        </div>
@@ -32,17 +32,17 @@
     <div style="padding-top:20px" class="alert alert-info" role="alert">Store this at <strong>$HOME</strong>/.sregistry, keep private, and do not include in github repos.</div>
 
        <div class="col-md-1" style='padding-top:10px'>
-           <button id="token" 
-                   class="btn copyme" 
+           <button id="token"
+                   class="btn copyme"
                    data-clipboard-target="#token">
                    <i class="fa fa-copy"></i></button>
        </div>
        <div style="padding-top:20px;" class="well col-md-12" id="token_well" role="alert">
             { "registry":
                {
-                "token": 
+                "token":
                      "{{ request.user.token }}",
-                "username": "{{ request.user.username }}"{% if domain %},{% endif %} 
+                "username": "{{ request.user.username }}"{% if domain %},{% endif %}
                 {% if domain %}
                 "base": "{{ domain }}"
                 {% endif %}
@@ -68,21 +68,21 @@
 $('.copyme').click(function(){
     var copy_id = $(this).attr('id')
     var content = $("#" + copy_id + "_well")
-    var range = document.createRange();  
-    range.selectNode(content[0])  
+    var range = document.createRange();
+    range.selectNode(content[0])
     window.getSelection().addRange(range)
 
-   try {  
-        // Now that we've selected the anchor text, execute the copy command  
-        var successful = document.execCommand('copy');  
-        var msg = successful ? 'successful' : 'unsuccessful';  
+   try {
+        // Now that we've selected the anchor text, execute the copy command
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
         toast_message('Copy ' + msg)
-      }  catch(err) {  
-        toast_message('Oops, unable to copy');  
-      }  
+      }  catch(err) {
+        toast_message('Oops, unable to copy');
+      }
 
-    // removeRange(range) when it is supported  
-    window.getSelection().removeAllRanges();  
+    // removeRange(range) when it is supported
+    window.getSelection().removeAllRanges();
 
 });
 </script>

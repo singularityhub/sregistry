@@ -29,7 +29,7 @@
                    <td>{% if f.collection.number_downloads %}{{ f.collection.number_downloads }}{% else %}0{% endif %}</td>
                    <td>{{ f.collection.modify_date|date:"Y-m-d"}}
                         {% if f.collection.repo.url %}
-                        <a style="margin-right:20px;float:right" 
+                        <a style="margin-right:20px;float:right"
                            href="https://www.github.com/{{ f.collection.repo.full_name }}" target="_blank">
                      <i class="fa fa-github"></i></a>{% endif %}
                    </td>
@@ -39,7 +39,7 @@
                 </table>
             </div>
         </div>
-        {% else %} 
+        {% else %}
          <div class="row">
             <div class="col-md-12">
                 <h4 class="title">Favorites</h4>

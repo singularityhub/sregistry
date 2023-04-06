@@ -1,6 +1,6 @@
 """
 
-Copyright (C) 2016-2022 Vanessa Sochat.
+Copyright 2016-2023 Vanessa Sochat.
 
 This Source Code Form is subject to the terms of the
 Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
@@ -34,7 +34,6 @@ def prepare_build_task(cid, recipes, branch):
 
 
 def parse_hook(cid, branch="master", commits=None):
-
     """parse hook will take a request and an associated user collection,
     and finish parsing. This means generating the new container,
     and submitting a job to run on Google Cloud Build.
@@ -64,7 +63,6 @@ def build_commits(collection, commits, branch):
 
     # Find changed files!
     for commit in commits:
-
         print(commit)
         commit_id = commit.get("id")
         commit_date = commit.get("timestamp")
@@ -75,13 +73,11 @@ def build_commits(collection, commits, branch):
             removed.append({"name": filename, "id": commit_id, "date": commit_date})
 
         for filename in files:
-
             # Supports building from Singularity recipes
             if re.search("Singularity", filename):
                 add_record = True
 
             if filename in modified:
-
                 # Don't add if we have more recent
                 if parse(commit_date) < parse(modified[filename]["date"]):
                     add_record = False
@@ -99,7 +95,6 @@ def build_commits(collection, commits, branch):
 
     # If the previous filename date is later than the record
     for entry in removed:
-
         # If the entry was modified before it was removed, remove it
         if entry["name"] in modified:
             if parse(modified[entry["name"]]["date"]) < parse(entry["date"]):
@@ -109,7 +104,6 @@ def build_commits(collection, commits, branch):
 
     # If we have records after parsing
     if modified:
-
         # This function submits the google build
         django_rq.enqueue(
             prepare_build_task, cid=collection.id, recipes=modified, branch=branch
@@ -134,12 +128,10 @@ def build_previous_commits(collection, branch):
 
     # Find changed files!
     for commit in commits:
-
         commit_id = commit.get("sha") or commit.get("id")
         commit_date = commit["commit"]["committer"]["date"]
 
         for record in commit["files"]:
-
             # We care about absolute basename paths
             filename = record["filename"]
 
@@ -149,10 +141,8 @@ def build_previous_commits(collection, branch):
 
             # Only going to build updated recipes
             elif record["status"] in ["added", "modified", "renamed"]:
-
                 # Supports building from Singularity recipes
                 if re.search("Singularity", filename):
-
                     # If the record is renamed after in modified, don't add
                     if record["status"] == "renamed":
                         renamed.append(
@@ -178,11 +168,9 @@ def build_previous_commits(collection, branch):
     # Now assemble keepers
     keepers = {}
     for entry in modified:
-
         # The recipe is what we compare to
         recipe = os.path.basename(entry["recipe"])
         if recipe in keepers:
-
             # Update if it's more recent
             if parse(keepers[recipe]["date"]) < parse(entry["date"]):
                 keepers[recipe] = entry
@@ -197,7 +185,6 @@ def build_previous_commits(collection, branch):
 
     # If the previous filename date is later than the record
     for entry in renamed:
-
         # If the entry was modified before it was renamed, remove it
         if entry["from"] in modified:
             if parse(modified[entry["from"]]["date"]) < parse(entry["date"]):
@@ -207,7 +194,6 @@ def build_previous_commits(collection, branch):
 
     # If we have records after parsing
     if modified:
-
         # This function submits the google build
         django_rq.enqueue(
             prepare_build_task, cid=collection.id, recipes=modified, branch=branch

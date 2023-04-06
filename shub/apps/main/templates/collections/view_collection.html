@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static "css/material-table.css"%}">
@@ -14,16 +14,16 @@
 
 #collection_tags {
     float:right;
-    background:white; 
+    background:white;
     border-radius:10px;
     border:none;
     margin-bottom:50px
 }
 
 #star {
-    padding-left:25px; 
-    float:right; 
-    color:#e32929; 
+    padding-left:25px;
+    float:right;
+    color:#e32929;
     font-size:30px;
     cursor:pointer;
 }
@@ -37,7 +37,7 @@
 {% include 'messages/message.html' %}
 
 <div class="row" style="margin-top:30px">
-    
+
     <!-- Container collection meta -->
     <div class="col-md-4">
         <h3 class="title">{{ collection.name }} <span class="small">collection</span></h3>
@@ -70,7 +70,7 @@
     <!-- Container collection meta -->
     <div class="col-md-12">
         <div >
-                
+
             {% if edit_permission %}
             <!-- Settings -->
             <a href="{% url 'collection_settings' collection.id %}"><button class="btn btn-sm btn-default">Settings</button></a>
@@ -117,11 +117,11 @@
                            <tbody>
                            {% for container in containers %}{% if "DUMMY" not in container.tag %}<tr>
                                <td style="width:80px">
-                               {% if edit_permission %}<a title="delete container" 
-                                  class="delete_container btn-sm btn btn-control btn-light" 
+                               {% if edit_permission %}<a title="delete container"
+                                  class="delete_container btn-sm btn btn-control btn-light"
                                   id="delete{{ container.id }}">
                                    <i class="fa fa-trash"></i></a>
-                                   <a id="confirm_delete{{ container.id }}" 
+                                   <a id="confirm_delete{{ container.id }}"
 {% if container.metadata.builder.name == "google_build" %}href="{% url 'delete_google_container' container.id %}">
 {% else %}                          href="{% url 'delete_container' container.id %}">{% endif %}</a>
                                {% endif %}<!-- container was pushed directly -->
@@ -132,7 +132,7 @@
                                    {{ collection.name }}/{{ container.name }}:{{ container.tag }}
                                    </a>
                                </td>
-                                
+
                                <td>{% if container.builder.deffile %}<a href="{{ container.builder.deffile }}" target="_blank">Singularity.{{ container.tag }}</a>{% else %}
                                <a href="{% url 'download_recipe' container.id %}">Singularity.{{ container.tag }}</a>{% endif %}</td>
                                <td>
@@ -140,12 +140,12 @@
                                        {% if edit_permission %}<a href="{% url 'change_freeze_status' container.id %}">{% endif %}
                                        {% if container.frozen %}
                                        <button title="a frozen tag is locked from being overwritten with a push."
-                                               style="width:115px" 
+                                               style="width:115px"
                                                class="btn btn-info btn-sm"
                                                {% if edit_permission %}{% else %}disabled{% endif %}>FROZEN <i style='color:white' class="fa fa-lock"></i></button>
                                        {% else %}
                                        <button title="freezing a container prevents pushing for the specified tag."
-                                               style="width:115px" 
+                                               style="width:115px"
                                                class="btn btn-success btn-sm"
                                                {% if edit_permission %}{% else %}disabled{% endif %}>OPEN <i style='color:white' class="fa fa-unlock"></i></button></a>
                                        {% endif %}
@@ -162,24 +162,24 @@
                                {% if container.image %}<!-- Globus only works for local images -->
                                {% if 'globus' in PLUGINS_ENABLED %}{% include "globus/_container_details.html" %}{% endif %}
                                {% endif %}
-                           </td>                                
+                           </td>
 
                            </tr>
                            {% endif %}{% endfor %}
                        </tbody>
-                       </form>    
+                       </form>
 
                     </table>
                 </div>
             </div>
             {% else %}
-            
+
             <!-- No containers! Tell the user to add one -->
             <div class="col-lg-8 col-sm-6">
                 <p style="padding-top:20px;padding-bottom:20px">Refresh the page to see changes. You can use the <i style='margin-left:10px;margin-right:10px' class="fa fa-plus"></i> above to add a container here.</p>
             </div>
 
-            {% include "social/share_links.html" %} 
+            {% include "social/share_links.html" %}
             {% endif %}
 
         </div>

@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block css %}
 <style>
@@ -35,11 +35,11 @@ rect {
     <div class="col-md-4">
         <h3 style="margin-bottom:0px">Collection Sizes (Containers)</h3>
         <small>{{ generation_date }}</small>
-        <a id="save_as_svg" 
-           value="" 
+        <a id="save_as_svg"
+           value=""
            style="margin-left:10px; cursor:pointer"
            onclick="save_svg()"><i class="fa fa-save"></i></a>
-            
+
     </div>
     <div class="col-md-4">
         <h4 id="container_metrics" style="color:333;margin-top:10px;margin-bottom:0px"></h4>
@@ -79,7 +79,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
   var data = [];
 
   // uid: is the container id
-  // size: used to be the size in MBs, now is containers count 
+  // size: used to be the size in MBs, now is containers count
   // id: is the container name
   var lookup = Object();
 
@@ -128,7 +128,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
   cell.append("text")
       .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
     .selectAll("tspan")
-      .data(function(d) { 
+      .data(function(d) {
            var cname = d.id.split('.').slice(-1)
            cname.push(d.data.n)
            return cname.join(' n=').split(/(?=[A-Z][^A-Z])/g).concat(format(d.value) + " containers");
@@ -139,7 +139,7 @@ d3.csv("{% url 'collections_size_data' %}", function(error, raw) {
       .text(function(d) { return d; });
 
   cell.append("title")
-      .text(function(d) { 
+      .text(function(d) {
            return d.id + "\n" + format(d.value) + " containers"; });
        });
 
