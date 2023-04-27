@@ -8,7 +8,7 @@ services:
     restart: always
 
     # IMPORTANT: update the tag to coincide with release version
-    image: quay.io/vanessa/sregistry
+    image: ghcr.io/singularityhub/sregistry:latest
     env_file:
       - ./.minio-env
     volumes:
@@ -25,7 +25,7 @@ services:
 
   nginx:
     restart: always
-    image: quay.io/vanessa/sregistry_nginx
+    image: ghcr.io/singularityhub/sregistry_nginx:latest
     ports:
       - "80:80"
       - "443:443"
@@ -47,7 +47,7 @@ services:
   scheduler:
 
     # IMPORTANT: update the tag to coincide with release version
-    image: quay.io/vanessa/sregistry
+    image: ghcr.io/singularityhub/sregistry:latest
     command: python /code/manage.py rqscheduler
     volumes:
       - .:/code
@@ -63,7 +63,7 @@ services:
   worker:
 
     # IMPORTANT: update the tag to coincide with release version
-    image: quay.io/vanessa/sregistry
+    image: ghcr.io/singularityhub/sregistry:latest
     command: python /code/manage.py rqworker default
     volumes:
       - .:/code

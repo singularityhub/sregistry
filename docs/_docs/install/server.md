@@ -10,14 +10,14 @@ Before doing `docker compose up -d` to start the containers, there are some spec
 ## Release Version
 
 If you've downloaded a [release](https://github.com/singularityhub/sregistry/releases/),
-you'll want to update the `docker compose.yaml` instances of the quay.io/vanessa/sregistry
+you'll want to update the `docker compose.yaml` instances of the ghcr.io/singularityhub/sregistry
 image to be tagged with the release version that matches your clone. E.g.:
 
 ```yaml
 # Change instances of
-  image: quay.io/vanessa/sregistry
+  image: ghcr.io/singularityhub/sregistry
 # to
-  image: quay.io/vanessa/sregistry:1.1.34
+  image: ghcr.io/singularityhub/sregistry:<release>
 ```
 
 If you have cloned master, then the current master should coincide with
@@ -296,7 +296,7 @@ If you want to try it, you can build the image. Note that this step isn't necess
 
 ```bash
 cd sregistry
-docker build -t quay.io/vanessa/sregistry .
+docker build -t ghcr.io/singularityhub/sregistry .
 ```
 
 ## Nginx
@@ -306,7 +306,7 @@ nginx that included the [nginx uploads module](https://www.nginx.com/resources/w
 This allowed us to define a server block that would accept multipart form data directly, and
 allowed uploads directly to the server without needing to stress the uwsgi application.
 The previous image we used is still provided on Docker Hub at
-[quay.io/vanessa/sregistry_nginx](https://hub.docker.com/r/quay.io/vanessa/sregistry_nginx)
+[vanessa/sregistry_nginx](https://hub.docker.com/r/quay.io/vanessa/sregistry_nginx)
 While we don't use this for standard uploads, we still use it for the web interface upload,
 and thus have not removed it. To build this image on your own change this section:
 
@@ -314,7 +314,7 @@ and thus have not removed it. To build this image on your own change this sectio
 ```bash
 nginx:
   restart: always
-  image: quay.io/vanessa/sregistry_nginx
+  image: ghcr.io/singularityhub/sregistry_nginx
   ports:
     - "80:80"
   volumes:

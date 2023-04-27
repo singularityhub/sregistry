@@ -12,8 +12,13 @@ aren't in your cache).
 
 ## What containers are provided?
 
-Singularity Registry Server uses the following images, all provided on Quay.io
-(or you can build the registry-specific ones locally):
+Singularity Registry Server (as of April 27, 2023) builds images to GitHub packages,
+so they are built alongside the code.
+
+ - [ghcr.io/singularityhub/sregistry](https://github.com/singularityhub/sregistry/pkgs/container/sregistry)
+ - [ghcr.io/singularityhub/sregistry_nginx](https://github.com/singularityhub/sregistry/pkgs/container/sregistry_nginx)
+
+For history, Singularity Registry used to build images on Quay via an automated build on CircleCI:
 
  - [quay.io/vanessa/sregistry]({{ site.registry }}): is the core application
    image, generated from the Dockerfile in the base of the repository.
@@ -21,7 +26,8 @@ Singularity Registry Server uses the following images, all provided on Quay.io
    container installed with the NGINX upload module, intended for use with
    speedy uploads. It is generated from the subfolder "nginx" in the repository.
 
-To use these images provided, you can bring up the containers like so:
+But we switched when Circle had bad behavior, and we also didn't like the idea
+of credentials crossing platforms.
 
 ## Start Containers
 
@@ -63,8 +69,8 @@ If you want to re-pull (or for other reason, remove) the core images, do that
 too:
 
 ```bash
-$ docker rmi quay.io/vanessa/sregistry
-$ docker rmi quay.io/vanessa/sregistry_nginx
+$ docker rmi ghcr.io/singularityhub/sregistry
+$ docker rmi ghcr.io/singularityhub/sregistry_nginx
 ```
 
 You can inspect any container by looking at its logs:
@@ -131,14 +137,14 @@ If you make changes to either of the images locally (or have other reasons to
 build them on your own), you can do this!  In the base of the repository:
 
 ```bash
-$ docker build -t quay.io/vanessa/sregistry .
+$ docker build -t ghcr.io/singularityhub/sregistry .
 ```
 
 And then to build NGINX:
 
 ```bash
 $ cd nginx
-$ docker build -t quay.io/vanessa/sregistry_nginx .
+$ docker build -t ghcr.io/singularityhub/sregistry_nginx .
 ```
 
 That's it! Likely the easiest thing to do is `docker compose up -d` and let the
