@@ -15,7 +15,7 @@ jobs:
       - name: Tributors Update
 
         # Important! Update to release https://github.com/con/tributors
-        uses: con/tributors@0.0.19
+        uses: con/tributors@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
