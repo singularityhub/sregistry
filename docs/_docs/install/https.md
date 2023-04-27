@@ -108,7 +108,7 @@ paths to use the files in your present working directory.
 ```yaml
 nginx:
   restart: always
-  image: quay.io/vanessa/sregistry_nginx
+  image: ghcr.io/singularityhub/sregistry_nginx
   ports:
     - "80:80"
     - "443:443"

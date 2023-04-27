@@ -45,7 +45,7 @@ you need to edit the `docker compose.yml` and uncomment binds to your host:
 ```bash
 uwsgi:
   restart: always
-  image: quay.io/vanessa/sregistry
+  image: ghcr.io/singularityhub/sregistry
   volumes:
     - .:/code
     - ./static:/var/www/static
@@ -71,5 +71,5 @@ adding new users). If you find a better way to do this, please test and open an 
 
 Finally, you must build the docker image with the build argument ENABLE_PAM set to true:
 ```bash
-$ docker build --build-arg ENABLE_PAM=true -t quay.io/vanessa/sregistry .
+$ docker build --build-arg ENABLE_PAM=true -t ghcr.io/singularityhub/sregistry .
 ```

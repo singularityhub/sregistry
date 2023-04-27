@@ -36,8 +36,9 @@ to list and verify the edits. Specifically, you need to add this line:
 ```
 
 This will run a docker commit at 1:00am, daily, using the container name
-"sregistry_uwsgi_1" and saving to "quay.io/vanessa/sregistry:snapshot". When the snapshot
-is saved for the disk (at 3-4am per the previous instructions) then
+"sregistry_uwsgi_1" and saving to "quay.io/vanessa/sregistry:snapshot". Note that you can change
+this name to whatever you think is appropriate - this is an old registry name used here as an
+example. When the snapshot is saved for the disk (at 3-4am per the previous instructions) then
 this container should be included. A few notes:
 
  - make sure that your containers are named as specified above - if you start from a different folder or use a different version of compose, you might see differences from the commands above.

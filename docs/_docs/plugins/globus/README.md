@@ -48,7 +48,7 @@ SOCIAL_AUTH_GLOBUS_SECRET="xxxxxxxxxxxxxxx"
 If you don't yet have a `secrets.py` you can copy the `dummy_secrets.py` in the same folder, which has commented out examples of the above.
 Then, you must build the container setting the build argument ENABLE_GLOBUS to true.
 ```
-docker build --build-arg ENABLE_GLOBUS=true -t quay.io/vanessa/sregistry .
+docker build --build-arg ENABLE_GLOBUS=true -t ghcr.io/singularityhub/sregistry .
 ```
 
 Once the build is done, start the container.

@@ -306,7 +306,7 @@ Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/con
 
 Finally, you must build the Docker image with the build argument ENABLE_LDAP set to true:
 ```bash
-docker build --build-arg ENABLE_LDAP=true -t quay.io/vanessa/sregistry .
+docker build --build-arg ENABLE_LDAP=true -t ghcr.io/singularityhub/sregistry .
 ```
 
 It's recommended to have the uwsgi logs open so any issue with ldap is shown clearly. You can do that with:
