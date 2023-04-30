@@ -185,6 +185,7 @@ INTEGER_DEFAULTS = {
     # The maximum number of downloads allowed per container/collection, per week
     "CONTAINER_WEEKLY_GET_LIMIT": 100,
     "COLLECTION_WEEKLY_GET_LIMIT": 100,
+    "GOOGLE_BUILD_TIMEOUT_SECONDS": None,  # None defaults to 10 minutes
     "MINIO_SIGNED_URL_EXPIRE_MINUTES": 5,
     # Google Build
     # To prevent denial of service attacks on Google Cloud Storage, you should set a reasonable limit for the number of active, concurrent builds.
