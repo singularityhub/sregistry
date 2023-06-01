@@ -87,6 +87,7 @@ STRING_DEFAULTS = {
     "DATABASE_ENGINE": "django.db.backends.postgresql_psycopg2",
     "DATABASE_NAME": "postgres",
     "DATABASE_USER": "postgres",
+    "DATABASE_PASSWORD": "postgres",
     "DATABASE_HOST": "db",
     "DATABASE_PORT": "5432",
     # Redis
@@ -409,13 +410,14 @@ MANAGERS = ADMINS
 
 # DATABASE
 
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
         "ENGINE": cfg.DATABASE_ENGINE,
         "NAME": cfg.DATABASE_NAME,
         "USER": cfg.DATABASE_USER,
+        "PASSWORD": cfg.DATABASE_PASSWORD,
         "HOST": cfg.DATABASE_HOST,
         "PORT": cfg.DATABASE_PORT,
     }
