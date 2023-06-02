@@ -672,16 +672,3 @@ if ENABLE_GITLAB_AUTH:  # noqa
         SOCIAL_AUTH_GITLAB_SCOPE=[]
     SOCIAL_AUTH_GITLAB_SCOPE += get_sregistry_envar_list("SOCIAL_AUTH_GITLAB_SCOPE")
     SOCIAL_AUTH_GITLAB_SCOPE = list(set(SOCIAL_AUTH_GITLAB_SCOPE))
-
-
-if __name__ == "__main__":
-    # Either dump all settings, or just the ones specified on the command line
-    import sys
-    if len(sys.argv) == 1:
-        for i in locals().copy().keys():
-            if i.isupper():
-                print(i,'=',eval(i))
-    else:
-        for i in sys.argv[1:]:
-            if i in locals().keys():
-                print(i,'=',eval(i))
