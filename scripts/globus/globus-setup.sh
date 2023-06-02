@@ -21,17 +21,17 @@ token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_conne
 
 # Export that globus plugin is enabled to config
 
-if ! grep -q \"globus\" /code/shub/settings/config.py; then
-    echo "PLUGINS_ENABLED+=[\"globus\"]" >> /code/shub/settings/config.py
+if ! python code/shub/settings.py PLUGINS_ENABLED | grep -q globus; then
+    echo "PLUGINS_ENABLED: [\"globus\"]" >> /code/settings.yaml
 fi
 
 # Even if we already have a previous robot name, it must correspond
 # to naming of this endpoint, so we re-generate (and get a new log file)
-echo "ROBOTNAME='${ROBOTNAME}'" >> /code/shub/settings/config.py
+echo "ROBOTNAME: '${ROBOTNAME}'" >> /code/settings.yaml
 
 ENDPOINT_ID=$(globus endpoint local-id)
 if [ "${ENDPOINT_ID}" != "No Globus Connect Personal installation found." ]; then
-    echo "PLUGIN_GLOBUS_ENDPOINT=\"${ENDPOINT_ID}\"" >> /code/shub/settings/config.py
+    echo "PLUGIN_GLOBUS_ENDPOINT: \"${ENDPOINT_ID}\"" >> /code/settings.yaml
 fi
 
 # Have we set up config paths yet?

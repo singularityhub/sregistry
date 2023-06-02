@@ -11,9 +11,9 @@ The `saml_auth` plugin allows users to authentication with your [SAML provider](
 
 To enable SAML authentication you must:
 
-  * Add `saml_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Add some configuration details to `shub/settings/config.py`
-  * Configure the details of your SAML provider in in `shub/settings/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
+  * Add `saml_auth` to the `PLUGINS_ENABLED` list in `settings.yaml`
+  * Add some configuration details to `settings.yaml`
+  * Configure the details of your SAML provider in in `shub/secrets.py` per instructions provided [here](http://python-social-auth.readthedocs.io/en/latest/backends/saml.html).
   * Build the docker image with the build argument ENABLE_SAML set to true:
     ```bash
     $ docker build --build-arg ENABLE_SAML=true -t ghcr.io/singularityhub/sregistry .
@@ -23,7 +23,7 @@ To enable SAML authentication you must:
 If you haven't yet created a secrets.py, a good start is to do the following:
 
 ```
-cp shub/settings/dummy_secrets.py shub/settings/secrets.py
+cp shub/dummy_secrets.py shub/secrets.py
 ```
 
 
@@ -31,22 +31,22 @@ cp shub/settings/dummy_secrets.py shub/settings/secrets.py
 This quick start is intended to demonstrate basic functionality of the SAML authentication.
 
 
-#### Edit Config.py
+#### Edit settings.yaml
 
-In the file `shub/settings/config.py` you should add the name of your institution (used to render the button)
+In the file `settings.yaml` you should add the name of your institution (used to render the button)
 along with the idp (the unique identifier for your SAML server request). That means uncommenting these lines.
 
-```bash
-# AUTH_SAML_IDP = "stanford"
-# AUTH_SAML_INSTITUTION = "Stanford University"
+```yaml
+# AUTH_SAML_IDP: "stanford"
+# AUTH_SAML_INSTITUTION: "Stanford University"
 ```
 
 so they appear like:
 
 
-```bash
-AUTH_SAML_IDP = "stanford"
-AUTH_SAML_INSTITUTION = "Stanford University"
+```yaml
+AUTH_SAML_IDP: "stanford"
+AUTH_SAML_INSTITUTION: "Stanford University"
 ```
 
 #### Setting up SAML Auth

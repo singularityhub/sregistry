@@ -144,7 +144,7 @@ STRING_DEFAULTS = {
     "SOCIAL_AUTH_BITBUCKET_OAUTH2_KEY": None,  # '<your-consumer-key>'
     "SOCIAL_AUTH_BITBUCKET_OAUTH2_SECRET": None,  # '<your-consumer-secret>'
     # LDAP Authentication (ldap-auth)
-    # Only required if 'ldap-auth' is added to PLUGINS_ENABLED in config.py
+    # Only required if 'ldap-auth' is added to PLUGINS_ENABLED in settings.yaml
     # This example assumes you are using an OpenLDAP directory
     # If using an alternative directory - e.g. Microsoft AD, 389 you
     # will need to modify attribute names/mappings accordingly
@@ -162,7 +162,7 @@ STRING_DEFAULTS = {
     # Anyone in this group is a superuser for the app
     "AUTH_LDAP_SUPERUSER_GROUP_FLAGS": None,  # "cn=superuser,ou=django,ou=groups,dc=example,dc=com"
     # Globus Assocation (globus)
-    # Only required if 'globus' is added to PLUGINS_ENABLED in config.py
+    # Only required if 'globus' is added to PLUGINS_ENABLED in settings.yaml
     "SOCIAL_AUTH_GLOBUS_KEY": None,
     "SOCIAL_AUTH_GLOBUS_USERNAME": None,  # "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org"
     "SOCIAL_AUTH_GLOBUS_SECRET": None,

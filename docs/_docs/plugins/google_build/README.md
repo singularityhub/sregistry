@@ -24,16 +24,16 @@ an endpoint.
 ## Configure sregistry
 
 By default, google build is disabled. To configure sregistry to
-use Google Cloud build and Storage, in settings/config.py you can enable the plugin by
+use Google Cloud build and Storage, in settings.yaml you can enable the plugin by
 uncommenting it from the list here:
 
-```bash
-PLUGINS_ENABLED = [
-#    'ldap_auth',
-#    'saml_auth',
-#    'globus',
-     'google_build'
-]
+```yaml
+PLUGINS_ENABLED:
+#    - ldap_auth
+#    - saml_auth
+#    - pam_auth
+#    - globus
+    - google_build
 ```
 You will need to build the image locally with, at least, the build argument ENABLE_GOOGLEBUILD set to true:
 
@@ -43,8 +43,8 @@ $ docker build --build-arg ENABLE_GOOGLEBUILD=true -t ghcr.io/singularityhub/sre
 
 ## Secrets
 
-Next, set the following variables in `shub/settings/secrets.py`,
-that you can create from `dummy_secrets.py` in the shub/settings folder.
+Next, set the following variables in `shub/secrets.py`,
+that you can create from `dummy_secrets.py` in the `shub/` folder.
 The first two speak for themselves, your project name and path to your
 Google Application Credentials.
 
