@@ -202,6 +202,32 @@ INTEGER_DEFAULTS = {
     "CONTAINER_SIGNED_URL_EXPIRE_SECONDS": None,  # 10
 }
 
+LIST_DEFAULTS = {
+    #list the scopes that will be needed by the gitlab OAuth provider
+    "SOCIAL_AUTH_GITLAB_SCOPE": [],
+
+    # Plugins
+    # Add the name of a plugin under shub.plugins here to enable it
+
+    # Available Plugins:
+
+    # - ldap_auth: Allows sregistry to authenticate against an LDAP directory
+    # - google_build: a custom storage with that uses Google Cloud Build + Storage
+    # - pam_auth: Allow users from (docker) host to log in
+    # - globus: allows connection from sregistry to endpoints
+    # - saml_auth: authentication with SAML
+    # - pgp: deploy a key server alongside your registry
+
+    "PLUGINS_ENABLED": [
+        #    'pgp'
+        #    'ldap_auth',
+        #    'google_build'
+        #    'pam_auth',
+        #    'globus',
+        #    'saml_auth'
+    ]
+}
+
 # Environment helpers
 
 
@@ -252,6 +278,11 @@ for key in STRING_DEFAULTS:
         STRING_DEFAULTS[key] = value
 
 
+for key in LIST_DEFAULTS:
+    value = get_sregistry_envar_list(key)
+    if value is not []:
+        LIST_DEFAULTS[key] = list(set(value))
+
 # Finally, create settings object
 class Settings:
     def __init__(self, dictionary):
@@ -269,7 +300,7 @@ class Settings:
             yield key, value
 
 
-DEFAULTS = STRING_DEFAULTS | BOOLEAN_DEFAULTS | INTEGER_DEFAULTS
+DEFAULTS = STRING_DEFAULTS | BOOLEAN_DEFAULTS | INTEGER_DEFAULTS | LIST_DEFAULTS
 
 # If we have a settings file, it takes preference to DEFAULTS
 if os.path.exists(SETTINGS_FILE):
@@ -426,33 +457,6 @@ DATABASES = {
 MINIO_ROOT_USER = os.environ.get("MINIO_ROOT_USER") or cfg.MINIO_ROOT_USER
 MINIO_ROOT_PASSWORD = os.environ.get("MINIO_ROOT_PASSWORD") or cfg.MINIO_ROOT_PASSWORD
 
-# Plugins
-# Add the name of a plugin under shub.plugins here to enable it
-
-# Available Plugins:
-
-# - ldap_auth: Allows sregistry to authenticate against an LDAP directory
-# - google_build: a custom storage with that uses Google Cloud Build + Storage
-# - pam_auth: Allow users from (docker) host to log in
-# - globus: allows connection from sregistry to endpoints
-# - saml_auth: authentication with SAML
-# - pgp: deploy a key server alongside your registry
-
-PLUGINS_ENABLED = [
-    #    'pgp'
-    #    'ldap_auth',
-    #    'google_build'
-    #    'pam_auth',
-    #    'globus',
-    #    'saml_auth'
-]
-
-# Any plugins enabled from the environment?
-PLUGINS_ENABLED += get_sregistry_envar_list("PLUGINS_ENABLED")
-
-# Ensure unique set
-PLUGINS_ENABLED = list(set(PLUGINS_ENABLED))
-
 # Default Django logging is WARNINGS+ to console
 # so visible via docker-compose logs uwsgi
 LOGGING = {
@@ -559,6 +563,15 @@ RQ_QUEUES = {"default": {"URL": cfg.REDIS_URL}}
 RQ = {"host": cfg.REDIS_HOST, "db": 0}
 
 
+
+# Finally, ensure all variables in cfg are set in locals
+for key, value in cfg:
+    # Don't set if the value is empty, or it's been set previously
+    if value is None or key in locals() and locals()[key] is not None:
+        continue
+    locals()[key] = value
+
+
 # Plugins
 
 # If PAM_AUTH in plugins enbled, add django_pam
@@ -633,13 +646,6 @@ for plugin in PLUGINS_ENABLED:
         for context_processor in plugin.CONTEXT_PROCESSORS:
             TEMPLATES[0]["OPTIONS"]["context_processors"].append(context_processor)
 
-# Finally, ensure all variables in cfg are set in locals
-for key, value in cfg:
-    # Don't set if the value is empty, or it's been set previously
-    if value is None or key in locals() and locals()[key] is not None:
-        continue
-    locals()[key] = value
-
 # Try reading in from secrets first (no issue if not found)
 try:
     from .secrets import *  # noqa
@@ -666,9 +672,3 @@ if ENABLE_GOOGLE_AUTH:  # noqa
         "access_type": "offline",
         "approval_prompt": "auto",
     }
-
-if ENABLE_GITLAB_AUTH:  # noqa
-    if "SOCIAL_AUTH_GITLAB_SCOPE" not in locals():
-        SOCIAL_AUTH_GITLAB_SCOPE=[]
-    SOCIAL_AUTH_GITLAB_SCOPE += get_sregistry_envar_list("SOCIAL_AUTH_GITLAB_SCOPE")
-    SOCIAL_AUTH_GITLAB_SCOPE = list(set(SOCIAL_AUTH_GITLAB_SCOPE))
