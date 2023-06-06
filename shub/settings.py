@@ -283,6 +283,7 @@ for key in LIST_DEFAULTS:
     if value:
         LIST_DEFAULTS[key] = list(set(value))
 
+
 # Finally, create settings object
 class Settings:
     def __init__(self, dictionary):
@@ -563,7 +564,6 @@ RQ_QUEUES = {"default": {"URL": cfg.REDIS_URL}}
 RQ = {"host": cfg.REDIS_HOST, "db": 0}
 
 
-
 # Finally, ensure all variables in cfg are set in locals
 for key, value in cfg:
     # Don't set if the value is empty, or it's been set previously
@@ -575,11 +575,11 @@ for key, value in cfg:
 # Plugins
 
 # If PAM_AUTH in plugins enbled, add django_pam
-if "pam_auth" in PLUGINS_ENABLED:
+if "pam_auth" in PLUGINS_ENABLED: # noqa
     INSTALLED_APPS += ["django_pam"]
 
 # If LDAP_AUTH in plugins enabled, populate from settings
-if "ldap_auth" in PLUGINS_ENABLED:
+if "ldap_auth" in PLUGINS_ENABLED: # noqa
     # To work with OpenLDAP and posixGroup groups we need to import some things
     import ldap
     from django_auth_ldap.config import LDAPSearch, PosixGroupType
@@ -615,7 +615,7 @@ if "ldap_auth" in PLUGINS_ENABLED:
 
 
 # If google_build in use, we are required to include GitHub
-if "google_build" in PLUGINS_ENABLED:
+if "google_build" in PLUGINS_ENABLED: # noqa
     # For task discovery by celery
     SOCIAL_AUTH_GITHUB_SCOPE = [
         "admin:repo_hook",
@@ -628,7 +628,7 @@ if "google_build" in PLUGINS_ENABLED:
     ENABLE_GITHUB_AUTH = True
 
 # Apply any plugin settings
-for plugin in PLUGINS_ENABLED:
+for plugin in PLUGINS_ENABLED: # noqa
     plugin_module = "shub.plugins." + plugin
     plugin = import_module(plugin_module)
 
