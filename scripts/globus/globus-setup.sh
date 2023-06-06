@@ -21,7 +21,7 @@ token=$(globus endpoint create --personal "${ENDPOINT}" --jmespath 'globus_conne
 
 # Export that globus plugin is enabled to config
 
-if ! python code/shub/settings.py PLUGINS_ENABLED | grep -q globus; then
+if ! python manage.py show_settings PLUGINS_ENABLED | grep -q globus; then
     echo "PLUGINS_ENABLED: [\"globus\"]" >> /code/settings.yaml
 fi
 
