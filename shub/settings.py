@@ -280,7 +280,7 @@ for key in STRING_DEFAULTS:
 
 for key in LIST_DEFAULTS:
     value = get_sregistry_envar_list(key)
-    if value is not []:
+    if value:
         LIST_DEFAULTS[key] = list(set(value))
 
 # Finally, create settings object
