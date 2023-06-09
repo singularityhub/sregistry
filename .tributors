@@ -27,7 +27,8 @@
         "name": "Sergio López Huguet",
         "bio": "Ph.D Student ",
         "blog": "https://github.com/serlophug",
-        "email": "sergio.lophug@gmail.com"
+        "email": "sergio.lophug@gmail.com",
+        "orcid": "0000-0002-6523-6108"
     },
     "jbd": {
         "name": "jbd",
@@ -116,5 +117,9 @@
         "orcid": null,
         "affiliation": "Fraunhofer-Institut für Zelltherapie und Immunologie",
         "blog": "https://github.com/SethosII"
+    },
+    "karcaw": {
+        "name": "Evan Felix",
+        "blog": "https://github.com/karcaw"
     }
 }

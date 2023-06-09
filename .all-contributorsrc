@@ -225,6 +225,17 @@
             "avatar_url": [
                 "https://avatars.githubusercontent.com/u/4445745?v=4"
             ]
+        },
+        {
+            "login": "karcaw",
+            "name": "Evan Felix",
+            "contributions": [
+                "code"
+            ],
+            "profile": "https://github.com/karcaw",
+            "avatar_url": [
+                "https://avatars.githubusercontent.com/u/663031?v=4"
+            ]
         }
     ],
     "contributorsPerLine": 7
