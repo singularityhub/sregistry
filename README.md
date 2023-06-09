@@ -6,7 +6,7 @@
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8F%20%20%E2%97%8B-orange)](https://fair-software.eu)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 - [Documentation](https://singularityhub.github.io/sregistry)
@@ -44,6 +44,9 @@
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/craigwindell"><img src="https://avatars.githubusercontent.com/u/44250868?v=4?s=100" width="100px;" alt="craigwindell"/><br /><sub><b>craigwindell</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=craigwindell" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hashkeks"><img src="https://avatars.githubusercontent.com/u/34633191?v=4?s=100" width="100px;" alt="Cedric"/><br /><sub><b>Cedric</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=hashkeks" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SethosII"><img src="https://avatars.githubusercontent.com/u/4445745?v=4?s=100" width="100px;" alt="Paul Jähne"/><br /><sub><b>Paul Jähne</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=SethosII" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/karcaw"><img src="https://avatars.githubusercontent.com/u/663031?v=4?s=100" width="100px;" alt="Evan Felix"/><br /><sub><b>Evan Felix</b></sub></a><br /><a href="https://github.com/singularityhub/sregistry/commits?author=karcaw" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
