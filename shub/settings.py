@@ -203,21 +203,17 @@ INTEGER_DEFAULTS = {
 }
 
 LIST_DEFAULTS = {
-    #list the scopes that will be needed by the gitlab OAuth provider
+    # list the scopes that will be needed by the gitlab OAuth provider
     "SOCIAL_AUTH_GITLAB_SCOPE": [],
-
     # Plugins
     # Add the name of a plugin under shub.plugins here to enable it
-
     # Available Plugins:
-
     # - ldap_auth: Allows sregistry to authenticate against an LDAP directory
     # - google_build: a custom storage with that uses Google Cloud Build + Storage
     # - pam_auth: Allow users from (docker) host to log in
     # - globus: allows connection from sregistry to endpoints
     # - saml_auth: authentication with SAML
     # - pgp: deploy a key server alongside your registry
-
     "PLUGINS_ENABLED": [
         #    'pgp'
         #    'ldap_auth',
@@ -225,7 +221,7 @@ LIST_DEFAULTS = {
         #    'pam_auth',
         #    'globus',
         #    'saml_auth'
-    ]
+    ],
 }
 
 # Environment helpers
@@ -575,11 +571,11 @@ for key, value in cfg:
 # Plugins
 
 # If PAM_AUTH in plugins enbled, add django_pam
-if "pam_auth" in PLUGINS_ENABLED: # noqa
+if "pam_auth" in PLUGINS_ENABLED:  # noqa
     INSTALLED_APPS += ["django_pam"]
 
 # If LDAP_AUTH in plugins enabled, populate from settings
-if "ldap_auth" in PLUGINS_ENABLED: # noqa
+if "ldap_auth" in PLUGINS_ENABLED:  # noqa
     # To work with OpenLDAP and posixGroup groups we need to import some things
     import ldap
     from django_auth_ldap.config import LDAPSearch, PosixGroupType
@@ -615,7 +611,7 @@ if "ldap_auth" in PLUGINS_ENABLED: # noqa
 
 
 # If google_build in use, we are required to include GitHub
-if "google_build" in PLUGINS_ENABLED: # noqa
+if "google_build" in PLUGINS_ENABLED:  # noqa
     # For task discovery by celery
     SOCIAL_AUTH_GITHUB_SCOPE = [
         "admin:repo_hook",
@@ -628,7 +624,7 @@ if "google_build" in PLUGINS_ENABLED: # noqa
     ENABLE_GITHUB_AUTH = True
 
 # Apply any plugin settings
-for plugin in PLUGINS_ENABLED: # noqa
+for plugin in PLUGINS_ENABLED:  # noqa
     plugin_module = "shub.plugins." + plugin
     plugin = import_module(plugin_module)
 
