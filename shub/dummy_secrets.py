@@ -8,18 +8,18 @@
 # =============================================================================
 # Social Authentication
 # Set keys and secrets for social authentication methods that you have
-# enabled in config.py.
+# enabled in settings.yaml.
 # See https://singularityhub.github.io/sregistry/install.html for full details
 # =============================================================================
 
 # Twitter OAuth2
-# Only required if ENABLE_TWITTER_AUTH=TRUE in config.py
+# Only required if ENABLE_TWITTER_AUTH=TRUE in settings.yaml
 # SOCIAL_AUTH_TWITTER_KEY = ''
 # SOCIAL_AUTH_TWITTER_SECRET = ''
 
 # -----------------------------------------------------------------------------
 # Google OAuth2
-# Only required if ENABLE_GOOGLE_AUTH=TRUE in config.py
+# Only required if ENABLE_GOOGLE_AUTH=TRUE in settings.yaml
 
 # GOOGLE_CLIENT_FILE='/code/.grilledcheese.json'
 
@@ -35,7 +35,7 @@
 # }
 # -----------------------------------------------------------------------------
 # GitHub OAuth
-# Only required if ENABLE_GITHUB_AUTH=TRUE in config.py
+# Only required if ENABLE_GITHUB_AUTH=TRUE in settings.yaml
 # http://psa.matiasaguirre.net/docs/backends/github.html?highlight=github
 
 # SOCIAL_AUTH_GITHUB_KEY = ''
@@ -47,7 +47,7 @@
 
 # -----------------------------------------------------------------------------
 # GitHub Enterprise OAuth
-# Only required if ENABLE_GITHUB_ENTERPRISE_AUTH=True in config.py
+# Only required if ENABLE_GITHUB_ENTERPRISE_AUTH=True in settings.yaml
 # See https://python-social-auth.readthedocs.io/en/latest/backends/github_enterprise.html
 # SOCIAL_AUTH_GITHUB_ENTERPRISE_URL = ""
 
@@ -112,11 +112,11 @@
 
 # =============================================================================
 # Plugin Authentication
-# Set options for authentication plugins that you have enabled in config.py
+# Set options for authentication plugins that you have enabled in settings.yaml
 # =============================================================================
 
 # LDAP Authentication (ldap-auth)
-# Only required if 'ldap-auth' is added to PLUGINS_ENABLED in config.py
+# Only required if 'ldap-auth' is added to PLUGINS_ENABLED in settings.yaml
 
 # This example assumes you are using an OpenLDAP directory
 # If using an alternative directory - e.g. Microsoft AD, 389 you
@@ -167,7 +167,7 @@
 # }
 
 # Globus Assocation (globus)
-# Only required if 'globus' is added to PLUGINS_ENABLED in config.py
+# Only required if 'globus' is added to PLUGINS_ENABLED in settings.yaml
 
 # SOCIAL_AUTH_GLOBUS_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 # SOCIAL_AUTH_GLOBUS_USERNAME="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org"
@@ -176,7 +176,7 @@
 
 
 # SAML Authentication (saml)
-# Only required if 'saml_auth' is added to PLUGINS_ENABLED in config.py
+# Only required if 'saml_auth' is added to PLUGINS_ENABLED in settings.yaml
 
 # AUTH_SAML_IDP = "stanford"
 # AUTH_SAML_INSTITUTION = "Stanford University"

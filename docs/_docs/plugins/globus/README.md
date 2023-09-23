@@ -12,7 +12,7 @@ The `globus` plugin allows a logged in user to connect their Globus account to a
 
 ## Setup
 
-In your `shub/settings/secrets.py` file you need to add a client id and secret generated at [https://developers.globus.org/](https://developers.globus.org/). Navigate to the site and do the following:
+In your `shub/secrets.py` file you need to add a client id and secret generated at [https://developers.globus.org/](https://developers.globus.org/). Navigate to the site and do the following:
 
  - Click on the first option, "Register your app with Globus"
  - In the top right click "Add --> New App"
@@ -37,7 +37,7 @@ http://localhost/globus/login/
 http://localhost/globus/login
 ```
 For reference, we are following [these steps](http://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client).
-Then click "Create app." Once you have the application created, you should copy the client secret and id, and add to your `shub/settings/secrets.py` file like so:
+Then click "Create app." Once you have the application created, you should copy the client secret and id, and add to your `shub/secrets.py` file like so:
 
 ```
 SOCIAL_AUTH_GLOBUS_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxx"

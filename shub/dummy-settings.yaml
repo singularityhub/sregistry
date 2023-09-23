@@ -159,6 +159,11 @@ API_DEFAULT_PAGINATION_CLASS: rest_framework.pagination.LimitOffsetPagination
 API_PAGE_SIZE: 10
 
 # PLUGINS
+# PLUGINS_ENABLED:
+#    - ldap_auth
+#    - saml_auth
+#    - globus
+#     - google_build
 
 # Google Cloud Build + Storage: configure a custom builder and storage endpoint
 
@@ -219,7 +224,7 @@ API_PAGE_SIZE: 10
 # OR cn=sregistry_admin,ou=groups,dc=example,dc=com
 
 # Globus Assocation (globus)
-# Only required if 'globus' is added to PLUGINS_ENABLED in config.py
+# Only required if 'globus' is added to PLUGINS_ENABLED in settings.yaml
 # SOCIAL_AUTH_GLOBUS_KEY: xxxxxxxxxxxx
 # SOCIAL_AUTH_GLOBUS_USERNAME: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@clients.auth.globus.org
 # SOCIAL_AUTH_GLOBUS_SECRET: xxxxxxxxxxxxxxxx

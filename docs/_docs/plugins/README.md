@@ -16,8 +16,8 @@ Plugins distributed with `sregistry` are found in the `shub/plugins` directory.
 ## Included Plugins
 
 The following plugins are included with sregistry, and can be enabled by adding them to the
-`PLUGINS_ENABLED` entry in `shub/settings/config.py`. Plugins may require further configuration in
-your registries' local `shub/settings/secrets.py` file.
+`PLUGINS_ENABLED` entry in `settings.yaml`. Plugins may require further configuration in
+your registries' local `shub/secrets.py` file.
 
  - [LDAP-Auth](ldap): authentication against LDAP directories
  - [PAM-Auth](pam): authentication using PAM (unix host users)
@@ -54,7 +54,7 @@ Each plugin:
  - Can register additional context processors by defining a tuple of complete paths to the relevant processors by specifying `CONTEXT_PROCESSORS` in its `__init.py__`
  - Must provide a documentation file and link in this README.
 
-Plugins are loaded when the plugin name is added to `PLUGINS_ENABLED` in `shub/settings/config.py`.
+Plugins are loaded when the plugin name is added to `PLUGINS_ENABLED` in `settings.yaml`.
 A plugin mentioned here is added to `INSTALLED_APPS` at runtime, and any `AUTHENTICATION_BACKEND`
 and `CONTEXT_PROCESSORS` listed in the plugin `__init.py__` is merged into the project settings.
 

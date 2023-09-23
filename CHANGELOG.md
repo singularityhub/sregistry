@@ -13,6 +13,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
  - setup LIST_DEFAULTS for list settings. (2.1.1)
+ - update docs referring to settings, and fix scripts using settings
  - update to use Django 4.2 (2.1.0)
  - consolidate config into one file with environment (2.0.0)
    - This is an API breaking change, as the settings are completely refactored

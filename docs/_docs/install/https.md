@@ -83,13 +83,13 @@ The certificate is at "./singularity-registry.org+5.pem" and the key at "./singu
 It will expire on 29 August 2023 🗓
 ```
 
-Then I moved them into the registry root, and updated my shub/settings/config.py to use
+Then I moved them into the registry root, and updated my settings.yaml to use
 https on localhost.
 
-```python
-DOMAIN_NAME = "https://127.0.0.1"
-DOMAIN_NAME_HTTP = "https://127.0.0.1"
-DOMAIN_NAKED = DOMAIN_NAME_HTTP.replace("https://", "")
+```yaml
+DOMAIN_NAME: "https://127.0.0.1"
+DOMAIN_NAME_HTTP: "https://127.0.0.1"
+DOMAIN_NAKED: DOMAIN_NAME_HTTP.replace("https://", "")
 ```
 
 Finally, we need to make sure that we are using the docker compose file for https,
