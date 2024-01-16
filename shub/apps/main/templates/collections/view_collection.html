@@ -125,7 +125,6 @@
 {% if container.metadata.builder.name == "google_build" %}href="{% url 'delete_google_container' container.id %}">
 {% else %}                          href="{% url 'delete_container' container.id %}">{% endif %}</a>
                                {% endif %}<!-- container was pushed directly -->
-                               {% if container.get_storage and request.user.is_authenticated %}<a href="{% url 'library_manual_download' container.get_uri %}" target="_blank"><button class="btn-sm btn btn-control btn-light"><i class="fa fa-download"></i></button></a>{% endif %}
                                </td>
 
                                <td><a href="{% url 'container_details' container.id %}">
