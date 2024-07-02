@@ -38,13 +38,15 @@
     "alhirzel": {
         "name": "Alex Hirzel",
         "bio": "easygoing thinker/tinkerer type",
-        "blog": "http://alex.hirzel.us/"
+        "blog": "http://alex.hirzel.us/",
+        "email": "alex@hirzel.us"
     },
     "smoe": {
         "name": "Steffen Möller",
         "blog": "http://tangiblecomputationalbiology.blogspot.com",
         "orcid": "0000-0002-7187-4683",
-        "email": "steffen_moeller@gmx.de"
+        "email": "steffen_moeller@gmx.de",
+        "bio": "Computational biologist in academia."
     },
     "yarikoptic": {
         "name": "Yaroslav Halchenko",
