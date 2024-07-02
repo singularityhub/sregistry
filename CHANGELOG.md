@@ -12,6 +12,7 @@ represented by the pull requests that fixed them. Critical items to know are:
 
 
 ## [master](https://github.com/singularityhub/sregistry/tree/master) (master)
+ - remove button uploads, deprecated (2.1.2)
  - setup LIST_DEFAULTS for list settings. (2.1.1)
  - update to use Django 4.2 (2.1.0)
  - consolidate config into one file with environment (2.0.0)

@@ -122,10 +122,6 @@
                 {% endif %}
 
                 {% if container.image %}
-                <a href="{% url 'download_container' container.id container.collection.secret %}"
-                   target="_blank">
-                   <button class="btn btn-sm btn-default">Download</button>
-                </a>
                 {% if edit_permission %}
                 <a id="share_container"
                    class="btn btn-default btn-sm"
