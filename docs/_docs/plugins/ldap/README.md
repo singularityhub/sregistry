@@ -14,12 +14,12 @@ LDAP directory. This supports logins against [Microsoft Active Directory](https:
 To enable LDAP authentication you must:
 
   * Build the docker image with the build argument ENABLE_LDAP set to true
-  * Add `ldap_auth` to the `PLUGINS_ENABLED` list in `shub/settings/config.py`
-  * Configure the details of your LDAP directory in `shub/settings/secrets.py`. See
-    `shub/settings/dummy_secrets.py` for an example OpenLDAP configuration. A good start is to do the following:
+  * Add `ldap_auth` to the `PLUGINS_ENABLED` list in `settings.yaml`
+  * Configure the details of your LDAP directory in `shub/secrets.py`. See
+    `shub/dummy_secrets.py` for an example OpenLDAP configuration. A good start is to do the following:
 
 ```
-cp shub/settings/dummy_secrets.py shub/settings/secrets.py
+cp shub/dummy_secrets.py shub/secrets.py
 ```
 
 Because no two LDAP directories are the same, configuration can be complex and there are no
@@ -269,7 +269,7 @@ The IPAddress thus is `172.17.0.2`. Note that you will need this address in the 
 #### Configure sregistry
 
 To configure sregistry to authenticate against our LDAP directory we need to set
-the following options in `shub/settings/secrets.py`:
+the following options in `shub/secrets.py`:
 
 ```python
 import ldap
@@ -302,7 +302,7 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 }
 ```
 
-Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `shub/settings/config.py`.
+Also ensure 'ldap_auth' is listed in `PLUGINS_ENABLED` inside `settings.yaml`.
 
 Finally, you must build the Docker image with the build argument ENABLE_LDAP set to true:
 ```bash

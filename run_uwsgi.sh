@@ -11,7 +11,7 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 service cron start
 
-if grep -Fxq "PLUGINS_ENABLED+=[\"globus\"]" /code/shub/settings/config.py
+if python manage.py show_settings PLUGINS_ENABLED | grep -q globus
 then
     # When configured, we can start the endpoint
     echo "Starting Globus Connect Personal"

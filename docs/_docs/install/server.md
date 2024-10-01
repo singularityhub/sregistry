@@ -44,7 +44,7 @@ If you don't care about user experience during updates and server downtime, you 
 
 ## Custom Domain
 
-In the [config settings file](https://github.com/singularityhub/sregistry/blob/master/shub/settings/config.py#L30)
+In the [config settings file](https://github.com/singularityhub/sregistry/blob/master/shub/dummy-settings.yaml#L20)
 you'll find a section for domain names, and other metadata about your registry. You will need to update
 this to be a custom hostname that you use, and custom names and unique resource identifiers for your
 registry. For example, if you have a Google Domain and are using Google Cloud, you should be able to set it up using [Cloud DNS](https://console.cloud.google.com/net-services/dns/api/enable?nextPath=%2Fzones&project=singularity-static-registry&authuser=1). Usually this means
@@ -130,19 +130,17 @@ more details about credentials in [the Minio documentation](https://docs.min.io/
 The `.minio-env` file is also bound to the uwsgi container, so that the generation of the minio
 storage can be authenticated by the uwsgi container, which is the interface between
 the Singularity client and minio. For variables that aren't secrets, you can look
-in `shub/settings/config.py` and look for the "Storage" section with various
+in `settings.yaml` and look for the "Storage" section with various
 minio variables:
 
-```python
-MINIO_SERVER = "minio:9000"  # Internal to sregistry
-MINIO_EXTERNAL_SERVER = (
-    "127.0.0.1:9000"  # minio server for Singularity to interact with
-)
-MINIO_BUCKET = "sregistry"
-MINIO_SSL = False  # use SSL for minio
-MINIO_SIGNED_URL_EXPIRE_MINUTES = 5
-MINIO_REGION = "us-east-1"
-MINIO_MULTIPART_UPLOAD = True
+```yaml
+MINIO_SERVER: "minio:9000"  # Internal to sregistry
+MINIO_EXTERNAL_SERVER: "127.0.0.1:9000"  # minio server for Singularity to interact with
+MINIO_BUCKET: "sregistry"
+MINIO_SSL: False  # use SSL for minio
+MINIO_SIGNED_URL_EXPIRE_MINUTES: 5
+MINIO_REGION: "us-east-1"
+MINIO_MULTIPART_UPLOAD: True
 ```
 
 Since the container networking space is different from what the external
